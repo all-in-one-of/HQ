@@ -1,0 +1,283 @@
+//脚本名称：MayaHair_System
+//作者：Lsy(刘升耀)
+//编写时间：2015.11
+//版本：V2.0
+//备注：修改时间2015.12.11
+//说明：脚本主要检查MayaHair系统的SimulationMethod属性
+//**************************
+//****************************************
+//*********************************************************************
+
+global proc MayaHair_System_UI(){
+	  
+	        if(`window -exists MayaHair_Windows`)deleteUI MayaHair_Windows;
+	        
+	        window -title "检查MayaHair_System" MayaHair_Windows;
+	          columnLayout -height 130 -width 280 -adj 1 ;
+	            text -label "";
+	            text -height 20 -label "请点击按钮开始" MayaHair_text_1;
+	            text -label "";
+	            button -command "MayaHair_progressWindows" -height 50 -label "开始检查" MayaHair_button_q1; 
+	        
+	        showWindow MayaHair_Windows;
+	
+}
+
+//显示隐藏的 MayaHair名称的UI
+//***************************
+//*************************************
+
+
+global proc HairObjNameUI(){
+	
+	    if(`window -exists MayaHair_Namewindows`) deleteUI  MayaHair_Namewindows;
+	    
+	    window -title "检查Hair_System"  MayaHair_Namewindows;
+	      columnLayout -width 300 -height 550 -adj 1 ;
+	        frameLayout -cll 1 -cl 1 -label "（0个）未设置静止的Hair节点"  MayaHair_frameLayout_1;
+	          textScrollList -selectCommand "MayaHair_select_item1" -numberOfRows 10 -allowMultiSelection 1 MayaHair_textScrollList_1;
+	         button -c "MayaHair_setAttr" -height 30 -label "一键设置静止";
+	         setParent ..;
+	         text -label "";
+	        frameLayout -cll 1 -cl 1 -label "（0个）已关联静止的Hair节点" MayaHair_frameLayout_2;
+	          textScrollList -selectCommand "MayaHair_select_item2" -numberOfRows 10 -allowMultiSelection 1 MayaHair_textScrollList_2;
+              setParent ..;
+              text -label "";
+            frameLayout -cll 1 -cl 1 -label "（0个）未设置Enable的Nucleus节点" MayaHair_frameLayout_3;
+	          textScrollList -selectCommand "MayaHair_select_item3" -numberOfRows 10 -allowMultiSelection 1 MayaHair_textScrollList_3;
+             button -c "MayaNucleus_setAttr" -height 30 -label "一键设置";
+             setParent ..;
+              text -label "";
+             button -c "Re_MayaHair_progressWindows" -height 50 -label "全部刷新";
+             
+}
+
+//进度UI
+//********
+//********************
+
+global proc ls_text(){
+	string $Hair_it1[]=`textScrollList -q -allItems MayaHair_textScrollList_1`;
+    int $nun_1=`size $Hair_it1`;
+    frameLayout -e -label ("（"+ $nun_1 + "个）未设置静止的Hair节点")  MayaHair_frameLayout_1;
+          
+    string $Hair_it2[]=`textScrollList -q -allItems MayaHair_textScrollList_2`;
+    int $nun_2=`size $Hair_it2`;
+    frameLayout -e -label ("（"+ $nun_2 + "个）已关联静止的Hair节点")  MayaHair_frameLayout_2;
+    
+    string $Hair_it3[]=`textScrollList -q -allItems MayaHair_textScrollList_3`;
+    int $nun_3=`size $Hair_it3`;
+    frameLayout -e -label ("（"+ $nun_3 + "个）未设置Enable的Hair节点")  MayaHair_frameLayout_3;
+}
+
+
+
+global proc ls_hairName(){
+	string $all_hair[]=`ls -type "hairSystem"`;
+	 //获取所有hairSystem
+	 string $one_hair;
+	 for($one_hair in $all_hair ){
+	        	
+	 string $HairAttr_n=$one_hair+".simulationMethod";
+	 int $get_i=`getAttr $HairAttr_n`;
+	 string $conn_n[]=`listConnections $HairAttr_n`;
+	 int $i=`size $conn_n`;
+	 if($i==0){
+	    if($get_i!=1){
+	        textScrollList -edit -append $one_hair MayaHair_textScrollList_1;
+	        };
+	       }else{
+	        		
+	              textScrollList -edit -append $one_hair MayaHair_textScrollList_2;
+	        		
+	        }
+	        	
+	        }
+	  string $all_nucleus[]=`ls -type "nucleus"`;
+	 //获取所有nucleus
+	 string $one_nucleus;
+	 for($one_nucleus in $all_nucleus ){
+	        	
+	 string $nucleusAttr_n=$one_nucleus+".enable";
+	 int $enable_get_i=`getAttr $nucleusAttr_n`;
+	 if($enable_get_i==1){
+	        textScrollList -edit -append $one_nucleus MayaHair_textScrollList_3;
+	        }}
+	ls_text;
+}
+
+global proc  MayaHair_progressWindows(){
+            
+	 
+             HairObjNameUI;	        
+	        
+	         int $amount = 0;
+             progressWindow
+                 -title "处理中.."
+                 -progress $amount
+                 -isInterruptable true;
+            //处理窗口的进度
+	        
+	        ls_hairName;
+         
+         /////把hairSystem节点放到text里面
+	      
+	      $amount=50;
+          progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+             
+          //处理窗口的进度
+   
+     while (true) {
+         // Check if the dialog has been cancelled
+         if ( `progressWindow -query -isCancelled` ) break;
+         // Check if end condition has been reached
+         if ( `progressWindow -query -progress` >= 100 ) break;
+  
+         $amount= $amount+10;
+         progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+
+     }
+    
+    //执行进度的过程..... 
+     
+ 
+ progressWindow -endProgress;
+ deleteUI MayaHair_Windows;
+ showWindow MayaHair_Namewindows;
+}
+
+
+global proc  Re_MayaHair_progressWindows(){
+            
+	         int $amount = 0;
+             progressWindow
+                 -title "处理中.."
+                 -progress $amount
+                 -isInterruptable true;
+            //处理窗口的进度
+	        
+	        textScrollList -edit -ra  MayaHair_textScrollList_1;
+	        textScrollList -edit -ra  MayaHair_textScrollList_2;
+	        textScrollList -edit -ra  MayaHair_textScrollList_3;
+	        
+         
+         /////把hairSystem节点放到text里面
+	      
+	      $amount=50;
+          progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+             
+          //处理窗口的进度
+          
+          
+           ls_hairName;
+           
+           /////
+           
+     while (true) {
+         // Check if the dialog has been cancelled
+         if ( `progressWindow -query -isCancelled` ) break;
+         // Check if end condition has been reached
+         if ( `progressWindow -query -progress` >= 100 ) break;
+  
+         $amount= $amount+10;
+         progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+
+     }
+    
+    //执行进度的过程..... 
+     
+ 
+ progressWindow -endProgress;
+}
+
+//选择框内的物体名称等于直接选择到物体
+//************************************************
+//**********************************************************
+
+global proc MayaHair_select_item1(){
+	string $select_it1[]=`textScrollList -q -selectItem MayaHair_textScrollList_1`;
+    select -r $select_it1;
+}
+
+global proc MayaHair_select_item2(){
+	string $select_it2[]=`textScrollList -q -selectItem MayaHair_textScrollList_2`;
+    select -r $select_it2;
+}
+
+global proc MayaHair_select_item3(){
+	string $select_it2[]=`textScrollList -q -selectItem MayaHair_textScrollList_3`;
+    select -r $select_it2;
+}
+//一键设置MayaHair静止
+//*********************************
+//***********************************************
+
+global proc MayaHair_setAttr(){
+	
+	string $lock_it1[]=`textScrollList -q -allItems MayaHair_textScrollList_1`;
+	string $lock_it_se;
+	int $int_size1=`size $lock_it1`;
+	
+  if($int_size1==0){
+  	 
+  	  print("/////没有需要设置静止的Hair节点"+"\n");
+  	
+  }else {
+  	
+  	for($lock_it_se in $lock_it1){
+  		
+		setAttr ($lock_it_se+".simulationMethod") 1;
+		 //锁定物体的Vis属性
+		print ("setAttr  " + $lock_it_se+".simulationMethod"+" 1;"+"\n");
+
+	};
+	 print("/////完成设置静止的Hair节点"+"\n");
+	
+  	
+  }
+	
+	
+	
+	
+}
+
+
+global proc MayaNucleus_setAttr(){
+	
+	string $lock_it1[]=`textScrollList -q -allItems MayaHair_textScrollList_3`;
+	string $lock_it_se;
+	int $int_size1=`size $lock_it1`;
+	
+  if($int_size1==0){
+  	 
+  	  print("/////没有需要设置Enable的nucleus节点"+"\n");
+  	
+  }else {
+  	
+  	for($lock_it_se in $lock_it1){
+  		
+		setAttr ($lock_it_se+".enable") 0;
+		 //锁定物体的Vis属性
+		print ("setAttr  " + $lock_it_se+".enable"+" 0;"+"\n");
+
+	};
+	 print("/////完成设置Enable的nucleus节点"+"\n");
+	
+  	
+  }
+	
+	
+	
+	
+}
+
+MayaHair_System_UI;
+

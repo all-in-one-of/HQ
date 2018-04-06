@@ -1,0 +1,5 @@
+设置系统环境变量：
+
+
+MAYA_MODULE_PATH
+\\10.99.1.6\Digital\Library\hq_toolbox\hq_maya

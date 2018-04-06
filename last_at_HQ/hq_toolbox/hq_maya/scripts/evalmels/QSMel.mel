@@ -1,0 +1,26 @@
+global proc float pointEmitterVel(string $pointEmitter, int $vertexCount){
+    vector $velLi[] = `getAttr ($pointEmitter +".ownerVelData")`;
+    int $velLen = `size($velLi)`;
+    int $step = $velLen/$vertexCount;
+    if ($step < $vertexCount){
+        $step = 1;
+        $vertexCount = $velLen;
+    }
+
+    float $speed = 0;
+    for ($i=$step; $i<$velLen; $i+=$step){
+        $speed += mag($velLi[$i]);
+    }
+    
+    return $speed/$vertexCount;
+}
+
+
+
+global proc setEmitterRateExpStr(){
+	//
+}
+
+global proc parColorForm3DTextureStr(){
+	//
+}

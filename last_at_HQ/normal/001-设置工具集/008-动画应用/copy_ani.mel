@@ -1,0 +1,161 @@
+string $spacename_obj[]={};
+string $space_name[]=`ls -sl`;
+string $namespace_buffer[]; 
+int $namespace_numTokens = 0;
+int $x=0;
+for ($x;$x<size($space_name);$x++)
+{
+    string $namespace="";
+    $namespace_numTokens = `tokenize $space_name[$x] ":" $namespace_buffer`;
+    if( $namespace_numTokens > 1 )
+    {
+    	for( $i = 0; $i < (size($namespace_buffer) - 1); $i++ )
+    	{
+    		$namespace += $namespace_buffer[$i];
+    		$namespace += ":";
+    	}
+    }
+    $spacename_obj[$x]=$namespace;
+}
+
+/////////////////////////////////////////////////////////
+
+global proc selectAllAttr(){
+
+ string $selType[] = `ls -sl`;
+    
+ if(`nodeType $selType[0]` == "transform")
+ {
+	int $theInTime=0;
+	int $sdcount = 0;
+	
+	float $startTime = `playbackOptions -q -min`;
+	float $endTime = `playbackOptions -q -max`;
+	string $startTimes = (string)$startTime;
+	string $endTimes = (string)$endTime;
+
+	string $allKeyAttr[];
+	$allKeyAttr=findAnimCurveyzl();
+	select $allKeyAttr;
+	string $select[] = `ls -sl`;
+	select -cl;
+	string $objects[];
+	string $obj[]; 
+	for ($i in $select)
+	{
+		$obj = `listConnections $i`;
+		string $objs[] = `listConnections $obj`;
+		//if (`nodeType $objs[0]` == "joint")
+		if (`nodeType $objs[0]` == "transform")
+			select -add $objs[0];
+	}
+	
+    selectKey -add -k $allKeyAttr;
+	keyframe -animation keys -option over -relative -timeChange (0+$theInTime) ;
+	             
+  }   
+    
+}
+
+
+global proc string[] findAnimCurveyzl(){
+	string $allAnimCurve[]={"animCurveUA","animCurveUL","animCurveUT","animCurveUU"};
+	string $returnAllKeyNodee[];
+	string $select_obj[]=`ls -sl`;
+	select -hi $select_obj[0];
+	$finalNodes =`ls -sl -type transform`;
+	select -cl;
+	
+	for ($x=0; $x<size($finalNodes) ; $x++)
+	{
+		int $allNodeKeysNum=`keyframe -q -keyframeCount $finalNodes[$x]`;
+		if ($allNodeKeysNum > 0)
+		{
+			string $attrOnly[] =`listAttr -k $finalNodes[$x]`;
+			for ($y=0; $y<size($attrOnly); $y++)
+			{	
+				string $nodesAttrs = $finalNodes[$x] + "." + $attrOnly[$y];
+				int $isExists=size(`ls $nodesAttrs`);
+				if ($isExists!=0)
+				{
+					int $singleNodeKeysNum=`keyframe -q -keyframeCount $nodesAttrs`;
+										
+					if ($singleNodeKeysNum > 1)
+					{	
+						string $nodesCurve[] = `listConnections -d off -s on ($finalNodes[$x]+"."+$attrOnly[$y])`;
+						string $curAnimCurve;	
+						if(size($nodesCurve)>0)
+						{
+							$curAnimCurve=`nodeType  $nodesCurve[0]`;
+							int $found=stringArrayContains($curAnimCurve,$allAnimCurve);
+							if(!$found)
+								$returnAllKeyNodee[size($returnAllKeyNodee)] = $nodesAttrs;
+						}
+					}
+				}
+			}
+		}
+	}
+	return $returnAllKeyNodee;
+}
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////
+selectAllAttr();
+
+string $copy_name[]=`ls -sl`;
+string $f_namespace[]={};
+string $name_obj[]={};
+
+string $k_namespace="";
+string $k_namespace_buffer[]; 
+int $k_namespace_numTokens = 0;
+string $h_name_space="";
+$k_namespace_numTokens = `tokenize $copy_name[0] ":" $k_namespace_buffer`;
+
+if( $k_namespace_numTokens > 1 )
+{
+	for( $i = 0; $i < (size($k_namespace_buffer) - 1); $i++ )
+	{
+		$k_namespace += $k_namespace_buffer[$i];
+		$k_namespace += ":";
+	}
+}
+if ($k_namespace==$spacename_obj[0])
+{
+    $h_name_space=$spacename_obj[1];
+}
+else
+{
+    $h_name_space=$spacename_obj[0];
+}
+
+int $i=0;
+for ($i;$i<size($copy_name);$i++)
+{
+    $f_namespace=stringToStringArray($copy_name[$i],":");
+    $name_obj[$i]=$f_namespace[size($f_namespace)-1];
+    
+}
+
+int $n=0;
+int $k=0;
+string $keyCtrls[]={};
+for($n;$n<size($name_obj);$n++)
+{
+ $keyCtrls[$k] = ($h_name_space + $name_obj[$n]);
+ if (`objExists $keyCtrls[$k]` )
+ {
+     copyKey -option curve $copy_name[$n];
+     pasteKey -option replace -copies 1 -connect 0 -timeOffset 0 -floatOffset 0 -valueOffset 0 $keyCtrls[$k];
+     $k++;
+ }
+}

@@ -1,0 +1,27 @@
+global proc float nurbsCurve_findParamFromLength( string $nurbsCurve, float $length ){
+	return python( "qm.nurbsCurve_findParamFromLength('" + $nurbsCurve + "', "  +  $length  + ")" );
+}
+
+global proc float[] nurbsCurve_findPointFromLength( string $nurbsCurve, float $length ){
+	return python( "qm.nurbsCurve_findPointFromLength('" + $nurbsCurve + "', "  +  $length + ")" );
+}
+
+global proc float[] nurbsCurve_closestPoint( string $nurbsCurve, vector $pos ){
+	return python( "QM.nurbsCurve_closestPoint('" + $nurbsCurve + "', ["  +  $pos.x +"," + $pos.y + "," + $pos.z + "])");
+}
+
+
+global proc float[] nurbsCurve_getPointAtParam( string $nurbsCurve, float $param ){
+	return python( "qm.nurbsCurve_getPointAtParam('" + $nurbsCurve + "', "  +  $param + ")" );
+}
+
+
+global proc float nurbsCurve_getParamAtPoint( string $nurbsCurve, vector $pos ){
+	return python( "qm.nurbsCurve_getParamAtPoint('" + $nurbsCurve + "', ["  +  $pos.x +"," + $pos.y + "," + $pos.z + "])");
+}
+
+
+global proc float nurbsCurve_distanceToPoint( string $nurbsCurve, vector $pos ){
+	return python( "qm.nurbsCurve_distanceToPoint('" + $nurbsCurve + "', ["  +  $pos.x +"," + $pos.y + "," + $pos.z + "])");
+}
+

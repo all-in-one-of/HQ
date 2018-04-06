@@ -1,0 +1,130 @@
+global proc PoseCheck()
+{
+    if (`window -q -exists PoseCheckWindow`) deleteUI PoseCheckWindow;
+    window
+        -title "导入动画曲线&摄像机" -wh 200 100
+              PoseCheckWindow;
+
+    columnLayout -adj 1; 
+       text -label "";
+       separator -style "none";
+	   button -l "导入pose曲线..." -c importAnimCam;
+     setParent ..; 
+ showWindow   PoseCheckWindow; 
+    
+} 
+
+global proc importAnimCam()
+{	
+	   select -r "*Character";
+	   string $selCtrl[] = `ls -sl`;
+	   if(size($selCtrl) == 1 )
+	   { 
+         file -import -type "animImport" -ra true -namespace "pose" -options "targetTime=4;copies=1;option=replace;pictures=0;connect=0;"  -pr -loadReferenceDepth "all" "//10.99.1.2/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/007-检查工具/pose.anim";  	   	       
+	   } 
+	   else
+	   error "文件中有多个与大圈重命名的物体,无法导入动画曲线！";	  
+	   
+	   playbackOptions -min 0 -max 900;
+	   
+       float $geoBbox[] = `xform -q -bb "*geo"`;
+
+       float $l = $geoBbox[3] - $geoBbox[0];
+       float $w = $geoBbox[4] - $geoBbox[1];
+       float $angle = 40;
+
+       float $edgeA = ($l/2)/tan(deg_to_rad($angle/2));
+       float $wHalf = `pow ($w/2) 2`;
+       float $edgeA = `pow ($edge) 2`;
+       float $h = `sqrt ($edgeA - $wHalf)`;
+       
+
+       camera -n "pos_cam1" -centerOfInterest 5 -focalLength 35 -lensSqueezeRatio 1 -cameraScale 1 -horizontalFilmAperture 1.41732 -horizontalFilmOffset 0 -verticalFilmAperture 0.94488 -verticalFilmOffset 0 -filmFit Fill -overscan 1 -motionBlur 0 -shutterAngle 144 -nearClipPlane 0.1 -farClipPlane 10000 -orthographic 0 -orthographicWidth 30 -panZoomEnabled 0 -horizontalPan 0 -verticalPan 0 -zoom 1; objectMoveCommand; cameraMakeNode 1 "";
+       group -n "pos_cam_G";       
+
+       string $cam = "pos_cam_G";
+       string $camera = "pos_cam1";	
+            
+	   pointConstraint -offset 0 0 0 -weight 1 "*Head_FK" $cam;       
+       select -r $camera; 
+       setAttr ($camera+".translateZ") $h;
+       select -r $cam;
+       setAttr ($cam+".rotateY") 20;                   	    
+       setKeyframe -t 0 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       setKeyframe -t 40 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       setKeyframe -t 340 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       delete pos_cam_G_pointConstraint1;
+      
+       
+	   
+	   pointConstraint -offset 0 0 0 -weight 1 "*LeftArm_Lower_Arm" $cam;	   
+       select -r $camera;
+       setAttr ($camera+".translateX") -0.4;
+       setAttr ($camera+".translateY") 0.2; 
+       setAttr ($camera+".translateZ") $h;
+       select -r $cam;       
+       setAttr ($cam+".rotateX") -70;         
+       setAttr ($cam+".rotateY") 20;  
+       setKeyframe -t 345 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       setKeyframe -t 380 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};       
+       delete pos_cam_G_pointConstraint1; 
+     		   
+        
+	   pointConstraint -offset 0 0 0 -weight 1 "*LeftArm_Hand" $cam;        
+       select -r $camera;       
+       setAttr ($camera+".translateX") 0.0;
+       setAttr ($camera+".translateY") 0.2; 
+       setAttr ($camera+".translateZ") ($h-1);
+       select -r $cam;        
+       setAttr ($cam+".rotateX") -10;         
+       setAttr ($cam+".rotateY") 25;        
+       setKeyframe -t 388 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       setKeyframe -t 492 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};       		        		   
+       delete pos_cam_G_pointConstraint1;
+
+
+
+	   pointConstraint -offset 0 0 0 -weight 1 "*Spine_Middle_FK" $cam;
+       select -r $camera;	                  
+       setAttr ($camera+".translateX") 0;
+       setAttr ($camera+".translateY") 0.2; 
+       setAttr ($camera+".translateZ") $h;
+       select -r $cam;        
+       setAttr ($cam+".rotateX") -15;         
+       setAttr ($cam+".rotateY") 25; 
+       setKeyframe -t 500 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       setKeyframe -t 687 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       delete pos_cam_G_pointConstraint1;
+ 
+	   pointConstraint -offset 0 0 0 -weight 1 "*Spine_joint1" $cam;
+       select -r $camera;      
+       setAttr ($camera+".translateX") 0;
+       setAttr ($camera+".translateY") 0.2; 
+       setAttr ($camera+".translateZ") $h;
+       select -r $cam;       
+       setAttr ($cam+".rotateX") 0;         
+       setAttr ($cam+".rotateY") 70; 
+       setKeyframe -t 690 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       setKeyframe -t 860 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};
+       delete pos_cam_G_pointConstraint1;       
+       
+	   pointConstraint -offset 0 0 0 -weight 1 "*Spine_joint1" $cam;       
+       select -r $camera;      
+       setAttr ($camera+".translateX") 0;
+       setAttr ($camera+".translateY") 0.2; 
+       setAttr ($camera+".translateZ") ($h+1);
+       select -r $cam;       
+       setAttr ($cam+".rotateX") 0;         
+       setAttr ($cam+".rotateY") 15; 
+       setKeyframe -t 900 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$cam,$camera};	   
+       delete pos_cam_G_pointConstraint1; 
+       	   	   	  	   
+	   lookThru pos_cam1;
+	   currentTime 900 ;
+	           
+}
+PoseCheck();
+
+
+
+ 

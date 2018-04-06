@@ -1,0 +1,123 @@
+//adv裙子设置生成
+
+python("import pathforuser");
+//python("reload(pathforuser)");
+string $absolutPath=`python("pathforuser.path_dir()")`;
+global string $dressPath;
+$dressPath = $absolutPath+"002-设置创建/dress_ctrl.mb"; 
+
+
+global proc dressRig_adv()
+{
+ global string $dressPath;
+
+ //创建裙子骨骼
+ select -r Hip_L;
+ joint -n "dress_f_jnt01";
+ select -r Knee_L;
+ joint -n "dress_f_jnt02";
+ select  -r Ankle_L;
+ joint -n "dress_f_jnt03"; 
+ parent dress_f_jnt03 dress_f_jnt02;
+ parent dress_f_jnt02 dress_f_jnt01;
+ parent -w dress_f_jnt01;
+ string $sel[] = `pickWalk -d up`;
+ setAttr ($sel[0]+".tx") 0;
+ makeIdentity -apply true -t 1 -r 0 -s 1 -n 0;
+ //parent -w dress_f_jnt01;
+ //delete $sel[0];
+ setAttr "dress_f_jnt01.radius" 0.2;
+ setAttr "dress_f_jnt02.radius" 0.2; 
+ setAttr "dress_f_jnt03.radius" 0.2;
+ duplicate -rr -n "dress_b_jnt01" dress_f_jnt01;
+ rename dress_b_jnt01|dress_f_jnt02 dress_b_jnt02;
+ rename dress_b_jnt02|dress_f_jnt03 dress_b_jnt03;
+ 
+ setAttr "dress_f_jnt01.translateZ" 0.02;
+ setAttr "dress_b_jnt01.translateZ" -0.02; 
+ 
+ //导入裙子控制器
+ if (!`objExists dress_ctrl.mb`)
+  file -i $dressPath;
+ else
+ error "裙子控制器已经存在!!!";
+ 
+ group -n "dress_ctrl_G" dress_ctrl;
+ parent dress_ctrl_G dress_f_jnt02;
+ setAttr "dress_ctrl_G.rotateZ" 0;
+ setAttr "dress_ctrl_G.translateX" 0;
+ setAttr "dress_ctrl_G.translateY" 0;
+ setAttr "dress_ctrl_G.translateZ" 0;
+ setAttr "dress_ctrl_G.rotateX" 0;
+ setAttr "dress_ctrl_G.rotateY" 0;
+ parent dress_ctrl_G dress_f_jnt01;
+ 
+ duplicate -rr -n "dress_knee_ctrl" dress_ctrl;
+ group -n "dress_knee_ctrl_G" dress_knee_ctrl;
+ parent dress_knee_ctrl_G dress_f_jnt03;
+ setAttr "dress_knee_ctrl_G.translateX" 0;
+ setAttr "dress_knee_ctrl_G.translateY" 0;
+ setAttr "dress_knee_ctrl_G.translateZ" 0;
+ 
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.tx";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.ty";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.tz";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.rx";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.ry";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.rz";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.sx";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.sy";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.sz";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.v";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.front_side";
+ setAttr -lock true -keyable false -channelBox false "dress_ctrl.back_side";  
+ 
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.tx";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.ty";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.tz";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.rx";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.ry";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.rz";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.sx";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.sy";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.sz";
+ setAttr -lock true -keyable false -channelBox false "dress_knee_ctrl.v"; 
+ 
+  
+ setAttr -keyable false -channelBox true "dress_ctrl.front_weight";
+ setAttr -keyable false -channelBox true "dress_ctrl.front_adjust";
+ setAttr -keyable false -channelBox true "dress_ctrl.back_weight";
+ setAttr -keyable false -channelBox true "dress_ctrl.back_adjust";  
+ 
+ 
+ setAttr -keyable false -channelBox true "dress_knee_ctrl.front_weight";
+ setAttr -keyable false -channelBox true "dress_knee_ctrl.front_adjust";
+ setAttr -keyable false -channelBox true "dress_knee_ctrl.back_weight";
+ setAttr -keyable false -channelBox true "dress_knee_ctrl.back_adjust"; 
+ setAttr -keyable false -channelBox true "dress_knee_ctrl.front_side";
+ setAttr -keyable false -channelBox true "dress_knee_ctrl.back_side";  
+ 
+ //expression -n "Long_dress_ctrl" -s "dress_f_jnt01.rotateZ = (((min(Hip_L.rotateZ , Hip_R.rotateZ))*dress_ctrl.front_weight)+((2-dress_ctrl.front_weight) * ((Hip_L.rotateZ + Hip_R.rotateZ)/2)))/2 - dress_ctrl.front_adjust*(Hip_L.rotateZ +  Hip_R.rotateZ);\ndress_b_jnt01.rotateZ = (((max(Hip_L.rotateZ , Hip_R.rotateZ))*dress_ctrl.back_weight)+((2-dress_ctrl.back_weight) * ((Hip_L.rotateZ + Hip_R.rotateZ)/2)))/2 - dress_ctrl.back_adjust*(Hip_L.rotateZ +  Hip_R.rotateZ);\ndress_f_jnt01.rotateY = (Hip_L.rotateY + Hip_R.rotateY)/2;\ndress_b_jnt01.rotateY = (Hip_L.rotateY + Hip_R.rotateY)/2;\ndress_f_jnt02.rotateZ = (((min(Knee_L.rotateZ , Knee_R.rotateZ))*dress_knee_ctrl.front_weight)+((2-dress_knee_ctrl.front_weight) * ((Knee_L.rotateZ + Knee_R.rotateZ)/2)))/2 - dress_knee_ctrl.front_adjust*(Hip_L.rotateZ +  Hip_R.rotateZ);\ndress_b_jnt02.rotateZ = (((max(Knee_L.rotateZ , Knee_R.rotateZ))*dress_knee_ctrl.back_weight)+((2-dress_knee_ctrl.back_weight) * ((Knee_L.rotateZ + Knee_R.rotateZ)/2)))/2 - dress_knee_ctrl.back_adjust*(Hip_L.rotateZ +  Hip_R.rotateZ);\ndress_f_jnt02.rotateY = (((max(abs(Knee_L.rotateY), abs(Knee_R.rotateY)))*dress_knee_ctrl.front_side)+((2-dress_knee_ctrl.front_side) * ((Knee_L.rotateY + Knee_R.rotateY)/2)))/2;\ndress_b_jnt02.rotateY = (((max(abs(Knee_L.rotateY), abs(Knee_R.rotateY)))*dress_knee_ctrl.back_side)+((2-dress_knee_ctrl.back_side) * ((Knee_L.rotateY + Knee_R.rotateY)/2)))/2;"; 
+ expression -n "Long_dress_ctrl" -s "dress_b_jnt01.rotateZ = (((min(Hip_L.rotateZ , Hip_R.rotateZ))*dress_ctrl.front_weight)+((2-dress_ctrl.front_weight) * ((Hip_L.rotateZ + Hip_R.rotateZ)/2)))/2 - dress_ctrl.front_adjust*(Hip_L.rotateZ +  Hip_R.rotateZ);\ndress_f_jnt01.rotateZ = (((max(Hip_L.rotateZ , Hip_R.rotateZ))*dress_ctrl.back_weight)+((2-dress_ctrl.back_weight) * ((Hip_L.rotateZ + Hip_R.rotateZ)/2)))/2 - dress_ctrl.back_adjust*(Hip_L.rotateZ +  Hip_R.rotateZ);\ndress_b_jnt01.rotateY = (Hip_L.rotateY - Hip_R.rotateY)/2;\ndress_f_jnt01.rotateY = (Hip_L.rotateY - Hip_R.rotateY)/2;\ndress_b_jnt02.rotateZ = (((min(Knee_L.rotateZ , Knee_R.rotateZ))*dress_knee_ctrl.front_weight)+((2-dress_knee_ctrl.front_weight) * ((Knee_L.rotateZ + Knee_R.rotateZ)/2)))/2 - dress_knee_ctrl.front_adjust*(Hip_L.rotateZ +  Hip_R.rotateZ);\ndress_f_jnt02.rotateZ = (((max(Knee_L.rotateZ , Knee_R.rotateZ))*dress_knee_ctrl.back_weight)+((2-dress_knee_ctrl.back_weight) * ((Knee_L.rotateZ + Knee_R.rotateZ)/2)))/2 - dress_knee_ctrl.back_adjust*(Hip_L.rotateZ +  Hip_R.rotateZ);\ndress_b_jnt02.rotateY = (((max(abs(Knee_L.rotateY), abs(Knee_R.rotateY)))*dress_knee_ctrl.front_side)+((2-dress_knee_ctrl.front_side) * ((Knee_L.rotateY + Knee_R.rotateY)/2)))/2;\ndress_f_jnt02.rotateY = (((max(abs(Knee_L.rotateY), abs(Knee_R.rotateY)))*dress_knee_ctrl.back_side)+((2-dress_knee_ctrl.back_side) * ((Knee_L.rotateY + Knee_R.rotateY)/2)))/2;"; 
+
+ group -n dress_C dress_f_jnt01 dress_b_jnt01;
+ group -n dress_rig;
+ 
+ float $getjointP[] = `xform -q -ws -t dress_f_jnt01`;
+ 
+ move $getjointP[0] $getjointP[1] $getjointP[2] dress_C.scalePivot dress_C.rotatePivot ;
+ move $getjointP[0] $getjointP[1] $getjointP[2] dress_rig.scalePivot dress_rig.rotatePivot ;
+ 
+ parentConstraint -mo -weight 1 Root_M dress_C;
+ scaleConstraint -mo -weight 1 Root_M dress_C; 
+ 
+ select -cl;
+ 
+ parent dress_rig Main;
+ select -cl;
+
+ print "长裙设置完成！";
+
+
+}
+dressRig_adv();

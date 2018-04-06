@@ -1,0 +1,27 @@
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftArm_joint2.rotateZ LeftArm_influence4.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftArm_joint2.rotateZ LeftArm_influence4.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftArm_joint2.rotateZ LeftArm_influence4.translateZ;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver LeftArm_joint2.rotateZ LeftArm_influence4.translateX;
+setDrivenKeyframe -driverValue -90 -value 0 -currentDriver LeftArm_joint2.rotateZ LeftArm_influence4.translateY;
+setDrivenKeyframe -driverValue -90 -value 0 -currentDriver LeftArm_joint2.rotateZ LeftArm_influence4.translateZ;
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_joint1.rotateZ LeftLeg_influence1_intermediate.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_joint1.rotateZ LeftLeg_influence1_intermediate.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_joint1.rotateZ LeftLeg_influence1_intermediate.translateZ;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver LeftLeg_joint1.rotateZ LeftLeg_influence1_intermediate.translateX;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver LeftLeg_joint1.rotateZ LeftLeg_influence1_intermediate.translateY;
+setDrivenKeyframe -driverValue -90 -value 0.05 -currentDriver LeftLeg_joint1.rotateZ LeftLeg_influence1_intermediate.translateZ;
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightArm_joint2.rotateZ RightArm_influence4.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightArm_joint2.rotateZ RightArm_influence4.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightArm_joint2.rotateZ RightArm_influence4.translateZ;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver RightArm_joint2.rotateZ RightArm_influence4.translateX;
+setDrivenKeyframe -driverValue -90 -value 0 -currentDriver RightArm_joint2.rotateZ RightArm_influence4.translateY;
+setDrivenKeyframe -driverValue -90 -value 0 -currentDriver RightArm_joint2.rotateZ RightArm_influence4.translateZ;
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_joint1.rotateZ RightLeg_influence1_intermediate.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_joint1.rotateZ RightLeg_influence1_intermediate.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_joint1.rotateZ RightLeg_influence1_intermediate.translateZ;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver RightLeg_joint1.rotateZ RightLeg_influence1_intermediate.translateX;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver RightLeg_joint1.rotateZ RightLeg_influence1_intermediate.translateY;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver RightLeg_joint1.rotateZ RightLeg_influence1_intermediate.translateZ;

@@ -1,0 +1,54 @@
+/////////////////////////////////////////////////////////////////////////////////
+string $YY_delete_unknow_z[] = `ls -type "unknown"`;
+string $YY_delete_unknow_z_int = size($YY_delete_unknow_z);
+
+if(`window -q -ex YY_matomb_win`)	
+		{
+deleteUI YY_matomb_win;
+};
+window -wh 200 300
+	   -s 0
+	   YY_matomb_win;
+columnLayout -rs 10 -adj 1 ;
+text -l "删除所有未知节点工具";
+separator;
+rowLayout -nc 3 -cw3 90 30 60;
+text -w 80 -l "    场景中共有";
+//intField -w 30 -v 0 YY_unknow_node_a;
+text -w 60 -l $YY_delete_unknow_z_int Y_unknow_node_a;
+text  -l "个未知节点";
+setParent ..;
+button -h 30 -l "去除未知节点" -c YY_delte_Node YY_deleteunknow_node_avc;
+separator;
+showWindow YY_matomb_win;
+
+global proc YY_delte_Node()
+{
+string $YY_delete_unknow[] = `ls -type "unknown"`;
+string $YY_delete_unknow_int = size($YY_delete_unknow);
+for($ha = 0;$ha<size($YY_delete_unknow);$ha++)
+{
+if(`objExists $YY_delete_unknow[$ha]`)
+{	
+lockNode -lock 0 $YY_delete_unknow[$ha];
+delete $YY_delete_unknow[$ha];
+};
+};
+
+button -e -l ("共去除" + $YY_delete_unknow_int + "个节点") YY_deleteunknow_node_avc;
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+

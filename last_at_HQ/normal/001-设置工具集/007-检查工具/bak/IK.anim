@@ -1,0 +1,624 @@
+animVersion 1.1;
+mayaVersion 2012 x64;
+timeUnit film;
+linearUnit cm;
+angularUnit deg;
+startTime 40;
+endTime 881;
+anim IK 0 5 0;
+anim LeftArm_IK 1 1 0;
+anim LeftArm_amiknull 2 2 0;
+anim LeftArm_Arm_IK 3 3 0;
+anim LeftArm_Arm_IKShape 4 0 0;
+anim LeftArm_Arm_IKShapeOrig 4 0 0;
+anim LeftArm_IKhandnull 4 0 0;
+anim LeftArm_Arm_IK_SWITCH 3 1 0;
+anim LeftArm_Arm_IK_SWITCH_parentConstraint1 4 0 0;
+anim RightArm_IK 1 1 0;
+anim RightArm_amiknull 2 2 0;
+anim RightArm_Arm_IK 3 3 0;
+anim RightArm_Arm_IKShape 4 0 0;
+anim RightArm_Arm_IKShapeOrig 4 0 0;
+anim RightArm_IKhandorient 4 0 0;
+anim RightArm_Arm_IK_SWITCH 3 1 0;
+anim RightArm_Arm_IK_SWITCH_parentConstraint1 4 0 0;
+anim Head_IK 1 1 0;
+anim Head_iknull 2 1 0;
+anim Head_Head_IK 3 2 0;
+anim Head_Head_IKShape 4 0 0;
+anim Head_Head_IKShapeOrig 4 0 0;
+anim RightLeg_IK 1 2 0;
+anim RightLeg_standardpolevectornull 2 1 0;
+anim RightLeg_Standard_Pole_Vector 3 1 0;
+anim RightLeg_Standard_Pole_VectorShape 4 0 0;
+anim RightLeg_iknull 2 1 0;
+anim RightLeg_directioncompensate 3 2 0;
+anim rotateAxis.rotateAxisX rotateAxisX RightLeg_IK_Leg 4 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY rotateAxisY RightLeg_IK_Leg 4 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ rotateAxisZ RightLeg_IK_Leg 4 2 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim RaiseHeel RaiseHeel RightLeg_IK_Leg 4 2 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim RaiseToe RaiseToe RightLeg_IK_Leg 4 2 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim SwivelFoot SwivelFoot RightLeg_IK_Leg 4 2 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim LegStretch LegStretch RightLeg_IK_Leg 4 2 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim AutoStretch AutoStretch RightLeg_IK_Leg 4 2 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim KneeSlide KneeSlide RightLeg_IK_Leg 4 2 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim StandardPoleVector StandardPoleVector RightLeg_IK_Leg 4 2 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX translateX RightLeg_IK_Leg 4 2 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY translateY RightLeg_IK_Leg 4 2 11;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ translateZ RightLeg_IK_Leg 4 2 12;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX rotateX RightLeg_IK_Leg 4 2 13;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY rotateY RightLeg_IK_Leg 4 2 14;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ rotateZ RightLeg_IK_Leg 4 2 15;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim toetip toetip RightLeg_IK_Leg 4 2 16;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleX ankleX RightLeg_IK_Leg 4 2 17;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleY ankleY RightLeg_IK_Leg 4 2 18;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleZ ankleZ RightLeg_IK_Leg 4 2 19;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim knee_follow knee_follow RightLeg_IK_Leg 4 2 20;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1 spline step 1 1 0;
+  }
+}
+anim RightLeg_IK_LegShape 5 0 0;
+anim ankle_r_rot 5 1 0;
+anim RightLeg_recompensate 6 1 0;
+anim RightLeg_toepivotnull 7 2 0;
+anim RightLeg_Toe_Pivot 8 3 0;
+anim RightLeg_Toe_PivotShape 9 0 0;
+anim RightLeg_aimleg 9 0 0;
+anim RightLeg_footswiveler 9 1 0;
+anim RightLeg_controls_orient 10 2 0;
+anim RightLeg_heelraiser 11 2 0;
+anim RightLeg_Heel_Pivot 12 2 0;
+anim RightLeg_Heel_PivotShape 13 0 0;
+anim RightLeg_IKhandleattacherIK 13 0 0;
+anim RightLeg_Heel_Pivot_SWITCH 12 0 0;
+anim RightLeg_toeraiser 11 1 0;
+anim RightLeg_endpointtoe 12 0 0;
+anim RightLeg_Toe_Pivot_SWITCH 8 0 0;
+anim RightLeg_IK_Leg_SWITCH 4 1 0;
+anim RightLeg_IK_Leg_SWITCH_parentConstraint1 5 0 0;
+anim LeftLeg_IK 1 2 0;
+anim LeftLeg_standardpolevectornull 2 1 0;
+anim LeftLeg_Standard_Pole_Vector 3 1 0;
+anim LeftLeg_Standard_Pole_VectorShape 4 0 0;
+anim LeftLeg_iknull 2 1 0;
+anim LeftLeg_directioncompensate 3 2 0;
+anim rotateAxis.rotateAxisX rotateAxisX LeftLeg_IK_Leg 4 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY rotateAxisY LeftLeg_IK_Leg 4 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ rotateAxisZ LeftLeg_IK_Leg 4 2 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim RaiseHeel RaiseHeel LeftLeg_IK_Leg 4 2 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    759 0 flat flat 1 1 0;
+    769 0 auto auto 1 1 0;
+    790 0 flat flat 1 1 0;
+    800 0 auto auto 1 1 0;
+    810 46.400000000000006 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim RaiseToe RaiseToe LeftLeg_IK_Leg 4 2 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+    861 46.100000000000001 auto auto 1 1 0;
+    872 -34.500000000000007 auto auto 1 1 0;
+    881 0 auto auto 1 1 0;
+  }
+}
+anim SwivelFoot SwivelFoot LeftLeg_IK_Leg 4 2 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim LegStretch LegStretch LeftLeg_IK_Leg 4 2 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim AutoStretch AutoStretch LeftLeg_IK_Leg 4 2 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim KneeSlide KneeSlide LeftLeg_IK_Leg 4 2 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim StandardPoleVector StandardPoleVector LeftLeg_IK_Leg 4 2 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX translateX LeftLeg_IK_Leg 4 2 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY translateY LeftLeg_IK_Leg 4 2 11;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    719 7.2240296023524229 auto auto 1 1 0;
+    739 7.2240296023524229 auto auto 1 1 0;
+    759 0 flat flat 0 1 0;
+    790 0 flat flat 0 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ translateZ LeftLeg_IK_Leg 4 2 12;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    719 8.286161675422143 auto auto 1 1 0;
+    739 8.286161675422143 auto auto 1 1 0;
+    759 0 flat flat 0 1 0;
+    790 0 flat flat 0 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX rotateX LeftLeg_IK_Leg 4 2 13;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    759 0 flat flat 1 1 0;
+    790 0 flat flat 1 1 0;
+    800 -27.7340029946802 auto auto 1 1 0;
+    821 -27.511619722158631 auto auto 1 1 0;
+    830 0 auto auto 1 1 0;
+    839 29.750831597110508 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY rotateY LeftLeg_IK_Leg 4 2 14;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ rotateZ LeftLeg_IK_Leg 4 2 15;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim toetip toetip LeftLeg_IK_Leg 4 2 16;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleX ankleX LeftLeg_IK_Leg 4 2 17;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleY ankleY LeftLeg_IK_Leg 4 2 18;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleZ ankleZ LeftLeg_IK_Leg 4 2 19;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim knee_follow knee_follow LeftLeg_IK_Leg 4 2 20;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1 spline step 1 1 0;
+  }
+}
+anim LeftLeg_IK_LegShape 5 0 0;
+anim ankle_l_rot 5 1 0;
+anim LeftLeg_recompensate 6 1 0;
+anim LeftLeg_toepivotnull 7 2 0;
+anim LeftLeg_Toe_Pivot 8 3 0;
+anim LeftLeg_Toe_PivotShape 9 0 0;
+anim LeftLeg_aimleg 9 0 0;
+anim LeftLeg_footswiveler 9 1 0;
+anim LeftLeg_controls_orient 10 2 0;
+anim LeftLeg_heelraiser 11 2 0;
+anim LeftLeg_Heel_Pivot 12 2 0;
+anim LeftLeg_Heel_PivotShape 13 0 0;
+anim LeftLeg_IKhandleattacherIK 13 0 0;
+anim LeftLeg_Heel_Pivot_SWITCH 12 0 0;
+anim LeftLeg_toeraiser 11 1 0;
+anim LeftLeg_endpointtoe 12 0 0;
+anim LeftLeg_Toe_Pivot_SWITCH 8 0 0;
+anim LeftLeg_IK_Leg_SWITCH 4 1 0;
+anim LeftLeg_IK_Leg_SWITCH_parentConstraint1 5 0 0;

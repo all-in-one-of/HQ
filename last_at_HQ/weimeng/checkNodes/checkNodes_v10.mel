@@ -1,0 +1,3208 @@
+//checkNode;
+
+global proc checkNode()
+{
+    
+if (`window -ex checkNodesWin`)
+	deleteUI -window checkNodesWin;
+	window -title "检查指定类型的节点" checkNodesWin;
+	formLayout checkNodesLayout;
+
+    button -l "模型部" -c modelChoice -w 60  modelBtn;
+    button -l "角色部" -c characterChoice -w 60  characterBtn;    
+    button -l "插件检查" -c k_cplugincheckp -w 75 k_plugincheck;
+	button -l "开始检查" -c "checkNodesMain 0"   alpyBtn;
+	//button -l "Delete" -c "checkNodesMain 1" delBtn;
+	//button -l "Cancel" -c "deleteUI checkNodesWin" closeBtn;
+   
+    checkBox -l "检查重命名的节点" -v 1 check16;
+    checkBox -l "清理无点Polygons" -v 1 check8;
+    checkBox -l "清理多余的灯光连接" -v 1 check5;
+	checkBox -l "查询绑定前不干净的shape" -v 1 check4;
+	checkBox -l "查询不正确的shape命名" -v 1 check7;
+     separator -w 300 sep1;
+    checkBox -l "查询绑定后不干净的shape" -v 1 check0;
+	checkBox -l "清理废的intermediate节点" -v 1 check9;
+      separator -w 300 sep2;
+    checkBox -l "查询没有连阿诺德材质的毛发节点" -v 1 check17;
+    checkBox -l "查询连线断了的置换贴图节点" -v 1 check18;
+    checkBox -l "查询NURBS曲面" -v 0 check31;
+    checkBox -l "查询丢失贴图的Yeti节点" -v 0 check32;
+    checkBox -l "查询import类型为feather没有加*号的Yeti节点" -v 0 check33;
+    checkBox -l "查询表达式节点" -v 0 check34;
+    checkBox -l "查询选择面给材质的模型" -v 0 check35;
+    //checkBox -l "查询无用的Oig节点  " -v 0 k_check1;
+    checkBox -l "查询没有Freeze Transformations的模型  (若存在xx_all|xx_geo组，只检查组里内容)" -v 0 k_check2;
+    checkBox -l "查询CVs没有归0的模型  (若存在xx_all|xx_geo组，只检查组里内容)" -v 0 k_check3;
+      separator -w 300 sep3;
+    checkBox -l "关闭cycleCheck设置" -v 1 check10;
+    checkBox -l "清理voronoi破碎节点" -v 1 check12;
+    checkBox -l "清理_UNKNOWN_REF_NODE_节点" -v 1 check13;
+    checkBox -l "清理sharedReferenceNode节点" -v 1 check14;
+    checkBox -l "清理wkHeadsUp节点" -v 1 check15;
+    checkBox -l "清理未知节点" -v 0 check30;
+    checkBox -l "清理海龟渲染器节点" -v 1 check36;
+	checkBox -l "清理无用的渲染节点" -v 1 check26;
+	  separator -w 300 sep4;
+	checkBox -l "查询丢失的贴图" -v 1 check19;
+	checkBox -l "查询不在O盘的Vray代理路径" -v 1 check20;
+	checkBox -l "查询不在O盘的布料及几何体缓存路径" -v 1 check21;
+	checkBox -l "查询不在O盘的abc缓存路径" -v 1 check22;
+	checkBox -l "查询不在O盘的阿诺德代理路径" -v 1 check23;
+	checkBox -l "查询不在O盘的贴图路径" -v 1 check24;
+	checkBox -l "查询不在O盘的参考路径" -v 1 check25;
+
+      separator -w 300 sep5;
+   	//checkBox -l "查询海龟渲染器产生属性的shape" -v 1 check3;
+	//checkBox -l "全部" -v 1 -cc checkAll checkAll;
+    checkBox -l "全选/全不选" -v 1 -onCommand  checkAllProc  -offCommand  checkNoProc  checkAllBox;
+	
+	checkBox -l "只检查不清理" -v 0  -onCommand onlyCheck  -offCommand checkAndDelete  checkNotDelete;
+	checkBox -l "输出检查信息文档" -v 0  outputFile;
+	
+	formLayout -e	
+		-af check16 top 0 
+		-ac check8 top 0 check16
+		-ac check5 top 0 check8
+		-ac check4 top 0 check5
+		-ac check7 top 0 check4
+		-ac sep1   top 3 check7
+		-ac check0 top 3 sep1
+		-ac check9 top 0 check0
+		-ac sep2   top 3 check9
+		-ac check17 top 3 sep2
+		-ac check18 top 0 check17
+		-ac check31 top 0 check18
+		-ac check32 top 0 check31
+		-ac check33 top 0 check32
+		-ac check34 top 0 check33
+		-ac check35 top 0 check34
+		//-ac k_check1 top 0 check35
+		
+		-ac k_check2 top 0 check35
+		-ac k_check3 top 0 k_check2
+		-ac sep3  top 3 k_check3
+		-ac check10 top 3 sep3
+		-ac check12 top 0 check10
+		-ac check13 top 0 check12
+		-ac check14 top 0 check13
+		-ac check15 top 0 check14
+		-ac check30 top 0 check15
+		-ac check36 top 0 check30
+		-ac check26 top 0 check36
+		-ac sep4 top 3 check26
+		-ac check19 top 3 sep4
+		-ac check20 top 0 check19
+		-ac check21 top 0 check20
+		-ac check22 top 0 check21
+		-ac check23 top 0 check22
+		-ac check24 top 0 check23
+		-ac check25 top 0 check24
+		-ac sep5 top 3 check25
+		
+		//-ac check3 top 0 check15
+                -ac checkAllBox top 5 sep5
+		-ac checkNotDelete top 1 checkAllBox
+		-ac outputFile top 1  checkNotDelete
+
+		-af alpyBtn left 3
+                -af alpyBtn right 3		
+		-af alpyBtn bottom  3
+		
+		-af modelBtn left 3
+		-ac modelBtn bottom 3 alpyBtn
+		
+		-af characterBtn left 73
+		-ac characterBtn bottom 3 alpyBtn 
+		
+		-af k_plugincheck left 215
+		-ac k_plugincheck bottom 3 alpyBtn 
+		
+		
+		//-ap alpyBtn right 0 34
+		//-af alpyBtn bottom 0
+		
+	    checkNodesLayout;
+		
+showWindow checkNodesWin;
+window -e -wh 294 720 checkNodesWin;
+python("import sys");
+python ("sys.path.append('//10.99.1.12/数码电影/部门文件/08技术/技术部工具箱/技术部工具箱_请勿删除/All_mel/kTool/weimeng')");
+
+}
+
+
+
+
+global proc checkAllProc()
+    {
+		 checkBox -e -v 1 check16;
+		 checkBox -e -v 1 check8;
+		 checkBox -e -v 1 check5;
+		 checkBox -e -v 1 check4;
+		 checkBox -e -v 1 check7;
+		 checkBox -e -v 1 check0;
+		 checkBox -e -v 1 check9;
+		 checkBox -e -v 1 check10;
+		 checkBox -e -v 1 check12;
+		 checkBox -e -v 1 check13;
+		 checkBox -e -v 1 check14;
+		 checkBox -e -v 1 check15;
+		 checkBox -e -v 1 check17;
+		 checkBox -e -v 1 check18;
+		 checkBox -e -v 1 check19;
+		 checkBox -e -v 1 check20;
+		 checkBox -e -v 1 check21;
+		 checkBox -e -v 1 check22;
+		 checkBox -e -v 1 check23;
+		 checkBox -e -v 1 check24;
+		 checkBox -e -v 1 check25;
+		 checkBox -e -v 1 check26;
+		 checkBox -e -v 1 check30;
+		 checkBox -e -v 1 check31;
+		 checkBox -e -v 1 check32;
+		 checkBox -e -v 1 check33;
+		 checkBox -e -v 1 check34;
+		 checkBox -e -v 1 check35;
+		 checkBox -e -v 1 check36;
+		 //checkBox -e -v 1 k_check1;
+		 checkBox -e -v 1 k_check2;
+		 checkBox -e -v 1 k_check3;
+
+    }
+ 
+ global proc checkNoProc()
+    {
+		 checkBox -e -v 0 check16;
+		 checkBox -e -v 0 check8;
+		 checkBox -e -v 0 check5;
+		 checkBox -e -v 0 check4;
+		 checkBox -e -v 0 check7;
+		 checkBox -e -v 0 check0;
+		 checkBox -e -v 0 check9;
+		 checkBox -e -v 0 check10;
+		 checkBox -e -v 0 check12;
+		 checkBox -e -v 0 check13;
+		 checkBox -e -v 0 check14;
+		 checkBox -e -v 0 check15;
+		 checkBox -e -v 0 check17;
+		 checkBox -e -v 0 check18;
+		 checkBox -e -v 0 check19;
+		 checkBox -e -v 0 check20;
+		 checkBox -e -v 0 check21;
+		 checkBox -e -v 0 check22;
+		 checkBox -e -v 0 check23;
+		 checkBox -e -v 0 check24;
+		 checkBox -e -v 0 check25;
+		 checkBox -e -v 0 check26;
+		 checkBox -e -v 0 check30;
+		 checkBox -e -v 0 check31;
+		 checkBox -e -v 0 check32;
+		 checkBox -e -v 0 check33;
+		 checkBox -e -v 0 check34;
+		 checkBox -e -v 0 check35;
+		 checkBox -e -v 0 check36;
+		 //checkBox -e -v 0 k_check1;
+		 checkBox -e -v 0 k_check2;
+		 checkBox -e -v 0 k_check3;
+    }
+	
+	global proc modelChoice()
+	{
+	     checkBox -e -v 1 check16;
+		 checkBox -e -v 1 check8;
+		 checkBox -e -v 1 check5;
+		 checkBox -e -v 1 check4;
+		 checkBox -e -v 0 check7;
+		 checkBox -e -v 0 check0;
+		 checkBox -e -v 0 check9;
+		 checkBox -e -v 0 check17;
+		 checkBox -e -v 1 check18;
+		 checkBox -e -v 1 check10;
+		 checkBox -e -v 0 check12;
+		 checkBox -e -v 0 check13;
+		 checkBox -e -v 0 check14;
+		 checkBox -e -v 0 check15;
+		 checkBox -e -v 1 check26;
+		 checkBox -e -v 1 check19;
+		 checkBox -e -v 1 check20;
+		 checkBox -e -v 1 check21;
+		 checkBox -e -v 1 check22;
+		 checkBox -e -v 1 check23;
+		 checkBox -e -v 1 check24;
+		 checkBox -e -v 1 check25;
+		 checkBox -e -v 0 check30;
+		 checkBox -e -v 0 check31;
+		 checkBox -e -v 0 check32;
+		 checkBox -e -v 0 check33;
+		 checkBox -e -v 0 check34;
+		 checkBox -e -v 0 check35;
+		 checkBox -e -v 1 check36;
+		 //checkBox -e -v 0 k_check1;
+		 checkBox -e -v 0 k_check2;
+		 checkBox -e -v 0 k_check3;
+	}
+
+	global proc characterChoice()
+	{
+	     checkBox -e -v 1 check16;
+		 checkBox -e -v 1 check8;
+		 checkBox -e -v 1 check5;
+		 checkBox -e -v 1 check4;
+		 checkBox -e -v 1 check7;
+		 checkBox -e -v 1 check0;
+		 checkBox -e -v 1 check9;
+		 checkBox -e -v 1 check17;
+		 checkBox -e -v 1 check18;
+		 checkBox -e -v 1 check10;
+		 checkBox -e -v 1 check12;
+		 checkBox -e -v 1 check13;
+		 checkBox -e -v 1 check14;
+		 checkBox -e -v 1 check15;
+		 checkBox -e -v 1 check26;
+		 checkBox -e -v 1 check19;
+		 checkBox -e -v 1 check20;
+		 checkBox -e -v 1 check21;
+		 checkBox -e -v 1 check22;
+		 checkBox -e -v 1 check23;
+		 checkBox -e -v 1 check24;
+		 checkBox -e -v 1 check25;
+		 checkBox -e -v 0 check30;
+		 checkBox -e -v 1 check31;
+		 checkBox -e -v 1 check32;
+		 checkBox -e -v 1 check33;
+		 checkBox -e -v 0 check34;
+		 checkBox -e -v 1 check35;
+		 checkBox -e -v 1 check36;
+		 //checkBox -e -v 1 k_check1;
+		 checkBox -e -v 1 k_check2;
+		 checkBox -e -v 1 k_check3;
+
+	}
+	
+	global proc onlyCheck()
+	{
+	global int $ifCheckNotDelete ;
+	$ifCheckNotDelete = 1;		
+	}
+	
+	global proc checkAndDelete()
+	{
+	global int $ifCheckNotDelete ;
+	$ifCheckNotDelete = 0; 		
+	}
+//~ global proc checkAll()
+//~ {
+//~ int $v=`checkBox -q -v checkAll`;
+//~ for($i=1;$i<9;$i++)
+	//~ checkBox -e -v $v ("check"+$i);
+//~ }
+
+global proc closeFrm()
+{
+    
+string $allFrm[]=`columnLayout -q -ca lookLayout`;
+for($allFrmIt in $allFrm)
+	frameLayout -e -cl 1 ("lookWin|lookLayout|"+$allFrmIt);
+}
+
+global proc checkNodesMain(int $mod)
+{
+
+
+
+	int $amount = 0;
+	progressWindow -title "处理中..."  -ii 1  -progress $amount ;
+	
+	while (true) {
+		
+	   if ( `progressWindow -query -isCancelled` ) break;
+         // Check if end condition has been reached
+	   if ( `progressWindow -query -progress` >= 100 ) break;
+		
+	if (`window -ex lookWin`)
+		deleteUI -window lookWin;
+	window -title "节点信息" -wh 500 715 lookWin;
+	columnLayout -adj true lookLayout;
+
+	//	$startTime = `timerX`;
+int $checkListNum = 27;
+int $eachCheckListLength = 100/$checkListNum;
+	
+///////////////////////////////////////////////////////////////////////////
+		
+	global int $ifCheckNotDelete = 0;
+	
+	if(`checkBox -q -v checkNotDelete`)
+	{ $ifCheckNotDelete = 1; }		
+
+	$amount= $amount + $eachCheckListLength;
+    progressWindow -e -progress $amount -status "重命名的节点：";
+
+    if(`checkBox -q -v check16`) 
+	{
+	global string $overNameNode[];
+	$overNameNode = `checkOverNameAllObj(1)`;
+
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 frm16;
+
+	formLayout overNameFormLayout;
+
+	textScrollList -nr 10 -ams 1 -w 500 -h 500 -sc "selObj2 txt16" txt16;
+
+	    for($it in $overNameNode)
+		{
+		textScrollList -e -append $it txt16;
+		}
+	
+	string $buttonRefresh = `button -l "刷新检查结果"  -bgc 0.719 0.418 0.504  -c  refreshCheckResult`;
+	string $checkWithoutShape = `checkBox -l "过滤名称中含Shape的节点" -onc  "sgOverNameFilterShapeCmd"  -offCommand backToAllNameCmd  overNameFilterCheck1`;
+	string $checkWithoutShape2 = `checkBox -l "只显示几何体节点" -onc "sgOverNameFilterShapeCmd2"  -offCommand backToAllNameCmd  overNameFilterCheck2`;
+	string $checkWithoutShape3 = `checkBox -l "只显示curve节点" -onc "sgOverNameFilterShapeCmd3"  -offCommand backToAllNameCmd  overNameFilterCheck3`;
+
+	string $buttonRenameWrongShape = `button -l "修复所有命名错误的Shape节点" -bgc 0.719 0.418 0.504  -c renameWrongShape2`;
+		
+    string $text1 = `text -l "批量修复重命名的transform节点："  -bgc 0.719 0.418 0.504 `;
+	string $text2 = `text -l "(只重命名非参考的节点)"`;
+	
+	global string $textField1;
+	$textField1 = `textField -tx "在此输入新名字前缀"  -w 150`;
+		
+	string $button1 = `button -l "改名" -w 150 -c  groupRenameTemp`;
+		
+	string $buttonRenameShape = `button -l "批量修复重命名的shape节点"  -bgc 0.719 0.418 0.504  -c groupRenameShape`;
+	string $text3 = `text -l "(只修复非参考的节点)"`;
+		
+	string $title="("+(size($overNameNode))+"个)重命名的节点:";
+	frameLayout -e -l $title frm16;
+				
+	formLayout -edit
+		
+		-af txt16 "top" 5
+		-af txt16 "left" 5 
+
+		-af $buttonRefresh "top" 15
+		-ac $buttonRefresh "left" 235 txt16
+		
+        -ac $checkWithoutShape "top" 15 $buttonRefresh
+        -ac $checkWithoutShape  "left" 235	txt16
+
+        -ac $checkWithoutShape2 "top" 5  $checkWithoutShape
+        -ac $checkWithoutShape2  "left" 235	 txt16	
+		
+		-ac $checkWithoutShape3 "top" 5  $checkWithoutShape2
+        -ac $checkWithoutShape3  "left" 235	 txt16
+
+		-ac $buttonRenameWrongShape "top" 35 $checkWithoutShape3
+		-ac $buttonRenameWrongShape "left" 235 txt16
+		
+		-ac $text1 "top"  35  $buttonRenameWrongShape
+        -ac $text1  "left" 235	txt16
+
+		-ac $text2 "top" 5 $text1
+        -ac $text2  "left" 235	txt16
+
+        -ac $textField1 "top" 5  $text2
+        -ac $textField1  "left" 235	 txt16	
+		
+		-ac $button1 "top" 5  $textField1
+        -ac $button1  "left" 235	 txt16	
+		
+		-ac  $buttonRenameShape "top" 35 $button1
+		-ac  $buttonRenameShape "left" 235  txt16
+		
+		-ac $text3 "top" 5  $buttonRenameShape
+		-ac $text3 "left" 235  txt16
+
+	overNameFormLayout;
+		
+	setParent..;
+		//setParent..;
+    }
+
+if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////////////
+		
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "清理无点polygons";
+if(`checkBox -q -v check8`) 
+	{
+     string $poly_lyb[] = `ls -typ mesh`;
+     string $eachPoly;
+		
+	 string $totalPoly1[];
+	 string $totalPoly2[];
+		
+    // int $numPoly = 0;
+	 int $numNoPoint1 = 0; 
+	 int $numNoPoint2 = 0;
+		
+	 for ($eachPoly in $poly_lyb)
+     {
+	   //if ( `progressWindow -query -isCancelled` ) break;
+
+       int $pNUM[] = `polyEvaluate -v $eachPoly`;
+	   $ifConclude = ifConclude( $eachPoly ,"shave");
+		 
+       if($pNUM[0] == 0 && $ifConclude==0)
+       {
+        select -r $eachPoly;
+        string $tranB[] = `pickWalk -d up`;
+		string $shapeTrans = $tranB[0];
+		   
+		string $nodeTransShape[]=`listRelatives -f -c -s $shapeTrans`;
+		$ifRefNode = `referenceQuery -inr $eachPoly`;
+		   
+		if (`size $nodeTransShape`!=1)
+		{
+			if($ifRefNode==1)
+			{
+				$totalPoly2[$numNoPoint2] = $eachPoly;
+				$numNoPoint2++;
+			}
+			else if ($ifRefNode!=1)
+			{
+			    $totalPoly1[$numNoPoint1] = $eachPoly;
+				$numNoPoint1++;
+				if( $ifCheckNotDelete == 0)
+				delete $eachPoly;
+            }
+		}
+		
+		else if(`size $nodeTransShape`==1 )
+		{
+			if($ifRefNode==1)
+			{
+				$totalPoly2[$numNoPoint2] = $shapeTrans;
+				$numNoPoint2++;
+			}
+			else if ($ifRefNode!=1)
+			{
+			    $totalPoly1[$numNoPoint1] = $shapeTrans;
+				$numNoPoint1++;
+				if( $ifCheckNotDelete == 0)
+				delete $shapeTrans;
+            }
+
+		}
+		
+     
+     }
+    }
+
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 frm8;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt8" txt8;
+
+	/////////////////////////
+
+		textScrollList -e -append "已删除以下节点：" txt8;
+	
+	    for($it in $totalPoly1)
+		{
+		textScrollList -e -append $it txt8;
+		}
+
+	    textScrollList -e -append "不可删除以下节点，因为它是一个参考节点：" txt8;
+
+		for($it in $totalPoly2)
+		{
+		textScrollList -e -append $it txt8;
+		}
+
+	string $title="已清理("+$numNoPoint1+"个)无点polygons,不可清理(" + $numNoPoint2 + "个)无点polygons";
+	frameLayout -e -l $title frm8;
+		
+		
+		}
+
+	if ( `progressWindow -query -isCancelled` ) break;
+
+	////////////////////////////////////////////////////
+
+	$amount= $amount + $eachCheckListLength;
+     progressWindow -e -progress $amount -status "多余的灯光连接";
+     if(`checkBox -q -v check5`) 
+	{
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 frm5;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt5" txt5;
+     
+	global string $txt5 = "txt5";
+	int $numWrongLight = fh_cleanUpLightlinkers(0);
+		
+	string $title="已清理("+ $numWrongLight +"个)多余的灯光连接:";
+	frameLayout -e -l $title frm5;
+	}
+
+if ( `progressWindow -query -isCancelled` ) break;
+
+/////////////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "未绑定不干净的shape";
+if(`checkBox -q -v check4`)
+	{
+	string $deformerType[]={"skinCluster","blendShape","ffd","wrap","cluster","nonLinear","sculpt","jiggle","wire","groupId"};//"squamaNode","ropeNode","verNailNode"};
+	int $num=0;
+	string $txt="";
+	string $all[]=`ls -typ mesh -ni`;//`ls -typ mesh -typ nurbsSurface -ni`;
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm  -bgc 0.719 0.418 0.504 frm4;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt4" txt4;
+	for($it in $all)
+		{
+			string $hist[]=`listHistory $it`;
+			string $deform[]={};
+			//列出deformer
+			for($histIt in $hist){
+				if(stringArrayContains(nodeType($histIt),$deformerType)){
+					$deform[size($deform)]=$histIt;}
+				if(!size($deform))
+				{
+				if(size(`listConnections -d 0 $it`)){
+					string $list[]=`listConnections -d 0 ($it+".inMesh")`;
+					if(size($list))
+						{
+						if(nodeType($list[0])!="squamaNode"&&nodeType($list[0])!="ropeNode"&&nodeType($list[0])!="verNailNode"&&nodeType($list[0])!="transform")
+							{
+							textScrollList -e -append $it txt4;
+							$num++;
+							}
+						}
+					}
+				}}
+		}
+	string $title="("+$num+"个)未绑定不干净的shape:";
+	frameLayout -e -l $title frm4;
+	}
+
+if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "命名不正确的Shape节点";
+if(`checkBox -q -v check7`) 
+	{
+	//global string $wrongShape[] = {};
+		
+	int $num=0;
+	string $txt="";
+	string $allMesh[]=`ls -type mesh`;
+	string $allNurbSur[] = `ls -type nurbsSurface`;
+	string $allNurbCur[] = `ls -type nurbsCurve`;
+		
+	string $tempalll[] = stringArrayCatenate($allMesh,$allNurbSur);
+	string $alll[] = stringArrayCatenate($tempalll,$allNurbCur);
+		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 frm7;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt7" txt7;
+	for($it in $alll)
+		{
+			if((!(`gmatch $it "*Shape*"`))&&(!(`gmatch $it "*Orig*"`))){
+			//$wrongShape[`size $wrongShape`] = $it;
+			textScrollList -e -append $it txt7;
+			$num++;
+			}
+		}
+	string $title="("+$num+"个)命名不正确的Shape节点:";
+		
+    string $buttonWrongShape = `button -l "一键修复非参考的shape节点" -c renameWrongShape2`;
+		
+	frameLayout -e -l $title frm7;
+	}	
+	
+if ( `progressWindow -query -isCancelled` ) break;
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "没有连阿诺德材质的毛发节点";
+if(`checkBox -q -v check17`) 
+{
+	string $shaveHair[] = {};
+	string $mayaHair[] = {};
+	
+        if(`pluginInfo -q -loaded shaveNode`)
+	{$shaveHair = `ls -type "shaveHair"`;}
+
+	$mayaHair = `ls -type "hairSystem"`;
+		
+	int $num=0;
+	
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 frm17;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt17" txt17;
+		
+             if(`pluginInfo -q -loaded shaveNode`)
+	        {for($it in $mayaHair)
+		{
+		   if (`attributeExists "aiHairShader" $it`)
+		   {
+			int $upStreamNode = `connectionInfo -id  ($it + ".aiHairShader")`;
+			
+			if($upStreamNode == 0)
+			{
+                          string $dest[] = `listConnections -d 1  -type "pfxHair" $it`;
+		
+			  if(`size $dest`!=0)
+			  {
+			  textScrollList -e -append $it txt17;
+			  $num++;
+			  }
+		        }
+		    }
+		}}
+		
+		for($it in $shaveHair)
+		{
+		   if (`attributeExists "aiHairShader" $it`) 
+		   {
+			int $upStreamNode = `connectionInfo -id  ($it + ".aiHairShader")`;
+			
+			if($upStreamNode == 0)
+			{
+			textScrollList -e -append $it txt17;
+			$num++;
+		        }
+		   }
+		}
+
+	string $title="("+$num+"个)没有连阿诺德材质的毛发节点:";
+		
+	frameLayout -e -l $title frm17;
+}	
+
+	if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "连线断了的置换贴图节点";
+	
+if(`checkBox -q -v check18`) 
+	{
+    string $displaceMentNodes[] = `ls -type "displacementShader"`;
+    	
+    int $num = 0;		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 frm18;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt18" txt18;
+		
+	for($it in $displaceMentNodes)
+		{
+			$connectDisplacement = `listConnections -d 1 -type "shadingEngine" $it`;
+			
+			if(`size $connectDisplacement` == 0)
+			{
+			textScrollList -e -append $it txt18;
+			$num++;
+		    }
+		}
+		
+
+	string $title="("+$num+"个)连线断了的置换贴图节点:";
+		
+	frameLayout -e -l $title frm18;
+	}
+
+         if ( `progressWindow -query -isCancelled` ) break;
+	
+///////////////////////////////////////////
+////////////////////////////////////////////
+/////////////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "NURBS曲面：";
+if(`checkBox -q -v check31`) 
+	{
+
+    $nurbsNode = `ls -type "nurbsSurface"`;
+    $numNurbs = size($nurbsNode);
+
+    frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504  frm31;
+    textScrollList -nr 10 -ams 1 -sc "selObj txt31" txt31;
+
+    for($eachNode in $nurbsNode)
+     {
+           $nurbsParent = `listRelatives -p $eachNode`;
+           textScrollList -e -append $nurbsParent txt31;
+     }
+		
+	string $title="已检查出("+$numNurbs+"个)NURBS曲面：";
+		
+	frameLayout -e -l $title frm31;
+	}
+
+         if ( `progressWindow -query -isCancelled` ) break;
+
+
+////////////////////////////////////////////
+/////////////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "丢失贴图的Yeti节点：";
+if(`checkBox -q -v check32`) 
+{
+    int $numLostYetiTex = 0;
+
+    frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504  frm32;
+    textScrollList -nr 10 -ams 1 -sc "selObj txt32" txt32;
+
+    if(`pluginInfo -q -loaded pgYetiMaya`)
+    {
+    string $AllTransForm[] = `ls -typ pgYetiMaya`;//获取所有transform`
+    for ($TransFrom in $AllTransForm)
+      {
+       // print ($TransFrom+"\n");
+        string $texTure[] = `pgYetiGraph -listNodes -type "texture" -listParams $TransFrom`;//查看yeti节点的texture节点，
+        for ($tex in $texTure)
+	{
+           string $texturePath = `pgYetiGraph -node $tex -param "file_name" -getParamValue $TransFrom`;//获取路径
+           print ($texturePath+"\n");
+           if(!`filetest -e $texturePath`)
+            {
+             textScrollList -e -append $TransFrom txt32; 
+	     $numLostYetiTex++;
+            }
+       }
+     }
+    }
+    
+		
+	string $title="已检查出("+$numLostYetiTex+"个)丢失贴图的Yeti节点：";
+		
+	frameLayout -e -l $title frm32;
+}
+
+   if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////
+/////////////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "import类型为feather没有加*号的Yeti节点：";
+if(`checkBox -q -v check33`) 
+{
+     int $numYetiFeather = 0;
+     int $finNumYetiFeather = 0;
+    frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504  frm33;
+    textScrollList -nr 10 -ams 1 -sc "selObj txt33" txt33;
+
+    if(`pluginInfo -q -loaded pgYetiMaya`)
+    {
+      string $AllTransForm[] = `ls -typ pgYetiMaya`;//获取所有transform
+      for ($TransFrom in $AllTransForm)
+      {
+        print ($TransFrom+"\n");
+         string $import[] = `pgYetiGraph -listNodes -type "import" -listParams $TransFrom`;//查看yeti节点的import节点，
+         for($imp in $import)
+	 {
+           int $importType = `pgYetiGraph -node $imp -param "type" -getParamValue $TransFrom`;//获取type
+           if($importType == 3)//3的值为Feather
+             {
+               string $selArrt = `pgYetiGraph -node $imp -param "geometry" -getParamValue $TransFrom`;//获取type;
+               print ($selArrt+"\n");
+               if(!startsWith($selArrt,"*"))
+                 {
+		 $numYetiFeather++;
+		 textScrollList -e -append $TransFrom txt33;
+		   if($ifCheckNotDelete == 0){
+		    $finNumYetiFeather++;
+                    pgYetiGraph -node $imp -param "geometry" -setParamValueString ("*"+$selArrt) $TransFrom;}
+                 }
+             }
+          }
+       }
+    }
+    		
+	string $title="已检查出("+$numYetiFeather+"个)import类型为feather没有加*号的Yeti节点，并已修复("+$finNumYetiFeather+"个)：";
+		
+	frameLayout -e -l $title frm33;
+}
+
+  if ( `progressWindow -query -isCancelled` ) break;
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "表达式节点：";
+if(`checkBox -q -v check34`) 
+	{
+
+    $nurbsNode = `ls -type "expression"`;
+    $numNurbs = size($nurbsNode);
+
+    frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504  frm34;
+    textScrollList -nr 10 -ams 1 -sc "selObj txt34" txt34;
+
+    for($eachNode in $nurbsNode)
+     {
+           textScrollList -e -append $eachNode txt34;
+     }
+		
+	string $title="已检查出("+$numNurbs+"个)表达式节点：";
+		
+	frameLayout -e -l $title frm34;
+	}
+
+         if ( `progressWindow -query -isCancelled` ) break;
+
+
+////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "选择曲面给材质的模型：";
+if(`checkBox -q -v check35`) 
+{
+    int $numFace=0;
+    $meshes = `ls -type mesh`;
+
+    frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504  frm35;
+    textScrollList -nr 10 -ams 1 -sc "selObj txt35" txt35;
+
+    for($each in $meshes)
+      {
+       $des = `listConnections -d 1  -type shadingEngine -connections 1 $each`;
+        $splitArray = stringToStringArray ($des[0],".");
+         if(size($splitArray)>2)
+	 {
+            textScrollList -e -append $each txt35;
+	    $numFace++;
+         }
+      }
+		
+	string $title="已检查出("+$numFace+"个)选择曲面给材质的模型：";
+		
+	frameLayout -e -l $title frm35;
+}
+
+if ( `progressWindow -query -isCancelled` ) break;
+
+
+////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "绑定后不干净的shape";
+	
+if(`checkBox -q -v check0`)
+	{
+	string $deformers[]={"skinCluster","blendShape","ffd","wrap","cluster","nonLinear","sculpt","jiggle","wire","mesh","groupParts","groupId","nCloth","squamaNode","ropeNode","verNailNode","polyTransfer","polySmoothFace"};
+	string $deformerType[]={"skinCluster","blendShape","ffd","wrap","cluster","nonLinear","sculpt","jiggle","wire"};
+	
+	int $num=0;
+	string $txt="";
+	string $all[]=`ls -typ mesh -typ nurbsSurface -ni`;
+	
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 1 frm2;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt2" txt2;
+	
+	for($it in $all)
+		{
+		string $hist[]=`listHistory $it`;
+		string $deform[]={};
+		//列出deformer
+		for($histIt in $hist)
+			if(stringArrayContains(nodeType($histIt),$deformerType))
+				$deform[size($deform)]=$histIt;
+			if(size($deform))
+			{
+			string $con[];
+			if(nodeType($it)=="mesh")
+				$con=`listConnections -d 0 -sh 1 ($it+".inMesh")`;
+			if(nodeType($it)=="nurbsSurface")
+				$con=`listConnections -d 0 -sh 1 ($it+".create")`;
+			if(size($con))
+				{
+				if(!stringArrayContains(nodeType($con[0]),$deformers)){
+					if(!`gmatch $it "*shavedisplay*"`){
+					textScrollList -e -append $it txt2;
+					$num++;}
+					}
+				}
+			}
+		}
+	string $title="("+$num+"个)绑定后不干净的shape:";
+	frameLayout -e -l $title frm2;
+	}
+	
+	         if ( `progressWindow -query -isCancelled` ) break;
+
+///////////////////////////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount;
+if(`checkBox -q -v check9`) 
+	{
+	int $num1=0;
+	int $num2=0;
+
+	string $cantDelete[];
+	string $shouldDelete[];
+
+	string $txt="";
+	string $all[]=`ls -typ mesh -typ nurbsSurface -io`;
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm  -bgc 0 0.5 1 frm11;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt11" txt11;
+	for($it in $all)
+		{
+		string $con[]=`listConnections -s 0 -d 1 $it`;
+		string $con2[] = `listConnections $it`;
+			
+		if((`size $con2`==1&&`nodeType $con2[0]`=="transform")||`size $con`==0)
+			{           
+			$ifRefNode = `referenceQuery -inr $it`;
+
+            if($ifRefNode == 1)
+			{
+            //print ("warning! can not detete " + $eachNode + " because it is a referenced node! \n");
+            $cantDelete[$num1] = $it;
+			$num1++;
+			}
+        
+			else 
+            {
+			if( $ifCheckNotDelete == 0)
+			delete $it;
+			$shouldDelete[$num2] = $it;
+            $num2++;
+             }
+			}
+		}
+		
+		textScrollList -e -append "已删除以下节点：" txt11;
+	
+	    for($it in $shouldDelete)
+		{
+		textScrollList -e -append $it txt11;
+		}
+		
+	    textScrollList -e -append "不可删除以下节点，因为它是一个参考节点：" txt11;
+
+		for($it in $cantDelete)
+		{
+		textScrollList -e -append $it txt11;
+		}
+
+	string $title="已清理("+$num2+"个)废的intermediate节点,不可清理(" + $num1 + "个)废的intermediate节点";
+	frameLayout -e -l $title frm11;
+	}
+
+	         if ( `progressWindow -query -isCancelled` ) break;
+
+/////////////////////////////////////////////
+
+	$amount= $amount + $eachCheckListLength;
+    progressWindow -e -progress $amount;
+    if(`checkBox -q -v check10`) 
+	{
+		
+	cycleCheck -e off;
+		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm   -bgc 0 0.5 0  frm10;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt10" txt10;
+		
+	string $title="已清理(1个)cycleCheck设置:";
+	frameLayout -e -l $title frm10;
+	}
+
+         if ( `progressWindow -query -isCancelled` ) break;
+///////////////////////////////////////////////////////////////////////	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "voronoi破碎节点：";
+if(`checkBox -q -v check12`) 
+{
+	string $cantDelete[];
+	string $shouldDelete[];
+
+	int $numVoronoi1 = 0;
+    int $numVoronoi2 = 0;
+
+     $unknownDag = `ls -type "unknownDag"`;
+
+     for($eachNode in $unknownDag)
+      {
+        $ifConclude =  ifConclude($eachNode,"voronoiNode");
+
+		  if($ifConclude ==1)
+          {
+            $ifRefNode = `referenceQuery -inr $eachNode`;
+
+            if($ifRefNode == 1)
+			{
+            //print ("warning! can not detete " + $eachNode + " because it is a referenced node! \n");
+            $cantDelete[$numVoronoi1] = $eachNode;
+			$numVoronoi1++;
+			}
+        
+			else 
+            {			
+			if( $ifCheckNotDelete == 0)
+			delete $eachNode;
+			$shouldDelete[$numVoronoi2] = $eachNode;
+            $numVoronoi2++;
+             }
+          }
+	}
+	
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm   -bgc 0 0.5 0  frm12;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt12" txt12;
+	
+	textScrollList -e -append "已删除以下节点：" txt12;
+	
+	    for($it in $shouldDelete)
+		{
+		textScrollList -e -append $it txt12;
+		}
+		
+	    textScrollList -e -append "不可删除以下节点，因为它是一个参考节点：" txt12;
+
+		for($it in $cantDelete)
+		{
+		textScrollList -e -append $it txt12;
+		}
+
+	string $title="已清理("+$numVoronoi2+"个)voronoi破碎节点，不可清理(" + $numVoronoi1 + ")个voronoi破碎节点：";
+	frameLayout -e -l $title frm12;
+}
+	
+         if ( `progressWindow -query -isCancelled` ) break;
+////////////////////////////////////////////////////////////////////////////////////////	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "_UNKNOWN_REF_NODE_节点：";
+if(`checkBox -q -v check13`) 
+	{
+	string $cantDelete[];
+	string $shouldDelete[];
+
+    int $numUnknowRef1 = 0;
+    int $numUnknowRef2 = 0;
+
+    $unknownDag = `ls -type "reference"`;
+
+    for($eachNode in $unknownDag)
+    {
+    $ifConclude =  ifConclude($eachNode,"_UNKNOWN_REF_NODE_");
+
+    if($ifConclude ==1)
+      {
+        $ifRefNode = `referenceQuery -inr $eachNode`;
+
+        if($ifRefNode == 1)
+        {
+            //print ("warning! can not delete " + $eachNode + " because it is a referenced node! \n");
+            $cantDelete[$numUnknowRef1] = $eachNode;
+            $numUnknowRef1 ++;
+        }
+        else 
+           {if( $ifCheckNotDelete == 0)
+			delete $eachNode;
+            $shouldDelete[$numUnknowRef2] = $eachNode;
+            $numUnknowRef2 ++;
+           }
+      }
+    }
+
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm   -bgc 0 0.5 0  frm13;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt13" txt13;
+	
+	textScrollList -e -append "已删除以下节点：" txt13;
+	
+	    for($it in $shouldDelete)
+		{
+		textScrollList -e -append $it txt13;
+		}
+		
+	    textScrollList -e -append "不可删除以下节点，因为它是一个参考节点：" txt13;
+
+		for($it in $cantDelete)
+		{
+		textScrollList -e -append $it txt13;
+		}
+		
+	string $title="已清理("+$numUnknowRef2+"个)_UNKNOWN_REF_NODE_节点，不可清理(" + $numUnknowRef1 + ")个_UNKNOWN_REF_NODE_节点：";
+	
+	frameLayout -e -l $title frm13;
+	}
+	
+         if ( `progressWindow -query -isCancelled` ) break;
+//////////////////////////////////////////////////////////////////	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "sharedReferenceNode节点：";
+if(`checkBox -q -v check14`) 
+	{
+	string $cantDelete[];
+	string $shouldDelete[];
+
+    int $numSharedRef1 = 0;
+    int $numSharedRef2 = 0;
+
+    $unknownDag = `ls -type "reference"`;
+
+    for($eachNode in $unknownDag)
+     {
+      $ifConclude =  ifConclude($eachNode,"sharedReferenceNode");
+
+      if($ifConclude ==1)
+       {
+        $ifRefNode = `referenceQuery -inr $eachNode`;
+
+        if($ifRefNode == 1)
+        {
+            //print ("warning! can not detete " + $eachNode + " because it is a referenced node! \n");
+           
+		   $cantDelete[$numSharedRef1] = $eachNode;
+           $numSharedRef1++;
+        }
+        else 
+           {  			
+			 if( $ifCheckNotDelete == 0)
+			 delete $eachNode;			   
+			$shouldDelete[$numSharedRef2] = $eachNode;
+           $numSharedRef2++;
+           }
+     }
+  }
+
+
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm   -bgc 0 0.5 0  frm14;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt14" txt14;
+  
+    textScrollList -e -append "已删除以下节点：" txt14;
+	
+	    for($it in $shouldDelete)
+		{
+		textScrollList -e -append $it txt14;
+		}
+		
+	    textScrollList -e -append "不可删除以下节点，因为它是一个参考节点：" txt14;
+
+		for($it in $cantDelete)
+		{
+		textScrollList -e -append $it txt14;
+		}
+		
+	string $title="已清理("+$numSharedRef2+"个)sharedReferenceNode节点，不可清理(" + $numSharedRef1 + ")个sharedReferenceNode节点：";
+	frameLayout -e -l $title frm14;
+	}
+	
+         if ( `progressWindow -query -isCancelled` ) break;
+////////////////////////////////////////////////////////////////////////////////////	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "wkHeadsUp节点：";
+if(`checkBox -q -v check15`) 
+	{
+	string $cantDelete[];
+	string $shouldDelete[];
+
+    int $numWk1 = 0;
+    int $numWk2 = 0;
+
+    $unknownDag = `ls -type "expression"`;
+
+    for($eachNode in $unknownDag)
+     {
+       $ifConclude =  ifConclude($eachNode,"wkHeadsUp");
+
+        if($ifConclude ==1)
+         {
+           $ifRefNode = `referenceQuery -inr $eachNode`;
+
+           if($ifRefNode == 1)
+           {
+            //print ("warning! can not detete " + $eachNode + " because it is a referenced node! \n");
+            $cantDelete[$numWk1] = $eachNode;
+            $numWk1++;
+           }
+           else 
+           {			
+			if( $ifCheckNotDelete == 0)
+			delete $eachNode;
+			$shouldDelete[$numWk2] = $eachNode;
+            $numWk2++;
+
+           }
+        }
+    }
+
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 0  frm15;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt15" txt15;
+	
+	textScrollList -e -append "已删除以下节点：" txt15;
+	
+	    for($it in $shouldDelete)
+		{
+		textScrollList -e -append $it txt15;
+		}
+		
+	    textScrollList -e -append "不可删除以下节点，因为它是一个参考节点：" txt15;
+
+		for($it in $cantDelete)
+		{
+		textScrollList -e -append $it txt15;
+		}
+		
+	string $title="已清理("+$numWk2+"个)wkHeadsUp节点，不可清理(" + $numWk1 + ")个wkHeadsUp节点：";
+		
+	frameLayout -e -l $title frm15;
+	}
+
+         if ( `progressWindow -query -isCancelled` ) break;
+	
+////////////////////////////////////////////
+/////////////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "未知节点：";
+if(`checkBox -q -v check30`) 
+	{
+	string $cantDelete[];
+	string $shouldDelete[];
+
+    int $numWeizhi1 = 0;
+    int $numWeizhi2 = 0;
+
+    $unknownDagNode = `ls -type "unknown"`;
+
+    for($eachNode in $unknownDagNode)
+     {
+           $ifRefNode = `referenceQuery -inr $eachNode`;
+
+           if($ifRefNode == 1)
+           {
+            //print ("warning! can not detete " + $eachNode + " because it is a referenced node! \n");
+            $cantDelete[$numWeizhi1] = $eachNode;
+            $numWeizhi1++;
+           }
+           else 
+           {			
+			if( $ifCheckNotDelete == 0)
+			{
+			lockNode -lock off $eachNode;
+			delete $eachNode;
+			}
+			$shouldDelete[$numWeizhi2] = $eachNode;
+                        $numWeizhi2++;
+
+           }
+    }
+
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 0  frm30;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt30" txt30;
+	
+	textScrollList -e -append "已删除以下节点：" txt30;
+	
+	    for($it in $shouldDelete)
+		{
+		textScrollList -e -append $it txt30;
+		}
+		
+	    textScrollList -e -append "不可删除以下节点，因为它是一个参考节点：" txt30;
+
+		for($it in $cantDelete)
+		{
+		textScrollList -e -append $it txt30;
+		}
+		
+	string $title="已清理("+$numWeizhi2+"个)未知节点，不可清理(" + $numWeizhi1 + ")个未知节点：";
+		
+	frameLayout -e -l $title frm30;
+	}
+
+         if ( `progressWindow -query -isCancelled` ) break;
+
+
+////////////////////////////////////////////
+/////////////////////////////////////////////////////
+	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "海龟渲染器节点：";
+if(`checkBox -q -v check36`) 
+{
+	string $cantDelete[];
+	string $shouldDelete[];
+
+    int $numWeizhi1 = 0;
+    int $numWeizhi2 = 0;
+
+    $unknownDagNode = `ls -type "unknown"`;
+
+    for($eachNode in $unknownDagNode)
+     {
+           $ifRefNode = `referenceQuery -inr $eachNode`;
+           $ifConclude1 = ifConclude( $eachNode ,"turtle");
+	   $ifConclude2 = ifConclude( $eachNode ,"Turtle");
+
+        if(($ifConclude1==1)||($ifConclude2==1))
+	{
+           if($ifRefNode == 1)
+           {
+            //print ("warning! can not detete " + $eachNode + " because it is a referenced node! \n");
+            $cantDelete[$numWeizhi1] = $eachNode;
+            $numWeizhi1++;
+           }
+           else 
+           {			
+			if( $ifCheckNotDelete == 0)
+			{
+			catch (`delete $eachNode`);
+			}
+			$shouldDelete[$numWeizhi2] = $eachNode;
+                        $numWeizhi2++;
+           }
+	 }
+    }
+
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 0  frm36;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt36" txt36;
+	
+	textScrollList -e -append "已删除以下节点：" txt36;
+	
+	    for($it in $shouldDelete)
+		{
+		textScrollList -e -append $it txt36;
+		}
+		
+	    textScrollList -e -append "不可删除以下节点，因为它是一个参考节点：" txt36;
+
+		for($it in $cantDelete)
+		{
+		textScrollList -e -append $it txt36;
+		}
+		
+	string $title="已清理("+$numWeizhi2+"个)海龟渲染器节点，不可清理(" + $numWeizhi1 + ")个海龟渲染器节点：";
+		
+	frameLayout -e -l $title frm36;
+}
+
+         if ( `progressWindow -query -isCancelled` ) break;
+
+
+////////////////////////////////////////////
+
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "无用的渲染节点：";
+if(`checkBox -q -v check26`) 
+	{
+		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 0  frm26;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt26" txt26;
+		
+	int $numRender[] = MLdeleteUnused2();
+		
+	string $title="已检查出("+ ($numRender[0]) +"个)无用的渲染节点,已清理(" + ($numRender[1]) +")个无用的渲染节点,其他因是参考节点无法删除：";
+		
+	frameLayout -e -l $title frm26;
+	}
+
+	         if ( `progressWindow -query -isCancelled` ) break;
+
+///////////////////////////////////////////	
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "丢失的贴图";
+	
+if(`checkBox -q -v check19`) 
+	{
+	string $allTextureNodes[] = fh_getTextureNodes();
+    	
+    int $num = 0;		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 1  frm19;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt19" txt19;
+		
+for ($textureNode in $allTextureNodes)
+{
+    print $textureNode;
+    print "\n";
+	string $oldWholePath = getTextureFullPath2($textureNode);
+	if (!(`filetest -r $oldWholePath`)&&size($oldWholePath))//文件不存在时,路径不为空，判断 <UDIM>
+	{
+		//print "WithoutFile\n";
+		string $array[];
+		$array = stringToStringArray($oldWholePath, "/");
+		//print $array;
+		//print $array[size($array)-1];
+		int $flag = `gmatch ($array[size($array)-1]) ("*<UDIM>*")`;
+		if(!$flag){
+	    		print "error <UDIM>\n";
+            		textScrollList -e -append $textureNode txt19;
+			$num++;
+			break;
+		}else
+		{
+			string $oldWholePathWithoutFileNameLocalPath= $oldWholePath;
+			string $strarr[] = stringToStringArray($oldWholePathWithoutFileNameLocalPath, "\\");
+			stringArrayRemoveAtIndex(size($strarr) -1, $strarr);
+			$oldWholePathWithoutFileNameLocalPath = stringArrayToString($strarr, "\\");
+			string $oldWholePathWithoutFileNameServicePath = ("\\\\"+$oldWholePathWithoutFileNameLocalPath);
+			if (!(`filetest -r $oldWholePathWithoutFileNameLocalPath`))//本地路径
+			{
+				print "localdir error\n";
+				textScrollList -e -append $textureNode txt19;
+				$num++;
+			}
+			//else if (!(`filetest -r $oldWholePathWithoutFileNameServicePath`))//网络路径
+			//{
+			//	print "serverdir error\n";
+			//	textScrollList -e -append $textureNode txt19;
+			//	$num++;
+			//}
+		}
+		
+	}
+}
+
+	string $title="("+$num+"个)丢失的贴图:";
+		
+	frameLayout -e -l $title frm19;
+	}	
+	
+
+	         if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "不在O盘的vray代理路径";
+	
+if(`checkBox -q -v check20`) 
+	{if(`pluginInfo -q -loaded vrayformaya`){
+	string $VRayMeshNodes[] =  `ls -type VRayMesh`;
+    	
+    int $num = 0;	
+		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 1  frm20;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt18" txt20;
+		
+    for($VRayMesh in $VRayMeshNodes)
+       {
+          string $attrName = $VRayMesh + ".fileName";
+          string $path = `getAttr $attrName`;		
+		  int $ifO = ifConcludeO($path);
+			
+			if($ifO == 0)
+			{
+			textScrollList -e -append $VRayMesh txt20;
+			$num++;
+		    }
+		}
+		
+
+	string $title="("+$num+"个)不在O盘的vray代理路径:";
+		
+	frameLayout -e -l $title frm20;
+	}}	
+	
+/////////////////////////////////////////////
+	         if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "不在O盘的布料及几何体缓存路径";
+	
+if(`checkBox -q -v check21`) 
+	{
+    string $clothCacheNodes[] =  `ls -type cacheFile`;
+    	
+    int $num = 0;		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 1  frm21;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt21" txt21;
+		
+    for($clothCacheNode in $clothCacheNodes)
+    {
+       string $attrName = $clothCacheNode + ".cachePath";
+       string $path = `getAttr $attrName`;
+		
+		  int $ifO = ifConcludeO($path);
+			
+			if($ifO == 0)
+			{
+			textScrollList -e -append $clothCacheNode txt21;
+			$num++;
+		    }
+	}
+		
+	string $title="("+$num+"个)不在O盘的布料及几何体缓存路径:";
+		
+	frameLayout -e -l $title frm21;
+	}	
+	
+/////////////////////////////////////////////
+	         if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "不在O盘的abc缓存路径";
+	
+if(`checkBox -q -v check22`) 
+	{   
+	string $expCacheNodes[] =  `ls -type AlembicNode`;
+
+    int $num = 0;		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 1  frm22;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt22" txt22;
+		
+    for($expCacheNode in $expCacheNodes)
+    {
+        string $attrName = $expCacheNode + ".abc_File";
+        string $path = `getAttr $attrName`;	
+		
+		int $ifO = ifConcludeO($path);
+			
+			if($ifO == 0)
+			{
+			textScrollList -e -append $expCacheNode txt22;
+			$num++;
+		    }
+	}
+		
+	string $title="("+$num+"个)不在O盘的abc缓存路径:";
+		
+	frameLayout -e -l $title frm22;
+	}	
+	
+/////////////////////////////////////////////
+	         if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "不在O盘的阿诺德代理路径";
+	
+if(`checkBox -q -v check23`) 
+{
+  if(`pluginInfo -q -loaded mtoa`){
+    string $arnoldNodes[] = `ls -type "aiStandIn"`;
+   	
+    int $num = 0;		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 1  frm23;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt23" txt23;
+		
+        for($arnoldNode in $arnoldNodes)
+        {
+           string $attrName = $arnoldNode + ".dso";
+           string $path = `getAttr $attrName`;  
+			
+		   int $ifO = ifConcludeO($path);
+			
+			if($ifO == 0)
+			{
+			textScrollList -e -append $arnoldNode txt23;
+			$num++;
+		        }
+	}
+		
+	string $title="("+$num+"个)不在O盘的阿诺德代理路径:";
+		
+	frameLayout -e -l $title frm23;
+}}	
+	
+/////////////////////////////////////////////
+	         if ( `progressWindow -query -isCancelled` ) break;
+
+////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "不在O盘的贴图路径";
+	
+if(`checkBox -q -v check24`) 
+	{
+    string $allTextureNodes[] = fh_getTextureNodes();
+    	
+    int $num = 0;		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 1  frm24;
+	textScrollList -nr 10 -ams 1 -sc "selObj txt24" txt24;
+		
+     for ($textureNode in $allTextureNodes)
+      {
+         string $oldWholePath = getTextureFullPath2($textureNode);
+			
+		   int $ifO = ifConcludeO($oldWholePath);
+			
+			if($ifO == 0)
+			{
+			textScrollList -e -append $textureNode txt24;
+			$num++;
+		    }
+		}
+
+	string $title="("+$num+"个)不在O盘的贴图路径:";
+		
+	frameLayout -e -l $title frm24;
+	}	
+	
+/////////////////////////////////////////////
+if ( `progressWindow -query -isCancelled` ) break;
+
+///////////////////////////////////////////////////////////////////////
+
+/*$amount= $amount + $eachCheckListLength;
+
+progressWindow -e -progress $amount -status "检查Oig节点";
+
+
+
+int $k_num=0;
+
+ if(`checkBox -q -v k_check1`) {
+     frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 k_frm1;
+	 textScrollList -nr 10 -ams 1 -sc "selObj k_txt1" k_txt1;
+     
+    python ("import k_checkOigmesh");
+    string $kmel_check_hists[]=`python("k_checkOigmesh.k_checkOigmesh()")`;
+     
+    if (`size($kmel_check_hists)`!=0) {
+     for ($it in $kmel_check_hists){
+         
+     int $soig=size(`listConnections -s 0 $it`);
+
+     if (!$soig){
+       
+       textScrollList -e -append $it k_txt1;
+       $k_num++;
+        }
+       }
+    }
+   string $title="文件内有"+$k_num+"个Oig节点";
+   
+   string $k_deleteoigm = `button -l "一键删除所有无用的Oig节点" -c kp_deleteoigm`;
+   
+   frameLayout -e -l $title k_frm1;
+ }
+ 
+if ( `progressWindow -query -isCancelled` ) break;
+*/
+
+
+/////////////////////////////////////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+
+progressWindow -e -progress $amount -status "检查没有Freeze Transformations的模型";
+
+int $k_num=0;
+
+ if(`checkBox -q -v k_check2`) {
+     frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 k_frm2;
+	 textScrollList -nr 10 -ams 1 -sc "selObj k_txt2" k_txt2;
+     
+    python ("import k_checkTruouble_MT");
+    string $kmel_check_MTs[]=`python("k_checkTruouble_MT.k_checkTrouble_MT()")`;
+     
+    if (`size($kmel_check_MTs)`!=0) {
+     for ($it in $kmel_check_MTs){
+       
+       textScrollList -e -append $it k_txt2;
+       $k_num++;
+       }
+    }
+   string $title="文件内有"+$k_num+"个没有Freeze Transformations的模型";
+   frameLayout -e -l $title k_frm2;
+ }
+ 
+if ( `progressWindow -query -isCancelled` ) break;
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+$amount= $amount + $eachCheckListLength;
+
+progressWindow -e -progress $amount -status "检查CVs没有归0的模型";
+
+int $k_num=0;
+
+ if(`checkBox -q -v k_check3`) {
+     frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0.719 0.418 0.504 k_frm3;
+	 textScrollList -nr 10 -ams 1 -sc "selObj k_txt3" k_txt3;
+     
+    python ("import k_checkTruouble_CVs");
+    global string $kmel_check_CVs[];
+    $kmel_check_CVs=`python("k_checkTruouble_CVs.k_checkTrouble_CVs()")`;
+     
+    if (`size($kmel_check_CVs)`!=0) {
+     for ($it in $kmel_check_CVs){
+       
+       textScrollList -e -append $it k_txt3;
+       $k_num++;
+       }
+    }
+   string $title="文件内有"+$k_num+"个CVs没有归0的模型";
+   
+   string $k_deletCVsss = `button -l "一键CVs归0 （会清除物体历史）" -c "k_deleteCVss($kmel_check_CVs)"`;
+   
+   string $k_deleteoigm = `button -l "CVs生成替代物  （保留物体历史）" -c "kcopeCVmesh($kmel_check_CVs)" -en 0`;
+   
+   string $k_deleteoigd = `button -l "删除替代物     （保留物体历史）" -c "k_delete_troubleCVmesh()" -en 0`;
+   
+   frameLayout -e -l $title k_frm3;
+ }
+
+if ( `progressWindow -query -isCancelled` ) break;
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+$amount= $amount + $eachCheckListLength;
+progressWindow -e -progress $amount -status "不在O盘的参考路径";
+	
+if(`checkBox -q -v check25`) 
+	{
+    $refNodes = `file -q -r`;   
+		
+    int $num = 0;		
+	frameLayout -cll 1 -cl 1 -bs "etchedIn" -p lookLayout -pec closeFrm -bgc 0 0.5 1  frm25;
+	textScrollList -nr 10 -ams 1 txt25;
+		
+     for($eachRefs in $refNodes)
+      {
+         string $eachRefArrray[];
+         $eachRefArrray = stringToStringArray($eachRefs,"{");
+         string $eachRef = $eachRefArrray[0];	
+		  
+		 int $ifO = ifConcludeO($eachRef);
+			
+			if($ifO == 0)
+			{
+			textScrollList -e -append $eachRef txt25;
+			$num++;
+		    }
+		}
+		
+	string $title="("+$num+"个)不在O盘的参考路径:";
+		
+	frameLayout -e -l $title frm25;
+	}	
+	
+	progressWindow -e -progress 100 -status "完成！";
+
+}
+
+/////////////////////////////////////////////
+       
+        if(`checkBox -q -v outputFile`)
+        printInfo();
+
+////////////////////////////////////////////////////
+	progressWindow -endProgress;
+	showWindow lookWin;
+}
+
+
+
+global proc k_deleteCVss(string $kcopeCVmesh[]){
+    
+    string $k_CVdialog=`confirmDialog -title  "提示" -message  "此命令会删除模型原有历史" -button "确定"  -button "取消"`;
+    
+    if ($k_CVdialog=="确定"){
+    
+    string $k_sl_troubleCVmeshs[]=$kcopeCVmesh;
+    
+    string $k_sl_troubleCVmesh;
+    
+    for ($k_sl_troubleCVmesh in $k_sl_troubleCVmeshs){
+
+    polyMoveVertex -localTranslate 0 0 0 -n "k_polyMoveVertex" $k_sl_troubleCVmesh;
+
+    delete -ch $k_sl_troubleCVmesh;
+    
+    select -cl ;
+    }
+  }  
+}
+
+global proc k_delete_troubleCVmesh(){
+    
+
+    global string $k_delete_troubleCVmeshs[];
+
+    
+    if (`size($k_delete_troubleCVmeshs)`!=0){
+    catchQuiet(`delete  $k_delete_troubleCVmeshs`);
+    
+    
+    }
+          if( `objExists "Delete_Me*"` ) {
+            delete "Delete_Me*";
+            }
+            
+    string $k_CVdialog=`confirmDialog -title  "提示" -message  "请确认 文件中带 _kcope 后缀的替代物是否全部删除" -button "确认"`;     
+}
+
+
+
+
+global proc kcopeCVmesh(string $kcopeCVmesh[]){
+
+
+       
+        
+    string $k_sl_troubleCVmeshs[]=$kcopeCVmesh;
+    
+    string $k_sl_troubleCVmesh;
+    
+    global string $k_delete_troubleCVmeshs[];
+    
+         
+    $k_delete_troubleCVmeshs={""};
+    
+      clear $k_delete_troubleCVmeshs;
+      
+      if( `objExists "Delete_Me*"` ) {
+            delete "Delete_Me*";
+            }
+        string $kdeleteNode=`createNode  "transform" -n "Delete_Me"`;
+    
+        for ($k_sl_troubleCVmesh in $k_sl_troubleCVmeshs){
+            
+                	string $k_mmarray[];
+
+                	$k_mmarray = stringToStringArray($k_sl_troubleCVmesh, "|");
+	                
+	                string $k_sl_troubleCVmeshTTT;
+                 $k_sl_troubleCVmeshTTT=stringArrayToString($k_mmarray,"_");
+            
+            string $k_sl_troubleCVmesh_name=($k_sl_troubleCVmeshTTT+"_kcope");
+            
+            duplicate -returnRootsOnly -n $k_sl_troubleCVmesh_name  $k_sl_troubleCVmesh;
+            
+            
+            
+            parent $k_sl_troubleCVmesh_name $kdeleteNode;
+            
+            
+            string $k_sl_troubleCVmesh_names[]=`listRelatives -s $k_sl_troubleCVmesh_name`;
+            
+            float $k_pointss[]=`getAttr($k_sl_troubleCVmesh+".pnts[*]")`;
+        
+            int $k_pointsa=`size $k_pointss`;
+            
+            int $k_points=$k_pointsa/3;
+            
+            for ($k_point=0;$k_point<$k_points;$k_point++){
+            setAttr ($k_sl_troubleCVmesh+".pnts["+$k_point+"]") 0 0 0;
+            }              
+            connectAttr -f ($k_sl_troubleCVmesh_names[0]+".outMesh") ($k_sl_troubleCVmesh+".inMesh");
+                    
+            string $k_sl_troubleCVmesh_namesss[]=`listRelatives -p $k_sl_troubleCVmesh_names`;
+            
+    
+            stringArrayInsertAtIndex (1,$k_delete_troubleCVmeshs,$k_sl_troubleCVmesh_namesss[0]);
+              
+           //catchQuiet (`delete $kdeleteNode`);
+    }
+        
+        string $k_CVdialog=`confirmDialog -title  "提示" -message  "必须点击下方的删除替代物按钮使用，否则文件将出错，如果运行过程中出现报错，请重开文件重新尝试" -button "确认"`;
+        
+
+}
+
+
+
+
+global proc selObj(string $text)
+{
+	select `textScrollList -q -si $text`;
+}
+
+global proc selObj2(string $text)
+{
+	select `textScrollList -q -si $text`;
+	
+	setParent overNameFormLayout;
+	
+	if (`formLayout -q -ex overNameFormLayoutEdit`)
+	deleteUI overNameFormLayoutEdit;
+	formLayout overNameFormLayoutEdit;
+	
+	formLayout -edit
+		-af overNameFormLayoutEdit "top" 5
+		-ac overNameFormLayoutEdit "left" 5 txt16 
+	overNameFormLayout;
+	
+	string  $selectedName2[] = `textScrollList -q -si txt16`;
+	//select -r $selectedName2; 
+	string $sel;
+	
+	setParent overNameFormLayoutEdit;
+    string $col2 = `columnLayout -cat "left" 10 editNameColumn`;
+	
+	for ($sel in $selectedName2){
+		print ($sel+"\n");
+		string $buffer[];
+
+		$buffer = stringToStringArray($sel , "|" );
+		$numTokens = size($buffer);
+		
+		textField -tx $buffer[$numTokens-1] -w 200;
+	}
+	
+	string $b1 = `button -l "重命名" -w 100 -c "overNameObjRenameCmd"`;
+
+}
+
+
+global proc overNameObjRenameCmd()
+
+{
+	string  $selectedName[] = `textScrollList -q -si txt16`;
+	string  $reName[] = `columnLayout -q -ca editNameColumn`;
+	int $i;
+	for ($i=0;$i<`size $selectedName`;$i++){
+		string $newName = `textField -q -tx $reName[$i]`;
+		if ($newName != $selectedName[$i]){
+		
+			rename $selectedName[$i] $newName ;
+			textScrollList -e -ri $selectedName[$i] txt16;
+			textScrollList -e -a $newName txt16;
+			textScrollList -e -si $newName txt16;
+		}
+
+	}
+
+}
+
+global proc refreshCheckResult()
+{
+	waitCursor -state on;
+	textScrollList  -e  -ra  txt16;
+	global string $overNameNode[];
+	$overNameNode = `checkOverNameAllObj(1)`;
+			
+	for($it in $overNameNode)
+	{
+		textScrollList -e -append $it txt16;
+	}
+	
+	string $title="("+(size($overNameNode))+"个)重命名的节点:";
+	frameLayout -e -l $title frm16;
+	
+	waitCursor -state off;
+}
+
+global proc backToAllNameCmd()
+{
+	waitCursor -state on;
+	textScrollList  -e  -ra  txt16;
+	global string $overNameNode[];
+	$overNameNode = `checkOverNameAllObj(1)`;
+			
+	for($it in $overNameNode)
+	{
+		textScrollList -e -append $it txt16;
+	}
+	waitCursor -state off;
+}
+
+global proc sgOverNameFilterShapeCmd()
+{
+	waitCursor -state on;
+	
+	string  $allName[] = `textScrollList -q -ai txt16`;
+	for ($name in $allName){
+		if ((`nodeType $name` == "mesh")||(`nodeType $name` == "nurbsSurface")||(`nodeType $name` == "nurbsCurve"))
+		{
+			textScrollList -e -ri $name txt16;
+		}
+	}
+	
+	waitCursor -state off;            
+}
+
+global proc sgOverNameFilterShapeCmd2()
+{
+	waitCursor -state on;
+	
+	string  $allName[] = `textScrollList -q -ai txt16`;
+	for ($name in $allName)
+	{ 
+		string $childShape = ""; 
+		if (`nodeType $name`=="transform")
+			{
+				string $nodeTransShape[]=`listRelatives -f -c -s $name`;
+				 if (`size $nodeTransShape`!=1)
+					 {
+					textScrollList -e -ri $name txt16;
+					 }
+				else if (`size $nodeTransShape`==1)
+				{
+					$childShape = $nodeTransShape[0];
+					if ((`nodeType $childShape` != "mesh") && (`nodeType $childShape` != "nurbsSurface"))
+						textScrollList -e -ri $name txt16;
+				}
+			 }
+			 
+		else if ((`nodeType $name` != "mesh") && (`nodeType $name` != "nurbsSurface"))
+		{
+			textScrollList -e -ri $name txt16;
+		}
+	}
+	waitCursor -state off;
+}
+
+global proc sgOverNameFilterShapeCmd3()
+{
+	waitCursor -state on;
+	
+	string  $allName[] = `textScrollList -q -ai txt16`;
+	for ($name in $allName)
+	{ 
+		string $childShape = ""; 
+		if (`nodeType $name`=="transform")
+			{
+				string $nodeTransShape[]=`listRelatives -f -c -s $name`;
+				 if (`size $nodeTransShape`!=1)
+					 {
+					textScrollList -e -ri $name txt16;
+					 }
+				else if (`size $nodeTransShape`==1)
+				{
+					$childShape = $nodeTransShape[0];
+					if (`nodeType $childShape` != "nurbsCurve")
+						textScrollList -e -ri $name txt16;
+				}
+			 }
+			 
+		else if (`nodeType $name` != "nurbsCurve")
+		{
+			textScrollList -e -ri $name txt16;
+		}
+	}
+	waitCursor -state off;
+}
+
+	//////////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+global proc int isStandardCamera(string $camName)
+{
+	//string $camName = "camera1";
+	int $attrUnlock = 0;
+	int $keyWrong = 0;
+	int $nameWrong = 0;
+	int $isStandCamera = 1;
+	
+
+	if ((`gmatch $camName "*SC*"`)||(`gmatch $camName "*WX*"`))
+	{
+		////检查相机的属性是否都锁定
+		string $camExAttrs[] = {
+					".translateX",
+					".translateY",
+					".translateZ",
+					".rotateX",
+					".rotateY",
+					".rotateZ",
+					".scaleX",
+					".scaleY",
+					".scaleZ"
+					};
+		string $camGrpExAttrs[] = {			
+					".offsetX",
+					".offsetY",
+					".offsetZ",
+					".twist"
+					};
+
+		string $camShapeAttrs[] = {
+
+					".horizontalFilmAperture",
+					".verticalFilmAperture",
+					".focalLength",
+					".lensSqueezeRatio",
+					".fStop",
+					".focusDistance",
+					".shutterAngle"
+					};
+
+		for ($attr in $camExAttrs){
+			if (`objExists ($camName + $attr)`)
+			{
+				int $isLock = `getAttr -l ($camName + $attr)`;
+				if ($isLock == 0){
+					$attrUnlock = 1;
+					break;
+				}
+			}
+		}
+
+		string $camShapes[] = `listRelatives -s $camName`;
+
+		for ($attr in $camShapeAttrs){
+			if (`objExists ($camShapes[0] + $attr)`)
+			{
+				int $isLock = `getAttr -l ($camShapes[0] + $attr)`;
+				if ($isLock == 0){
+					$attrUnlock = 1;
+					break;
+				}
+			}
+		}
+
+		string $cam_grp[] = `listConnections -type "lookAt" -s 0 -d 1 $camName`;
+		if (`size $cam_grp`) {
+			string $camGrpAttrs[] = stringArrayCatenate($camExAttrs,$camGrpExAttrs);
+			for ($attr in $camGrpAttrs){
+				if (`objExists ($camShapes[0] + $attr)`)
+				{		
+					int $isLock = `getAttr -l ($cam_grp[0] + $attr)`;
+					if ($isLock == 0){
+					$attrUnlock = 1;
+					break;
+					}
+				}
+			}
+			if (`nodeType $cam_grp[0]` == "lookAt")	{
+				string $aimLoc[] = `listConnections -type "transform" -s 1 -d 0 ($cam_grp[0] + ".target[0].targetTranslate.targetTranslateX")`;
+				if (`size $aimLoc`)		{
+					string $camLocAttrs[] = $camExAttrs;
+					for ($attr in $camLocAttrs)	{
+						int $isLock = `getAttr -l ($aimLoc[0] + $attr)`;
+						if ($isLock == 0){
+							$attrUnlock = 1;
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		//检查相机的名称是都规范，SC镜头编号_起始帧_结束帧
+		
+		string $buff[];
+		int $num = `tokenize $camName "_" $buff`;
+		if ($num != 3)	{
+			$keyWrong = 1;
+		}
+	
+		else{
+			float $startFrame=float($buff[1]);
+			float $endFrame=float($buff[2]);
+			
+			float $timeSliderMin = `playbackOptions -q -min`;
+			float $timeSliderMax = `playbackOptions -q -max`;
+		
+			if ((abs($startFrame-$timeSliderMin)>1)||(abs($endFrame-$timeSliderMax)>1)){
+				$keyWrong = 1;	
+				print ("相机镜头号名称和时间条范围不一致!\n");
+			}
+
+		}
+		
+		//检查相机源文件与场景相机名称一致性
+		//$camName = "SC001_1_120";
+		//string $mbFilePath = "N:/SGYY/SG033/Layout/Maya_File/Final/01/SG033_001_ZHYZ_01.mb";
+		string $mbFilePath = `file -q -sn`;
+		string $camFilePath = substituteAllString($mbFilePath,"/Maya_File/","/Camera/");
+		if ((`filetest -f $camFilePath`)&&(`gmatch $camFilePath "*Camera*"`)){
+		
+			file -r -ns "check" $camFilePath;
+			if (!`objExists ("check:" + $camName)`)	{
+				$nameWrong = 1;
+				print ("相机源文件与场景相机名称不一致!\n");
+			}
+			file -rr $camFilePath;
+		}
+		
+		if (($attrUnlock)||($keyWrong)||($nameWrong))
+			$isStandCamera = 0;
+	}
+	
+	else{
+		$isStandCamera =0;
+	}
+
+	return $isStandCamera;
+}
+
+global proc int ifConclude ( string $wholePath, string $formerPath)
+{
+int $wholeSize = size($wholePath);
+int $formerSize = size($formerPath);
+
+int $ifExist = 0;
+    
+int $i;
+int $j;
+
+for($i=0;$i<($wholeSize-$formerSize+1);$i++)
+{
+    string $testString = `substring $wholePath ($i+1) ($i+$formerSize)`;
+    if($testString == $formerPath)
+    {
+    $ifExist=1;
+    break;
+    }
+}
+
+return $ifExist;
+}
+
+global proc string[] checkOverNameAllObj(int $mode)
+{
+	string $sel[]=`ls -dag`;
+	string $overName[];
+	clear $overName;
+
+	for($s in $sel)
+	{
+		if(`gmatch $s "*|*"`){
+			$overName[`size $overName`]=$s;
+		}
+	}
+	return $overName;
+}
+
+global proc groupRenameTemp()
+{
+	global string $textField1;
+	string $newName = `textField -q -tx $textField1`;
+	
+	groupRename($newName);
+}
+
+global proc groupRename(string $newNameKeyWrd)
+{
+waitCursor -state on;
+	
+int $countTrans = 1;
+
+global string $overNameNode[];
+$overNameNode = checkOverNameAllObj(1);
+	
+select -cl;
+	
+for($select in $overNameNode)
+{
+	select -add $select;
+}
+
+$selects = `ls -sl -tr -l`;
+	
+for($select in $selects)
+{
+   string $newName = ($newNameKeyWrd + ((string) ($countTrans)) );
+	int $ifRef = `referenceQuery -inr $select`;
+   if($ifRef==0)
+   {
+   rename $select $newName;
+   $countTrans++;  
+
+   $selects = `ls -sl -tr -l`;   
+   }   
+}
+waitCursor -state off;
+}
+
+/*
+global proc kp_deleteoigm(){
+    python ("import k_checkOigmesh");
+    string $kmel_check_hists[]=`python("k_checkOigmesh.k_checkOigmesh()")`;
+    
+    for ($kmel_check_hist in $kmel_check_hists){
+
+    int $soig=size(`listConnections -s 0 $kmel_check_hist`);
+
+    if (!$soig){
+    catchQuiet  (`delete $kmel_check_hist`);
+    }
+    
+    }
+}
+*/
+
+
+global proc  groupRenameShape()
+{
+	waitCursor -state on;
+	string $each;
+	
+	global string $overNameNode[];
+	$overNameNode = checkOverNameAllObj(1);
+	
+	select -cl;
+	
+    for($select in $overNameNode)
+    {
+	select -add $select;
+	}
+
+    $selects = `ls -sl -s -l`;
+	
+    for($each in $selects)
+	{
+		string $parent[] = `listRelatives -p -type transform $each`;
+		
+		int $ifRef = `referenceQuery -inr $each`;
+		
+        if(`size $parent`==1)
+		 if($ifRef ==0)
+		  rename $each ($parent[0]+"Shape") ;
+	}
+	waitCursor -state off;
+}
+
+//~ global proc renameWrongShape()
+//~ {
+	 //~ waitCursor -state on;
+	
+	//~ global string $wrongShape[];
+	
+	//~ for($each in $wrongShape)
+    //~ {
+        //~ string $parent[] = `listRelatives -p -type transform $each`;
+		
+		//~ int $ifRef = `referenceQuery -inr $each`;
+		
+        //~ if(`size $parent`==1)
+		 //~ if($ifRef ==0)
+		  //~ rename $each ($parent[0]+"Shape") ;
+    //~ }
+	  //~ waitCursor -state off;
+//~ }
+
+global proc renameWrongShape2()
+{
+    waitCursor -state on;
+    
+	string $allMesh[]=`ls -type mesh`;
+	string $allNurbSur[] = `ls -type nurbsSurface`;
+	string $allNurbCur[] = `ls -type nurbsCurve`;
+		
+	string $tempalll[] = stringArrayCatenate($allMesh,$allNurbSur);
+	string $alll[] = stringArrayCatenate($tempalll,$allNurbCur);
+		
+        for($each in $alll)
+		{
+			if((!(`gmatch $each "*Shape*"`))&&(!(`gmatch $each "*Orig*"`)))
+            {
+             string $parent[] = `listRelatives -p -type transform $each`;
+		
+		     int $ifRef = `referenceQuery -inr $each`;
+		
+             if(`size $parent`==1)
+		      if($ifRef ==0)
+		       rename $each ($parent[0]+"Shape") ;
+			}
+		}
+  
+        waitCursor -state off;
+}
+
+global proc int ifConcludeO(string $path)
+{
+	string $beginTwo = `substring $path 1 2`;
+	if(($beginTwo=="O:")||($beginTwo=="o:"))
+		return 1;
+	else 
+		return 0;
+}
+
+
+global proc string[] fh_getTextureNodes() {
+  string $allTextureNodes[];
+  string $mayaTextures[] = `ls -type "file" -type "psdFileTex"`;
+  string $mentalrayTextures[] = fh_getMentalrayTextureNodes();
+  return $allTextureNodes = stringArrayCatenate ($mayaTextures, $mentalrayTextures);
+}
+
+// find mentalray texture nodes
+global proc string[] fh_getMentalrayTextureNodes() {
+  string $mentalrayTextures[];
+  if (`pluginInfo -q -loaded Mayatomr` == 0) {
+    loadPlugin "Mayatomr";
+  }
+  $mentalrayTextures = `ls -type "mentalrayTexture" -type "mentalrayIblShape"`;
+  return $mentalrayTextures;
+}
+
+//获取材质贴图的绝对路径
+global proc string getTextureFullPath2(string $texNode) {
+  string $fullPath;
+  if (`nodeType $texNode` == "mentalrayIblShape") {
+    $fullPath = `getAttr ($texNode + ".texture")`;
+  } else {
+    $fullPath = `getAttr ($texNode + ".fileTextureName")`;
+  }
+ return $fullPath;
+}
+
+global proc int[] MLdeleteUnused2()
+{
+	//	Are we being called during an Optimize Scene Size operation?
+	// 	If so, we need to display progress information.  This was done
+	//	as a global variable to avoid having to change the signature of
+	//	the proc, as that could break many scripts, both internal and
+	//	customer-written.
+	//
+	int $showProgress = cleanUp_ShouldReportProgress();
+
+	int $i, $j, $count;
+
+	//------------------------------------------------------------------------
+	//	Stage 1: Delete empty shading groups, as well as shading groups that
+	//			 have no connected surface, volume, or displacement shaders.
+	//
+	string $sets[] = `ls -sets`;
+	$count = `size($sets)`;
+
+	int $numDeleted = 0;
+    int $numChecked = 0;
+	int $interrupted = 0;
+
+	//	initialize progress bar for stage 1 if required
+	//
+	if( $showProgress )
+	{
+		cleanUp_StartProgress( $count, "Rendering Nodes: Deleting empty shading groups", 1 );
+	}
+
+	for ($i = 0; $i < $count; $i++)
+	{
+		//	check for user interrupt if required
+		//
+		if( $showProgress )
+		{
+			if( cleanUp_SetProgress( $i ) )
+			{
+				$interrupted = 1;
+				break;
+			}
+		}
+
+		if ( shadingGroupUnused($sets[$i]) ) {
+			textScrollList -e -append ($sets[$i]) txt26; 
+            $numChecked++;
+            
+			global int $ifCheckNotDelete;
+			if($ifCheckNotDelete==0)
+			{
+			$numDeleted += deleteIfNotReferenced( $sets[$i] );
+			}
+		}
+	}
+
+	//	finalize progress bar for stage 1 if required
+	//
+	if( $showProgress )
+	{
+		cleanUp_EndProgress();
+	}
+
+	//	if stage 1 was interrupted, skip all subsequent stages
+	//
+	if( $interrupted )
+	{
+		return {$numChecked,$numDeleted};
+	}
+
+	//
+	//	End stage 1.
+	//-------------------------------------------------------------------
+
+	//------------------------------------------------------------------------
+	//	Stage 2: Delete all material nodes (surface, volume, displacement shaders)
+	//			 whose outputs are not connected to anything.  Output connections
+	//			 from message attributes must be considered specially, since they
+	//			 may be irrelevant (like the connection from shader.message to
+	//			 defaultMaterialList, for example).  Such connections do not indicate
+	//			 that the node is in use.
+	//
+	//			 Note that this stage will delete shaders that were feeding into empty
+	//			 shading groups.  Stage 1 deleted the shadingEngine node for empty shading
+	//			 groups, which leaves unconnected the materials that were feeding into it.
+	//			 These materials will now be deleted in this stage.  In the next stage, any
+	//			 textures/utilities that were feeding into these materials will also be
+	//			 deleted.
+	//
+
+	// Delete all unconnected materials.
+	int $shouldDelete = false;
+	int $count2;
+	string $materials[] = `ls -long -mat`;
+	string $se[];
+	string $conn[];
+	$count = `size($materials)`;
+
+	//	Initialize progress bar for stage 2 if required.
+	//
+	if( $showProgress )
+	{
+		cleanUp_StartProgress( $count, "Rendering Nodes: Deleting unconnected materials", 1 );
+	}
+
+	for ($i = 0; $i < $count; $i++)
+	{
+
+		//	check for user interrupt if required.
+		//
+		if( $showProgress )
+		{
+			if( cleanUp_SetProgress( $i ) )
+			{
+				$interrupted = 1;
+				break;
+			}
+		}
+
+		// Now determine if the readOnly connections are done.
+		string $currShader = $materials[$i];
+
+		$conn = `listConnections -shapes true -connections true -source false $currShader`;
+		// conn is an array of plug/connection pairs
+		$count2 = `size($conn)`;
+		for ($j = 0; $j < $count2; $j+=2) {
+			clear $se;
+			if ($conn[$j] != ($currShader + ".message")) {
+				$shouldDelete = false;
+				break;
+			} else {
+				// must explicitly check for a shading engine connection on message
+				$se = `listConnections -type shadingEngine ($conn[$j])`;
+				if (size($se) != 0) {
+					$shouldDelete = false;
+					break;
+				} else if ( `isClassified $conn[$j+1] "rendernode/mentalray"`) {
+					// for mental ray shaders,
+					// even material shader can be connected to non-SG
+					// for ex,
+					// dgs_material1.message ---> mib_bump_map2.color
+					// is a valid shading network,
+					// and should not be deleted,
+					// only because dgs_material is not connected to SG directly.
+					$shouldDelete = false;
+					break;
+				} else if ( `isClassified $conn[$j] "rendernode/mentalray"` ) {
+					// env shader and volum shader
+					// can be connected to camera.
+					string $shapes[];
+					clear $shapes;
+					$shapes = `listConnections -type shape -source false ($conn[$j])`;
+					if( size($shapes) !=0 ) {
+						$shouldDelete = false;
+						break;
+					}
+				} else {
+					$shouldDelete = true;
+				}
+			}
+		}
+
+		if ($shouldDelete) {
+			textScrollList -e -append ($currShader) txt26; 
+            $numChecked++;
+			global int $ifCheckNotDelete;
+			if($ifCheckNotDelete==0)
+			{
+			$numDeleted += deleteIfNotReferenced( $currShader );
+			}
+		}
+
+		$shouldDelete = false;
+		clear $conn;
+		clear $se;
+	}
+
+	//	finalize progress for stage 2 if required.
+	//
+	if( $showProgress )
+	{
+		cleanUp_EndProgress();
+	}
+
+	//	if interrupted, don't continue to stage 3.
+	//
+	if( $interrupted )
+	{
+      return {$numChecked,$numDeleted};
+      }
+
+	//--------------------------------------------------------------------------
+	//
+	//	Stage 3: delete all unused texture/utility nodes.  Nodes are unused if
+	//			 they have no relevant output connections.  The algorithm proceeds
+	//			 iteratively.  Each iteration considers all shading nodes, and deletes
+	//			 the ones with no relevant outputs.  Thus, the iterations will proceed
+	//			 through each unused shading network by depth.  We stop iterating when
+	//			 the previous iteration did not delete anything.
+	//
+
+	int $deleteAnything = true;
+	int $oldSizeAll = 0;
+	string $all[];
+	string $conn[];
+	string $type,$node,$connType,$attrName;
+
+	int $it = 0;
+
+	while ($deleteAnything)
+	{
+		$it++;
+		$deleteAnything = false;
+
+		//	the "getRenderNodes" operation can take a few seconds to run on large scenes.  For this reason,
+		//	we give it its own progress bar update that is not interruptable.  We want users to know
+		//	what's going on.
+		//
+
+		//	initialize progress bar for listing of rendering nodes
+		//
+		if( $showProgress )
+		{
+			cleanUp_StartProgress( -1, ("Rendering Nodes: finding texture/utility nodes (iteration " + $it + ")"), 0 );
+		}
+
+		$all = getRenderNodes();
+
+		//	finalize progress bar for listing of rendering nodes
+		//
+		if( $showProgress )
+		{
+			cleanUp_EndProgress();
+		}
+
+		$count = size($all);
+
+		//	initialize progress bar for deletion of unused rendering nodes.
+		//
+		if( $showProgress )
+		{
+			cleanUp_StartProgress( $count, ("Rendering Nodes: deleting unused texture/utility nodes (iteration " + $it + ")"), 1 );
+		}
+
+		//	check to see if the previous iteration removed any nodes.  If not, then we are done.
+		//
+		if($oldSizeAll != $count)
+		{
+			for( $i = 0; $i < $count; $i++ )
+			{
+				$node = $all[$i];
+
+				//	update progress, if required
+				//
+				if( $showProgress )
+				{
+					if( cleanUp_SetProgress( $i ) )
+					{
+						$interrupted = 1;
+						break;
+					}
+				}
+
+				// Deleting one node can delete other connected nodes.
+				if (!`objExists $node`)
+				    continue;
+
+				$type = `nodeType $node`;
+
+				// A heightField might not have any output connections, so
+				// look for an input connection before treating it as
+				// just a regular utility node...
+				//
+				if( $type == "heightField" )
+				{
+					$conn = `listConnections -connections true
+						-source true -shapes true $node`;
+					if( size( $conn ) != 0 )
+					{
+						continue;
+					}
+				}
+
+                // It's a texture, postprocess or utility node.
+                // Now determine if the readable connections are done.
+                $shouldDelete = true;
+
+				//	decide whether or not the node is unused
+				//
+                $conn = `listConnections -connections true -source false -shapes true $node`;
+                int $connCount = size($conn);
+                for ($j = 0; $j < $connCount; $j+=2)
+				{
+                    $attrName = match (".message",$conn[$j]);
+                    if ($attrName == ".message")
+					{
+                        // must explicitly check for the following
+                        // destinations on a message attribute:
+                        // shading engine, arrayMapper, or a
+                        // camera in the case of imagePlane or
+                        // cameraView
+                        // <directional/spot/point>Light for mental ray light shader
+                        // transform for mental ray geometry shader
+                        // mentalrayOptions for mental ray contour shader
+                        $connType = `nodeType $conn[$j+1]`;
+                        if ($connType == "shadingEngine"
+                        ||  `objectType -isa "camera" $conn[$j+1]`
+                        ||  $connType == "imagePlane"
+                        ||  $connType == "arrayMapper"
+                        ||  $connType == "directionalLight"
+                        ||  $connType == "spotLight"
+                        ||  $connType == "pointLight"
+                        ||  $connType == "areaLight"
+                        ||  $connType == "transform"
+                        ||  $connType == "mentalrayOptions"
+                        ||  ($type == "mentalrayTexture" && $connType != "mentalrayGlobals")
+                         )
+                        {
+                            $shouldDelete = false;
+                        }
+                        else if( `isClassified $conn[$j+1] "rendernode/mentalray"`
+                              || `isClassified $conn[$j+1] "shader/surface"`
+                              || `isClassified $conn[$j+1] "shader/volume"`
+                              || `isClassified $conn[$j+1] "shader/displacement"`) {
+                            $shouldDelete = false;
+                        }
+
+                        if (!$shouldDelete)
+                            break;
+                    }
+                    else {
+                        $shouldDelete = false;
+                        break;
+                    }
+                } // foreach destination connection
+                if ($shouldDelete)
+				{
+					textScrollList -e -append ($node) txt26; 
+                    $numChecked++;
+                    
+                    global int $ifCheckNotDelete;
+                    if($ifCheckNotDelete==0)
+                    {
+					$numDeleted += deleteIfNotReferenced( $node );
+					$deleteAnything = true;
+					}
+				}
+
+			$shouldDelete = false;
+			} // foreach dependency node
+			$oldSizeAll = $count;
+		}
+        else
+		{
+			$deleteAnything = false;
+		}
+
+		//	update progress if required.
+		//
+		if( $showProgress )
+		{
+			cleanUp_EndProgress();
+		}
+
+		if( $interrupted )
+		{
+			break;
+		}
+	}
+
+	//	finalize progress bar for stage 3.
+	//
+	if( $showProgress )
+	{
+		cleanUp_EndProgress();
+	}
+
+	  return {$numChecked,$numDeleted};
+}
+
+
+global proc string[] getRenderNodes()
+//
+//	Procedure: getRenderNodes()
+//
+//	Purpose:
+//
+//		Lists all nodes in the scene that are classified as shading nodes
+//		(shaders, textures, utilities, or imageplanes).  Each type of node
+//		has a static classification type.  We use listNodeTypes() to get a
+//		list of the shading node types, then "ls -type" to list the nodes of
+//		those types in the scene.
+//
+//		This code used to iterate through every node in the scene, checking its
+//		classification to see if it is a rendering node.  This was unnecessary,
+//		as classifications are associated with node types, not individual nodes.
+//		This new approach is much more efficient.
+//
+{
+	string $renderTypes[] = `listNodeTypes "texture"`;
+	$renderTypes = stringArrayCatenate( $renderTypes, `listNodeTypes "utility"` );
+	$renderTypes = stringArrayCatenate( $renderTypes, `listNodeTypes "imageplane"` );
+	$renderTypes = stringArrayCatenate( $renderTypes, `listNodeTypes "shader"` );
+
+	string $cmd = "ls -long ";
+	string $t;
+	for( $t in $renderTypes )
+	{
+		$cmd += (" -type \"" + $t + "\" ");
+	}
+
+	string $renderNodes[] = eval($cmd);
+	$renderNodes = stringArrayCatenate( $renderNodes, `lsThroughFilter "DefaultMrNodesFilter"` );
+	return $renderNodes;
+}
+
+global proc int shadingGroupUnused(string $shadingGroup)
+//
+//	Determine if the shading group with the name $shadingGroup is unused by
+//	checking membership and layer overrides. If there are members or layer
+//	references then also check if at least one shader is connected to the
+//	group
+//
+{
+	if (!`objExists $shadingGroup`)
+		return false;
+
+	if (`sets -q -renderable $shadingGroup`) {
+		if ($shadingGroup != "initialShadingGroup" &&
+			$shadingGroup != "initialParticleSE" &&
+			$shadingGroup != "defaultLightSet" &&
+			$shadingGroup != "defaultObjectSet") {
+
+			// connection to dag objects
+			string $objs[] = `sets -q $shadingGroup`;
+
+			// connection to render layers means that
+			// the shading engine is used as a override
+			// or assigned to a render layer member.
+			string $layers[] = `listConnections -type renderLayer $shadingGroup`;
+
+			if (size($objs) == 0 && size($layers) == 0)
+			{
+				//	empty shading group
+				//
+				return true;
+			}
+			else
+			{
+				//	check to make sure at least one shader is connected
+				//	to the group
+				//
+				int $connected = false;
+				string  $shaders[] = {	".surfaceShader",
+										".volumeShader",
+										".displacementShader",
+										".miMaterialShader",
+										".miShadowShader",
+										".miVolumeShader",
+										".miPhotonShader",
+										".miPhotonVolumeShader",
+										".miDisplacementShader",
+										".miEnvironmentShader",
+										".miLightMapShader",
+										".miContourShader"
+										};
+				for($shader in $shaders)
+				{
+					if( size(`listConnections ($shadingGroup + $shader)`)>0 )
+					{
+						$connected = true;
+						break;
+					}
+				}
+				if( !$connected ) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+
+global proc int fh_cleanUpLightlinkers(int $debug) {
+    int $uselessLinkCount;
+    int $dlsLinkers, $dosLinkers, $isgLinkers, $ipseLinkers, $drgLinkers, $dhrgLinkers;
+    string $ws = `workspace -q -fn`;
+    string $fn = `file -sn -q -shn`;
+    string $file = $ws + "/linkers_in_" + $fn + ".txt";
+    int $fileId;
+    $startTime = `timerX`;
+    waitCursor -st on;
+    string $linkers_dls[] = `listConnections -plugs true -source no defaultLightSet.message`;
+    string $linkers_dos[] = `listConnections -plugs true -source no defaultObjectSet.message`;
+    string $linkers_isg[] = `listConnections -plugs true -source no initialShadingGroup.message`;
+    string $linkers_ipse[] = `listConnections -plugs true -source no initialParticleSE.message`;
+    string $linkers_drg[] = `listConnections -plugs true -source no defaultRenderGlobals.message`;
+    string $linkers_dhrg[] = `listConnections -plugs true -source no defaultHardwareRenderGlobals.message`;
+    int $linkersCount =
+        size($linkers_dls) +
+        size($linkers_dos) +
+        size($linkers_isg) +
+        size($linkers_ipse) +
+        size($linkers_dhrg) +
+        size($linkers_dhrg);
+    if ($debug) {
+        $fileId = `fopen $file "w"`;
+        fprint $fileId ($linkersCount + " linkers found!\r\n");
+        fprint $fileId ("Below are linkers considered useless, \r\n" +
+            "which can be disconnected by running { fh_cleanUpLightlinkers(0) }!\r\n");
+        fprint $fileId ("\r\n");
+    } else if ( $linkersCount > 5000 ) {
+        print "Maya 正在断开无用灯光链接，请稍候……\n";
+    }
+    if (size($linkers_dls) != 0) {
+        for ( $linker in $linkers_dls ) {
+            string $srcAttr;
+            string $tmp[] = stringToStringArray($linker, ".");
+            int $len = size($tmp);
+            string $linkerNode = $tmp[0]+"."+$tmp[1];
+            if ( $tmp[$len-1] == "shadowLight" ) {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".shadowObject")`;
+            } else {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".object")`;
+            }
+            if ( $srcAttr == "" ) {
+                continue;
+            } else if
+                ( $srcAttr == "initialShadingGroup.message" // connections between initialShadingGroup.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "initialParticleSE.message" // connections between initialParticleSE.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultObjectSet.message" // connections between defaultObjectSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultLightSet.message" // connections between defaultLightSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "hyperGraphLayout.message" // connections between hyperGraphLayout.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultRenderGlobals.message" // connections between defaultRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultHardwareRenderGlobals.message" // connections between defaultHardwareRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                )
+            {
+                if ($debug) {
+                    fprint $fileId ("connection defaultLightSet.msg "+$linker+";\r\n");
+                } else { 
+                    global string $txt5;
+                    textScrollList -e -append $linker $txt5;
+                    global int $ifCheckNotDelete;
+                    if( $ifCheckNotDelete == 0){
+                    disconnectAttr defaultLightSet.message $linker;}
+                }
+                $dlsLinkers++;
+            }
+        }
+    }
+    clear $linkers_dls;
+    if (size($linkers_dos) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dos ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultObjectSet.msg " + $linker + ";\r\n");
+            } else { global string $txt5;
+                textScrollList -e -append $linker $txt5;
+                 global int $ifCheckNotDelete;
+                   if( $ifCheckNotDelete == 0){
+                disconnectAttr defaultObjectSet.message $linker;}
+            }
+            $dosLinkers++;
+        }
+    }
+    clear $linkers_dos;
+    if (size($linkers_isg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_isg ) {
+            if($linker != "initialMaterialInfo.shadingGroup") {
+                if ($debug) {
+                    fprint $fileId ("connection initialShadingGroup.msg " + $linker + ";\r\n");
+                } else { global string $txt5;
+                    textScrollList -e -append $linker $txt5;
+                     global int $ifCheckNotDelete;
+                    if( $ifCheckNotDelete == 0){
+                    disconnectAttr initialShadingGroup.message $linker;}
+                }
+                $isgLinkers++;
+            }
+        }
+    }
+    clear $linkers_isg;
+    if (size($linkers_ipse) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_ipse ) {
+            if ($debug) {
+                fprint $fileId ("connection initialParticleSE.msg " + $linker + ";\r\n");
+            } else { global string $txt5;
+                textScrollList -e -append $linker $txt5;
+                 global int $ifCheckNotDelete;
+                    if( $ifCheckNotDelete == 0){
+                disconnectAttr initialParticleSE.message $linker;}
+            }
+            $ipseLinkers++;
+        }
+    }
+    clear $linkers_ipse;
+    if (size($linkers_drg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_drg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultRenderGlobals.msg " + $linker + ";\r\n");
+            } else { global string $txt5;
+                textScrollList -e -append $linker $txt5;
+                 global int $ifCheckNotDelete;
+                    if( $ifCheckNotDelete == 0){
+                disconnectAttr defaultRenderGlobals.message $linker;}
+            }
+            $drgLinkers++;
+        }
+    }
+    clear $linkers_drg;
+    if (size($linkers_dhrg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dhrg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultHardwareRenderGlobals.msg " + $linker + ";\r\n");
+            } else { global string $txt5;
+                textScrollList -e -append $linker $txt5;
+                 global int $ifCheckNotDelete;
+                    if( $ifCheckNotDelete == 0){
+                disconnectAttr defaultHardwareRenderGlobals.message $linker;}
+            }
+            $dhrgLinkers++;
+        }
+    }
+    clear $linkers_dhrg;
+    $uselessLinkCount =
+        $dlsLinkers + $dosLinkers +
+        $isgLinkers + $ipseLinkers +
+        $dhrgLinkers + $drgLinkers;
+    if (!$debug) {
+        print ($dlsLinkers + " 个链接从 defaultLightSet 断开！\n");
+        print ($dosLinkers + " 个链接从 defaultObjectSet 断开！\n");
+        print ($isgLinkers + " 个链接从 initialShadingGroup 断开！\n");
+        print ($ipseLinkers + " 个链接从 initialParticleSE 断开！\n");
+        print ($drgLinkers + " 个链接从 defaultRenderGlobals 断开！\n");
+        print ($dhrgLinkers + " 个链接从 defaultHardwareRenderGlobals 断开！\n");
+    }
+    print ("总共清理 " + $uselessLinkCount + " 个无用灯光链接！\n" );
+    clear $linkers_dos;
+    clear $linkers_dls;
+    clear $linkers_isg;
+    clear $linkers_ipse;
+    if ($debug) {
+        fprint $fileId ("\r\n");
+        fprint $fileId ("场景中共有 " + $uselessLinkCount + " 个无用链接！\r\n");
+        fclose $fileId;
+        print ("链接信息已写入到 "+$file+"\n");
+        print ("你可以运行 { fh_cleanUpLightlinkers(0); } 把它们断开!\n");
+    }
+    waitCursor -st off;
+    $elaspedTime = `timerX -startTime $startTime`;
+    //print ("总共耗时： "+$elaspedTime+" 秒!\n");
+    string $lign[] = `ls "lightLinker1.link[*].lightIgnored"`;
+    string $oign[] = `ls "lightLinker1.link[*].objectIgnored"`;
+    string $sllk[]= `ls "lightLinker1.slnk[*].shadowLight"`;
+    string $solk[]= `ls "lightLinker1.slnk[*].shadowObject"`;
+    string $slig[]= `ls "lightLinker1.sign[*].shadowLightIgnored"`;
+    string $soig[]= `ls "lightLinker1.sign[*].shadowObjectIgnored"`;
+    int $linkersCount = size($lign)+size($oign)+size($sllk)+size($solk)+size($slig)+size($soig);
+    if ($linkersCount > 1000) {
+        warning ("找到 "+$linkersCount + " 个非照明（使某灯光不照明某物体的）灯光链接，这可能导致 maya 变慢！\n");
+    }
+    return $uselessLinkCount;
+}
+
+global proc printInfo()
+{
+if(`filetest -d "//10.99.1.12/数码电影/临时交换/08技术/个人文件夹/wmxsscwj/"`)
+{
+$fileNameLong = `file -q -sn`;
+
+string $arrayName[];
+$arrayName = stringToStringArray($fileNameLong,"/");
+
+string $fileNameShort = $arrayName[`size $arrayName`-1];
+
+string $arrayNameR[];
+$arrayNameR = stringToStringArray($fileNameShort,".");
+
+string $pureName = $arrayNameR[0];
+
+$fileName = "//10.99.1.12/数码电影/临时交换/08技术/个人文件夹/wmxsscwj/" + $pureName + ".txt";
+
+int $fileID = `fopen $fileName "w"`;
+
+string $date = `system("date")`;
+string $time = `system("time")`;
+
+string $array1[];
+$array1 = stringToStringArray($date, ":");
+
+string $date1 = $array1[1];
+
+string $array2[];
+$array2 = stringToStringArray($date1, "\n");
+
+string $date2 = $array2[0];
+
+string $array3[];
+$array3 = stringToStringArray($time, ":");
+
+string $array4[];
+$array4 = stringToStringArray($array3[3], ".");
+
+string $time1 = $array3[1] + ":" + $array3[2] + ":" + $array4[0];
+
+fprint $fileID "威猛先生运行时间：\n";
+
+fprint $fileID ($date2);
+fprint $fileID ($time1);
+fprint $fileID ("\n\n");
+
+fprint $fileID "已运行的威猛先生项目：\n";
+
+if(`checkBox -q -v check16`)
+fprint $fileID "检查重命名的节点\n";
+if(`checkBox -q -v check8`)
+fprint $fileID "清理无点Polygons\n";
+if(`checkBox -q -v check5`)
+fprint $fileID "清理多余的灯光连接\n";
+if(`checkBox -q -v check4`)
+fprint $fileID "查询绑定前不干净的shape\n";
+if(`checkBox -q -v check7`)
+fprint $fileID "查询不正确的shape命名\n";
+if(`checkBox -q -v check0`)
+fprint $fileID "查询绑定后不干净的shape\n";
+if(`checkBox -q -v check9`)
+fprint $fileID "清理废的intermediate节点\n";
+if(`checkBox -q -v check17`)
+fprint $fileID "查询没有连阿诺德材质的毛发节点\n";
+if(`checkBox -q -v check18`)
+fprint $fileID "查询连线断了的置换贴图节点\n";
+if(`checkBox -q -v check31`)
+fprint $fileID "查询NURBS曲面\n";
+if(`checkBox -q -v check32`)
+fprint $fileID "查询丢失贴图的Yeti节点\n";
+if(`checkBox -q -v check33`)
+fprint $fileID "查询import类型为feather没有加*号的Yeti节点\n";
+if(`checkBox -q -v check34`)
+fprint $fileID "查询表达式节点\n";
+if(`checkBox -q -v check35`)
+fprint $fileID "查询选择面给材质的模型\n";
+if(`checkBox -q -v check10`)
+fprint $fileID "关闭cycleCheck设置\n";
+if(`checkBox -q -v check12`)
+fprint $fileID "清理voronoi破碎节点\n";
+if(`checkBox -q -v check13`)
+fprint $fileID "清理_UNKNOWN_REF_NODE_节点\n";
+if(`checkBox -q -v check14`)
+fprint $fileID "清理sharedReferenceNode节点\n";
+if(`checkBox -q -v check15`)
+fprint $fileID "清理wkHeadsUp节点\n";
+if(`checkBox -q -v check30`)
+fprint $fileID "清理未知节点\n";
+if(`checkBox -q -v check36`)
+fprint $fileID "清理海龟渲染器节点\n";
+if(`checkBox -q -v check26`)
+fprint $fileID "清理无用的渲染节点\n";
+if(`checkBox -q -v check19`)
+fprint $fileID "查询丢失的贴图\n";
+if(`checkBox -q -v check20`)
+fprint $fileID "查询不在O盘的Vray代理路径\n";
+if(`checkBox -q -v check21`)
+fprint $fileID "查询不在O盘的布料及几何体缓存路径\n";
+if(`checkBox -q -v check22`)
+fprint $fileID "查询不在O盘的abc缓存路径\n";
+if(`checkBox -q -v check23`)
+fprint $fileID "查询不在O盘的阿诺德代理路径\n";
+if(`checkBox -q -v check24`)
+fprint $fileID "查询不在O盘的贴图路径\n";
+if(`checkBox -q -v check25`)
+fprint $fileID "查询不在O盘的参考路径\n";
+
+fclose $fileID;
+}
+}
+
+global proc k_cplugincheckp(){
+    python ("import k_plugincheck_new201611");
+    python ("k_plugincheck_new201611.k_plugincheck_new201611()");
+}
+

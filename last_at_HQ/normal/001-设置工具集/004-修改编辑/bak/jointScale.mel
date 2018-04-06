@@ -1,0 +1,52 @@
+global proc JointInverseScaleTool()
+{
+    if (`window -q -exists JointInverseScaleToolWindow`) deleteUI JointInverseScaleToolWindow;
+    window
+        -title "骨骼链缩放关联" -wh 200 100
+              JointInverseScaleToolWindow;
+
+    columnLayout -adj 1; 
+       text -label "";
+       separator -style "none";
+	   button -l "打断关联" -c breakInverseScale;
+       text -label "";
+	   button -l "关联" -c connectInverseScale;
+     setParent ..; 
+ showWindow   JointInverseScaleToolWindow; 
+    
+} 
+
+global proc breakInverseScale()
+{
+    
+  string $selJnt[] = `ls -sl`;
+  int $i,$j;
+  for($i=0;$i<size($selJnt);$i++) 
+  {
+    string $connectJoint[] = `listConnections -s 0 -d 1 -t joint $selJnt[$i]`;
+    if(size($connectJoint) == 1)
+    {
+      for($j=0;$j<size($connectJoint);$j++)
+      {
+        disconnectAttr ($selJnt[$i]+".scale") ($connectJoint[$j]+".inverseScale");       
+       }
+     }         
+   }
+   print "所选骨骼的inverseScale属性已全部打断！";                
+}
+global proc connectInverseScale()
+{
+  string $selJoint[] = `ls -sl`;
+  int $r;
+  for($r=0;$r<size($selJoint);$r++)
+  {
+    string $connectJoint[] = `listConnections -s 0 -d 1 -t joint $selJoint[$r]`;   
+    if(size($connectJoint) == 0)
+    {
+     catch (`connectAttr ($selJoint[$r]+".scale") ($selJoint[$r+1]+".inverseScale")`);           
+    }       
+  }
+  print "所选骨骼的inverseScale属性已关联！";    
+}
+
+JointInverseScaleTool();

@@ -1,0 +1,174 @@
+//~ Script name: fh_cleanUpLightlinkers.mel
+//~ This script is used to disconnect useless lightLinkers in your scene
+//~ Usage: Copy the script file to your maya script directory,
+//~         and in the script editor run "fh_cleanUpLightlinkers(0)".
+//~         For debug mode, run "fh_cleanUpLightlinkers(1)".
+//~         When in debug mode, a file named "linkers_in_<scene>.txt",
+//~         where <scene> is your scene name with file extention,
+//~         will be writen to your current project directory.
+//~ Compatibility: maya 7.0, maya 2008 ext2, maya 2009,
+//~ should work for other not very old version.
+//~ Author: Frank Hill
+//~ Last Modified by Frank Hill on 2010.2.23
+
+global proc fh_cleanUpLightlinkers(int $debug) {
+    int $uselessLinkCount;
+    int $dlsLinkers, $dosLinkers, $isgLinkers, $ipseLinkers, $drgLinkers, $dhrgLinkers;
+    string $ws = `workspace -q -fn`;
+    string $fn = `file -sn -q -shn`;
+    string $file = $ws + "/linkers_in_" + $fn + ".txt";
+    int $fileId;
+    $startTime = `timerX`;
+    waitCursor -st on;
+    string $linkers_dls[] = `listConnections -plugs true -source no defaultLightSet.message`;
+    string $linkers_dos[] = `listConnections -plugs true -source no defaultObjectSet.message`;
+    string $linkers_isg[] = `listConnections -plugs true -source no initialShadingGroup.message`;
+    string $linkers_ipse[] = `listConnections -plugs true -source no initialParticleSE.message`;
+    string $linkers_drg[] = `listConnections -plugs true -source no defaultRenderGlobals.message`;
+    string $linkers_dhrg[] = `listConnections -plugs true -source no defaultHardwareRenderGlobals.message`;
+    int $linkersCount =
+        size($linkers_dls) +
+        size($linkers_dos) +
+        size($linkers_isg) +
+        size($linkers_ipse) +
+        size($linkers_dhrg) +
+        size($linkers_dhrg);
+    if ($debug) {
+        $fileId = `fopen $file "w"`;
+        fprint $fileId ($linkersCount + " linkers found!\r\n");
+        fprint $fileId ("Below are linkers considered useless, \r\n" +
+            "which can be disconnected by running { fh_cleanUpLightlinkers(0) }!\r\n");
+        fprint $fileId ("\r\n");
+    } else if ( $linkersCount > 5000 ) {
+        print "Maya is busy disconnecting lightLinkers, please wait ........\n";
+    }
+    if (size($linkers_dls) != 0) {
+        for ( $linker in $linkers_dls ) {
+            string $srcAttr;
+            string $tmp[] = stringToStringArray($linker, ".");
+            int $len = size($tmp);
+            string $linkerNode = $tmp[0]+"."+$tmp[1];
+            if ( $tmp[$len-1] == "shadowLight" ) {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".shadowObject")`;
+            } else {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".object")`;
+            }
+            if ( $srcAttr == "" ) {
+                continue;
+            } else if
+                ( $srcAttr == "initialShadingGroup.message" // connections between initialShadingGroup.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "initialParticleSE.message" // connections between initialParticleSE.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultObjectSet.message" // connections between defaultObjectSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultLightSet.message" // connections between defaultLightSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "hyperGraphLayout.message" // connections between hyperGraphLayout.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultRenderGlobals.message" // connections between defaultRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultHardwareRenderGlobals.message" // connections between defaultHardwareRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                )
+            {
+                if ($debug) {
+                    fprint $fileId ("connection defaultLightSet.msg "+$linker+";\r\n");
+                } else {
+                    disconnectAttr defaultLightSet.message $linker;
+                }
+                $dlsLinkers++;
+            }
+        }
+    }
+    clear $linkers_dls;
+    if (size($linkers_dos) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dos ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultObjectSet.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultObjectSet.message $linker;
+            }
+            $dosLinkers++;
+        }
+    }
+    clear $linkers_dos;
+    if (size($linkers_isg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_isg ) {
+            if($linker != "initialMaterialInfo.shadingGroup") {
+                if ($debug) {
+                    fprint $fileId ("connection initialShadingGroup.msg " + $linker + ";\r\n");
+                } else {
+                    disconnectAttr initialShadingGroup.message $linker;
+                }
+                $isgLinkers++;
+            }
+        }
+    }
+    clear $linkers_isg;
+    if (size($linkers_ipse) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_ipse ) {
+            if ($debug) {
+                fprint $fileId ("connection initialParticleSE.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr initialParticleSE.message $linker;
+            }
+            $ipseLinkers++;
+        }
+    }
+    clear $linkers_ipse;
+    if (size($linkers_drg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_drg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultRenderGlobals.message $linker;
+            }
+            $drgLinkers++;
+        }
+    }
+    clear $linkers_drg;
+    if (size($linkers_dhrg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dhrg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultHardwareRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultHardwareRenderGlobals.message $linker;
+            }
+            $dhrgLinkers++;
+        }
+    }
+    clear $linkers_dhrg;
+    $uselessLinkCount =
+        $dlsLinkers + $dosLinkers +
+        $isgLinkers + $ipseLinkers +
+        $dhrgLinkers + $drgLinkers;
+    if (!$debug) {
+        print ($dlsLinkers + " lightLinkers disconnected from defaultLightSet!\n");
+        print ($dosLinkers + " lightLinkers disconnected from defaultObjectSet!\n");
+        print ($isgLinkers + " lightLinkers disconnected from initialShadingGroup!\n");
+        print ($ipseLinkers + " lightLinkers disconnected from initialParticleSE!\n");
+        print ($drgLinkers + " lightLinkers disconnected from defaultRenderGlobals!\n");
+        print ($dhrgLinkers + " lightLinkers disconnected from defaultHardwareRenderGlobals!\n");
+        print ("There are " + $uselessLinkCount + " linkers considered useless and disconnected!\n" );
+    }
+    if ($debug) {
+        fprint $fileId ("\r\n");
+        fprint $fileId ("There are " + $uselessLinkCount + " linkers considered useless!\r\n");
+        fclose $fileId;
+        print ("Linkers info writen to "+$file+"\n");
+        print ("You can run {     fh_cleanUpLightlinkers(0);     } to disconnect them!\n");
+    }
+    waitCursor -st off;
+    $elaspedTime = `timerX -startTime $startTime`;
+    print ("Total time elasped: "+$elaspedTime+" s!\n");
+    string $lign[] = `ls "lightLinker1.link[*].lightIgnored"`;
+    string $oign[] = `ls "lightLinker1.link[*].objectIgnored"`;
+    string $sllk[]= `ls "lightLinker1.slnk[*].shadowLight"`;
+    string $solk[]= `ls "lightLinker1.slnk[*].shadowObject"`;
+    string $slig[]= `ls "lightLinker1.sign[*].shadowLightIgnored"`;
+    string $soig[]= `ls "lightLinker1.sign[*].shadowObjectIgnored"`;
+    int $linkersCount = size($lign)+size($oign)+size($sllk)+size($solk)+size($slig)+size($soig);
+    if ($linkersCount > 1000) {
+        warning ($linkersCount + " ignored linkers found, which may slow down your maya!\n");
+    }
+}
+fh_cleanUpLightlinkers(0);

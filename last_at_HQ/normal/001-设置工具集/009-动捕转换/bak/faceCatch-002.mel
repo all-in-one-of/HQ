@@ -1,0 +1,226 @@
+global proc readTracker()
+{
+    if (`window -q -exists readTrackerWindow`) deleteUI readTrackerWindow;
+    window
+        -title "获取TXT数据" -wh 200 200
+              readTrackerWindow;
+    columnLayout;
+    separator -height 10;     
+     rowColumnLayout -nc 3 -cw 1 70 -cw 2 250 -cw 3 80;
+       text -l "     TXT路径:" -al "left";
+       textField -ed 1 -tx "" TrackerPathFld;
+	   button -l "浏览..." -c getTrackerPATH;
+     setParent ..; 
+   separator -height 10;
+    rowColumnLayout -nc 4 -cw 1 190 -cw 2 60 -cw 3 70 -cw 4 80;
+       optionMenuGrp -label "输出帧率："  -columnWidth 1 65 fpsOMG;
+         menuItem -label "Film(24 fps)"; 
+         menuItem -label "Game(15 fps)";
+         menuItem -label "PAL(25 fps)";
+         menuItem -label "NTSC(30 fps)";
+         menuItem -label "show(48 fps)";
+         menuItem -label "PAL Field(50 fps)"; 
+         menuItem -label "NTSC Field(60 fps)";
+         menuItem -label "milliseconds"; 
+         menuItem -label "seconds"; 
+         menuItem -label "minutes";
+         menuItem -label "hours";                                                                 
+         menuItem -label "other";
+       text -l " 其他帧率:" -al "left";
+       textField -ed 1 -tx "" ohterFpsFld;       
+       button -l "导入..." -c importTracker;
+    setParent ..; 
+  setParent ..;     
+ showWindow   readTrackerWindow; 
+    
+} 
+
+global string $path;
+global string $return[];
+global proc getTrackerPATH()
+{
+   string $return[] = `fileDialog2 -fileMode 1 -caption "Import text" -ff "*.txt" -okc "Browse" -cc "Cancel"`;
+   string $path = $return[0];
+
+	if ( size ( $path ) != 0)
+	{
+		textField -e -tx $path TrackerPathFld;
+	}
+};
+
+
+    
+global proc importTracker()
+{   
+   currentUnit -t "ntsc";//设置帧率为30fps   
+   playbackOptions -ps 1;//设置播放帧率为30fs
+ 
+   //导入跟踪数据生成小球 
+        
+   string $fileName = `textField -q -tx TrackerPathFld`;
+    
+    int $i;
+    int $j;
+    int $frameNum;
+    int $pointNum;
+    
+    int $fileId=`fopen $fileName "r"`;
+    
+     $nextLine = `fgetline $fileId`;
+     string $frameLine[];
+     tokenize $nextLine "=" $frameLine;
+     $frameNum = $frameLine[1];
+     
+     playbackOptions -min 0 -max $frameNum;     
+     
+     $nextLine = `fgetline $fileId`;
+     string $pointLine[];
+     tokenize $nextLine "=" $pointLine;
+     $pointNum = $pointLine[1];
+           
+     
+     for($i=1;$i<$pointNum+1;$i++)
+     {
+         string $trackerName;
+         if($i<10)
+             $trackerName = "0" +  $i;
+         else
+             $trackerName = $i;
+         
+         polySphere -n ("tracker_"+ $trackerName);
+         disconnectAttr ("tracker_"+ $trackerName + "Shape.instObjGroups[0]") initialShadingGroup.dagSetMembers[0];//线框显示
+         
+         //设置不可渲染属性
+         setAttr ("tracker_"+ $trackerName +".castsShadows") 0;
+         setAttr ("tracker_"+ $trackerName +".receiveShadows") 0;
+         setAttr ("tracker_"+ $trackerName +".motionBlur") 0;
+         setAttr ("tracker_"+ $trackerName +".primaryVisibility") 0;
+         setAttr ("tracker_"+ $trackerName +".smoothShading") 0;
+         setAttr ("tracker_"+ $trackerName +".visibleInReflections") 0;
+         setAttr ("tracker_"+ $trackerName +".visibleInRefractions") 0;
+    
+         setAttr ("tracker_"+ $trackerName +".overrideEnabled") 1;
+         setAttr ("tracker_"+ $trackerName +".overrideColor") 13;//设置小球颜色为红色
+
+         setAttr ("tracker_"+ $trackerName + ".scaleX") 0.2;
+         setAttr ("tracker_"+ $trackerName + ".scaleY") 0.2;
+         setAttr ("tracker_"+ $trackerName + ".scaleZ") 0.2;
+         select -r ("tracker_"+ $trackerName);
+         makeIdentity -apply true -t 0 -r 0 -s 1 -n 0;
+         DeleteHistory;
+         select -cl;
+     }
+     
+     for($j=1;$j<($frameNum+1);$j++)
+     {
+       $nextLine = `fgetline $fileId`;
+       string $nextLines[];
+       tokenize $nextLine " " $nextLines;
+         
+         if($nextLines[0]=="frame")
+         {
+             int $currentFrame = int ($nextLines[1]);
+             currentTime $currentFrame;
+     
+              
+             for($i=1;$i<$pointNum+1;$i++)
+              {
+               $nextLine = `fgetline $fileId`;
+               string $pointInfo[];
+               tokenize $nextLine " " $pointInfo;
+                  
+               string $trackerName;
+               if($i<10)
+                $trackerName = "tracker_0" + $i;
+               else
+                $trackerName = "tracker_" + $i;
+               
+               float $transX = $pointInfo[1];
+               float $transY = $pointInfo[2];
+       
+              setAttr ($trackerName + ".tx")  ($transX*0.01);
+              setAttr ($trackerName + ".ty")  ($transY*-0.01);
+       
+              select -r $trackerName;
+              setKeyframe;
+              }
+          }
+     }
+     
+     setAttr ("tracker_21.overrideColor") 17;
+     setAttr ("tracker_22.overrideColor") 17;
+     setAttr ("tracker_23.overrideColor") 17;
+     
+    fclose $fileId; 
+    select -cl;
+
+   int $GetFpsOMG;
+   $GetFpsOMG = `optionMenuGrp -q -sl fpsOMG`;
+   string $otherFps = `textField -q -tx ohterFpsFld`;     
+   string $fps;
+   switch($GetFpsOMG)
+   {
+    case 1:
+    $fps = "film";
+    break;
+    case 2:
+    $fps = "game";
+    break;
+    case 3:
+    $fps = "pal";
+    break;
+    case 4:
+    $fps = "ntsc";
+    break;
+    case 5:
+    $fps = "show";
+    break;
+    case 6:
+    $fps = "palf";
+    break; 
+    case 7:
+    $fps = "ntscf";
+    break;
+    case 8:
+    $fps = "millisec";
+    break;
+    case 9:
+    $fps = "sec";
+    break;
+    case 10:
+    $fps = "min";
+    break;
+    case 11:
+    $fps = "hour";
+    break;                               
+    case 12:
+    $fps =  $otherFps + "fps";
+    break;           
+   } 
+   
+   
+   currentUnit -t $fps;//设置输出帧率
+   playbackOptions -ps 1;//设置播放帧率为当前输出帧率
+
+   select -r "tracker*";
+
+  
+   bakeResults -simulation true -t ("0:" + $frameNum) -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -removeBakedAttributeFromLayer false -bakeOnOverrideLayer false -controlPoints false -shape true;
+ 
+   group -n "tracker_G";
+   xform -os -piv 0 0 0;
+     
+   select -cl;   
+ 
+   currentTime 0;
+   
+   playbackOptions -min 0 -max $frameNum;     
+   
+   confirmDialog -title "导入确认" -message "跟踪信息导入完成！" -button "确认";
+
+
+
+
+}
+
+readTracker();

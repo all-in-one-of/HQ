@@ -1,0 +1,145 @@
+global proc removeNameSpace()
+{
+	if (`window -q -ex removeNameSpaceWindow`) deleteUI removeNameSpaceWindow;
+	window -title "去除命名空间" removeNameSpaceWindow;
+	 columnLayout -adj on -rs 10;
+	 separator;             
+          radioButtonGrp -numberOfRadioButtons 2
+                         -label "适用范围:" 
+                         -cw 1 70 -cl3  center left left
+                         -labelArray2 "全文件" "特定前缀" 
+                         -sl 1 
+                         
+                         -onCommand1 "formLayout -e -en 0 FL"
+                         
+                         -onCommand2 "formLayout -e -en 1 FL"
+                         
+                         "removeNameSpaceStyle";
+
+					
+		
+	       formLayout -en 0 FL;
+	                  
+	                  
+           rowLayout -nc 2 -cw 1 180 -cw 2 80 
+					-cat 1 "both" 5 -cat 2 "both" 5
+					-cal 1 "center" -cal 2 "center";  	                  				
+					                                            
+           textFieldGrp -l "空间名:" -tx "" 
+					    -cw 1 50 -cw 2 150					   
+					    -cat 1 "left" 3 -cat 2 "both" 3
+                        nameSpaceNameFld;                                           
+                       
+           button -l "获取" -c "get_currNameSpace()";
+		 setParent..;
+      setParent..; 		 
+		 rowLayout -nc 2 -cw 1 135 -cw 2 135 
+				   -cat 1 "both" 10 -cat 2 "both" 10
+				   -cal 1 "center" -cal 2 "center";
+			button -l "去除" -c RemoveNameSpace;
+			button -l "取消" -c "deleteUI removeNameSpaceWindow";
+		 setParent ..;
+       setParent..;   		       
+ 
+  	window -e -w 300 -h 100 removeNameSpaceWindow;		
+	showWindow removeNameSpaceWindow;
+}              
+                
+ removeNameSpace;               
+                
+/*
+                    rowColumnLayout -numberOfColumns 2
+                            -cw 1 150 -cw 2 60 
+                             -cs 1 5 -cs 2 0 ;
+                       // text -label "清除灯光材质未知节点： ";
+                       
+                        button -label "Remove"  -c RemoveAll;
+                        setParent ..;
+            setParent..;
+            
+        frameLayout -label "去除选择的命名空间" -borderStyle "etchedIn"
+                    -collapse 0 -collapsable 1
+                    -marginWidth 5 -marginHeight 5;
+                    
+			textFieldGrp -l "Namespace" -tx "" 
+										-cw 1 80 -cw 2 150
+										-cat 1 "left" 20 -cat 2 "both" 5
+												CL_RNStextFieldGrp;
+				rowLayout -nc 2 -cw 1 130 -cw 2 130 
+												-cat 1 "both" 10 -cat 2 "both" 10
+												-cal 1 "center" -cal 2 "center";
+					button -l "Remove" -c "CL_removeNameSpace (`textFieldGrp -q -tx CL_RNStextFieldGrp`)";
+					button -l "Cancel" -c "deleteUI removeNameSpaceWindow";
+		       setParent ..;
+           setParent..;   		       
+       setParent..;   
+*/
+
+
+global proc get_currNameSpace()
+{     
+  string $sles[]=`ls -sl`;
+  string $buffer[];
+  string $n="";
+  $numTokens = `tokenize $sles[0]  ":" $buffer`;
+  for($i=0;$i<$numTokens-1;$i++)
+  {
+   $n+=$buffer[$i]+":";
+  }
+  if($numTokens>1)
+  {
+   textFieldGrp -e -tx $n nameSpaceNameFld;
+  }
+  else
+  {
+   textFieldGrp -e -tx "物体没命名空间" nameSpaceNameFld;
+  }
+}
+
+
+global proc  RemoveNameSpace()
+{
+  int $currentSelRadioButton = `radioButtonGrp -q -select removeNameSpaceStyle`;
+
+
+  if ($currentSelRadioButton == 1)
+  {
+    string $buffer[];
+    string $listAll[] = `ls`;
+    int $i;
+    for($i=0;$i<size($listAll);$i++)
+    {
+     int $nameSpaceNum = `tokenize $listAll[$i] ":" $buffer`;
+     if($nameSpaceNum != 1 )
+    {
+     catch (`rename $listAll[$i] $buffer[$nameSpaceNum-1]`);    
+    }  
+   }
+
+   /*    
+    string $nameSpaceaName[] = `namespaceInfo -lon`;
+    int $r;
+    for($r=0;$r<size($nameSpaceaName);$r++)
+    {
+      catch (`namespace -f -mv $nameSpaceaName[$r] ":"`);
+      catch (`namespace -f -rm $nameSpaceaName[$r]`);     
+     }
+   */ 
+   print "Thers is no namespce in this file!"; 
+   confirmDialog -title "空间命名去除确认" -message ("已经去除了文件中所有的空间命名") -button "确认";             
+ }
+  
+  if($currentSelRadioButton == 2)
+  {
+      
+
+    string $getTextField = `textFieldGrp -q -tx nameSpaceNameFld`;
+	namespace -f -mv $getTextField ":";
+	namespace -f -rm $getTextField;  
+  }
+    
+}
+
+
+
+

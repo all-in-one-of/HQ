@@ -1,0 +1,4 @@
+C:\Program Files\Autodesk\Maya2012\Python\lib\site-packages
+
+from pw_mGeo import mGeoWriter
+mGeoWriter.show()

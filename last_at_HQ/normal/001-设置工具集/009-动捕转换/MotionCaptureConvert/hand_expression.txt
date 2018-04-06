@@ -1,0 +1,63 @@
+LeftThumb_finger_control.rotateZ = -LeftHandThumb1.rotateZ;
+LeftThumb_finger_control.MiddleJoint = -LeftHandThumb2.rotateZ;
+LeftThumb_finger_control.LastJoint = -LeftHandThumb3.rotateZ;
+LeftThumb_finger_control.rotateX = -LeftHandThumb1.rotateX;
+LeftThumb_finger_control.rotateY = -LeftHandThumb1.rotateY;
+
+
+LeftFinger1_finger_control.rotateZ = LeftHandIndex1.rotateZ;
+LeftFinger1_finger_control.MiddleJoint = LeftHandIndex2.rotateZ;
+LeftFinger1_finger_control.LastJoint = LeftHandIndex3.rotateZ;
+LeftFinger1_finger_control.rotateY = LeftHandIndex1.rotateY;
+LeftFinger1_finger_control.rotateX = LeftHandIndex1.rotateX;
+
+
+LeftFinger2_finger_control.rotateZ = LeftHandMiddle1.rotateZ;
+LeftFinger2_finger_control.MiddleJoint = LeftHandMiddle2.rotateZ;
+LeftFinger2_finger_control.LastJoint = LeftHandMiddle3.rotateZ;
+LeftFinger2_finger_control.rotateX = LeftHandMiddle1.rotateX;
+LeftFinger2_finger_control.rotateY = LeftHandMiddle1.rotateY;
+
+LeftFinger3_finger_control.rotateZ = LeftHandRing1.rotateZ;
+LeftFinger3_finger_control.MiddleJoint = LeftHandRing2.rotateZ;
+LeftFinger3_finger_control.LastJoint = LeftHandRing3.rotateZ;
+LeftFinger3_finger_control.rotateX = LeftHandRing1.rotateX;
+LeftFinger3_finger_control.rotateY = LeftHandRing1.rotateY;
+
+LeftFinger4_finger_control.rotateZ = LeftHandPinky1.rotateZ;
+LeftFinger4_finger_control.MiddleJoint = LeftHandPinky2.rotateZ;
+LeftFinger4_finger_control.LastJoint = LeftHandPinky3.rotateZ;
+LeftFinger4_finger_control.rotateX = LeftHandPinky1.rotateX;
+LeftFinger4_finger_control.rotateY = LeftHandPinky1.rotateY;
+
+RightThumb_finger_control.rotateZ = -RightHandThumb1.rotateZ;
+RightThumb_finger_control.MiddleJoint = -RightHandThumb2.rotateZ;
+RightThumb_finger_control.LastJoint = -RightHandThumb3.rotateZ;
+RightThumb_finger_control.rotateX = RightHandThumb1.rotateX;
+RightThumb_finger_control.rotateY = RightHandThumb1.rotateY;
+
+
+RightFinger1_finger_control.rotateZ = RightHandIndex1.rotateZ;
+RightFinger1_finger_control.MiddleJoint = RightHandIndex2.rotateZ;
+RightFinger1_finger_control.LastJoint = RightHandIndex3.rotateZ;
+RightFinger1_finger_control.rotateY = -RightHandIndex1.rotateY;
+RightFinger1_finger_control.rotateX = -RightHandIndex1.rotateX;
+
+
+RightFinger2_finger_control.rotateZ = RightHandMiddle1.rotateZ;
+RightFinger2_finger_control.MiddleJoint = RightHandMiddle2.rotateZ;
+RightFinger2_finger_control.LastJoint = RightHandMiddle3.rotateZ;
+RightFinger2_finger_control.rotateX = -RightHandMiddle1.rotateX;
+RightFinger2_finger_control.rotateY = -RightHandMiddle1.rotateY;
+
+RightFinger3_finger_control.rotateZ = RightHandRing1.rotateZ;
+RightFinger3_finger_control.MiddleJoint = RightHandRing2.rotateZ;
+RightFinger3_finger_control.LastJoint = RightHandRing3.rotateZ;
+RightFinger3_finger_control.rotateX = -RightHandRing1.rotateX;
+RightFinger3_finger_control.rotateY = -RightHandRing1.rotateY;
+
+RightFinger4_finger_control.rotateZ = RightHandPinky1.rotateZ;
+RightFinger4_finger_control.MiddleJoint = RightHandPinky2.rotateZ;
+RightFinger4_finger_control.LastJoint = RightHandPinky3.rotateZ;
+RightFinger4_finger_control.rotateX = -RightHandPinky1.rotateX;
+RightFinger4_finger_control.rotateY = -RightHandPinky1.rotateY;

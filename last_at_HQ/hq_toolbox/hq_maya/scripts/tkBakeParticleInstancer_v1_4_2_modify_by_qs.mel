@@ -1,0 +1,553 @@
+/*
+bake particleInstancer v1.4
+
+Author:
+thomas kutschera, june 2010
+seed.digital.vision
+t.kutschera@seed.de.com
+
+Edited by:
+Danilo Pinheiro, july 2010
+nilouco.blogspot.com
+nilouco@gmail.com
+(included time range)
+
+description:
+- bakes particle Instancer  
+- bakes rgbPP, opacityPP and incandescencePP in one shader using tripleSwitch and assigns it to the baked objects
+- considers multiple Objects
+usage:
+- copy the script to your shelf, make it a button and execute it
+*/
+
+global int $startFrame;
+global int $endFrame;
+
+proc tkCheckSelection()
+{	
+	$mySel = `ls -sl`;
+	$tmp = `ls -dag -g $mySel[0]`;
+	string $part = $tmp[0];
+
+	if (`objectType -isType "particle" $part` || `objectType -isType "nParticle" $part`)
+		tkSelParticles();
+	else
+		textField -e -text "select a particle!" uiMessage;
+}
+
+
+proc string getParShape(){
+    string $sel[] = `ls -sl`;
+    string $children[];
+    for ($obj in $sel){
+        $children = `listRelatives -type "nParticle"  $obj`;
+        if (size($children))
+            break;
+        $children = `listRelatives -type "particle" $obj`;
+        if (size($children))
+            break;
+    }
+    if (size($children))
+        return $children[0];
+    else 
+        return "No have particle";
+}
+//print (getParShape());
+
+
+
+proc string[] getParAttrList(){
+python("\
+import maya.cmds as cmds\n\
+import maya.mel as mel\n\
+attrList = cmds.listAttr(mel.eval(\"getParShape()\"), a=True)\n\
+for attr in cmds.listAttr(mel.eval(\"getParShape()\"), a=True):\n\
+    if attr[-1] == '0':\n\
+        attrList.remove(attr)");
+        
+return `python("attrList")`;
+}
+
+
+
+
+proc tkSelParticles()
+{
+	undoInfo -state off;
+
+	global int $startFrame;
+	global int $endFrame;
+	global string $SG;
+	global string $switchRgb;
+	global string $switchInc;
+	global string $switchOpac;
+	global string $dup[];
+	global int $frame;
+	global int $i;
+	global string $partShape;
+
+	string $loc[];
+	string $grp[];
+	string $grpLoc[];	
+	float $indexPP[];
+	int $rgbMode;
+	int $incMode;
+	int $opacMode;
+	int $texMode = `checkBox -q -v uiTextures`;
+	int $stateRotate = `checkBox -q -v uiBakeRotate`;
+	int $stateScale = `checkBox -q -v uiBakeScale`;
+	
+	
+	int $stateOAS = `checkBox -q -v "uiOtherAttrSwitch"`;
+	   
+	string $forOtherAttrGet = "";
+	string $forOtherAttrAdd = "";
+	string $forOtherAttrSet = "";
+		
+	if ($stateOAS == 1){
+        string $otherAttrList[] = `textScrollList -q -si "uiAttrList"`;
+	    for ($attr in $otherAttrList){
+            string $attrType = `getAttr -type ($partShape + "." + $attr)`;
+	        if ($attrType == "doubleArray"){
+	            $forOtherAttrGet +=  "float $"  +  $attr  +  "Value[] = `getParticleAttr -at \"" + $attr + "\" ($partShape + \".pt[\" + $i + \"]\")`;\n" ;
+	            $forOtherAttrAdd +=  "addAttr -ln \""   +  $attr  +  "\" -at double -k 1 $dup[0];\n" ;
+	            $forOtherAttrSet +=  "setKeyframe -at \""  +  $attr  +  "\" -v $"  +  $attr  +  "Value[0] -time $frame ($dup[0]);\n"  ;   
+	            }	            	        
+	        else{
+	            $forOtherAttrGet +=  "float $"  +  $attr  +  "Value[] = `getParticleAttr -at \"" + $attr + "\" ($partShape + \".pt[\" + $i + \"]\")`;\n" ;
+		
+	            $forOtherAttrAdd +=  "addAttr -ln \"" + $attr  +  "\" -at double3 $dup[0];\n" ;
+	            $forOtherAttrAdd +=  "addAttr -ln \"" + $attr + "_x\" -at double -p " + $attr + " -k 1 $dup[0];\n" ;
+	            $forOtherAttrAdd +=  "addAttr -ln \"" + $attr + "_y\" -at double -p " + $attr + " -k 1 $dup[0];\n" ;
+	            $forOtherAttrAdd +=  "addAttr -ln \"" + $attr + "_z\" -at double -p " + $attr + " -k 1 $dup[0];\n" ;
+	            //addAttr -ln "cus_z"  -at double -p cus  |nParticle2;
+	    
+	            $forOtherAttrSet +=  "setKeyframe -at \""  +  $attr  +  "_x\" -v $"  +  $attr  +  "Value[0] -time $frame ($dup[0]);\n"  ; 
+	            $forOtherAttrSet +=  "setKeyframe -at \""  +  $attr  +  "_y\" -v $"  +  $attr  +  "Value[0] -time $frame ($dup[0]);\n"  ;
+	            $forOtherAttrSet +=  "setKeyframe -at \""  +  $attr  +  "_z\" -v $"  +  $attr  +  "Value[0] -time $frame ($dup[0]);\n"  ;	            
+	            
+	            //setKeyframe -at "cus_x" -v 2 -t 761 "nParticle2";
+	            } 
+	            
+	    }
+	}
+
+	
+		
+	$mySel = `ls -sl`;	// select particle
+	$tmp = `ls -dag -g $mySel[0]`;
+	string $part = $tmp[0];
+	textField -e -text $part uiMessage;
+
+
+	$tmp = `listRelatives -s $mySel[0]`;
+	string $partShape = $tmp[0];
+
+	$tmp = `particleInstancer -q -name $part`;
+	string $inst = $tmp[0];
+	    
+    //��������instanceObjects
+	$objs = `particleInstancer -n $inst -q -obj $part`;
+	
+	// (<edited) included option to time range:
+	// int $startFrame, $endFrame;
+	int $range = `checkBox -q -v rangeCheckBox`;
+	if ($range == 0) 
+		{
+		$startFrame	= `playbackOptions -q -min`;
+		$endFrame	= `playbackOptions -q -max`;
+		print "\nstate off";
+		} 
+	else 
+		{
+		$startFrame = `intField -q -v startField`;
+		$endFrame = `intField -q -v endField`;
+		}
+		//(edited/>)
+	print ("\nstartFrame: " + $startFrame);
+	print ("\nendFrame: " + $endFrame);
+
+	if (`objExists "grp_dup"` == false)
+		$grp[0] = `group -em -n "grp_dup"`; 
+	else
+		$grp[0] = "grp_dup";
+
+	if (`objExists "grp_loc"` == false)
+		$grpLoc[0] = `group -em -n "grp_loc"`; 
+	else
+		$grpLoc[0] = "grp_loc";
+
+	if (`attributeExists "rgbPP" $partShape`)
+		$rgbMode = 1;
+	else 
+		$rgbMode = 0;
+	
+	if (`attributeExists "opacityPP" $partShape`)
+		$opacMode = 1;
+	else 
+		$opacMode = 0;
+
+	if (`attributeExists "incandescencePP" $partShape`)
+		$incMode = 1;
+	else 
+		$incMode = 0;
+
+
+
+
+    //start bake
+	for ($f=$startFrame; $f<$endFrame+2; $f++)
+	{
+		print ("\nframe: " + $f);
+		currentTime -u 1 $f;
+		
+		int $count	= `getAttr ($partShape + ".count")`;
+		$frame	= `currentTime -q`;
+
+		for ($i=0; $i<$count; $i++)
+		{
+			$pos	= `getParticleAttr -at "position" ($partShape + ".pt[" + $i + "]")`;
+			$id	= `getParticleAttr -at "particleId" ($partShape + ".pt[" + $i + "]")`;
+			
+			
+			if($stateOAS == 1){
+			    eval($forOtherAttrGet);
+			}
+						
+            
+            //�ж�instance�����ѡ����û��ָ��������л�����ֵ��ָ���ı��������û�и�һ��Ĭ�ϵ�ֵ
+			string $objIndex = `particleInstancer -n $inst -q -objectIndex $partShape`;
+			if ($objIndex != "")
+				$indexPP = `getParticleAttr -at $objIndex ($partShape + ".pt[" + $i + "]")`;
+			else
+				$indexPP[0] = 0.0;
+
+			string $rot	= `particleInstancer -n $inst -q -rotation $partShape`;
+			if ($rot != "")
+				$rotPP = `getParticleAttr -at $rot ($partShape + ".pt[" + $i + "]")`;
+
+			string $aimDir	= `particleInstancer -n $inst -q -aimDirection $partShape`;
+			if ($aimDir != "")
+				$aimPP = `getParticleAttr -at $aimDir ($partShape + ".pt[" + $i + "]")`;
+			else
+				$aimAxisPP = {1.0, 0.0, 0.0};
+	
+			string $aimAxis	= `particleInstancer -n $inst -q -aimAxis $partShape`;
+			if ($aimAxis != "")
+				$aimAxisPP = `getParticleAttr -at $aimAxis ($partShape + ".pt[" + $i + "]")`;
+			else
+				$aimAxisPP = {1.0, 0.0, 0.0};
+
+			string $aimUpAxis = `particleInstancer -n $inst -q -aimUpAxis $partShape`;
+			if ($aimUpAxis != "")
+				$aimUpAxisPP = `getParticleAttr -at $aimUpAxis ($partShape + ".pt[" + $i + "]")`;
+			else
+				$aimUpAxisPP = {0.0, 1.0, 0.0};
+ 		
+			string $aimWorldUp = `particleInstancer -n $inst -q -aimWorldUp $partShape`;
+			if ($aimWorldUp != "")
+				$aimWorldUpPP = `getParticleAttr -at $aimWorldUp ($partShape + ".pt[" + $i + "]")`;
+			else
+				$aimWorldUpPP = {0.0, 1.0, 0.0};
+ 
+			string $scaleInst = `particleInstancer -n $inst -q -scale $partShape`;
+			if ($scaleInst != "")
+				$scalePP = `getParticleAttr -at $scaleInst ($partShape + ".pt[" + $i + "]")`;
+
+			if ($rgbMode == 1)
+				$rgbPP	= `getParticleAttr -at "rgbPP" ($partShape + ".pt[" + $i + "]")`;
+			if ($incMode == 1)
+				$incPP	= `getParticleAttr -at "incandescencePP" ($partShape + ".pt[" + $i + "]")`;
+			if ($opacMode == 1)
+				$opacPP	= `getParticleAttr -at "opacityPP" ($partShape + ".pt[" + $i + "]")`;
+
+
+			if (`objExists ("dup_" + $id[0])` == false)		
+			{
+				$dup = `duplicate -un -renameChildren -instanceLeaf -n ("dup_" + $id[0]) $objs[int($indexPP[0])]`;
+				
+			
+				if($stateOAS == 1){
+				   eval($forOtherAttrAdd);
+				}
+				
+				
+				
+				parent $dup[0] $grp;
+				int $rangeFrame = $endFrame - $startFrame;
+				if ($rangeFrame != 0)
+					setKeyframe -at "visibility" -v 0 -time $frame $dup[0];
+
+				if ($rgbMode == 1 && $texMode != 0)
+				{				
+					addAttr -ln "col_R" -at "float" -dv $rgbPP[0] $dup[0];		
+					addAttr -ln "col_G" -at "float" -dv $rgbPP[1] $dup[0];		
+					addAttr -ln "col_B" -at "float" -dv $rgbPP[2] $dup[0];
+					setAttr -e -k 1 ($dup[0] + ".col_R");
+					setAttr -e -k 1 ($dup[0] + ".col_G");
+					setAttr -e -k 1 ($dup[0] + ".col_B");
+				}
+				if ($incMode == 1 && $texMode != 0)
+				{				
+					addAttr -ln "inc_R" -at "float" -dv $incPP[0] $dup[0];		
+					addAttr -ln "inc_G" -at "float" -dv $incPP[1] $dup[0];		
+					addAttr -ln "inc_B" -at "float" -dv $incPP[2] $dup[0];
+					setAttr -e -k 1 ($dup[0] + ".inc_R");
+					setAttr -e -k 1 ($dup[0] + ".inc_G");
+					setAttr -e -k 1 ($dup[0] + ".inc_B");
+				}
+				if ($opacMode == 1 && $texMode != 0)
+				{				
+					addAttr -ln "opac_PP" -at "float" -dv $opacPP[0] $dup[0];		
+					setAttr -e -k 1 ($dup[0] + ".opac_PP");
+				}
+
+				addAttr -ln "id" -at "float" -dv ($id[0]) $dup[0];
+				setAttr -e -k 1 ($dup[0] + ".id");
+				
+			}
+
+			
+			else 
+			{
+				$dup[0] = ("dup_" + $id[0]);
+				int $rangeFrame = $endFrame - $startFrame;
+				if ($rangeFrame != 0)
+					setKeyframe -at "visibility" -v 1 -time $frame $dup[0];
+
+				if ($rgbMode == 1 && $texMode != 0)
+				{				
+					setKeyframe -at "col_R" -v $rgbPP[0] -time $frame $dup[0];
+					setKeyframe -at "col_G" -v $rgbPP[1] -time $frame $dup[0];
+					setKeyframe -at "col_B" -v $rgbPP[2] -time $frame $dup[0];
+				}
+				if ($incMode == 1 && $texMode != 0)
+				{				
+					setKeyframe -at "inc_R" -v $incPP[0] -time $frame $dup[0];
+					setKeyframe -at "inc_G" -v $incPP[1] -time $frame $dup[0];
+					setKeyframe -at "inc_B" -v $incPP[2] -time $frame $dup[0];
+				}
+				if ($opacMode == 1 && $texMode != 0)
+				{				
+					setKeyframe -at "opac_PP" -v $opacPP[0] -time $frame $dup[0];
+				}
+			}
+			
+			setKeyframe -at "translateX" -v $pos[0] -time $frame $dup[0];
+			setKeyframe -at "translateY" -v $pos[1] -time $frame $dup[0];
+			setKeyframe -at "translateZ" -v $pos[2] -time $frame $dup[0];
+			
+			if($stateOAS == 1){
+			   eval($forOtherAttrSet);
+			}
+			
+			if ($aimDir != "" && $stateRotate == 1)
+			{
+				$loc = `spaceLocator -p 0 0 0 -n ("loc_frame_" + ($f) + "_id_" + $id[0])`;
+				setAttr ($loc[0] + ".tx") (($pos[0]) + ($aimPP[0]));
+				setAttr ($loc[0] + ".ty") (($pos[1]) + ($aimPP[1]));
+				setAttr ($loc[0] + ".tz") (($pos[2]) + ($aimPP[2]));
+				setAttr ($loc[0] + ".sx") .2;
+				setAttr ($loc[0] + ".sy") .2;
+				setAttr ($loc[0] + ".sz") .2;
+				$constraint = `aimConstraint -offset 0 0 0 -weight 1 -aimVector $aimAxisPP[0] $aimAxisPP[1] $aimAxisPP[2] -upVector $aimUpAxisPP[0] $aimUpAxisPP[1] $aimUpAxisPP[2] -worldUpType "vector" -worldUpVector $aimWorldUpPP[0] $aimWorldUpPP[1] $aimWorldUpPP[2] ("loc_frame_" + ($f) + "_id_" + $id[0]) ("dup_" + $id[0])`;
+				$tmpRot = `getAttr ("dup_" + $id[0] + ".rotate")`;
+
+				setKeyframe -at "rotateX" -v $tmpRot[0] -time $frame $dup[0];
+				setKeyframe -at "rotateY" -v $tmpRot[1] -time $frame $dup[0];
+				setKeyframe -at "rotateZ" -v $tmpRot[2] -time $frame $dup[0];
+
+				if (`objExists ("loc_frame_" + ($f-2) + "_id_" + $id[0])`)
+					delete ("loc_frame_" + ($f-2) + "_id_" + $id[0]);
+
+				delete $constraint;
+
+				if (`objExists $loc[0]`)
+					parent $loc[0] $grpLoc;
+				clear $loc;
+			}
+
+			else if ($rot != "" && $stateRotate == 1)
+			{
+				setKeyframe -at "rotateX" -v $rotPP[0] -time $frame $dup[0];
+				setKeyframe -at "rotateY" -v $rotPP[1] -time $frame $dup[0];
+				setKeyframe -at "rotateZ" -v $rotPP[2] -time $frame $dup[0];
+			}
+
+			else if ($rot == "" && $aimDir == "" && $stateRotate == 1)
+			{
+				$tmpRot = `getAttr ($objs[int($indexPP[0])] + ".rotate")`;
+				setKeyframe -at "rotateX" -v $tmpRot[0] -time $frame $dup[0];
+				setKeyframe -at "rotateY" -v $tmpRot[1] -time $frame $dup[0];
+				setKeyframe -at "rotateZ" -v $tmpRot[2] -time $frame $dup[0];
+			}
+			
+			if ($scaleInst != "" && $stateScale == 1)
+			{
+				setKeyframe -at "scaleX" -v $scalePP[0] -time $frame $dup[0];
+				setKeyframe -at "scaleY" -v $scalePP[0] -time $frame $dup[0];
+				setKeyframe -at "scaleZ" -v $scalePP[0] -time $frame $dup[0];
+			}
+
+			else if ($scaleInst == "" && $stateScale == 1)
+			{
+				$tmpScale = `getAttr ($objs[int($indexPP[0])] + ".scale")`;
+				setKeyframe -at "scaleX" -v $tmpScale[0] -time $frame $dup[0];
+				setKeyframe -at "scaleY" -v $tmpScale[1] -time $frame $dup[0];
+				setKeyframe -at "scaleZ" -v $tmpScale[2] -time $frame $dup[0];
+			}
+
+
+			clear $id;
+		}
+	}
+
+	delete $grpLoc;
+
+	select -r -hi $grp[0];
+	select -d $grp[0];
+	$dupSel = `ls -sl`;
+
+	if ($rgbMode + $incMode + $opacMode != 0 && $texMode != 0)	// build shader
+	{
+		$lambert	= `shadingNode -asShader lambert`;
+		$SG		= `sets -renderable true -noSurfaceShader true -empty`;
+		connectAttr -f ($lambert + ".outColor") ($SG + ".surfaceShader");
+		if ($rgbMode == 1)	// add rgbPP and build shader
+		{
+			$switchRgb	= `shadingNode -asUtility tripleShadingSwitch`;
+			connectAttr -f ($switchRgb + ".output") ($lambert + ".color");
+		}
+		if ($incMode == 1)	// add incandescencePP and build shader
+		{
+			$switchInc	= `shadingNode -asUtility tripleShadingSwitch`;
+			connectAttr -f ($switchInc + ".output") ($lambert + ".incandescence");
+		}
+		if ($opacMode == 1)	// add opacityPP and build shader
+		{
+			$switchOpac	= `shadingNode -asUtility tripleShadingSwitch`;
+			$revOpac	= `shadingNode -asUtility reverse`;
+			connectAttr -f ($switchOpac + ".output") ($revOpac + ".input");
+			connectAttr -f ($revOpac + ".output") ($lambert + ".transparency");
+		}
+	}		
+
+	for ($obj in $dupSel)
+	{
+		if (`objectType -isType "transform" $obj`)
+		{
+			int $rangeFrame = $endFrame - $startFrame;
+			if ($rangeFrame != 0)
+			{
+				int $keyCount = `keyframe -q -keyframeCount ($obj + ".visibility")`;
+				keyframe -e -index ($keyCount -1) -valueChange 0 ($obj + ".visibility");
+			}
+
+			if ($rgbMode == 1 && $texMode != 0)
+			{			
+				int $myId = `getAttr ($obj + ".id")`;
+				select -r $obj;
+				sets -e -forceElement $SG;
+
+				$tmp = `listRelatives -s $obj`;
+				string $objShape = $tmp[0];
+
+				connectAttr -f ($objShape + ".instObjGroups[0]") ($switchRgb + ".input[" + $myId + "].inShape");
+				$bc = `shadingNode -asUtility blendColors`;
+				setAttr ($bc + ".blender") 1;
+				connectAttr -f ($obj + ".col_R") ($bc + ".color1R");
+				connectAttr -f ($obj + ".col_G") ($bc + ".color1G");
+				connectAttr -f ($obj + ".col_B") ($bc + ".color1B");
+				connectAttr -f ($bc + ".output") ($switchRgb + ".input[" + $myId + "].inTriple");
+			}
+			
+			if ($incMode == 1 && $texMode != 0)
+			{			
+				int $myId = `getAttr ($obj + ".id")`;
+				select -r $obj;
+				sets -e -forceElement $SG;
+
+				$tmp = `listRelatives -s $obj`;
+				string $objShape = $tmp[0];
+
+				connectAttr -f ($objShape + ".instObjGroups[0]") ($switchInc + ".input[" + $myId + "].inShape");
+				$bc = `shadingNode -asUtility blendColors`;
+				setAttr ($bc + ".blender") 1;
+				connectAttr -f ($obj + ".col_R") ($bc + ".color1R");
+				connectAttr -f ($obj + ".col_G") ($bc + ".color1G");
+				connectAttr -f ($obj + ".col_B") ($bc + ".color1B");
+				connectAttr -f ($bc + ".output") ($switchInc + ".input[" + $myId + "].inTriple");
+			}
+			
+			if ($opacMode == 1 && $texMode != 0)
+			{			
+				int $myId = `getAttr ($obj + ".id")`;
+				select -r $obj;
+				sets -e -forceElement $SG;
+
+				$tmp = `listRelatives -s $obj`;
+				string $objShape = $tmp[0];
+
+				connectAttr -f ($objShape + ".instObjGroups[0]") ($switchOpac + ".input[" + $myId + "].inShape");
+				$bc = `shadingNode -asUtility blendColors`;
+				setAttr ($bc + ".blender") 1;
+				connectAttr -f ($obj + ".opac_PP") ($bc + ".color1R");
+				connectAttr -f ($obj + ".opac_PP") ($bc + ".color1G");
+				connectAttr -f ($obj + ".opac_PP") ($bc + ".color1B");
+				connectAttr -f ($bc + ".output") ($switchOpac + ".input[" + $myId + "].inTriple");
+			}		
+		}
+	}
+	undoInfo -state on;
+}
+
+if( `window -exists bake_particles` )
+	deleteUI bake_particles;
+
+$window = `window -title "win bake particles instancer" -s 0 bake_particles`;
+columnLayout -adj 1;
+button -l "select particle and bake" -c tkCheckSelection -bgc .8 1 .8 uiSelParticles;
+checkBox -l "including rgbPP / opacityPP / incandescencePP" -align "left" uiTextures;
+checkBox -l "bake Rotation" -align "left"  -v 1 uiBakeRotate;
+checkBox -l "bake Scale" -align "left" -v 1 uiBakeScale;
+// (<edited)
+separator;
+rowColumnLayout -nc 2;
+checkBox -onc "intField -e -en 1 startField; intField -e -en 1 endField;" -ofc "intField -e -en 0 startField; intField -e -en 0 endField;" -v 0 -label "Timeline Range:" rangeCheckBox; 
+text -label "";
+text -label "Start:"; 
+text -label "End:";
+intField -en 0 -v 0 startField; 
+intField -en 0 -v 1 endField;
+setParent..; //(edited/>)
+textField -en 0 -text "     select a particleObject" uiMessage;
+
+//my modify
+checkBox -onc "textScrollList -e -en 1 -removeAll uiAttrList;\
+                if (getParShape() != \"No have particle\"){\
+                    string $attrList[] = getParAttrList();\
+                    for ($attr in $attrList) {\
+                        textScrollList -e -append $attr uiAttrList;\
+                    }\
+                }"
+        -ofc "textScrollList -e -en 0 uiAttrList" -v 0 -label "create New Attributes:"  uiOtherAttrSwitch; 
+
+
+
+paneLayout;
+textScrollList -numberOfRows 8 -allowMultiSelection true -en 0 -h 600
+    -showIndexedItem 4 "uiAttrList";
+
+
+if (getParShape() != "No have particle"){
+    //string $attrList[] = `listAttr -a -ud (getParShape())`;
+    
+    string $attrList[] = getParAttrList();
+        for ($attr in $attrList){
+            textScrollList -e -append $attr "uiAttrList";
+    }
+}
+
+
+window -e -wh 322 500 $window;
+showWindow $window;

@@ -1,0 +1,14 @@
+global proc float getCurrentTime()
+{
+	float $frame = `currentTime -query`;
+	return $frame;
+}
+
+headsUpDisplay -section          7
+               -block            1
+               -blockSize        "small"
+               -label            "frame:"
+               -labelFontSize    "small"
+               -command          "getCurrentTime()"
+               -atr
+			   HUDCurrentTime;

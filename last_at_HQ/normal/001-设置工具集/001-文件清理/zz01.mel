@@ -1,0 +1,3416 @@
+//fix 2010_09_27  收集贴图按文件包拷贝
+//fix  2010_05_29  相机预览尺寸维持比例选项.(line~1829~)
+//fix_add  2010_05_25 相机面版内增加,去掉命名空间功能.  
+//fix 2010_05_15更新UV和材质传递(增加一传多功能)(line ~1230~)
+//fix 2010_03_26 更新设置目录,自动播放首个avi.
+//fix 2010_03_10 更新参考相机不能输出保存.  
+
+global proc zz01()
+{
+
+if(`window -exists scenescleanUI`)
+	{
+     deleteUI -window scenescleanUI;   
+    }
+
+window -menuBar 0 -title "组装工具集 v2015"
+	-width 330 -height 300 
+	-mxb off
+	-vis off
+	scenescleanUI;
+
+columnLayout  -adjustableColumn 01
+	-rowSpacing 10 -columnWidth 250 mainCol;
+  	
+
+button -label "优化场景"  -h 30 -bgc 0.482 0.482 0.2
+	-c OptimizeScene;
+
+button -label "删除多余灯光链接 (新)"  -h 30 -bgc 0.591 0.725 1
+	-c "fh_cleanUpLightlinkers(0)";
+
+
+	
+button -label "贴图检查面板" -h 30 -bgc 0.987 0.685 0.29
+	-c "FTM_BuildMainUI ()";
+
+button -label "传递材质和UV" -h 30 -bgc 0.091 0.725 0.5
+	-c "TransferShader()";
+
+button -label "渲染检查面板(ch1)" -h 30 -bgc 0.282 0.482 0.8
+	-c "ch1()";
+
+button -label "相机预览 " -h 30 -bgc 0.885 0.482 0.7
+	-c "ZZPlaybast ()";
+
+showWindow scenescleanUI ;
+
+}
+
+/////////////////----clight()-----//////////////////////
+//~ 脚本名字: fh_cleanUpLightlinkers_cn.mel
+//~ 此脚本用于清理场景中的无用灯光链接。
+//~ 用法: 
+    //~ 1、把脚本拖拽 到 maya 界面。
+    //~ 2、把脚本复制到 maya 的脚本编辑器，然后运行。
+    //~ 3、把脚本复制到 maya 的脚本目录，改名为 fh_cleanUpLightlinkers.mel，
+        //~ 然后在 maya 的脚本编辑器中，运行 "fh_cleanUpLightlinkers(0)"。
+    //~ 4、可以使用 "fh_cleanUpLightlinkers(1)" 运行调试模式，调试模式时，
+        //~ 会把即将进行处理的链接写入项目文件夹中名为 "linkers_in_<scene>.txt" 的文件，
+        //~ 其中 <scene> 是带扩展名的场景文件名。
+//~ 兼容性：maya 7.0, maya 2008 (ext2), maya 2009
+
+//~ 建议：由于脚本刚刚经过修改，使用脚本后应另存一个文件，在确认新文件
+//~ 渲染效果和老文件没有区别的情况下再删除老文件。如果遇到使用脚本后效果
+//~ 发生变化，请联系技术部黄喜锋，以对脚本进行进一步完善。谢谢。
+
+//~ 脚本最后由黄喜锋修改于 2010.2.23
+
+global proc fh_cleanUpLightlinkers(int $debug) {
+    int $uselessLinkCount;
+    int $dlsLinkers, $dosLinkers, $isgLinkers, $ipseLinkers, $drgLinkers, $dhrgLinkers;
+    string $ws = `workspace -q -fn`;
+    string $fn = `file -sn -q -shn`;
+    string $file = $ws + "/linkers_in_" + $fn + ".txt";
+    int $fileId;
+    $startTime = `timerX`;
+    waitCursor -st on;
+    string $linkers_dls[] = `listConnections -plugs true -source no defaultLightSet.message`;
+    string $linkers_dos[] = `listConnections -plugs true -source no defaultObjectSet.message`;
+    string $linkers_isg[] = `listConnections -plugs true -source no initialShadingGroup.message`;
+    string $linkers_ipse[] = `listConnections -plugs true -source no initialParticleSE.message`;
+    string $linkers_drg[] = `listConnections -plugs true -source no defaultRenderGlobals.message`;
+    string $linkers_dhrg[] = `listConnections -plugs true -source no defaultHardwareRenderGlobals.message`;
+    int $linkersCount =
+        size($linkers_dls) +
+        size($linkers_dos) +
+        size($linkers_isg) +
+        size($linkers_ipse) +
+        size($linkers_dhrg) +
+        size($linkers_dhrg);
+    if ($debug) {
+        $fileId = `fopen $file "w"`;
+        fprint $fileId ($linkersCount + " linkers found!\r\n");
+        fprint $fileId ("Below are linkers considered useless, \r\n" +
+            "which can be disconnected by running { fh_cleanUpLightlinkers(0) }!\r\n");
+        fprint $fileId ("\r\n");
+    } else if ( $linkersCount > 5000 ) {
+        print "Maya 正在断开无用灯光链接，请稍候……\n";
+    }
+    if (size($linkers_dls) != 0) {
+        for ( $linker in $linkers_dls ) {
+            string $srcAttr;
+            string $tmp[] = stringToStringArray($linker, ".");
+            int $len = size($tmp);
+            string $linkerNode = $tmp[0]+"."+$tmp[1];
+            if ( $tmp[$len-1] == "shadowLight" ) {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".shadowObject")`;
+            } else {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".object")`;
+            }
+            if ( $srcAttr == "" ) {
+                continue;
+            } else if
+                ( $srcAttr == "initialShadingGroup.message" // connections between initialShadingGroup.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "initialParticleSE.message" // connections between initialParticleSE.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultObjectSet.message" // connections between defaultObjectSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultLightSet.message" // connections between defaultLightSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "hyperGraphLayout.message" // connections between hyperGraphLayout.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultRenderGlobals.message" // connections between defaultRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultHardwareRenderGlobals.message" // connections between defaultHardwareRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                )
+            {
+                if ($debug) {
+                    fprint $fileId ("connection defaultLightSet.msg "+$linker+";\r\n");
+                } else {
+                    disconnectAttr defaultLightSet.message $linker;
+                }
+                $dlsLinkers++;
+            }
+        }
+    }
+    clear $linkers_dls;
+    if (size($linkers_dos) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dos ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultObjectSet.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultObjectSet.message $linker;
+            }
+            $dosLinkers++;
+        }
+    }
+    clear $linkers_dos;
+    if (size($linkers_isg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_isg ) {
+            if($linker != "initialMaterialInfo.shadingGroup") {
+                if ($debug) {
+                    fprint $fileId ("connection initialShadingGroup.msg " + $linker + ";\r\n");
+                } else {
+                    disconnectAttr initialShadingGroup.message $linker;
+                }
+                $isgLinkers++;
+            }
+        }
+    }
+    clear $linkers_isg;
+    if (size($linkers_ipse) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_ipse ) {
+            if ($debug) {
+                fprint $fileId ("connection initialParticleSE.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr initialParticleSE.message $linker;
+            }
+            $ipseLinkers++;
+        }
+    }
+    clear $linkers_ipse;
+    if (size($linkers_drg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_drg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultRenderGlobals.message $linker;
+            }
+            $drgLinkers++;
+        }
+    }
+    clear $linkers_drg;
+    if (size($linkers_dhrg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dhrg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultHardwareRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultHardwareRenderGlobals.message $linker;
+            }
+            $dhrgLinkers++;
+        }
+    }
+    clear $linkers_dhrg;
+    $uselessLinkCount =
+        $dlsLinkers + $dosLinkers +
+        $isgLinkers + $ipseLinkers +
+        $dhrgLinkers + $drgLinkers;
+    if (!$debug) {
+        print ($dlsLinkers + " 个链接从 defaultLightSet 断开！\n");
+        print ($dosLinkers + " 个链接从 defaultObjectSet 断开！\n");
+        print ($isgLinkers + " 个链接从 initialShadingGroup 断开！\n");
+        print ($ipseLinkers + " 个链接从 initialParticleSE 断开！\n");
+        print ($drgLinkers + " 个链接从 defaultRenderGlobals 断开！\n");
+        print ($dhrgLinkers + " 个链接从 defaultHardwareRenderGlobals 断开！\n");
+    }
+    print ("总共清理 " + $uselessLinkCount + " 个无用灯光链接！\n" );
+    clear $linkers_dos;
+    clear $linkers_dls;
+    clear $linkers_isg;
+    clear $linkers_ipse;
+    if ($debug) {
+        fprint $fileId ("\r\n");
+        fprint $fileId ("场景中共有 " + $uselessLinkCount + " 个无用链接！\r\n");
+        fclose $fileId;
+        print ("链接信息已写入到 "+$file+"\n");
+        print ("你可以运行 { fh_cleanUpLightlinkers(0); } 把它们断开!\n");
+    }
+    waitCursor -st off;
+    $elaspedTime = `timerX -startTime $startTime`;
+    //print ("总共耗时： "+$elaspedTime+" 秒!\n");
+    string $lign[] = `ls "lightLinker1.link[*].lightIgnored"`;
+    string $oign[] = `ls "lightLinker1.link[*].objectIgnored"`;
+    string $sllk[]= `ls "lightLinker1.slnk[*].shadowLight"`;
+    string $solk[]= `ls "lightLinker1.slnk[*].shadowObject"`;
+    string $slig[]= `ls "lightLinker1.sign[*].shadowLightIgnored"`;
+    string $soig[]= `ls "lightLinker1.sign[*].shadowObjectIgnored"`;
+    int $linkersCount = size($lign)+size($oign)+size($sllk)+size($solk)+size($slig)+size($soig);
+    if ($linkersCount > 1000) {
+        warning ("找到 "+$linkersCount + " 个非照明（使某灯光不照明某物体的）灯光链接，这可能导致 maya 变慢！\n");
+    }
+}
+fh_cleanUpLightlinkers(0);
+
+
+
+
+/////////////---------dlight--------//////////////////////////
+
+
+
+
+//////////////////////fileCheck()////////////////////////////////////////////
+
+/////////////////////---TransferShaderAndUV()----////////////////////////
+
+//transfer shader and UV
+global proc TransferShader()
+{
+	global int $mat_check = 0;
+	global int $transuv_check = 1;
+	global int $transmat_check = 1;
+	global int $transuv_check1 = 1;
+	global int $transmat_check1 = 1;
+
+	global int $TransferShader_selected = 0;
+
+	int $i;
+	string $child[];
+
+	if (`window -q -exists mushconvMatWin`)
+		deleteUI mushconvMatWin;
+
+	window -title "Transfer Shader" -resizeToFitChildren true mushconvMatWin;
+
+		columnLayout -adjustableColumn true;
+			menuBarLayout;
+				menu -label "Help";
+					menuItem -label "Help on Transfer Shader..." -command "HelpCallback TransferShader";
+				setParent ..;
+    			frameLayout -label "For Scene Use" -labelAlign "top" -cll 1 -cl 1
+
+    				-borderStyle "etchedIn";
+
+				$i = 0;
+
+				string $formLayout = `formLayout`;
+ 					$child[$i++] = `textFieldGrp -columnWidth 1 100 -adjustableColumn 2 -label "Mapping File:" -editable false -text ""`;
+					$child[$i++] = `button -label "Browse" -w 80 -command ("mll_brow " + $child[0])`;
+					$child[$i++] = `checkBox -label "Transfer UVs" -value $transuv_check -changeCommand "$transuv_check = #1"`;
+					$child[$i++] = `checkBox -label "Transfer Material" -value $transmat_check -changeCommand "$transmat_check = #1"`;
+					$child[$i++] = `checkBox -label "With Full Path" -value $mat_check -changeCommand "$mat_check = #1"`;
+					$child[$i++] = `checkBox -label "For Selected Objects Only" -value $TransferShader_selected -changeCommand "$TransferShader_selected = #1"`;
+					$child[$i++] = `button -label "Apply" -command ("TransferShaderTransferUVMatApply " + $child[0])`;
+				setParent ..;
+
+				formLayout -edit
+					-attachForm		$child[0]	"top"		10
+					-attachForm		$child[0]	"left"		0
+					-attachControl		$child[0]	"right"		5	$child[1]
+
+					-attachForm		$child[1]	"top"		10
+					-attachForm		$child[1]	"right"		5
+
+					-attachControl		$child[2]	"top"		15	$child[1]
+					-attachForm		$child[2]	"left"		25
+					
+					-attachControl		$child[3]	"top"		15	$child[1]
+					-attachControl		$child[3]	"left"		30	$child[2]
+
+					-attachControl		$child[4]	"top"		20	$child[3]
+					-attachForm		$child[4]	"left"		25
+
+					-attachOppositeControl	$child[5]	"top"		0	$child[4]
+					-attachOppositeControl	$child[5]	"left"		0	$child[3]
+
+					-attachControl		$child[6]	"top"		10	$child[4]
+					-attachForm		$child[6]	"left"		5
+					-attachForm		$child[6]	"right"		5
+
+				$formLayout;
+
+				setParent ..;
+
+    			frameLayout -label "For Selected Objects Use" -labelAlign "top" -cll true
+    				-borderStyle "etchedIn";
+				$i = 0;
+
+				string $formLayout = `formLayout`;
+					$child[$i++] = `checkBox -label "传递 UVs" -v $transuv_check1 -cc "$transuv_check1 = #1"`;
+					$child[$i++] = `checkBox -label "传递 材质" -v $transmat_check1 -cc "$transmat_check1 = #1"`;
+					$child[$i++] = `button -label "应用(先选择ok的物体.)"-bgc 0.091 0.725 1 -command ("TransferUVMatSel " + $child[0] + " " + $child[1])`;
+
+				setParent ..;
+
+				formLayout -edit
+
+					-attachForm		$child[0]	"top"		15	
+					-attachForm		$child[0]	"left"		25
+					
+					-attachForm		$child[1]	"top"		15	
+					-attachControl		$child[1]	"left"		30	$child[0]
+
+					-attachControl		$child[2]	"top"		10	$child[0]
+					-attachForm		$child[2]	"left"		5
+					-attachForm		$child[2]	"right"		5
+				$formLayout;
+
+				setParent ..;
+
+			frameLayout -label "For Lighting File Use" -labelAlign "top" -cll 1 -cl 1 -borderStyle "etchedIn";
+				string $formLayout = `formLayout`;
+ 					string $textFieldGrp = `textFieldGrp -label "Material Rar File:" -editable false -columnWidth 1 100 -adjustableColumn 2`;
+					string $symbolButton = `symbolButton -image "navButtonBrowse.xpm" -command ("TransferShaderBrowse " + $textFieldGrp)`;
+					string $button = `button -label "Apply" -command ("ApplyLightingMaterial " + $textFieldGrp)`;
+					setParent ..;
+				formLayout -edit
+					-attachForm		$textFieldGrp	"left"		0
+					-attachOppositeControl	$textFieldGrp	"bottom"	0	$button
+					-attachControl		$textFieldGrp	"right"		0	$symbolButton
+
+					-attachOppositeControl	$symbolButton	"bottom"	0	$button
+					-attachControl		$symbolButton	"right"		30	$button
+
+					-attachForm		$button		"top"		10
+					-attachForm		$button		"right"		5
+				$formLayout;
+				setParent ..;
+
+	showWindow mushconvMatWin;
+}
+
+// 
+//
+global proc TransferShaderBrowse(string $textFieldGrp)
+{
+	string $file = `fileDialog -directoryMask "*.rar"`;
+	if (`filetest -f $file`)
+	{
+		if (`gmatch $file "*.rar"`)
+			textFieldGrp -edit -fileName $file $textFieldGrp;
+		else
+			warning "Not a rar file.";
+	}
+}
+
+
+global proc ApplyLightingMaterial(string $textFieldGrp)
+{
+	string $selected[] = `ls -long -sl`;
+
+	string $file = `textFieldGrp -query -fileName $textFieldGrp`;
+	if (`filetest -f $file`)
+	{
+		string $buf[];
+		tokenize $file "/" $buf;
+		string $filename = `substring $buf[size($buf)-1] 1 (size($buf[size($buf)-1])-3)` + "mb";
+	//	string $filename = `dirname $file`;
+	//	$filename = `substring $file (size($filename)+2) (size($file)-3)` + "mb";
+		string $folder = `internalVar -userAppDir` + "projects/default/scenes";
+
+		string $cmd = "\\\\File-cluster\\GDC\\Resource\\Support\\bin\\WinRar\\Rar.exe x -o+ \"" + `substituteAllString $file "/" "\\"` + "\" \"" + `substituteAllString $folder "/" "\\"` + "\"";
+		waitCursor -state on;
+		system $cmd;
+		catch(`TransferUVMat ($folder + "/" + $filename) false true false false $selected`);
+		waitCursor -state off;
+
+		sysFile -delete ($folder + "/" + $filename);
+	}
+}
+
+global proc TransferShaderTransferUVMatApply(string $textFieldGrp)
+{
+	string $renderLayers[] = `ls -type renderLayer`;
+	if (size($renderLayers)>1)
+	{
+		string $confresult = `confirmDialog -title "Confirm" -message "Render Layer Exists! Continue Anyway?"
+			-button "Yes" -button "No" -defaultButton "No"
+			-cancelButton "No" -dismissString "No"`;
+		if ($confresult == "No")
+			return;
+	}
+	
+	global int $transuv_check;
+	global int $transmat_check;
+	global int $mat_check;
+	global int $TransferShader_selected;
+
+	string $selected[] = `ls -long -sl`;
+
+	string $filename = `textFieldGrp -q -fileName $textFieldGrp`;
+	waitCursor -state on;
+	//system ("D:\\Alias\\MAYA6~1.0\\bin\\mayabatch.exe -command \"AMbatchOutput \\\"\\\"\" -file " + "\"" + $filename + "\"");
+	string $mayalocation =`getenv "MAYA_LOCATION"`;
+	string $cmd = ("\"\"" + $mayalocation + "/bin/mayabatch.exe \" -command \"AMbatchOutput \\\"\\\"\" -file " + "\"" + $filename + "\"\"");
+	system $cmd;
+	TransferUVMat $filename $transuv_check $transmat_check $mat_check $TransferShader_selected $selected;
+	waitCursor -state off;
+}
+
+
+//for scene use
+global proc mll_brow(string $control)
+{
+	fileBrowserDialog -mode 0  -fileCommand ("mll_browProc " + $control) -fileType "mayaBinary" -actionName "Browse" -operationMode "Reference";
+}
+
+global proc int mll_browProc(string $control, string $filename, string $fileType)
+{
+	textFieldGrp -e -text $filename $control;
+	return true;
+}
+
+//get namespace of imported things
+proc string getnamespace()
+{
+	string $namesp;
+	string $imobj[] = `ls -shapes "ImUVs*:*"`;
+	string $buf[];
+	tokenize $imobj[0] ":" $buf;
+	$namesp = $buf[0];
+	return $namesp;
+}
+
+//test whether there is a UVMinSmooth node on given object
+proc int getsmooth(string $obj) 
+{
+	string $his[] = `listHistory -pruneDagObjects true $obj`;
+	for ($i=0;$i<size($his);$i++ )
+	{
+		if (`gmatch $his[$i] "UVMinSmooth*"`) 
+			return 1;
+	}
+	return 0;
+}
+
+//if object has UVMinSmooth attr, smooth it firstly.
+proc smoothBeforetransUVs()
+{
+	print "UV MIN SMOOTH\n";
+	string $namesp = getnamespace()+":";
+
+	string $imobj[] = `ls -tr ($namesp+"*")`;
+
+	for ($i=0;$i<size($imobj);$i++ )
+	{
+		string $lS[] = `listAttr -userDefined -string UVMinSmooth $imobj[$i]`;
+		if (size($lS) == 1)
+		{
+			int $value = `getAttr ($imobj[$i]+".UVMinSmooth")`;
+			string $buf[];
+			tokenize $imobj[$i] "|" $buf;
+			$imtr = $buf[size($buf) - 1];
+			tokenize $imtr ":" $buf;
+			$mobj = $buf[size($buf) - 1];
+
+			string $matchobj[] = `ls -type "transform" $mobj`;
+
+			for ($obj in $matchobj)
+			{
+				$UVsm = getsmooth($obj);	
+				if ($UVsm == 0)
+				{
+					string $shapes[] = `listRelatives -fullPath -shapes -type "mesh" $obj`;
+					if (size($shapes)>0)
+					{
+						$smname = `polySmooth -divisions $value -continuity 1 -keepBorder 0 -keepSelectionBorder 1 -keepTessellation 1 -constructionHistory 1 $shapes[0]`;
+						rename $smname "UVMinSmooth";
+						print("\n	Set UVMinSmooth on: "+$obj);
+					}
+				}
+			}
+		}
+
+	}
+}
+
+proc string mySubstitute(string $source, string $old, string $new)
+{
+	string $buf[];
+	
+	if (`tokenize $source "|" $buf`)
+		return ` substitute $old $buf[size($buf)-1]  ""`;
+	return "";
+}
+
+//remove namespace
+proc docleannamespace()
+{
+	string $namesp[] = `ls "ImUVs*:*"`;
+	for ($j=0;$j<size($namesp);$j++)
+	{
+		string $buff[];
+		tokenize $namesp[$j] "|" $buff;
+		string $obj = $buff[size($buff) - 1];
+
+		string $buf[];
+		tokenize $obj ":" $buf;
+		string $sp = $buf[0]+":";
+
+		string $new = mySubstitute($obj,$sp,"");
+		if (`objExists($namesp[$j])` && $new!=$namesp[$j] && size($new)>0)
+			rename $namesp[$j] $new;
+	}
+}
+
+//remove namespace
+proc multibodydocleannamespace(string $group)
+{
+	string $namesp[] = `listRelatives -allDescendents -fullPath $group`;
+	for ($j=0;$j<size($namesp);$j++)
+	{
+		string $buff[];
+		tokenize $namesp[$j] "|" $buff;
+		string $obj = $buff[size($buff) - 1];
+
+		string $buf[];
+		tokenize $obj ":" $buf;
+		string $sp = $buf[0]+":";
+
+		string $new = mySubstitute($obj,$sp,"");
+		if (`objExists($namesp[$j])` && $new!=$namesp[$j] && size($new)>0)
+			rename $namesp[$j] $new;
+	}
+}
+
+
+proc string getBasegroup(string $tr)
+{
+	string $grpname = $tr;
+	string $rel[] = `listRelatives -p -fullPath -type "transform" $tr`;
+	while(size($rel)>0) 
+	{
+		$grpname=$rel[0];
+		$rel = `listRelatives -p -fullPath -type "transform" $rel[0]`;
+	}
+	return $grpname;
+}
+
+global proc TransferMaterialPlace3d()
+{
+	print "TRANSFER PLACE3D\n";
+	string $namesp = getnamespace() + ":";
+	string $buf[] = `ls -long -type "place3dTexture" ($namesp + "*")`;
+	for ($place3dTexture in $buf)
+	{
+		string $buf1[] = `listRelatives -parent -fullPath $place3dTexture`;
+		if (size($buf1))
+		{
+			if (`tokenize $buf1[0] "|" $buf1` > 1)
+			{
+				tokenize $buf1[size($buf1)-1] ":" $buf1;
+				$buf1 = `ls -long -type "transform" $buf1[size($buf1)-1]`;
+				if (size($buf1))
+					parent $place3dTexture $buf1[0];
+			}
+			else
+				parent -world $place3dTexture;
+		}
+	}
+}
+
+//test whether there is a PolySmoothFace node on given object
+proc string getfinalsmooth(string $obj) 
+{
+	string $his[] = `listHistory -pruneDagObjects true $obj`;
+	for ($i=0;$i<size($his);$i++ )
+	{
+		if (`gmatch $his[$i] "finalSmooth*"`) 
+			return $his[$i];
+	}
+	return "";
+}
+
+//de-apply all smooth objects
+proc DeapplySmooth(string $list[])
+{
+	for ($mesh in $list)
+	{
+		$poly = getfinalsmooth($mesh); 
+		if ($poly!= "")
+		{
+			int $value = `getAttr ($poly+".divisions")`;
+			if ($value != 0)
+				setAttr ($poly+".divisions") 0 $mesh;
+		}
+	}
+}
+
+//function to connect uvChooser
+proc ConnetUvChooser(int $state)
+{
+	print "CONNECT UVCHOOSER\n";
+
+	$filename = (`internalVar -userAppDir` + "projects/default/scenes/tmpuvch.txt");
+	string $prefix = getnamespace()+":";
+
+	$fileID = `fopen $filename r`;
+
+	if ($fileID == 0)
+	{
+		// cannot open the file
+		error("Fail to open " + $filename);
+	}
+
+	string $buffer = `fgetline $fileID`;
+	$buffer = substituteAllString($buffer, "\n", "");
+
+	while (size($buffer) > 0) 
+	{
+		string $buf[];
+
+		if (`tokenize $buffer " " $buf` == 2)
+		{
+
+			string $SG = $prefix + $buf[1];
+
+			if (!`objExists $SG`)
+			{
+				warning($SG + " does not exist.");
+				$buffer = `fgetline $fileID`;
+				$buffer = substituteAllString($buffer, "\n", "");
+				continue;
+			}
+
+			string $shape = $buf[0];
+			if ($state == 0)
+			{
+				string $pbuf[];
+				tokenize $shape "|" $pbuf;
+				$imshape = $pbuf[size($pbuf) - 1];
+
+				string $matchmesh[] = `ls -noIntermediate $imshape`;
+
+				//to display unused object
+//				if (size($matchmesh)==0)
+//					print ("\n	Mapping object does not connect uvChooser: " + $imshape);
+
+				for ($curmesh in $matchmesh)
+					connectAttr -f $curmesh $SG;
+
+			}
+			else 
+			{
+				string $matchmesh[] = `ls -noIntermediate $shape`;
+
+				//to display unused object
+//				if (size($matchmesh)==0)
+//					print ("\n	Mapping object does not connect uvChooser: " + $shape);
+
+				for ($curmesh in $matchmesh)
+					connectAttr -f $curmesh $SG;
+			}
+
+		}
+		
+		$buffer = `fgetline $fileID`;
+		$buffer = substituteAllString($buffer, "\n", "");
+	}
+	fclose $fileID;
+}
+
+
+global proc TransferUVMat(string $filename, int $uvstate, int $matstate, int $pathstate, int $selectedOnly, string $selected[])
+{
+	if ($uvstate || $matstate)
+	{
+		if (`filetest -f $filename`)
+		{
+			cycleCheck -e off;
+
+			//import material scene
+			string $imtrans[] = `ls -type "mesh" -noIntermediate "ImUVs*:*"`;
+			if (size($imtrans) == 0)
+			{
+				file -import -namespace "ImUVs" -renameAll true -groupReference $filename;
+			}
+
+			print "TRANSFER SHADER:\n";
+			print "------------------------------------------------------------------------------------------\n";
+			
+			//transfer uv
+			if ($uvstate)
+			{
+				smoothBeforetransUVs();
+				string $list[] = `ls -dagObjects -type mesh -noIntermediate`;
+				DeapplySmooth($list);
+				TransferMaterialUV $pathstate $selectedOnly $selected;
+				//connect uvChooser
+				//ConnetUvChooser($pathstate);
+			}
+			//apply shadingGroup
+			if ($matstate)
+			{
+				TransferMaterialPlace3d();
+				TransferMaterialSG $pathstate $selectedOnly $selected;
+			}
+
+			//here for 3body file
+			print "DEAL WITH 3BODY PART:\n";
+			string $grp[] = `ls -tr "ImUVs*:texture_reference"`;
+			if (`objExists $grp[0]`)
+			{
+				//reconnect reference and shapes
+				parent -world $grp[0];
+				multibodydocleannamespace($grp[0]);
+			}
+
+			string $imtrans[] = `ls -shapes "ImUVs*:*"`;
+			string $impobj = getTransform($imtrans[0]);
+			if (`objExists $impobj`)
+			{
+				string $grpname = getBasegroup($impobj);
+				delete $grpname;
+			}
+
+			docleannamespace();
+
+			//deal with ShadingSwitch
+			string $trswich[] = `ls -type tripleShadingSwitch`;
+			string $douSw[] = `ls -type doubleShadingSwitch`;
+			string $sinSw[] = `ls -type singleShadingSwitch`;
+			if (size($trswich)>0||size($douSw)>0||size($sinSw)>0)
+				AMConswitch();
+
+			//re-arrange final smooth nodes
+			ArrangeNodes();
+
+			ConnectRefandShape();
+
+			print "------------------------------------------------------------------------------------------\n";
+			print "Transfer Shader\n";
+			
+			cycleCheck -e on;
+		}
+	}
+}
+
+
+proc int Isinstanceshape(string $mesh)
+{
+	string $ins[] = `listRelatives -fullPath -allParents -type "transform" $mesh`;
+	if (size($ins)>1)
+		return 1;
+	else
+		return 0;
+}
+
+//To get all the Transforms from a Shape node:
+proc string[] getAllTransforms( string $shape )
+{
+	string $transforms[];
+
+	if ( "transform" != `nodeType $shape` )
+	// If given node is already a transform, just pass on through
+	{
+		string $parents[] = `listRelatives -fullPath -allParents -type "transform" $shape`;
+		$transforms = $parents;
+	}
+
+	return $transforms;
+}
+
+
+//To get the instances of a Transform
+proc string[] getTranswithSameShape( string $xform )
+{
+	string $transforms[];
+	string $shapes[] = `listRelatives -fullPath -shapes -noIntermediate -type "mesh" $xform`;
+
+	for ($s in $shapes)
+	{
+		string $buf[];
+		tokenize $s "|" $buf;
+		string $sh = $buf[size($buf) - 1];
+
+		string $meshes[] = `ls -type "mesh" $sh`;
+		for ($k in $meshes)
+		{
+			string $obj[] = getAllTransforms($k);
+			if (size($obj) != 0)
+			{
+				appendStringArray($transforms, $obj, size($obj));
+			}
+		}
+	}
+
+	$transforms = stringArrayRemoveDuplicates($transforms);
+	return $transforms;
+}
+//function to connect reference&shape
+global proc ConnectRefandShape()
+{
+	print "TRANSFER MATERIAL\n";
+
+	$filename = (`internalVar -userAppDir` + "projects/default/scenes/tmpref.txt");
+
+	$fileID = `fopen $filename r`;
+
+	if ($fileID == 0)
+	{
+		// cannot open the file
+		error("Fail to open " + $filename);
+	}
+
+	string $buffer = `fgetline $fileID`;
+	$buffer = substituteAllString($buffer, "\n", "");
+
+	while (size($buffer) > 0) 
+	{
+		string $buf[];
+
+		if (`tokenize $buffer " " $buf` == 2)
+		{
+			// apply the material to the shape
+
+			string $SG = $buf[0];
+
+			string $shape = $buf[1];
+			if (`objExists $SG`&&`objExists $shape`)
+			{
+				connectAttr -f ($SG+".message") ($shape+".referenceObject");
+			}
+			else if (`objExists $SG`)
+				delete $SG;
+		}
+		
+		$buffer = `fgetline $fileID`;
+		$buffer = substituteAllString($buffer, "\n", "");
+	}
+	fclose $fileID;
+}
+
+global proc TransferMaterialSG(int $fullPath, int $selectedOnly, string $sel[])
+{
+	string $vet, $buf[], $buf1[];
+
+	print "TRANSFER MATERIAL\n";
+
+	string $selected[] = `ls -long -dagObjects $sel`;
+
+	string $prefix = getnamespace() + ":";
+
+	string $filename = (`internalVar -userAppDir` + "projects/default/scenes/tmpmat.txt");
+	int $fileId = `fopen $filename r`;
+	if (!$fileId)
+		error ("Fail to open " + $filename);
+
+	while (!`feof $fileId`) 
+	{
+		string $line = `fgetline $fileId`;
+		$line = `substitute "\n" $line ""`;
+		if (`tokenize $line " " $buf` == 2)
+		{
+			string $SG = $prefix + $buf[0];
+			if (!`objExists $SG`)
+			{
+				warning ($SG + " does not exist.");
+				continue;
+			}
+
+			string $shape = $buf[1];
+			int $size = `tokenize $shape "." $buf1`;
+			$shape = $buf1[0];
+			if ($size == 2)
+				$vet = "." + $buf1[1];
+			else
+				$vet = "";
+			
+			if ($fullPath)
+			{
+				if (`objExists $shape`)
+				{
+					if (!$selectedOnly || `stringArrayCount $shape $selected`)
+						sets -edit -forceElement $SG ($shape + $vet);
+				}
+			}
+			else
+			{
+				tokenize $shape "|" $buf;
+				$shape = $buf[size($buf)-1];
+
+				string $dest[] = `ls -long -transforms -shapes -noIntermediate $shape`;
+				for ($i=0; $i<size($dest); $i++)
+				{
+					
+					if (`nodeType $dest[$i]` == "mesh" || `nodeType $dest[$i]` == "nurbsSurface"|| `nodeType $dest[$i]` == "subdiv")
+					{
+						if (Isinstanceshape($dest[$i]))
+						{
+							$buf1 = `listRelatives -fullPath -allParents $dest[$i]`;
+							for ($j=0; $j<size($buf1); $j++)
+							{
+								if (!$selectedOnly || `stringArrayCount $buf1[$j] $selected`)
+									sets -edit -forceElement $SG ($buf1[$j] + $vet);
+							}
+						}
+						else
+						{
+							if (!$selectedOnly || `stringArrayCount $dest[$i] $selected`)
+								sets -edit -forceElement $SG ($dest[$i] + $vet);
+						}
+					}
+					else if (`nodeType $dest[$i]` == "transform")
+					{
+						$buf1 = getTranswithSameShape($dest[$i]);
+						for ($m in $buf1)
+						{
+							string $sp[] = `listRelatives -fullPath -shapes -type "mesh" $m`;
+							if (size($sp))
+							{
+								if (!$selectedOnly || `stringArrayCount $m $selected`)
+									sets -edit -forceElement $SG ($m + $vet);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	fclose $fileId;
+}
+
+//function to transfer UV
+proc myPolyTransfer(string $source, string $dest)
+{
+	int $uvcount[] = `polyEvaluate -uvcoord $source`;
+
+	//to display undone mesh
+	int $imvcount[] = `polyEvaluate -vertex $source`;
+	int $matchvcount[] = `polyEvaluate -vertex $dest`;
+	if ($imvcount[0]!=$matchvcount[0])
+	{
+		print ("\n	Number of vertices is unmatched: "+$dest);
+		return;
+	}
+	if ($uvcount[0]>0)
+	{
+		string $deluv[] = `polyUVSet -q -allUVSets $dest`;
+		for ($uv in $deluv)
+		{
+			if ($uv != "map1")
+				catch(`polyUVSet -uvSet $uv -delete $dest`);	// use catch use, KC (27 Sep 2003)
+				//a maya bug may cause error here.
+		}
+		$curUV =`polyUVSet -q -currentUVSet $source`; 
+		string $allUV[] =`polyUVSet -q -allUVSets $source`; 
+		string $trfname[];	
+		//delete old polyTransfer node
+		string $oldpolytransfer[] = `listHistory -pruneDagObjects true $dest`;
+		for ($t in $oldpolytransfer)
+		{
+			if (`nodeType $t` == "polyTransfer")
+				delete $t;
+		}
+		$trfname = `polyTransfer -uvSets 1 -alternateObject $source $dest`;
+		//another maya bug may cause error here.
+		$emptyuv = `polyUVSet  -create $dest`;
+		catch(`polyUVSet -uvSet $emptyuv -delete $dest`);
+		connectAttr -force ($trfname[0]+".output") ($dest+".inMesh");
+		string $todeluv[] = `ls -type "deleteUVSet"`;
+		for ($du in $todeluv)
+		{
+			string $left[] = `listConnections -destination true -source false $du`;
+			string $right[] = `listConnections -destination false -source true -type "createUVSet" $du`;
+			if (size($left) == 0&&size($right) == 1)
+			{
+				delete $du;
+				//delete $right;   createUVSets will be removed with the deleteUVSets together  
+			}
+		}
+		for ($j=0;$j<size($allUV) ;$j++ )
+		{
+			polyUVSet -e -uvSet $allUV[$j]  $source; 
+			// successfully copy UV set over, now connect the uvSetName attribute to the target
+			int $numUVset = `getAttr -size ($source + ".uvSet")`;
+
+			for ($ii = 0; $ii < $numUVset; $ii++)
+			{
+				string $uvSetName = `getAttr ($source + ".uvSet[" + $ii + "].uvSetName")`;
+
+				if ($uvSetName == $allUV[$j])
+				{
+					// check whether the UV set is connected to a UVChooser node
+					string $targets[] = `listConnections -destination true ($source + ".uvSet[" + $ii + "].uvSetName")`;
+					for ($jj = 0; $jj < size($targets); $jj++)
+					{
+						if (`nodeType $targets[$jj]` == "uvChooser")
+						{
+							int $numUVset2 = `getAttr -size ($dest + ".uvSet")`;
+
+							for ($iii = 0; $iii < $numUVset2; $iii++)
+							{
+								string $uvSetName2 = `getAttr ($dest + ".uvSet[" + $iii + "].uvSetName")`;
+
+								if ($uvSetName2 == $allUV[$j])
+									break;
+							}
+
+							int $uvSetIdx = $iii;
+							string  $uvsets[] = `listConnections -sh true -s true -d false $targets[$jj]`;
+							int $nextAvailable = size($uvsets);
+							connectAttr -force ($dest + ".uvSet[" + $uvSetIdx + "].uvSetName") ($targets[$jj] + ".uvSets[" + $nextAvailable + "]");
+						}
+					}	
+				}
+			}
+		}
+
+		polyUVSet -e -uvSet $curUV  $source; 
+	}
+}
+
+global proc TransferMaterialUV(int $fullPath, int $selectedOnly, string $sel[])
+{
+	print "TRANSFER UV\n";
+
+	string $selected[] = `ls -long -dagObjects -shapes $sel`;
+
+	string $namesp = getnamespace() + ":";
+	string $source[] = `ls -long -noIntermediate -type "mesh" ($namesp + "*")`;
+	for ($i=0; $i<size($source); $i++ )
+	{
+		string $obj = "";
+		string $buf[];
+		clear($buf);
+		string $buf1[];
+		clear($buf1);
+
+		tokenize $source[$i] "|" $buf;
+		if ($fullPath)
+		{
+			for ($j = 1; $j<size($buf); $j++)
+			{
+				tokenize $buf[$j] ":" $buf1;
+				$obj += "|" + $buf1[size($buf1) - 1];
+			}
+		}
+		else
+		{
+			tokenize $buf[size($buf) - 1] ":" $buf1;
+			$obj = $buf1[size($buf1) - 1];
+		}
+		
+		string $dest[] = `ls -long -noIntermediate -type "mesh" $obj`;
+		for ($j=0; $j<size($dest); $j++)
+		{
+			if (!$selectedOnly || `stringArrayCount $dest[$j] $selected`)
+			{
+				myPolyTransfer $source[$i] $dest[$j];
+				flushUndo;
+			}
+		}
+	}
+}
+
+
+//for selected objects use
+proc string getSelTransform(string $shape)
+{
+	string $transform = "";
+
+	if ( "transform" != `nodeType $shape` )
+	// If given node is already a transform, just pass on through
+	{
+		string $parents[] = `listRelatives -parent $shape`;
+		$transform = $parents[0];
+	}
+
+	return $transform;
+}
+
+//function to output the relationship between obj and shadingEngine
+proc OutputSelSG_shapes(string $obj, string $objtr, string $shading[])
+{
+
+	$tmp = (`internalVar -userAppDir` + "projects/default/scenes/tmpselmat.txt");
+	$fileID = `fopen $tmp w`;
+	
+	if ($fileID == 0)
+	{
+		// cannot open the file
+
+		error("Fail to open " + $tmp);
+	}
+	
+	for ($j = 0; $j < size($shading); $j++)		// skip last item because it is ""
+	{
+		string $objs[] = `sets -q $shading[$j]`;
+		for ($i = 0; $i < size($objs); $i++)
+		{
+			string $buf[];
+			tokenize $objs[$i] "." $buf;
+			string $shape = $buf[0];
+			string $long[] = `ls -long $shape`;
+			if ($long[0] == $obj||$long[0] == $objtr) 
+				fprint $fileID ($shading[$j] + " " + $objs[$i] + "\n");
+		}
+	}
+
+	fclose $fileID;
+}
+
+//function to transfer material
+proc transferSelMat(string $source, string $dest)
+{
+	$filename = (`internalVar -userAppDir` + "projects/default/scenes/tmpselmat.txt");
+	$fileID = `fopen $filename r`;
+
+	if ($fileID == 0)
+	{
+		// cannot open the file
+		error("Fail to open " + $filename);
+	}
+
+	string $buffer = `fgetline $fileID`;
+	$buffer = substituteAllString($buffer, "\n", "");
+
+	while (size($buffer) > 0) 
+	{
+		string $buf[];
+
+		if (`tokenize $buffer " " $buf` == 2)
+		{
+			// apply the material to the shape
+			string $SG = $buf[0];
+			string $vet = "";
+			string $buff[];
+			int $num = `tokenize $buf[1] "." $buff`;
+			string $shape = $buff[0];
+			if ($num == 2)
+				$vet = "."+$buff[1];
+			
+			sets -e -forceElement $SG ($dest+$vet);
+		}
+		$buffer = `fgetline $fileID`;
+		$buffer = substituteAllString($buffer, "\n", "");
+	}
+	fclose $fileID;
+}
+
+//re-create smooth node
+proc string smoothSearch(string $list[])
+{
+	for ($i in $list)
+	{
+		if (`gmatch $i "finalSmooth*"`&&(`nodeType $i` == "polySmoothFace"))
+			return $i;
+	}
+	return "";
+}
+ proc recreateSmooth(string $object)
+{
+	if (attributeExists("sm_divisions",$object))
+	{
+		string $his[] = `listHistory -groupLevels true -pruneDagObjects 1 -leaf true $object`;
+		string $smoothNode = smoothSearch($his);
+		if ($smoothNode != "")
+		{
+			delete $smoothNode;
+			string $shapes[] = `listRelatives -fullPath -noIntermediate -type "mesh" $object`;
+			if (size($shapes)>0)
+			{
+				$plyname = `polySmooth -divisions 0 -continuity 1 -keepBorder 0 -keepSelectionBorder 1 -keepTessellation 1 -constructionHistory 1 $shapes[0]`;
+				rename $plyname "finalSmooth";
+			}
+		}	
+	}
+}
+
+proc Conswitch(string $source, string $dest)
+{
+	string $switchNode1[]  = `listConnections -plugs 1 -source 0 -destination 1 -type tripleShadingSwitch $source`;
+	string $switchNode2[]  = `listConnections -plugs 1 -source 0 -destination 1 -type doubleShadingSwitch $source`;
+	string $switchNode[] = stringArrayCatenate($switchNode1,$switchNode2); 
+  	string $switchNode3[]  = `listConnections -plugs 1 -source 0 -destination 1 -type singleShadingSwitch $source`;
+	$switchNode = stringArrayCatenate($switchNode,$switchNode3); 
+	for ($i=0; $i<size($switchNode); $i++)
+		connectAttr -f ($dest+".instObjGroups[0]") $switchNode[$i];
+}
+////////////////////////////////////////
+//////////////////////////////////
+///////////////////////////////////////
+/////////////////////////////////////////////
+global proc TransferUVMatSel(string $uvcheck,string $matcheck)
+{
+	string $renderLayers[] = `ls -type renderLayer`;
+	if (size($renderLayers)>1)
+	{
+		string $confresult = `confirmDialog -title "Confirm" -message "Render Layer Exists! Continue Anyway?"
+			-button "Yes" -button "No" -defaultButton "No"
+			-cancelButton "No" -dismissString "No"`;
+		if ($confresult == "No")
+			return;
+	}
+	int $uv = `checkBox -q -v $uvcheck`;
+	int $mat = `checkBox -q -v $matcheck`;
+	
+	string $selAlls[]=`ls -sl`;
+        int $sizeAlls=size($selAlls);
+	string $first=$selAlls[0];
+	string $second;
+	int $i=1;
+	for($i=1;$i<$sizeAlls;$i++){
+		string $second=$selAlls[$i];
+		TransferUVMatSelProc($uv,$mat,$first,$second);
+		}
+}
+
+global proc TransferUVMatSelProc(int $uv, int $mat,string $first,string $second)
+{
+	select -cl;
+	select -r $first;
+	select -tgl $second;
+	string $sel[] = `ls -long -selection -dagObjects -type shape -noIntermediate`;
+	string $seltr[] = `ls -long -selection -dagObjects -type transform -noIntermediate`;
+	if (size($sel) != 2)
+		error ("polyTransfer requires two polygon objects");
+
+	cycleCheck -evaluation on;
+
+	//transfer UV
+	if ($uv)
+	{
+	/*	//add uvmin smooth node if necessary
+		string $lS[] = `listAttr -userDefined -string UVMinSmooth $seltr[0]`;
+		if (size($lS) == 1)
+		{
+			int $value = `getAttr ($seltr[0]+".UVMinSmooth")`;
+			$UVsm = getsmooth($seltr[1]);	
+			if ($UVsm == 0)
+			{
+				$smname = `polySmooth -divisions $value -continuity 1 -keepBorder 0 -keepSelectionBorder 1 -keepTessellation 1 -constructionHistory 1 $sel[1]`;
+				rename $smname "UVMinSmooth";
+				print("\n	Set UVMinSmooth on: "+$seltr[1]);
+			}
+		}
+		DeapplySmooth({$sel[0]});
+		myPolyTransfer($sel[0], $sel[1]);
+		*/
+		tranUV;
+	}
+	//transfer material
+	if ($mat)
+	{
+		//re-locate place3dTexture node
+		string $place3d[] = `listRelatives -children -fullPath -type "place3dTexture" $seltr[0]`;
+		for ($pd in $place3d)
+			parent $pd $seltr[1];
+
+		//transfer material
+		string $shading[] = `listConnections -source 0 -destination 1 -type shadingEngine $sel[0]`;
+		OutputSelSG_shapes($sel[0], $seltr[0], $shading);
+		transferSelMat($sel[0],$sel[1]);
+		recreateSmooth($seltr[1]);
+
+		//re-connect switchshading node
+		Conswitch($sel[0], $sel[1]);
+	}
+	docleannamespace();
+
+	cycleCheck -evaluation on;
+}
+//////////////////////////////////////////////////
+
+
+global proc tranUV()
+{
+string $selectall[];
+string $tagetShape[];
+$selectall=`ls -sl`;
+string $sel[] = `pickWalk -d down $selectall[0]`;
+
+for($i=1;$i<`size $selectall`;$i++)
+ {
+ $tagetShape= `pickWalk -d down $selectall[$i]`;
+ polyTransfer -vc 0 -uv 1 -v 0 -ao $sel[0] $tagetShape[0];
+ delTransfer($selectall[$i]);
+
+ //delPolyTransferNodeUV;
+ }
+}
+
+global proc delTransfer(string $obj)
+{
+	string $SH[]=`listRelatives -s -f -ni -type mesh $obj`;
+	string $allSH[]=`listRelatives -s -f -type mesh $obj`;
+	string $hist[]=`listHistory $obj`;
+	string $orgSH[];clear $orgSH;
+	string $delNode[];clear $delNode;
+
+	for($itSH in $allSH)
+		if(`getAttr ($itSH+".intermediateObject")`&&!size(`listConnections -d 0 $itSH`))
+			$orgSH[size($orgSH)]=$itSH;
+	for($histIt in $hist)
+		if(stringArrayContains(`nodeType $histIt`,{"transferAttributes","polyTransfer","polyPlanarProj","polyCylProj","polySphProj","polyAutoProj","polyPlanarProj","polyTweakUV"}))
+			$delNode[size($delNode)]=$histIt;
+
+	if(size($SH)==1&&size($orgSH)&&size($delNode))
+	{
+		string $mesh=`createNode mesh`;
+		for($orgIt in $orgSH)
+		{
+			connectAttr -f ($SH[0]+".outMesh") ($mesh+".inMesh");
+			refresh;
+			disconnectAttr ($SH[0]+".outMesh") ($mesh+".inMesh");
+			refresh;
+			polyTransfer -v 0 -vc 1 -uv 0 -ao $SH[0] $mesh;
+			delete -ch $mesh;
+
+			//string $conAttr[]=`connectionInfo -dfs ($orgIt+".worldMesh")`;
+			//for($conAttrIt in $conAttr)
+			//	disconnectAttr ($orgIt+".worldMesh") $conAttrIt;
+
+			
+			polyTransfer -v 0 -vc 1 -uv 1 -ao $mesh $orgIt;
+			refresh;
+			delete -ch $orgIt;
+
+			string $tranfer[]=`listConnections -d 0 $orgIt`;
+			delete `listConnections -d 0 -sh 1 ($tranfer[0]+".inputPolymesh")`;
+			//for($conAttrIt in $conAttr)
+			//	connectAttr ($orgIt+".worldMesh") $conAttrIt;
+		}
+
+		delete $delNode;
+		delete `listRelatives -p -f $mesh`;
+	}
+}
+///////////////////////////////////
+global proc delPolyTransferNodeUV()
+{
+	cycleCheck -e off;
+	//////////////////////
+	string $ioMesh[]=`ls -io -typ mesh -l`;
+	for($ioMeshIt in $ioMesh)
+	{
+		string $ioNum[]=`listConnections $ioMeshIt`;
+		if(!size($ioNum))
+		catch(`delete $ioMeshIt`);
+	}
+	///////////////////////
+	string $mesh[]=`ls -ni -typ mesh -l`;
+	string $tempSh=`createNode mesh -n tempMeshTransfer`;
+	for($meshIt in $mesh)
+	  {
+
+		  string $hist[]=`listHistory $meshIt`;
+		  int $num=0;
+		  for($histIt in $hist)
+		  {
+		   if(`objectType $histIt`=="polyTransfer"||`objectType $histIt`=="polyTweakUV"||`objectType $histIt`=="transferAttributes"||`objectType $histIt`=="polyPlanarProj"||`objectType $histIt`=="polyAutoProj"||`objectType $histIt`=="polySphProj"||`objectType $histIt`=="polyCylProj")
+			   $num=1;
+		   }
+	  
+		  if($num)
+		  {
+		  connectAttr -f ($meshIt+".outMesh") ($tempSh+".inMesh");
+		  select $tempSh;
+		  disconnectAttr ($meshIt+".outMesh") ($tempSh+".inMesh");
+
+		  string $tran[]=`listRelatives -f -p $meshIt`;
+		  string $baseSh[]=`listRelatives -f -s $tran[0]`;
+		  int $baseNum=0;
+		  for($baseShIt in $baseSh)
+			 {
+		 if(`getAttr ($baseShIt+".intermediateObject")`)
+			 {
+			 $baseNum=1;
+			 connectAttr -f ($tempSh+".outMesh") ($baseShIt+".inMesh");
+			 select $baseShIt;
+			 disconnectAttr ($tempSh+".outMesh") ($baseShIt+".inMesh");
+
+				 //setAttr ($baseShIt+".intermediateObject") 0;
+
+				 string $vex[]=`ls -fl -l ($baseShIt+".vtx[*]")`;
+				 for($vexIt in $vex)
+				   {
+				   string $buffer[];
+				   tokenize $vexIt "[]" $buffer;
+
+				   setAttr ($baseShIt+".pnts["+$buffer[1]+"].pntx") 0;
+				   setAttr ($baseShIt+".pnts["+$buffer[1]+"].pnty") 0;
+				   setAttr ($baseShIt+".pnts["+$buffer[1]+"].pntz") 0;
+				   }
+
+				 //setAttr ($baseShIt+".intermediateObject") 1;           
+			 }
+		 }
+		  if(!$baseNum)
+			  {
+		  connectAttr -f ($tempSh+".outMesh") ($meshIt+".inMesh");
+		  disconnectAttr ($tempSh+".outMesh") ($meshIt+".inMesh");
+		  }
+		  }
+
+	 
+	  }
+	string $transfer[]=`ls -typ polyTransfer`;
+	if(size($transfer)) delete $transfer;
+	string $tweakUV[]=`ls -typ polyTweakUV`;
+	if(size($tweakUV))  delete $tweakUV;
+
+	//if(!catch(`ls -typ transferAttributes`))
+	//  {
+	//  string $transferAttributes[]=`ls -typ transferAttributes`;
+	//  if(size($transferAttributes))  delete $transferAttributes;
+	//  }
+
+	string $polyPlanarProj[]=`ls -typ polyPlanarProj`;
+	if(size($polyPlanarProj))  delete $polyPlanarProj;
+	string $polyAutoProj[]=`ls -typ polyAutoProj`;
+	if(size($polyAutoProj))  delete $polyAutoProj;
+	string $polySphProj[]=`ls -typ polySphProj`;
+	if(size($polySphProj))  delete $polySphProj;
+	string $polyCylProj[]=`ls -typ polyCylProj`;
+	if(size($polyCylProj))  delete $polyCylProj;
+
+	delete `listRelatives -p $tempSh`;
+	cycleCheck -e off;
+}
+
+
+
+
+/////////////////////////////////////
+////////////////////////////////////
+/////////////////////////////////////////////
+///////////////////////////////////////
+/////////////////----ch1()-----//////////////////////
+
+global proc ch1()
+{ 
+
+if (`window -exists BeforeRender`)
+   deleteUI BeforeRender;
+if  (!`window -exists  BeforeRender`)
+ {
+    
+       window -title    "渲染检查"
+                    -resizeToFitChildren   true BeforeRender;
+           columnLayout  -adjustableColumn true
+                                    -cal  "center"
+                                    -rs 3  -cw 300;
+                separator;	
+                checkBoxGrp -ncb 1 -label " "
+		               -label1 "删除多余的灯光连接" -cw 2 200 -v1 0 lightlinker;
+	         checkBoxGrp -ncb 1 -label " "
+		               -label1 "检查贴图路径" -v1 1 texture;
+	         checkBoxGrp -ncb 1 -label " "
+		               -label1 "检查灯光阴影参数"   -cw 2 200 -v1 0 shadow; 
+                separator;
+	         checkBoxGrp -ncb 1 -label "参数设置"
+		              -label1 "设置Render Globals" -cw 2 200  -v1 0 -onc "radioButtonGrp -e -en 1  RaytracingradioButton" -ofc "radioButtonGrp -e -en 0  RaytracingradioButton" renderglobals;
+
+                rowLayout  -nc 2  -columnWidth2 20 20 ;
+                  radioButtonGrp  -numberOfRadioButtons 2 -cw 1 160 
+    	                           -label "  " 
+                                  -labelArray2 "无光线跟踪" "有光线跟踪"
+                                  -sl 1 RaytracingradioButton;
+                             
+                  setParent ..;
+                 checkBoxGrp -ncb 1 -label " "
+		                -label1 "设置Fur渲染" -cw 2 200  -v1 0 -onc "radioButtonGrp -e -en 1  FurradioButton" -ofc "radioButtonGrp -e -en 0  FurradioButton" Furglobals;
+
+               rowLayout  -nc 2  -columnWidth2 20 20 ;
+                 radioButtonGrp  -numberOfRadioButtons 2 -cw 1 160 
+    	                          -label "  " -labelArray2 "无Fur渲染" "有Fur渲染"
+                                 -sl 1 FurradioButton;
+                             
+                 setParent ..;
+
+                 separator;	
+	          checkBoxGrp -ncb 1 -en 0 -label " "
+		               -label1 "检查立体渲染参数" -cw 2 200  -v1 0 -onc "radioButtonGrp -e -en 1  stereosradioButton" -ofc "radioButtonGrp -e -en 0  stereosradioButton" stereos;
+
+                 rowLayout  -nc 2 -columnWidth2 20 20 ;
+                    radioButtonGrp -en 0 -numberOfRadioButtons 2 -cw 1 160 
+    	                            -label "  " -labelArray2 "环幕4D" "球幕"
+                                   -sl 1 stereosradioButton;
+                             
+                 setParent ..;
+
+                 separator;	
+                 rowLayout  -nc 2 -cat 1 "right" 50 -columnWidth2 200 200 ;
+
+                   button  -w 100 -h 30 -label "          确  定" -align "center" -command "check()";
+                   button -w 100 -h 30 -label "          关  闭" -align "center" -command "if   (`window -exists BeforeRender`) deleteUI -window BeforeRender";
+  }
+setParent ..;
+separator;	
+text  -label "    By Renhj   5/2005 " -align "right" textOutputa;
+showWindow  BeforeRender;
+
+}
+//////////////////////////////check()///////////////////////////////////////////////////////
+global proc check()
+{  
+if (`window -exists Outputwindow`)
+   deleteUI Outputwindow;
+ 
+if  (!`window -exists  Outputwindow`)
+ {
+    
+    window -title    "检查信息" 
+                    -resizeToFitChildren true Outputwindow;
+       columnLayout  -adjustableColumn true
+                     -cal  "center"
+                     -rs 3  -cw 500 columnLayout1;
+       separator;
+       text -label "    已经开始检查!" -align "left" 
+
+                    -font "fixedWidthFont"  textOutput;
+          
+
+
+       separator;
+
+            scrollField -w 500 -h 130 -font "fixedWidthFont" OKscrollField;
+       separator;
+       text -label "  警告信息" -align "left" 
+
+                    -font "fixedWidthFont"  textwindow;
+            scrollField -w 500 -h 200 
+
+                    -font "fixedWidthFont"
+                    -bgc 0 0 0   ErrorscrollField;
+  showWindow Outputwindow;      
+
+
+
+ if (`checkBoxGrp -q -v1 lightlinker`)
+    {
+     text -e -label "    正在删除无用的灯光连接......" -align "left" textOutput;
+     dlight;
+     scrollField -e    -it "场景中已没有无用的灯光连接!\n"  OKscrollField; 
+     }                        
+ if (`checkBoxGrp -q -v1 texture`)
+   {
+    text -e -label "    正在检查贴图路径......" -align "left" textOutput; 
+    fileCheck;
+    scrollField -e    -it "已检查完贴图路径!\n"  OKscrollField;
+   } 
+ if (`checkBoxGrp -q -v1  shadow`)
+   {
+   text -e -label "    正在检查阴影参数......" -align "left" textOutput; 
+   shadowCheck;
+   scrollField -e -it "已检查完阴影参数!\n"  OKscrollField;
+   }
+ if (`checkBoxGrp -q -v1  renderglobals`)
+   {
+       text -e -label "    正在设置Renderglobals......" -align "left" textOutput;
+       int $buttonRatracing=`radioButtonGrp -q -sl  RaytracingradioButton`;
+       if ($buttonRatracing==1)
+       Renderglobal_nonRatracing;
+       if ($buttonRatracing==2)
+       Renderglobal_Ratracing;
+       scrollField -e -it "已设置完Renderglobals!\n"  OKscrollField;
+   }
+ if (`checkBoxGrp -q -v1  Furglobals`)
+      { 
+       text -e -label "    正在设置Fur渲染......" -align "left" textOutput;
+       if( `objExists defaultFurGlobals` ) 
+          {
+         int $buttonFur=`radioButtonGrp -q -sl FurradioButton`;
+       
+         if ($buttonFur==1)
+         {
+          setAttr "defaultFurGlobals.renderFur" 0;    
+          scrollField -e  -it "Fur渲染已被关闭!\n"  ErrorscrollField;
+         }
+         if ($buttonFur==2)
+         {
+          setAttr "defaultFurGlobals.renderFur" 1; 
+          scrollField -e  -it "Fur渲染已被打开!\n"  ErrorscrollField;
+         }
+        }
+       int $buttonFur=`radioButtonGrp -q -sl FurradioButton`;
+       if( !`objExists defaultFurGlobals`&& $buttonFur==2) 
+          scrollField -e  -it "场景中没有Fur!\n"  ErrorscrollField;
+           
+       scrollField -e -it "已设置完Fur渲染!"  OKscrollField;
+       
+      }
+  text -e -label "    文件已检查完毕!"-align "left" textOutput;
+  }
+
+
+}
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////dl/////////////////////////////////////////
+global proc dlight( )
+{
+float $i,$m=0;
+for ($i=2;$i<1000000;$i=$i+1)
+{
+   float $a;float $b;
+     $a=`isConnected  defaultLightSet.message lightLinker1.link[$i].llnk`;
+     $b=`isConnected  defaultLightSet.message lightLinker1.link[$i].olnk`;
+  if  ($m<80000)
+   {
+     if (($a==1)&&($b==1))
+      {
+       disconnectAttr defaultLightSet.message lightLinker1.link[$i].llnk;
+       disconnectAttr defaultLightSet.message lightLinker1.link[$i].olnk;
+       $m=0;
+       string $lightNum=" "+$i+" 条无用的灯光连接已被删除!";
+       text -e -label $lightNum -align "left" textOutput;
+       
+      }
+     else $m++;
+   }
+  else 
+   break;
+};
+}
+//////////////////////fileCheck()////////////////////////////////////////////
+
+
+global proc fileCheck()
+{ 
+string  $allfile[];
+string  $file;
+$allfile = `ls -typ file`;
+float $size;
+for ( $file in $allfile )
+ {
+     string $texturename=$file+".fileTextureName";
+     
+     string $filepath1     = `getAttr $texturename`;
+     string $s1 = `substitute "urceimages" $filepath1 "+"`;
+     string $buffer[];
+     $numTokens = `tokenize $s1 "+" $buffer`;
+     $size=size($buffer);
+     if ($size>1)
+      {
+      string $filepath="sourceimages"+$buffer[1];
+      setAttr -type "string" $texturename $filepath;
+      }
+     else 
+      {
+          string $s1 = `substitute "mages" $filepath1 "+"`;
+          string $buffer1[];
+          $numTokens = `tokenize $s1 "+" $buffer1`;
+          $size=size($buffer1);       
+          if ($size>1)
+             {
+              string $filepath="sourceimages"+$buffer1[1];
+              setAttr -type "string" $texturename $filepath;
+             }
+          else
+            {
+              string $s1 = `substitute "extures" $filepath1 "+"`;
+              string $buffer2[];         
+              $numTokens = `tokenize $s1 "+" $buffer2`;
+              $size=size($buffer2);       
+              if ($size>1)
+                {
+                  string $filepath="sourceimages"+$buffer2[1];
+                  setAttr -type "string" $texturename $filepath;  
+                }
+              else
+               {
+                 string $filepath="sourceimages"+$filepath1;
+                 setAttr -type "string" $texturename $filepath;              
+               }
+           }
+      }
+     
+string $FrameExtension=$file+".useFrameExtension";     
+string $filecache=$file+".useCache";
+if (`getAttr $FrameExtension`) 
+setAttr $filecache 0; 
+if (!`getAttr $FrameExtension`) 
+setAttr $filecache 1; 
+string $filterType=$file+".filterType";
+setAttr $filterType 1;    
+ }
+
+
+string $num[];
+string $num_name[];
+int $i=0;
+ for ( $file in $allfile )
+ {
+     string $texturename=$file+".fileTextureName";
+     string $filepath1= `getAttr $texturename`;
+     int $var=`filetest -r $filepath1`;
+     if ($var==0)
+        {
+         $num[$i]=$filepath1;
+         $num_name[$i]=$file;
+         $i++;
+
+        }
+}
+
+if ($i>0)
+  {
+    int $j;
+    for ($j=0;$j<$i;$j++)
+     {
+      string $filename="贴图"+$num[$j]+" 不存在!!!\n";
+      scrollField -e    -it $filename -bgc 1 1 1   ErrorscrollField;
+     }
+    
+      string $file_noex="共"+$j+" 个贴图不存在!!!\n";
+      scrollField -e    -it $file_noex   ErrorscrollField;  
+      scrollField -e    -it "相应节点名称为:\n"   ErrorscrollField; 
+     
+    for ($j=0;$j<$i;$j++)
+     {
+      string $file_noexj=" "+$num_name[$j];
+      scrollField -e  -it $file_noexj  ErrorscrollField;
+     }
+    scrollField -e  -it "  \n"  ErrorscrollField;
+    scrollField -e  -it " \n -------------------------------------------- \n"  ErrorscrollField;
+    
+  } 
+}
+//////////////////////////////////shadowCheck()///////////////////
+global proc shadowCheck()
+{ 
+string  $allLight[];
+string  $light;
+
+$allLight = `ls -typ light`;
+for (  $light in $allLight )
+{
+  string $reuseDmap=$light+".reuseDmap";
+  string $writeDmap=$light+".writeDmap";
+  string $dmapResolution=$light+".dmapResolution";
+  string $useDepthMapShadows=$light+".useDepthMapShadows";
+ if (`attributeExists "reuseDmap" $light`) 
+    {
+      setAttr $reuseDmap 0;
+      setAttr $writeDmap 0;
+    }
+if (`attributeExists "dmapResolution" $light`) 
+ {
+  if (`getAttr $useDepthMapShadows`) 
+    {
+     int $LdmapResolution=`getAttr $dmapResolution`;
+     if ($LdmapResolution>2000)
+      {
+       string $dmapResolution=$light+" 的阴影分辨率大于2000!\n";
+       scrollField -e  -it $dmapResolution   ErrorscrollField;
+       }   
+    }
+ }
+ }
+    
+    scrollField -e  -it " \n ----------------------------------------------- \n"  ErrorscrollField;
+    
+}
+/////////////////////////////////////////////////////////
+global proc Renderglobal_nonRatracing()
+{ 
+setAttr "defaultRenderGlobals.ifp" -type "string" "";
+setAttr "defaultRenderGlobals.an" 1;
+setAttr "defaultRenderGlobals.pff" 1;
+setAttr "defaultRenderGlobals.peie" 1;
+setAttr "defaultRenderGlobals.ufe" 1;
+setAttr "defaultRenderGlobals.ofc" 0;
+
+setAttr "defaultRenderGlobals.byFrameStep" 1;
+setAttr "defaultRenderGlobals.extensionPadding" 4;
+setAttr defaultResolution.lockDeviceAspectRatio false;
+if (`getAttr "defaultRenderQuality.enableRaytracing"`)
+ {
+  setAttr "defaultRenderQuality.enableRaytracing" 0;
+  scrollField -e  -it "光线跟踪渲染已被关掉!\n"  ErrorscrollField;
+  scrollField -e  -it " \n ---------------------------------------------- \n"  ErrorscrollField;
+ }
+
+}
+
+global proc Renderglobal_Ratracing()
+{ 
+ 
+setAttr "defaultRenderGlobals.ifp" -type "string" "";
+setAttr "defaultRenderGlobals.an" 1;
+setAttr "defaultRenderGlobals.pff" 1;
+setAttr "defaultRenderGlobals.peie" 1;
+setAttr "defaultRenderGlobals.ufe" 1;
+setAttr "defaultRenderGlobals.ofc" 0;
+
+setAttr "defaultRenderGlobals.byFrameStep" 1;
+setAttr "defaultRenderGlobals.extensionPadding" 4;
+setAttr defaultResolution.lockDeviceAspectRatio false;
+
+
+if (!`getAttr "defaultRenderQuality.enableRaytracing"`)
+ {
+  setAttr "defaultRenderQuality.enableRaytracing" 1;
+  setAttr "defaultRenderQuality.reflections" 1;
+   setAttr "defaultRenderQuality.refractions" 1;
+  scrollField -e  -it "光线跟踪渲染已被打开!\n"  ErrorscrollField;
+ }
+if (`getAttr "defaultRenderQuality.enableRaytracing"`)
+ {
+  int $reflections=`getAttr "defaultRenderQuality.reflections"`;
+  if ($reflections>1)
+  scrollField -e  -it "光线跟踪的反射参数太大!\n"  ErrorscrollField;
+  int $refractions=`getAttr "defaultRenderQuality.refractions"`;
+  if ($reflections>1)
+  scrollField -e  -it "光线跟踪的折射参数太大!\n"  ErrorscrollField;  
+
+ }
+ 
+ scrollField -e  -it " \n ------------------------------------------------ \n"  ErrorscrollField;
+ 
+
+
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+///////////////		ZZPlaybast							//////////////////	
+//////////////////////////////////////////////////////////////////////////
+
+////////////////     创建窗口        /////////////////////////////////////
+
+global proc ZZPlaybast ()
+{	
+	if(`window -exists ZZPBWin`)
+		deleteUI ZZPBWin;
+	
+	
+	window -title "相机预览 1.3" 
+		-menuBar on
+		-mxb off
+		-w 210
+		-h 495
+		-sizeable on
+		ZZPBWin;
+
+////////////	创建编辑菜单   ///////////////////////////////////////
+
+	menu -label "编辑" -tearOff off;
+	
+	menuItem -label "更新说明" 
+			-c "ZZCamNew" ZZCamNew;
+	menuItem -divider on;
+
+	menuItem -label "关于" 
+			-c "ZZCamAbout" ZZCamAbout;
+	menuItem -divider on;
+	
+	menuItem -label "关闭" 
+			-c "deleteUI ZZPBWin" delWin;
+	
+//-----------	属性控制菜单	----------------------------------//
+	
+	menu -label "属性控制" -tearOff off;
+	
+	menuItem -label "No Gate" -c camDisplayNoGate;
+	setParent -m ..;	
+	
+	menuItem -label "overscan" -sm 1 -to 1;
+	menuItem -label "on" -c camDisplayResolutionOn ;
+	menuItem -label "off" -c camDisplayResolutionOff ;
+	setParent -m ..;
+	
+	menuItem -label "Safe Action" -sm 1	 -to 1;
+	menuItem -label "on" -c camDisplaySafeActionOn ;
+	menuItem -label "off" -c camDisplaySafeActionOff;
+	setParent -m ..;
+	
+	
+	menuItem -label "Safe Titile" -sm 1	-to 1;
+	menuItem -label "on" -c camDisplaySafeTitleOn ;
+	menuItem -label "off" -c camDisplaySafeTitleOff ;
+	setParent -m ..;
+       menuItem -label "play avi"  -ann "输出完后是否播放avi."  -checkBox on  playAvi;
+
+/////////////     窗口布局       ////////////////////	
+	
+	columnLayout -adj 1 mainCol;
+	
+		text -label "相机列表：" -align "left";
+		textScrollList -ams on -h 150 
+			-selectCommand ZZselCamInScenes 
+			-deleteKeyCommand ZZdelCamInScenes
+			camListP;
+		button -label "载入相机" -c ZZoutCam -ann "载入当前场景中的相机" getButton;
+		separator -h 10;
+		
+		rowColumnLayout -numberOfColumns 3 ZZcamExCol;
+		button -label "切换面板" -c ZZswichCamPanel -ann "切换工作窗口为你所选择的相机" zzswitchPanel;
+		button -label "打开avi目录" -ann "打开avi存放目录" -c  "open_file(1)"    yzl_but01;
+		button -label "去除命名空间" -ann "去除命名空间" -c  "CL_removeNameSpaceUI()"    yzl_but02;
+		setParent ..;
+	
+		frameLayout -label "设置avi存放路径" -la "center" -bs "etchedOut"
+					-collapse off -cll on	ZZcamEXToolsFram ;
+			columnLayout -adj 1 ZZcamEXToolsCol;
+                   //Set 2010 -03-25 by yzl
+		   string $FTM_CurrentProject = `workspace -q  -dir`;
+                  //textFieldButtonGrp -label "目录" -text $FTM_CurrentProject -buttonLabel "浏览..." -adj 1     FTM_TargetDirectoryField;
+
+                    textFieldGrp -columnWidth 1 45  -cl2 right left -adjustableColumn 2 -l "目录:" -editable  1 -text  $FTM_CurrentProject  catchFile;
+                    button -l "设置路径..."  -ann "默认= 输出avi目录是,文件存放目录"  -c   "catch_brow ()"  check2;
+		    separator -style "in" -h 5;
+
+		separator -h 10;
+		setParent ..;
+		setParent ..;
+	
+	frameLayout -label "预览相机属性设置" -la "center" -bs "etchedOut" 
+		 	 	 -collapse off -cll on PBOptionFra;
+		columnLayout -adj 1 PBOptionCol;
+			checkBoxGrp
+				-numberOfCheckBoxes 1
+				-label "Maintain w/ h ratio"
+				-labelArray3  ""   "Two"  "Three"  -on1 "bilis()"  -ann "维持宽高比率"  UIaaa;
+				
+			intFieldGrp 
+					-numberOfFields 2
+					-width 300
+					-label "预览尺寸"
+					-adjustableColumn2 10
+					-columnWidth3 80 50 50
+					-columnAttach3 "both" "both" "both"
+					-columnOffset3 3 0 0
+					-columnAlign3 "right" "both" "left"
+			 		-value1 400 
+					-value2 240 
+					-cc "biyzl()"
+					numPBWHDivs;
+			separator -h 5;
+			
+/*			intFieldGrp 
+					-numberOfFields 2
+					-width 300
+					-label "预览时间"
+					-adjustableColumn2 10
+					-columnWidth3 80 50 50
+					-columnAttach3 "both" "both" "both"
+					-columnOffset3 3 0 0
+					-columnAlign3 "right" "both" "left"
+			 		-value1 0 
+					-value2 48 
+					numPBTimesDivs;
+*/
+		setParent ..;
+	setParent ..;
+	separator -h 10;
+	
+	
+	button -label "预览"   -bgc 0.85 0.5 0.7   -c ZZPlayblastCam -ann "预览你在列表中所选择的相机" playblastButton;
+	separator -h 10;
+	
+	frameLayout -labelVisible off helpFram;
+
+	helpLine;
+
+	ZZoutCam;
+
+	showWindow ZZPBWin;
+
+}
+
+global  proc   bilis(){
+    float $oldV1=`intFieldGrp -q -v1 numPBWHDivs`;
+    float $oldV2=`intFieldGrp -q -v2 numPBWHDivs`;
+    global float $bi[];
+    float $yizi=$oldV1/$oldV2*1;
+    $bi[0]=$yizi;
+    $bi[1]=$oldV1;
+    $bi[2]=$oldV2;
+}
+
+global proc  biyzl()
+{
+  int $num1=`intFieldGrp -q -v1 numPBWHDivs`;
+  int $num2=`intFieldGrp -q -v2 numPBWHDivs`;
+  int $radioUI_num=`checkBoxGrp -q -v1 UIaaa`;
+  global float $bi[];
+  if ($radioUI_num==1){
+	if ($num1==$bi[1]){
+		$bi[1]=`floor ($num2*$bi[0])`;
+		intFieldGrp -e -v1  $bi[1]   numPBWHDivs;
+		$bi[2]=$num2;}
+	else if($num2==$bi[2]){
+		$bi[2]=`floor ($num1/$bi[0])`;
+		intFieldGrp -e -v2  $bi[2]   numPBWHDivs;
+		$bi[1]=$num1;}
+	}
+}
+
+
+//////////////////////////    相机列表与场景交互    /////////////////////////////
+
+//----------------	在场景中选择列表中选择的相机	---------------------------//
+
+
+global proc ZZselCamInScenes ()
+{
+	select -cl;
+	string $ZZallCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZallCam in $selCam)
+	{
+//		print ($ZZallCam + "\n");
+		select -add  $ZZallCam;
+	}
+
+}
+
+//--------------	在场景中删除列表中选择的相机	---------------//
+
+global proc ZZdelCamInScenes ()
+{
+	string $ZZallCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZallCam in $selCam)
+	{
+		delete  $ZZallCam;
+	}
+	ZZoutCam;
+}
+//---------------  列出场景中的相机,并反馈给相机列表   ------------///
+
+global proc ZZoutCam()
+{
+	string $allCam[] = `listCameras`;
+	string $eachCam;
+	
+	textScrollList -q -e -ra camListP;
+	
+	for ($eachCam in $allCam)
+	{
+		
+		textScrollList  -e -a $eachCam camListP;
+	};
+
+}
+
+//------------------- 切换面板  ------------------//
+
+global proc ZZswichCamPanel()
+{
+	string $ZZselCam[] = `textScrollList -q -si camListP`;
+	string $ZZallCam;
+	for($ZZallCam in $ZZselCam)
+	{
+		lookThru $ZZallCam;
+
+	}
+}
+//---------   重命名列表中选择的相机	  ----------////////
+global proc ZZRenameCam()
+{
+	//取得列表中选择的相机
+	string $ZZrenNameCam;
+	string $ZZNewCamName = `textFieldGrp -q -tx putNameCol`;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	
+	//执行重命名
+	for($ZZrenNameCam in $selCam)
+		{
+			rename $ZZrenNameCam $ZZNewCamName;
+		}
+		ZZoutCam;
+}
+
+////////////   预览列出列表中所选择的相机   ////////////////////////////////////
+
+//old  is here  global proc ZZPlayblastCam()
+
+/////////////////    属性控制    ///////////////////////
+
+//-------------- 	打开摄相机的overscan属性 -----------//
+
+global proc camDisplayResolutionOn ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displayResolution") on ;	
+	}
+}
+
+
+//-------------- 	关闭摄相机的overscan属性 -----------//
+
+global proc camDisplayResolutionOff ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displayResolution") off ;	
+	}
+}
+
+//-------------- 	打开摄相机的Safe Action属性 -----------//
+
+global proc camDisplaySafeActionOn ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displaySafeAction") on ;	
+	}
+}
+
+
+//-------------- 	关闭摄相机的Safe Action属性 -----------//
+
+global proc camDisplaySafeActionOff ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displaySafeAction") off ;	
+	}
+}
+
+
+//-------------- 	打开摄相机的Safe Title属性 -----------//
+
+global proc camDisplaySafeTitleOn ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displaySafeTitle") on ;	
+	}
+}
+
+
+//-------------- 	关闭摄相机的Safe Title属性 -----------//
+
+global proc camDisplaySafeTitleOff ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displaySafeTitle") off ;	
+	}
+}
+
+
+//-------------- 	No Gate属性 -----------//
+
+global proc camDisplayNoGate ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{	
+		setAttr ($ZZplayCam + ".displayResolution") off ;	
+		setAttr ($ZZplayCam + ".displaySafeAction") off ;	
+		setAttr ($ZZplayCam + ".displaySafeTitle") off ;	
+	}
+}
+
+////////////////-----   更新说明  -----  ///////////////////////////
+
+global proc ZZCamNew()
+{
+	//检测是否有重复窗口//
+	string $newWindow = "aboutWindow";
+	if(`window -q -exists $newWindow`)
+		deleteUI $newWindow ;
+	
+	window -w 300 -h 125 
+		-title "1.3更新说明 "
+		-sizeable off
+		-vis off
+		$newWindow;
+	
+	//布局
+        columnLayout -adjustableColumn true "About";
+        text "更新时间：2008.5.30";
+         text "更新说明：重新设计窗口布局，朝更人性化方向靠拢";
+		 text "除掉部分bug.";
+		 	
+        setParent..;
+
+
+	showWindow $newWindow;
+}
+
+
+///////////////////////-----   关于  -----  ///////////////////////////////////////
+
+global proc ZZCamAbout()
+{
+	//检测是否有重复窗口//
+	string $window = "aboutWindow";
+	if(`window -q -exists $window`)
+		deleteUI $window ;
+	
+	window -w 250 -h 150 
+		-title "关于相机预览1.3 "
+		-mxb off
+		-vis off
+		$window;
+	
+	//布局
+        columnLayout -adjustableColumn true "About";
+        text "作者:李晓军";
+         text "QQ: 56464068";
+		 text "创建时间：2008.5";
+         text "email: jzboylxj@163.com";
+         text "如果在使用中遇到有什么问题，或者bug，请通知本人";
+         text "本人会及时修正";
+		 text "谢谢使用，祝你工作愉快！";
+        setParent..;
+
+
+	showWindow $window;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+/*  This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: FileTextureManager v2.0
+''    Author: Crow Yeh
+''    Last Updated: April 16, 2002
+''    Update/Change this file at:
+''    http://www.highend3d.com/maya/mel/?section=project#1012
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///											///
+/// Procedure Name :	FileTextureManager.mel						///
+///											///
+/// Updated :	April, 2002								///
+///                                                                                     ///
+/// Author :	Crow Yeh								///
+/// Contact :	crow@citiz.net								///
+///											///
+/// Description :									///
+///											///
+///		FileTextureManager basically does these jobs:				///
+///		1. Analyse scene file textures.						///
+///		2. Copy or move the original texture files to user defined path.	///
+///		3. Reset file textures' path.						///
+///											///
+///		FileTextureManager is designed and written to be used on NT or		///
+///		IRIX. It has been tested on both NT and IRIX or cross. On other		///
+///		OS which uses "\" or "/" to separate path, like Linux, it should	///
+///		work properly, which has not been tested yet. But it worths a try.	///
+///											///
+/// How to use :									///
+///											///
+///		Put the script in your scripts folder then type and execute 		///
+///		"FileTextureManager" in the command line or Script Editor, 		///
+///		an UI window will appear. Then follow the help in the UI 		///
+///		window to finish your job. Have fun!					///
+///											///
+/// Inputs :	None									///
+///											///
+/// Return :	None									///
+/// 											///
+/// All Rights Reserved .								///
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////
+// MEL Starts //
+////////////////
+
+
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+// Get the right format of path(folder) to match current OS.
+//
+proc string FTM_GetPath (string $FTM_FileOrPath, string $FTM_OldPath)
+//$FTM_FileOrPath	Input type: file or path
+//$FTM_OldPath		The input
+{
+	//Only want the path.
+	if ($FTM_FileOrPath == "file")
+		$FTM_OldPath = `dirname $FTM_OldPath`;
+	//Get rid of the slash at the end.
+	$FTM_OldPath = `substitute "\\\\*$" $FTM_OldPath ""`;
+	$FTM_OldPath = `substitute "/*$" $FTM_OldPath ""`;
+	//Get the right path.
+	string $FTM_RightPath;
+	global int $FTMg_OS;
+	if ($FTMg_OS == 0)//nt
+		$FTM_RightPath = `toNativePath $FTM_OldPath` + "\\";
+	else if ($FTMg_OS == 1)//irix
+		$FTM_RightPath = `fromNativePath $FTM_OldPath` + "/";
+	return $FTM_RightPath;
+}
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+// Get the right format of input file's fullname (including path) to match current OS.
+// Return a string array, the first element is the right format of the input file's
+// fullname (including path), the second element is the shortname of input file (without path).
+//
+proc string[] FTM_GetFile (string $FTM_OldFullPath)
+{
+	string $FTM_RightPath[];
+	string $FTM_PathElements[];
+	int $FTM_PathElementsSize;
+
+	// fullname
+	global int $FTMg_OS;
+	if ($FTMg_OS == 0)//nt
+	{
+		$FTM_RightPath[0] = `toNativePath $FTM_OldFullPath`;
+		$FTM_PathElementsSize = `tokenize $FTM_RightPath[0] "\\" $FTM_PathElements`;
+		$FTM_RightPath[1] = $FTM_PathElements[$FTM_PathElementsSize - 1];
+	}
+	else if ($FTMg_OS == 1)//irix
+	{
+		$FTM_RightPath[0] = `fromNativePath $FTM_OldFullPath`;
+		$FTM_PathElementsSize = `tokenize $FTM_RightPath[0] "/" $FTM_PathElements`;
+		$FTM_RightPath[1] = $FTM_PathElements[$FTM_PathElementsSize - 1];
+	}
+	return $FTM_RightPath;
+}
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+// Analyse all the file texture nodes in current scene.
+//
+proc string[] FTM_FileTextureAnalyst ()
+{
+// All the file texture nodes maybe point to texture files in different paths(folders).
+// Here I use  "group" to indicate different paths , which means there are n "groups" of
+// different paths if the file texture nodes point to files in n different paths.
+
+// The tricky idea used here is to create a new temporary transform node each time the procedure
+// find a new "group". Then just add new attribute ("FTM_File_n") to each node to hold the names of
+// the file texture nodes , which point to texture files in the certain "group".
+// As a result, how many temporary transform nodes we have , how many different "groups" we found.
+// And for each temporary transform node, how many attributes begin with "FTM_File_" in name it has,
+// how many file texture nodes point to that path we found.
+
+	// All the file texture nodes found in current scene.
+	string $FTM_Files[] = `ls -typ file`;
+
+	// Different groups.
+	string $FTM_Groups[];
+	// The amount of different "groups".
+	int $FTM_GroupsSize;
+	// "Group" for not specified file texute nodes.
+	string $FTM_EmptyGroup = `createNode transform`;
+	int $FTM_EmptyGroupSize = 0;
+
+	// Figure out how many "groups" there are in current scene, and put each file texture node
+	// into proper "group".
+	for ($eachFile in $FTM_Files)
+	{
+		$FTM_GroupsSize = size($FTM_Groups);
+		// Get the path of current file texture node
+		string $FTM_CurrentFullPath = `getAttr ($eachFile + ".fileTextureName")`;
+		string $FTM_CurrentPath = dirname ($FTM_CurrentFullPath);
+
+		// File texutre was specified.
+		if (size($FTM_CurrentFullPath) != 0)
+		{
+			// Compare current path to all "groups" have been found. If matches then add new attribute
+			// to current "group" to hold the name of current file texture node, and exist the compare
+			// loop immediately.
+			for ($j=0; $j<$FTM_GroupsSize; $j++)
+			{
+				// Get the path of current "group".
+				string $FTM_OldFile = `getAttr ($FTM_Groups[$j] + ".FTM_File_0")`;
+				string $FTM_OldPath = dirname (`getAttr ($FTM_OldFile + ".fileTextureName")`);
+				// Compare current path to all "groups" have been found.
+				if ($FTM_CurrentPath == $FTM_OldPath)
+				{
+					// Figure out how many file textue nodes are contained in current "group".
+					string $FTM_FilesStored[] = `listAttr -string ("FTM_File_" + "\*") $FTM_Groups[$j]`;
+					int $FTM_FilesStoredSize = size ($FTM_FilesStored);
+					// The amount of file texture nodes stored is the new index.
+					addAttr -longName ("FTM_File_" + $FTM_FilesStoredSize) -dt "string" $FTM_Groups[$j];
+					setAttr -type "string" ($FTM_Groups[$j] + ".FTM_File_" + $FTM_FilesStoredSize) $eachFile;
+					break;
+				}
+			}
+			// No "group" matches means new "group" was found.
+			if ($j >= $FTM_GroupsSize)
+			{
+				// Create new "group", and add new attribute to it to hold the name
+				// of current file texure node.
+				$FTM_Groups[$FTM_GroupsSize] = `createNode transform`;
+				addAttr -longName "FTM_File_0" -dt "string" $FTM_Groups[$FTM_GroupsSize];
+				setAttr -type "string" ($FTM_Groups[$FTM_GroupsSize] + ".FTM_File_0") $eachFile;
+				continue;
+			}
+		}
+		// File texture was not specified yet. Use $FTM_EmptyGroup to hold the corresponding name for a second.
+		else
+		{
+			addAttr -longName ("FTM_File_" + $FTM_EmptyGroupSize) -dt "string" $FTM_EmptyGroup;
+			setAttr -type "string" ($FTM_EmptyGroup + ".FTM_File_" + $FTM_EmptyGroupSize) $eachFile;
+			$FTM_EmptyGroupSize = $FTM_EmptyGroupSize + 1;
+		}
+	}
+	// There is no empty "group" at all. Delete the unwanted temporary transform node.
+	if ($FTM_EmptyGroupSize == 0)
+		delete $FTM_EmptyGroup;
+	// Empty "group" exists, append it to the main "groups".
+	else
+	{
+		$FTM_GroupsSize = size($FTM_Groups);
+		$FTM_Groups[$FTM_GroupsSize] = $FTM_EmptyGroup;
+	}
+
+	select -cl;
+
+	return $FTM_Groups;
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+
+//
+// Command executed when "Analyse Scene File Textures" button pressed.
+//
+global proc FTM_AnalyseFileTextures (string $FTM_ParentUI)
+{
+	FTM_BuildMessageWindow;
+
+	waitCursor -state on;
+
+	global string $FTM_Groups[];
+	// Delete the temporary transform nodes.
+	if (size($FTM_Groups) != 0)
+	{
+		for ($FTM_Group in $FTM_Groups)
+		{
+			if ( size(`ls -transforms $FTM_Group`) )
+				delete $FTM_Group;
+		}
+	}
+	// Reasign values to the global string.
+	$FTM_Groups = `FTM_FileTextureAnalyst`;
+
+	// Make sure the cooresponding UI uniqe.
+	if (`columnLayout -q -ex ($FTM_ParentUI + "|FTM_AnalysisCheckerColumn")`)
+		deleteUI ($FTM_ParentUI + "|FTM_AnalysisCheckerColumn");
+
+	if (size($FTM_Groups) == 0)
+		text -e -l "No file textures found!" ($FTM_ParentUI + "|FTM_EmptyAnalysisText");
+	else
+	{
+		text -e -l "分析结果:" ($FTM_ParentUI + "|FTM_EmptyAnalysisText");
+
+		setParent $FTM_ParentUI;
+		columnLayout FTM_AnalysisCheckerColumn;
+		string $FTM_TotalResults = "Total " + size(`ls -typ file`) + " file textures point to " + size($FTM_Groups) + " (different) path(s) : ";
+		text -l $FTM_TotalResults;
+		text -l "" -h 10;
+
+		// Analyse each file in each "group".
+		for ($FTM_Group in $FTM_Groups)
+		{
+			string $FTM_FilesStored[] = `listAttr -string ("FTM_File_" + "\*") $FTM_Group`;
+			int $FTM_FilesStoredSize = size ($FTM_FilesStored);
+			string $FTM_FirstFile = `getAttr ($FTM_Group + ".FTM_File_0")`;
+			string $FTM_CurrentFullPath = `getAttr ($FTM_FirstFile + ".fileTextureName")`;
+			string $FTM_CurrentPath = dirname ($FTM_CurrentFullPath);
+
+			string $FTM_FileTexturesAnalysis;
+			// File texture not specified yet. In other words, empty file texture nodes.
+			if (size($FTM_CurrentFullPath) == 0)
+				$FTM_FileTexturesAnalysis = $FTM_FilesStoredSize + " texture(s) NOT specified. So they are NOT exist.";
+			// File texture specified, but no path information.
+			else if (size($FTM_CurrentPath) == 0)
+				$FTM_FileTexturesAnalysis = $FTM_FilesStoredSize + " texture(s) have no path information. So they are NOT exist(s).";
+			// Normal status.
+			else
+			{
+				// Correct the path format for current OS.
+				$FTM_CurrentPath = `FTM_GetPath "path" $FTM_CurrentPath`;
+				$FTM_FileTexturesAnalysis = $FTM_FilesStoredSize + " texture(s) point to === \" " + $FTM_CurrentPath + " \".";
+			}
+
+			// Queue the names of the files stored in current "group" for later quick selecting.
+			string $FTM_CurrentFile[];
+			string $FTM_CurrentFiles = "";
+			// Strings used to hold files exist or notExist.
+			string $FTM_Exist[] = {};
+			int $FTM_ExistSize = 0;
+			string $FTM_NotExist[] = {};
+			int $FTM_NotExistSize = 0;
+
+			for ($i=0; $i<size($FTM_FilesStored); $i++)
+			{
+				// Store the names of files in current "group".
+				$FTM_CurrentFile[$i] = `getAttr ($FTM_Group + "." + $FTM_FilesStored[$i])`;
+				$FTM_CurrentFiles = $FTM_CurrentFiles + $FTM_CurrentFile[$i] + " ";
+
+				// Check if the file exsist or not, then asign the name to responding variable.
+				string $FTM_CurrentFilePath = `getAttr ($FTM_CurrentFile[$i] + ".fileTextureName")`;
+				if ( `file -q -ex $FTM_CurrentFilePath`)
+				{
+					$FTM_Exist[$FTM_ExistSize] = $FTM_CurrentFile[$i];
+					$FTM_ExistSize = $FTM_ExistSize + 1;
+
+				}
+				else
+				{
+					$FTM_NotExist[$FTM_NotExistSize] = $FTM_CurrentFile[$i];
+					$FTM_NotExistSize = $FTM_NotExistSize + 1;
+				}
+			}
+
+			string $FTM_MainChecker = `checkBox -l $FTM_FileTexturesAnalysis -al left`;
+
+			// Only build responding sub-checker for the files have path information.
+			string $FTM_ExistSubChecker;
+			string $FTM_NotExistSubChecker;
+			if (size($FTM_CurrentFullPath) != 0  && size($FTM_CurrentPath) != 0)
+			{
+				columnLayout -adj 1 -cat left 30;
+					// A list of exist files, which is used for selection.
+					string $FTM_ExistFiles = "";
+					for ($i=0; $i<$FTM_ExistSize; $i++)
+						$FTM_ExistFiles = $FTM_ExistFiles + $FTM_Exist[$i] + " ";
+					$FTM_ExistSubChecker = `checkBox -l ($FTM_ExistSize + " of them exist(s).") -al left
+						-onc ("select -add " + $FTM_ExistFiles) -ofc ("select -deselect " + $FTM_ExistFiles)`;
+
+					// A list of NOT exist files, which is used for selection.
+					string $FTM_NotExistFiles = "";
+					for ($i=0; $i<$FTM_NotExistSize; $i++)
+						$FTM_NotExistFiles = $FTM_NotExistFiles + $FTM_NotExist[$i] + " ";
+					$FTM_NotExistSubChecker = `checkBox -l ($FTM_NotExistSize + " of them NOT exist(s).") -al left
+						-onc ("select -add " + $FTM_NotExistFiles) -ofc ("select -deselect " + $FTM_NotExistFiles)`;
+				setParent ($FTM_ParentUI + "|FTM_AnalysisCheckerColumn");
+
+				// Main checker's onCommand and offCommand should influnce responding subcheckers in this case;
+				checkBox -e -onc ("select -add " + $FTM_CurrentFiles + ";checkBox -e -v 1 -vis 0 " + $FTM_ExistSubChecker + ";checkBox -e -v 1 -vis 0 " + $FTM_NotExistSubChecker)
+					-ofc ("select -deselect " + $FTM_CurrentFiles + ";checkBox -e -v 0 -vis 1 " + $FTM_ExistSubChecker + ";checkBox -e -v 0 -vis 1 " + $FTM_NotExistSubChecker)
+					$FTM_MainChecker;
+			}
+			// Main checker's onCommand and offCommand should NOT influnce responding subcheckers in this case;
+			else
+				checkBox -e -onc ("select -add " + $FTM_CurrentFiles) -ofc ("select -deselect " + $FTM_CurrentFiles) $FTM_MainChecker;
+		}
+	}
+	waitCursor -state off;
+	global string $FTM_Groups[];
+	if (size($FTM_Groups) != 0)
+	{
+		for ($FTM_Group in $FTM_Groups)
+		{
+			if ( size(`ls -transforms $FTM_Group`) )
+				delete $FTM_Group;
+		}
+	}
+	deleteUI FTM_MessageWindow;
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+
+//
+//Comand executed when Browse button pressed.
+//
+global proc FTM_BrowseCmd (string $FTM_FileOrPath, string $FTM_TextField, string $FTM_WhichButton, int $FTM_BrowseType)
+//$FTM_FileOrPath		Pass to FTM_ChangeTextField
+//$FTM_TextField		Pass to FTM_ChangeTextField
+//$FTM_WhichButton		Pass to fileBrowser, which will be the label of the dialog
+//$FTM_BrowseType		Pass to fileBrowser, which will define to get dialog for file or folder
+{
+	string $FTM_CurrentProject = `workspace -q -rd`;
+	workspace -dir $FTM_CurrentProject;
+	string $FTM_Temp = "";
+		$FTM_Temp = $FTM_Temp + "FTM_ChangeTextField ";
+		$FTM_Temp = $FTM_Temp + ("\"" + $FTM_FileOrPath + "\" ");
+		$FTM_Temp = $FTM_Temp + ("\"" + $FTM_TextField + "\" ");
+	fileBrowser $FTM_Temp $FTM_WhichButton "" $FTM_BrowseType;
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+//
+//The callback command on fileBrowser.
+//
+global proc FTM_ChangeTextField (string $FTM_FileOrPath, string $FTM_TextField, string $FTM_File, string $FTM_FileType)
+//$FTM_FileOrPath	How to deal with the input path , will be pass to FTM_GetPath
+//$FTM_TextField	The name of the control need to be edited
+//$FTM_File		The file specified
+//$FTM_FileType		The file type specified
+{
+	string $FTM_Path = `FTM_GetPath $FTM_FileOrPath $FTM_File`;
+	textFieldButtonGrp -e -text $FTM_Path $FTM_TextField;
+	//Close the dialog for IRIX.
+	global int $FTMg_OS;
+	if ($FTMg_OS == 1)
+		window -e -vis false projectViewerWindow;
+}
+
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+//
+// Warning window for unknown OS.
+//
+proc FTM_UnknownOS (string $FTM_os)
+{
+	global int $FTMg_OS;
+
+	windowPref -enableAll false;
+
+	if (`window -exists FTM_UnknownOSWindow`)
+		deleteUI FTM_UnknownOSWindow;
+	window -s 0 -mnb 0 -mxb 0 -wh 400 200 -t "Not Tested OS" FTM_UnknownOSWindow;
+	string $FTM_UnknownOSMainForm = `formLayout -nd 100`;
+		string $FTM_UnknownOSInfoColumn = `columnLayout -adj 1`;
+			text -l ("FileTextureManager is not tested on \" " + $FTM_os + " \"\nBut, it maybe work.\n\nPlease specify which separator the OS use to describe path.\n\n") -al center;
+			// Default separator si "/" .
+			$FTMg_OS = 1;
+			radioButtonGrp -nrb 2 -select 1 -l "Path Separator : " -l1 "   / " -l2 "   \\ " -cw3 100 100 100
+					-on1 "$FTMg_OS = 1" -on2 "$FTMg_OS = 0";
+		string $FTM_UnknownOSFunctionForm = `formLayout -p $FTM_UnknownOSMainForm`;
+			string $FTM_UnknownOSTryButton = `button -l "Try it" -h 30 -w 120 -c "deleteUI FTM_UnknownOSWindow;FTM_BuildMainUI"`;
+			string $FTM_UnknownOSExitButton = `button -l "Exit" -h 30 -w 80 -c "deleteUI FTM_UnknownOSWindow"`;
+		formLayout -e
+			-af $FTM_UnknownOSExitButton right 0
+			-an $FTM_UnknownOSExitButton left
+			-ac $FTM_UnknownOSTryButton right 10 $FTM_UnknownOSExitButton
+			-an $FTM_UnknownOSTryButton left
+			$FTM_UnknownOSFunctionForm;
+	formLayout -e
+		-af $FTM_UnknownOSInfoColumn top 20
+		-af $FTM_UnknownOSInfoColumn left 20
+		-af $FTM_UnknownOSInfoColumn right 20
+		-ac $FTM_UnknownOSInfoColumn bottom 15 $FTM_UnknownOSFunctionForm
+		-af $FTM_UnknownOSFunctionForm left 10
+		-af $FTM_UnknownOSFunctionForm right 10
+		-af $FTM_UnknownOSFunctionForm bottom 10
+		-an $FTM_UnknownOSFunctionForm top
+		$FTM_UnknownOSMainForm;
+	showWindow FTM_UnknownOSWindow;
+
+	windowPref -enableAll true;
+}
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+//
+// Build the processing message window in the right position and size.
+//
+global proc FTM_BuildMessageWindow ()
+{
+	windowPref -enableAll false;
+
+	// Caculate the position for the message window.
+	int $FTM_MainWindowPos[] = `window -q -tlc FTM_MainWindow`;
+	int $FTM_MainWindowSize[] = `window -q -wh FTM_MainWindow`;
+	int $FTM_MessageWindowPos[];
+	$FTM_MessageWindowPos[0] = $FTM_MainWindowPos[0] + ($FTM_MainWindowSize[1] - 100)/2;
+	$FTM_MessageWindowPos[1] = $FTM_MainWindowPos[1] + ($FTM_MainWindowSize[0] - 200)/2;
+
+	if (`window -ex FTM_MessageWindow`)
+		deleteUI FTM_MessageWindow;
+	window -s 1 -tb 0 -wh 200 100 -tlc $FTM_MessageWindowPos[0] $FTM_MessageWindowPos[1] FTM_MessageWindow;
+	string $FTM_MessageForm = `formLayout`;
+		string $FTM_Message = `text -l "Processing ...... Please wait" -al center`;
+	formLayout -e
+		-af $FTM_Message top 0
+		-af $FTM_Message bottom 0
+		-af $FTM_Message left 0
+		-af $FTM_Message right 0
+		$FTM_MessageForm;
+	showWindow FTM_MessageWindow;
+
+	windowPref -enableAll true;
+}
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+//Build the main UI.
+//
+global proc FTM_BuildMainUI ()
+{
+//Make sure the window will be displayed in proper size.
+windowPref -enableAll false;
+//If the UI exits , delete it.
+if (`window -exists FTM_MainWindow`)
+	deleteUI FTM_MainWindow;
+//Build a new UI.
+window -title "贴图文件收集器. 极翔天使汉化" -wh 600 600 -tlc 200 200 -ret FTM_MainWindow;
+	string $FTM_MainForm = `formLayout`;
+		string $FTM_Tabs = `tabLayout -imw 0 -imh 0`;
+//Option tab
+		string $FTM_OptionForm = `formLayout`;
+			string $FTM_OptionScroll = `scrollLayout -cr true`;
+			string $FTM_OptionColumn = `columnLayout -adj 1 -rs 5`;
+//Analyse area
+				formLayout -nd 100 FTM_AnalyseForm;
+						string $FTM_AnalyseColumn = `columnLayout -cat both 30 -adj 1 -rs 5`;
+							button -l "开始收集场景贴图文件" -h 30 -w 250 FTM_AnalyseButton;
+							text -l "" -h 5;
+							text -l "勾选所需文件进行操作. <可进行多重选择>";
+						string $FTM_AnalysisScroll = `scrollLayout -p FTM_AnalyseForm`;
+							string $FTM_AnalysisColumn = `columnLayout -cat left 15`;
+								text -l "没有找到相关资料." FTM_EmptyAnalysisText;
+							button -e -c ("FTM_AnalyseFileTextures " + $FTM_AnalysisColumn) ($FTM_AnalyseColumn + "|FTM_AnalyseButton");
+				formLayout -e
+					-af $FTM_AnalyseColumn left 0
+					-af $FTM_AnalyseColumn right 0
+					-af $FTM_AnalyseColumn top 5
+					-af $FTM_AnalyseColumn bottom 300
+					-ac $FTM_AnalysisScroll top 5 $FTM_AnalyseColumn
+					-af $FTM_AnalysisScroll bottom 0
+					-af $FTM_AnalysisScroll left 0
+					-af $FTM_AnalysisScroll right 0
+					($FTM_OptionColumn + "|FTM_AnalyseForm");
+			setParent $FTM_OptionColumn;
+				separator -style "in" -h 10;
+//Operation mode
+			radioButtonGrp -l "操作模式" -la3 "自动" "手动"  "自动并建包 " -nrb 3 -select 1 -cl3 right left left -cw3 120 100 100 FTM_OperationMode;
+//Set source directory area
+				textFieldButtonGrp -label "源目录" -text "" -buttonLabel "浏览..." -adj 2 -en 0 -cw 1 120 -cw 3 60 -cl3 right left center FTM_SourceDirectoryField;
+//Set target directory area
+				string $FTM_CurrentProject = `workspace -q -rd`;
+				string $FTM_CurrentSourceImagesDir = $FTM_CurrentProject + "sourceimages";
+				string $FTM_SourceImages = `FTM_GetPath "path" $FTM_CurrentSourceImagesDir`;
+				textFieldButtonGrp -label "目标目录" -text $FTM_SourceImages -buttonLabel "浏览..." -adj 2 -cw 1 120 -cw 3 60 -cl3 right left center FTM_TargetDirectoryField;
+				separator -style "in" -h 5;
+//Create new folder area
+				checkBoxGrp -ncb 1 -l1 "在目标目录下建立新的文件夹" -adj 1 -v1 0 -cat 1 left 101 FTM_MakeFolderChecker;
+				textFieldGrp -label "文件夹名称" -text "MyTextureFiles" -en 0 -cw2 120 180 -cl2 right left FTM_NewFolderNameField;
+				separator -style "in" -h 5;
+//Update texture file area
+				rowLayout -nc 2 -cw 1 120 -cat 1 right 0 -cl2 left left FTM_AddPrefixRow;
+					checkBox -l "增加前缀" -v 0 FTM_AddPrefixChecker;
+					textField -tx "prefix_" -en 0 -w 150 FTM_PrefixField;
+			setParent $FTM_OptionColumn;
+				rowLayout -nc 2 -cw 1 120 -cat 1 right 0 -cl2 left left FTM_AddSuffixRow;
+					checkBox -l "增加后缀" -v 0 FTM_AddSuffixChecker;
+					textField -tx "_suffix" -en 0 -w 150 FTM_SuffixField;
+			setParent $FTM_OptionColumn;
+				checkBoxGrp -ncb 1 -l1 "取代序列" -adj 1 -v1 0 -cat 1 left 101 FTM_ReplaceStringChecker;
+				textFieldGrp -l "旧的序列" -tx "旧的序列" -en 0 -cw2 120 150 -cl2 right left FTM_OldStringField;
+				textFieldGrp -l "新的序列" -tx "新的序列" -en 0 -cw2 120 150 -cl2 right left FTM_NewStringField;
+		formLayout -e
+			-af $FTM_OptionScroll top 5
+			-af $FTM_OptionScroll left 0
+			-af $FTM_OptionScroll right 0
+			-af $FTM_OptionScroll bottom 0
+			$FTM_OptionForm;
+		setParent $FTM_Tabs;
+//Help tab
+			string $FTM_HelpForm = `formLayout`;
+//Description area
+				scrollField -ww true -editable false FTM_HelpField;
+//About FileTextureManager
+			setParent $FTM_HelpForm;
+				string $FTM_AboutFrame = `frameLayout -l "关于场景贴图收集器" -la top -fn boldLabelFont -cll 0 -bv true -bs "in" -li 5`;
+				string $FTM_AboutForm = `formLayout`;
+					string $FTM_AboutTextLeft = `text -l "脚本名称 :\nUpdated :\nAuthor :\nContact :\n汉化作者 ：\n\nAll  Rights  Reserved." -al left`;
+					string $FTM_AboutTextRight = `text -l "FileTextureManager.mel\nApril, 2002\nCrow Yeh\nCrow@citiz.net\n极翔天使" -al left`;
+				formLayout -e
+					-af $FTM_AboutTextLeft left 10
+					-af $FTM_AboutTextLeft top 5
+					-an $FTM_AboutTextLeft right
+					-af $FTM_AboutTextLeft bottom 5
+					-ac $FTM_AboutTextRight left 10 $FTM_AboutTextLeft
+					-af $FTM_AboutTextRight top 5
+					-an $FTM_AboutTextRight right
+					-af $FTM_AboutTextRight bottom 5
+					$FTM_AboutForm;
+			formLayout -e
+				-ac FTM_HelpField bottom 5 $FTM_AboutFrame
+				-af FTM_HelpField top 5
+				-af FTM_HelpField left 0
+				-af FTM_HelpField right 0
+				-an $FTM_AboutFrame top
+				-af $FTM_AboutFrame left 0
+				-af $FTM_AboutFrame right 0
+				-af $FTM_AboutFrame bottom 0
+				$FTM_HelpForm;
+//Function form.
+	setParent $FTM_MainForm;
+		string $FTM_FunctionForm = `formLayout -h 30 -numberOfDivisions 100`;
+			string $FTM_CopyButton = `button -l "拷贝文件"
+							-c ("FTM_Function \"Copy\" " + $FTM_OptionColumn)`;
+			string $FTM_MoveButton = `button -l "移动文件"
+							-c ("FTM_Function \"Move\" " + $FTM_OptionColumn)`;
+			string $FTM_SetButton = `button -l "设置路径"
+							-c ("FTM_Function \"Set\" " + $FTM_OptionColumn)`;
+			string $FTM_ResetButton = `button -l "重新设置" -c ("FTM_ResetUI " + $FTM_OptionColumn + " " + $FTM_AnalysisColumn)`;
+			string $FTM_CloseButton = `button -l "关闭FTM"
+							-c ("global string $FTM_Groups[]; if (size($FTM_Groups) != 0){	for ($FTM_Group in $FTM_Groups)	{if ( size(`ls -transforms $FTM_Group`) )delete $FTM_Group;} } $FTM_Groups = {}; deleteUI FTM_MainWindow; select -cl;")`;
+		formLayout -e
+			-ap $FTM_CopyButton right 1 20
+			-af $FTM_CopyButton top 0
+			-af $FTM_CopyButton left 0
+			-af $FTM_CopyButton bottom 0
+			-ap $FTM_MoveButton left 1 20
+			-ap $FTM_MoveButton right 1 40
+			-af $FTM_MoveButton top 0
+			-af $FTM_MoveButton bottom 0
+			-ap $FTM_SetButton left 1 40
+			-ap $FTM_SetButton right 1 60
+			-af $FTM_SetButton top 0
+			-af $FTM_SetButton bottom 0
+			-af $FTM_ResetButton top 0
+			-af $FTM_ResetButton bottom 0
+			-ap $FTM_ResetButton left 1 60
+			-ap $FTM_ResetButton right 1 80
+			-ap $FTM_CloseButton left 1 80
+			-af $FTM_CloseButton top 0
+			-af $FTM_CloseButton right 0
+			-af $FTM_CloseButton bottom 0
+			$FTM_FunctionForm;
+	formLayout -e
+		-af $FTM_Tabs top 0
+		-af $FTM_Tabs left 0
+		-af $FTM_Tabs right 0
+		-ac $FTM_Tabs bottom 3 $FTM_FunctionForm
+		-af $FTM_FunctionForm left 0
+		-af $FTM_FunctionForm right 0
+		-af $FTM_FunctionForm bottom 0
+		-an $FTM_FunctionForm top
+		$FTM_MainForm;
+
+FTM_EditUIControl $FTM_OptionColumn $FTM_HelpForm;
+
+tabLayout -e -tl $FTM_OptionForm "选项" $FTM_Tabs;
+tabLayout -e -tl $FTM_HelpForm "帮助" $FTM_Tabs;
+showWindow FTM_MainWindow;
+//Make sure other windows will be displayed in proper size.
+windowPref -enableAll true;
+}
+
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+
+//
+// Edit the UI Controls after they've been built
+//
+global proc FTM_EditUIControl (string $FTM_OptionColumn, string $FTM_HelpForm)
+{
+	// Adding "|" separator to the control name is necessary that
+	// Maya adds "|" to the control's full name(path) automaticly after creating it.
+
+// Operation mode
+	radioButtonGrp -e -on1 ("textFieldButtonGrp -e -en 0 -tx \"\" " + $FTM_OptionColumn + "|FTM_SourceDirectoryField")
+			-on2 ("textFieldButtonGrp -e -en 1 -tx \"\" " + $FTM_OptionColumn + "|FTM_SourceDirectoryField")
+			-on3 ("textFieldButtonGrp -e -en  0 -tx \"\" " + $FTM_OptionColumn + "|FTM_SourceDirectoryField")
+			($FTM_OptionColumn + "|FTM_OperationMode");
+// Set source directory
+	textFieldButtonGrp -e -bc ("FTM_BrowseCmd \"file\" \"" + $FTM_OptionColumn + "|FTM_SourceDirectoryField\" \"Set_S.D.\" 0")
+			($FTM_OptionColumn + "|FTM_SourceDirectoryField");
+// Set target directory
+	textFieldButtonGrp -e -bc ("FTM_BrowseCmd \"path\" \"" + $FTM_OptionColumn + "|FTM_TargetDirectoryField\" \"Set_T.D.\" 4")
+			($FTM_OptionColumn + "|FTM_TargetDirectoryField");
+// Make new folder
+	checkBoxGrp -e -on1 ("textFieldGrp -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_NewFolderNameField")
+			-of1 ("textFieldGrp -e -en 0 -text \"MyTextureFiles\" " + $FTM_OptionColumn + "|FTM_NewFolderNameField")
+			($FTM_OptionColumn + "|FTM_MakeFolderChecker");
+// Add prefix
+	checkBox -e -onc ("textField -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_PrefixField")
+			-ofc ("textField -e -en 0 -text \"prefix_\" " + $FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_PrefixField")
+			($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_AddPrefixChecker");
+// Add suffix
+	checkBox -e -onc ("textField -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_SuffixField")
+			-ofc ("textField -e -en 0 -text \"_suffix\" " + $FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_SuffixField")
+			($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_AddSuffixChecker");
+// Replace string
+	checkBoxGrp -e -on1 ("textFieldGrp -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_OldStringField; textFieldGrp -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_NewStringField")
+			-of1 ("textFieldGrp -e -en 0 -text \"OldString\" " + $FTM_OptionColumn + "|FTM_OldStringField; textFieldGrp -e -en 0 -text \"NewString\" " + $FTM_OptionColumn + "|FTM_NewStringField")
+			($FTM_OptionColumn + "|FTM_ReplaceStringChecker");
+
+// Help description field
+	string $FTM_HelpDescription = "\n[Description]:\n";
+		$FTM_HelpDescription += "  FileTextureManager basically does these jobs:\n";
+		$FTM_HelpDescription += "  1. Analyse scene file textures.\n";
+		$FTM_HelpDescription += "  2. Copy or move the original texture files to user defined path.\n";
+		$FTM_HelpDescription += "  3. Reset file textures' path.\n\n";
+		$FTM_HelpDescription += "[Work Flow]:\n";
+		$FTM_HelpDescription += "  Step 1. Analyse scene file textures.(optional)\n";
+		$FTM_HelpDescription += "  Step 2. Select scene file textures (nodes) you want to manage by checking on the related checkers in the UI. You can also do this by your own method, Eg. select them in Hypershade.\n";
+		$FTM_HelpDescription += "  Step 3. Set options as needed.\n";
+		$FTM_HelpDescription += "  Step 4. Do copy, move or set by pressing related button.\n";
+		$FTM_HelpDescription += "  Step 5. Press \"Exit\" button to exit FileTextureManager. (important)\n\n";
+		$FTM_HelpDescription += "[Tips]:\n";
+		$FTM_HelpDescription += "  1. To convert \"\\\" to \"/\" or \"/\" to \"\\\" in the path, just analyse scene file textures, then select all the file textures point to the same \"wrong\" path by simply checking on the related checkers, set target directory to where related texture files are, reset the path by pressing \"Set Path\". Now you've done!\n";
+		$FTM_HelpDescription += "  2. Always keep 2 different version for each texture file. Eg. \"abc_LowRes.tga\" is in low resolution while \"abc_HighRes.tga\" is in high resolution. Do your job using low-res textures to speed the interactant. Just remember to use FileTextureManager to reset each file texture to point to the related high-res texture before rendering. (Add prefix, add suffix or even replace string.)\n";
+		$FTM_HelpDescription += "  3. The FileTextureManager's UI does not update dynamically like what Attribute Editor does, so it is better to re-analyse scene file textures each time you finish an FTM job. This is not necessary if you do not use the Analyse function at all.\n\n";
+		$FTM_HelpDescription += "[Notes]:\n";
+		$FTM_HelpDescription += "  1. Add suffix function has limitation on the texture file name. To be sure it work as desired, the file name must be in a regular format, Eg. \"filename.ext\", \"filename.[#...#].ext\", \"filename.ext.[#...#]\", etc. The add suffix function will always replace the first \".\" found in the whole file name with \"suffix.\".\n";
+		$FTM_HelpDescription += "  2. Add prfix, add suffix and replace string can be executed at the same time to each file texture. Replace string is caculated first, then add suffix, and add prefix last.\n";
+		$FTM_HelpDescription += "  3. It is highly recommended not to contain \".\" in prefix, suffix, old string and new string.\n";
+		$FTM_HelpDescription += "  4. Zero or more transform node will be created to hold some important information needed by FileTextureManager when using it, they will be automatically removed when you press \"Reset FTM\" or \"Exit\". So it is important to exit FileTextureManager by pressing \"Exit\" button. Press the close button on the top-right corner of the UI may pollute your scene. This can usually be fixed by restarting FileTextureManager immediately before you do any modifications to the scene.\n";
+		$FTM_HelpDescription += "  5. Sometimes process fails. The reason may be various. The most possible reason could be one of or both the following two: a. Texture file is not found in the source directory; b. Permission denied on reading or writing or deleting.\n";
+		$FTM_HelpDescription += "  6. FileTexureManager works on both NT and IRIX, both are tested. For other OS, if \"\\\" or \"/\" is used to separate path, like Linux, FileTextureManager should work properly. FileTextureManager is not tested on OS except NT and IRIX, but it worths a try.\n\n";
+		$FTM_HelpDescription += "[Details]:\n";
+		$FTM_HelpDescription += "  1. Analysing scene file textures let you know how many file textures there are in the scene, where there are, whether they exist or not, etc. It also allows user select all the texture files point to same path by only one simple click.\n";
+		$FTM_HelpDescription += "  2. How to choose operation mode depends on different source directory status. If file is there where it point to, use Automatic mode, otherwise use Manual mode.\n";
+		$FTM_HelpDescription += "  3. Other functions are pretty definite as marked in the UI.\n";
+
+	scrollField -e -text $FTM_HelpDescription ($FTM_HelpForm + "|FTM_HelpField");
+}
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+// Reset the UI to its initial state.
+//
+global proc FTM_ResetUI (string $FTM_OptionColumn, string $FTM_AnalysisColumn)
+{
+	waitCursor -state on;
+
+	// The main window;
+	window -e -wh 600 600 FTM_MainWindow;
+
+	// Analyse area
+	text -e -l "Not analysed yet." ($FTM_AnalysisColumn + "|FTM_EmptyAnalysisText");
+
+	// Delete the temporary transform nodes.
+	global string $FTM_Groups[];
+	if (size($FTM_Groups) != 0)
+	{
+		for ($FTM_Group in $FTM_Groups)
+		{
+			if ( size(`ls -transforms $FTM_Group`) )
+				delete $FTM_Group;
+		}
+	}
+	// Empty the global string.
+	$FTM_Groups = {};
+
+	if (`columnLayout -q -ex ($FTM_AnalysisColumn + "|FTM_AnalysisCheckerColumn")`)
+		deleteUI ($FTM_AnalysisColumn + "|FTM_AnalysisCheckerColumn");
+
+	// Operation mode
+	radioButtonGrp -e -select 1 ($FTM_OptionColumn + "|FTM_OperationMode");
+	// Source directory field
+	textFieldButtonGrp -e -text "" -en 0 ($FTM_OptionColumn + "|FTM_SourceDirectoryField");
+	// Target directory field
+	string $FTM_CurrentProject = `workspace -q -rd`;
+	string $FTM_CurrentSourceImagesDir = $FTM_CurrentProject + "sourceimages";
+	string $FTM_SourceImages = `FTM_GetPath "path" $FTM_CurrentSourceImagesDir`;
+	textFieldButtonGrp -e -text $FTM_SourceImages ($FTM_OptionColumn + "|FTM_TargetDirectoryField");
+	// Make new folder area
+	checkBoxGrp -e -v1 0 ($FTM_OptionColumn + "|FTM_MakeFolderChecker");
+	textFieldGrp -e -text "我的贴图文件" -en 0 ($FTM_OptionColumn + "|FTM_NewFolderNameField");
+	// Add prefix area
+	checkBox -e -v 0 ($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_AddPrefixChecker");
+	textField -e -text "prefix_" -en 0 ($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_PrefixField");
+	// Add suffix area
+	checkBox -e -v 0 ($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_AddSuffixChecker");
+	textField -e -text "_suffix" -en 0 ($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_SuffixField");
+	// Replace string area
+	checkBoxGrp -e -v1 0 ($FTM_OptionColumn + "|FTM_ReplaceStringChecker");
+	textFieldGrp -e -text "OldString" -en 0 ($FTM_OptionColumn + "|FTM_OldStringField");
+	textFieldGrp -e -text "NewString" -en 0 ($FTM_OptionColumn + "|FTM_NewStringField");
+
+	select -cl;
+	waitCursor -state off;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+proc string createNewPath(string $FTM_picFullPath,string $FTM_oldTargetDirectory)
+{
+string $FTM_RightPath[];
+string $FTM_PathElements[];
+int $FTM_PathElementsSize;
+$FTM_RightPath[0] = `toNativePath $FTM_picFullPath`;
+$FTM_PathElementsSize = `tokenize $FTM_RightPath[0] "\\" $FTM_PathElements`;
+
+global int $FTMg_OS;
+$FTM_TargetDirectorys = `FTM_GetPath "path" $FTM_oldTargetDirectory`;
+$FTM_TargetDirectorys = $FTM_TargetDirectorys + $FTM_PathElements[$FTM_PathElementsSize-2];
+if (!`file -q -ex $FTM_TargetDirectorys`)
+{
+	if ($FTMg_OS == 0)
+			system ("md \"" + $FTM_TargetDirectorys + "\"");
+	else if ($FTMg_OS == 1)
+			system ("mkdir \"" + $FTM_TargetDirectorys+ "\"");
+}
+$FTM_TargetDirectorys= `FTM_GetPath "path" $FTM_TargetDirectorys`;
+return $FTM_TargetDirectorys;
+}
+
+// The Copy, Move and Set functions.
+//
+global proc FTM_Function (string $FTM_Function, string $FTM_OptionColumn)
+{
+	string $FTM_SelectedFiles[] = `ls -sl -typ file`;
+	// If there is no file texture node selected, popup
+	// confirm dialog to remind user to select at least
+	// one file texture node.
+	if ( size($FTM_SelectedFiles) <= 0)
+		confirmDialog -t "No file texture node selected" -ma center -b "OK"
+			-m "Select at least one file texture node please" -p FTM_MainWindow;
+	// File texture node selected , do the function.
+	else
+	{
+		window -e -vis 0 FTM_MainWindow;
+		FTM_BuildMessageWindow;
+
+		waitCursor -state on;
+
+		// First get elements ready.
+		global int $FTMg_OS;
+		int $FTM_OperationMode = `radioButtonGrp -q -select ($FTM_OptionColumn + "|FTM_OperationMode")`;
+
+		// Source directory.
+		string $FTM_SourceDirectory;
+
+		// Target directory.
+		string $FTM_TargetDirectory = `textFieldButtonGrp -q -text ($FTM_OptionColumn + "|FTM_TargetDirectoryField")`;
+		$FTM_TargetDirectory = `FTM_GetPath "path" $FTM_TargetDirectory`;
+		// Check if new folder needed. If needed, create one only when the folder does not exist.
+		if ( `checkBoxGrp -q -v1 ($FTM_OptionColumn + "|FTM_MakeFolderChecker")` )
+		{
+			string $FTM_NewFolderName = `textFieldGrp -q -text ($FTM_OptionColumn + "|FTM_NewFolderNameField")`;
+			$FTM_TargetDirectory = $FTM_TargetDirectory + $FTM_NewFolderName;
+			if (!`file -q -ex $FTM_TargetDirectory`)
+			{
+				if ($FTMg_OS == 0)
+					system ("md \"" + $FTM_TargetDirectory + "\"");
+				else if ($FTMg_OS == 1)
+					system ("mkdir \"" + $FTM_TargetDirectory + "\"");
+			}
+			$FTM_TargetDirectory = `FTM_GetPath "path" $FTM_TargetDirectory`;
+		}
+
+		// Define command for function.
+		string $FTM_FunctionCmd;
+		if ($FTM_Function == "Copy")
+		{
+			if ($FTMg_OS == 0)
+				$FTM_FunctionCmd = "copy";
+			else if ($FTMg_OS == 1)
+				$FTM_FunctionCmd = "cp";
+		}
+		else if ($FTM_Function == "Move")
+		{
+			if ($FTMg_OS == 0)
+				$FTM_FunctionCmd = "move";
+			else if ($FTMg_OS == 1)
+				$FTM_FunctionCmd = "mv";
+		}
+
+		// Execute command of current function for every file texture node selected.
+		for ($FTM_SelectedFile in $FTM_SelectedFiles)
+		{
+			string $FTM_CurrentFile = `getAttr ($FTM_SelectedFile + ".fileTextureName")`;
+			string $FTM_SourceFile[] = `FTM_GetFile $FTM_CurrentFile`;
+			string $FTM_OriginSourceFile = $FTM_SourceFile[1];
+
+			// The file texture is not specified.
+			if (size($FTM_OriginSourceFile) == 0)
+				warning ($FTM_SelectedFile + " :  File texture is not specified.");
+			// The file texture is specified.
+			else
+			{
+
+				// If replace string was selected, replace the string specified.
+				if ( `checkBoxGrp -q -v1 ($FTM_OptionColumn + "|FTM_ReplaceStringChecker")` )
+				{
+					string $FTM_OldString = `textFieldGrp -q -tx ($FTM_OptionColumn + "|FTM_OldStringField")`;
+					string $FTM_MatchExpression = "(" + $FTM_OldString + ")+";
+					string $FTM_NewString = `textFieldGrp -q -tx ($FTM_OptionColumn + "|FTM_NewStringField")`;
+					for ($i=0; $i<size($FTM_SourceFile[1]); $i++)
+						$FTM_SourceFile[1] = `substitute $FTM_MatchExpression $FTM_SourceFile[1] $FTM_NewString`;
+				}
+
+				// Add prefix or(and) append suffix.
+				string $FTM_Prefix;
+				string $FTM_Suffix;
+				// If prefix was set, add it to the file name.
+				if ( `checkBox -q -v ($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_AddPrefixChecker")` )
+					$FTM_Prefix = `textField -q -tx ($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_PrefixField")`;
+
+				// If suffix was set, append it to the file name.
+				// In this case, we meet a limitation: the function will only work as desired when file name
+				// is in normal format, which should look like "filename.[].fileExtension": middle part
+				// and fileExtention are both optional and filename itself can NOT contain "." .
+				if ( `checkBox -q -v ($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_AddSuffixChecker")` )
+				{
+					string $FTM_Suffix = `textField -q -tx ($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_SuffixField")` + ".";
+
+					// Replace the first "." found in file name with "suffix."
+					$FTM_SourceFile[1] = `substitute "\\.+" $FTM_SourceFile[1] $FTM_Suffix`;
+				}
+				$FTM_SourceFile[1] = $FTM_Prefix + $FTM_SourceFile[1];
+
+				// Function process.
+				string $FTM_FinalCmd;
+				string $FTM_FunctionResult;
+				if ($FTM_Function != "Set")
+				{
+					if ($FTM_OperationMode == 1)
+					{
+						$FTM_FinalCmd = $FTM_FunctionCmd + " \"" + $FTM_SourceFile[0] + "\" \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+						$FTM_FunctionResult = $FTM_SelectedFile + " :  " + $FTM_Function + " \"" + $FTM_SourceFile[0] + "\" to \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+					}
+					else if ($FTM_OperationMode == 2)
+					{
+						$FTM_SourceDirectory = `textFieldButtonGrp -q -text ($FTM_OptionColumn + "|FTM_SourceDirectoryField")`;
+						$FTM_SourceDirectory = `FTM_GetPath "path" $FTM_SourceDirectory`;
+						$FTM_FinalCmd = $FTM_FunctionCmd + " \"" + $FTM_SourceDirectory + $FTM_OriginSourceFile + "\" \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+						$FTM_FunctionResult = $FTM_SelectedFile + " :  " + $FTM_Function + " \"" + $FTM_SourceDirectory + $FTM_SourceFile[1] + "\" to \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+					}
+					else if ($FTM_OperationMode == 3)
+					{
+						$FTM_TargetDirectory=`textFieldButtonGrp -q -text ($FTM_OptionColumn + "|FTM_TargetDirectoryField")`;
+						$new_FTM_TargetDirectory =createNewPath($FTM_SourceFile[0],$FTM_TargetDirectory);
+						print    "yzl";
+						print    $new_FTM_TargetDirectory ;
+						$FTM_FinalCmd = $FTM_FunctionCmd + " \"" + $FTM_SourceFile[0] + "\" \"" + $new_FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+					        $FTM_FunctionResult = $FTM_SelectedFile + " :  " + $FTM_Function + " \"" + $FTM_SourceFile[0] + "\" to \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+					}
+				}
+				else if ($FTM_Function == "Set")
+				{
+					setAttr -typ "string" ($FTM_SelectedFile + ".fileTextureName") ($FTM_TargetDirectory + $FTM_SourceFile[1]);
+					$FTM_FunctionResult = $FTM_SelectedFile + " :  Set to \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+				}
+
+				// Do the function.
+				// System command only executed when the function is not "Set".
+				if ($FTM_Function != "Set")
+					system ($FTM_FinalCmd);
+
+				// Print the function result.
+			if($FTM_OperationMode != 3)
+				{
+				if ( `file -q -ex ($FTM_TargetDirectory + $FTM_SourceFile[1])` )
+				{
+					if ($FTM_Function == "Move")
+					{
+						// File copied but not removed -- not actually "move".
+						if ( `file -q -ex $FTM_SourceFile[0]` || `file -q -ex ($FTM_SourceDirectory + $FTM_OriginSourceFile)`)
+						{
+							$FTM_FunctionResult = "Succeed >>>>>> " + $FTM_FunctionResult + " But the original file is not removed. Check the HELP for possible reasons.";
+							warning ($FTM_FunctionResult);
+						}
+						else
+						{
+							$FTM_FunctionResult = "Succeed >>>>>> " + $FTM_FunctionResult;
+							print ($FTM_FunctionResult + "\n");
+						}
+					}
+					else
+					{
+						$FTM_FunctionResult = "Succeed >>>>>> " + $FTM_FunctionResult;
+						print ($FTM_FunctionResult + "\n");
+					}
+				}
+				else
+				{
+					if ($FTM_Function == "Set")
+						$FTM_FunctionResult = "Succeed >>>>>> " + $FTM_FunctionResult + " >>>>>> But destination does NOT exist.";
+					else if ($FTM_Function != "Set")
+						$FTM_FunctionResult = "Fail >>>>>> " + $FTM_FunctionResult + " >>>>>> Check the HELP for possible reasons.";
+					warning ($FTM_FunctionResult);
+				}
+			}
+		}
+	}
+
+		waitCursor -state off;
+		deleteUI FTM_MessageWindow;
+		window -e -vis 1 FTM_MainWindow;
+		confirmDialog -t "Job finished" -m "Job finished.\nRefer to Script Editor for details." -ma center -b "OK" -p FTM_MainWindow;
+	}
+}
+
+//////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+//
+// The main procedure.
+// Query current OS, then build the main UI.
+//
+global proc FileTextureManager ()
+{
+	select -cl;
+	global int $FTMg_OS ;
+	$FTM_os =`about -os`;
+	if ($FTM_os == "nt")
+	{
+		$FTMg_OS = 0;
+		FTM_BuildMainUI;
+	}
+	else if ($FTM_os == "irix")
+	{
+		$FTMg_OS = 1;
+		FTM_BuildMainUI;
+	}
+	else
+	FTM_UnknownOS $FTM_os;
+}
+
+//////////////
+// MEL Ends //
+//////////////
+//start_2010_03_25 by yanzhili
+
+global proc ZZPlayblastCam()
+{
+	//取得相机预览尺寸
+	int $ZZPlayblastW =` intFieldGrp -q -value1 numPBWHDivs `;
+	int $ZZPlayblastH =` intFieldGrp -q -value2 numPBWHDivs `;
+	
+	//取得相机预览时间
+//	int $ZZPlayblastSt =` intFieldGrp -q -value1 numPBTimesDivs `;
+//	int $ZZPlayblastEd =` intFieldGrp -q -value2 numPBTimesDivs `;
+	
+	//开始预览
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+
+
+	for($ZZplayCam in $selCam)
+		{  
+                         $lastname=mytoken($ZZplayCam,":");
+			lookThru $ZZplayCam;
+			playblast -fmt movie 
+						-cc on
+						-filename  $lastname
+						-width $ZZPlayblastW
+						-height $ZZPlayblastH
+//						-startTime $ZZPlayblastSt
+//						-endTime  $ZZPlayblastEd
+						-fo
+						-p 100
+						-v off;}
+//add two
+for($ZZplayCam in $selCam){  
+
+$lastname=mytoken($ZZplayCam,":");
+
+string $currAviDir=`textFieldGrp -q -text  catchFile`;
+string $workS=`workspace -q -fn`;
+string $dir_image=`workspace -q -fre images`;
+
+string $destWindows = $currAviDir+"/"+$lastname+".avi";
+string $srcWindows =$workS+"/"+$dir_image+"/"+$lastname+".avi";
+
+sysFile -rename $destWindows  $srcWindows; 
+}
+//add three
+string $currAviDirs=`textFieldGrp -q -text  catchFile`;
+$selCams=mytoken($selCam[0],":");
+int $onof=`menuItem -q -checkBox  playAvi`;
+if($onof==1){
+   system("load"+$currAviDirs+"/"+$selCams+".avi");}
+
+}
+//mytoken
+global  proc string mytoken(string $cd_string,string $cd_sub){
+string $buffer[];
+string $a="";
+$numTokens = `tokenize $cd_string  $cd_sub  $buffer`;
+for($i=0;$i<$numTokens;$i++){
+  $a+=$buffer[$i]+"_";
+}
+if($numTokens>1){return $a;}
+else{
+   return   $cd_string ;}
+}
+//end_2010_03_24!
+//add_2010_3_25  by yzl
+global proc catch_brow()
+{
+fileBrowser "seton" "currDirt"  "" "4";
+}
+
+global proc  seton( string $path, string $type ){
+textFieldGrp -e -text $path  catchFile;
+}
+
+proc int catch_browProc(string $control, string $filename, string $fileType)
+{
+  string $aa=$filename;
+  print $aa;
+  textFieldGrp -e -text $filename $control;
+  return true;
+}
+
+
+global proc open_file(string $num ){
+switch($num){
+case "1":
+string $currAviDir=`textFieldGrp -q -text  catchFile`;
+system("load " + $currAviDir);
+ break;
+case "2":
+system("load " + " F:/");
+ break;
+case "3":
+system("load " + "D:/");
+ break;    
+}
+}
+//end!
+//add 2010_05_25 by yzl
+global proc CL_removeNameSpace(string $name)
+{
+	namespace -f -mv $name ":";
+	namespace -f -rm $name;
+}
+
+global proc CL_removeNameSpaceUI()
+{
+	if (`window -q -ex CL_RNSwindow`) deleteUI CL_RNSwindow;
+	window -title "Colorland Remove Namespace" CL_RNSwindow;
+		columnLayout -adj on -rs 10;
+                      rowLayout -nc 2  -cw 1 230 -cw 2 130;
+			    textFieldGrp -l "Namespace"     -tx "" 
+										-cw 1 80 -cw 2 150
+										-cat 1 "left" 20 -cat 2 "both" 5
+												CL_RNStextFieldGrp;
+                             button -l "get" -c "get_currNameSpace()";
+			setParent..;
+
+				rowLayout -nc 2 -cw 1 130 -cw 2 136 
+												-cat 1 "both" 10 -cat 2 "both" 10
+												-cal 1 "center" -cal 2 "center";
+					button -l "Remove" -c "CL_removeNameSpace (`textFieldGrp -q -tx CL_RNStextFieldGrp`)";
+					button -l "Cancel" -c "deleteUI CL_RNSwindow";
+			setParent..;
+
+	window -e -w 300 -h 100 CL_RNSwindow;		
+	showWindow CL_RNSwindow;
+}
+
+global proc get_currNameSpace()
+{     
+       string $sles[]=`ls -sl`;
+       string $buffer[];
+       string $a="";
+       $numTokens = `tokenize $sles[0]  ":" $buffer`;
+  	for($i=0;$i<$numTokens-1;$i++){
+	  $a+=$buffer[$i]+":";
+	}
+	if($numTokens>1){
+       textFieldGrp -e -tx $a CL_RNStextFieldGrp;
+	}
+	else{
+	textFieldGrp -e -tx "物体没命名空间" CL_RNStextFieldGrp;
+	}
+}
+
+zz01;

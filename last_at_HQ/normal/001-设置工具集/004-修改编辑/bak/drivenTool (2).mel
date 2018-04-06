@@ -1,0 +1,453 @@
+//***********
+//   窗口
+//***********
+
+
+//主窗口
+global proc F_KEY_Window(){
+    if (`window -q -exists F_Key_Window`) deleteUI F_Key_Window;
+    window -t "Set Driven Key" F_Key_Window;
+        columnLayout -w 520 -h 500;
+            frameLayout -label "Driver" -borderStyle "in";
+                rowLayout -nc 2;
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_list_Driver_1()" DRIVER_1;//驱动物体列表框的第一个列表框
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_list_Driver_2()" DRIVER_2;//驱动物体列表框的第二个列表框
+                    setParent ..;
+                setParent ..;
+            frameLayout -label "Driven" -borderStyle "in";
+                rowLayout -nc 2;
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_list_Driven_1()" DRIVEN_1;//被驱动物体列表框的第一个列表框
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_list_Driven_2()" DRIVEN_2;//被驱动物体列表框的第三个列表框
+                    setParent ..;
+                setParent ..;
+            separator -height 5 -style "in"; 
+                rowLayout -nc 4;
+                button -l "Key" -w 128 -h 22 -en false -c "F_Driver_Window()" Driver_0;
+                button -l "Load Driver" -w 128 -h 22 -c "F_Import_Driver()";
+                button -l "Load Driven" -w 128 -h 22 -c "F_Import_Driven()";
+                button -l "Close" -w 128 -h 22 -c "F_Close_Window()";
+    showWindow F_Key_Window;
+}
+
+
+//副窗口
+global proc F_Driver_Window()
+{
+    global string $K_return_Driver_1[];
+    global string $K_return_Driver_2[];
+    global string $K_return_Driven_1[];
+    global string $K_return_Driven_2[];
+    string $K_Driver_obj_Attr_nam[];
+    string $K_Driven_obj_Attr_nam[];
+    F_return_Driver_1();
+    F_return_Driver_2();
+    F_return_Driven_1();
+    F_return_Driven_2();
+
+    if (`window -q -exists F2_driver_Window_1`) deleteUI F2_driver_Window_1;
+    $K_Driver_obj_Attr_nam[0]=$K_return_Driver_1[0]+"."+$K_return_Driver_2[0];
+    string $K_value_attr1=`getAttr $K_Driver_obj_Attr_nam[0]`;
+    window -t "驱动" F2_driver_Window_1;
+        columnLayout;
+            rowColumnLayout -nc 4 -cw 1 150 -cw 2 50 -cw 3 30 -cw 4 50;
+                text -l "驱动属性";
+                textField -tx 0 Driver_from;
+                text -l "to";
+                textField -tx $K_value_attr1 Driver_to;
+            setParent ..;
+            int $x=0;
+            for($x;$x<size($K_return_Driven_2);$x++)
+            {
+                string $K_Driven_split[]=stringToStringArray($K_return_Driven_2[$x],".");
+                if (size($K_Driven_split)<2)
+                {
+                    int $y=0;
+                    for($y;$y<size($K_return_Driven_1);$y++)
+                    {
+                        $K_Driven_obj_Attr_nam[0]=$K_return_Driven_1[$y]+"."+$K_return_Driven_2[$x];//被驱动属性的完整名称
+                        string $K_value_attr=`getAttr $K_Driven_obj_Attr_nam[0]`;
+                        string $K_Driven_from="Driven_from_"+$y+$x;   
+                        string $K_Driven_to="Driven_to_"+$y+$x;
+                        rowColumnLayout -nc 4 -cw 1 150 -cw 2 50 -cw 3 30 -cw 4 50;
+                             text -l $K_Driven_obj_Attr_nam[0]; 
+                             textField -tx 0 $K_Driven_from;
+                             text -l "to";
+                             textField -tx $K_value_attr $K_Driven_to;
+                        setParent ..; 
+                    }
+                }
+                else
+                {
+                    $K_Driven_obj_Attr_nam[0]=$K_return_Driven_2[$x];
+                    string $K_value_attr=`getAttr $K_Driven_obj_Attr_nam[0]`;
+                    string $K_Driven_from="Driven_from_"+$x;    
+                    string $K_Driven_to="Driven_to_"+$x;
+                    rowColumnLayout -nc 4 -cw 1 150 -cw 2 50 -cw 3 30 -cw 4 50;
+                         text -l $K_Driven_obj_Attr_nam[0]; 
+                         textField -tx 0 $K_Driven_from;
+                         text -l "to";
+                         textField -tx $K_value_attr $K_Driven_to;
+                    setParent ..; 
+                }
+             }
+                
+            rowColumnLayout -nc 2;
+                button -l "Key" -w 150 -h 30 -c "F2_Driver_obj()";
+                button -l "Close" -w 150 -h 30 -c "F2_close_Window()";
+                setParent ..; 
+            separator -height 5 -style "in"; 
+
+    showWindow F2_driver_Window_1;
+}
+
+
+//*******************
+//  窗口列表框内的值
+//*******************
+
+
+//驱动物体列表框的第一个列表框
+global proc F_list_Driver_1()
+{
+    global string $K_return_Driver_1[];
+    global string $K_select_objAttr[];
+    F_return_Driver_1(); //返回驱动物体第一个框的值
+    select $K_return_Driver_1[0];//选择驱动物体的名字
+    if(size($K_return_Driver_1)==1)//如果只选择了一个项 则后面的框里显示这个项的属性
+    {
+        F_list_removeAll("DRIVER_2");//清空2框中的项 
+        F_selectObj_Attr($K_return_Driver_1[0]); //选择的对象的属性
+        F_textScrollList_addList("DRIVER_2",$K_select_objAttr);//列出选择的对象的属性 
+    }
+    else
+    {
+        warning "驱动物体多选还未开放，请不要多选";
+        F_list_onlyOne("DRIVER_1");//只能选择一个
+    }
+    F_Examine_Driver();//检测驱动的按钮是否可以按下
+}
+
+
+//驱动物体列表框的第二个列表框
+global proc F_list_Driver_2() 
+{
+    global string $K_return_Driver_2[];
+    F_return_Driver_2(); //返回驱动物体第二个框的值
+    if(size($K_return_Driver_2)>1)//如果只选择了一个项
+    {
+        warning "驱动物体属性多选还未开放，请不要多选";
+        F_list_onlyOne("DRIVER_2");//只能选择一个
+    }
+    F_Examine_Driver();//检测驱动的按钮是否可以按下
+}
+
+
+//被驱动物体列表框的第一个列表框
+global proc F_list_Driven_1()
+{
+    global string $K_select_value[];
+    global string $K_select_objAttr[];
+    F_Return_valueNumber("DRIVEN_1");
+    string $K_only_attr[];
+    string $K_only_attr_1[];
+    string $K_only_attr_2[];
+    int $x;
+    select $K_select_value;
+    if(size($K_select_value)==1)//如果只选择了一个项 则后面的框里显示这个项的属性
+    {
+        F_list_removeAll("DRIVEN_2");//清空2框中的项 
+        F_selectObj_Attr($K_select_value[0]); //选择的对象的属性
+        F_textScrollList_addList("DRIVEN_2",$K_select_objAttr);//列出选择的对象的属性 
+    }
+    else
+    {
+        F_list_removeAll("DRIVEN_2");
+        for ($x=0;$x<size($K_select_value);$x++)
+        {
+            int $z;
+            F_selectObj_Attr($K_select_value[$x]);
+            for ($z=0;$z<size($K_select_value);$z++)
+            {
+                int $y;
+                for ($y=0;$y<size($K_select_objAttr);$y++)
+                {
+                    if (attributeExists($K_select_objAttr[$y],$K_select_value[$z]))
+                    {
+                        $K_only_attr_2[size($K_only_attr_2)]=$K_select_objAttr[$y];
+                    }
+                    else
+                    {
+                        $K_only_attr_2[size($K_only_attr_2)]=($K_select_value[$x]+"."+$K_select_objAttr[$y]);
+                        $K_only_attr_1[size($K_only_attr_1)]=$K_select_objAttr[$y];
+                    }
+                }
+            }
+        }
+        $K_only_attr=stringArrayRemove($K_only_attr_1,stringArrayRemoveDuplicates($K_only_attr_2));
+        F_textScrollList_addList("DRIVEN_2",$K_only_attr);
+    }
+    F_Examine_Driver();//检测驱动的按钮是否可以按下
+    clear($K_only_attr);
+    clear($K_only_attr_1);
+    clear($K_only_attr_2);
+}
+
+
+//被驱动物体列表框的第二个列表框
+global proc F_list_Driven_2()
+{
+    F_Examine_Driver();//检测驱动的按钮是否可以按下
+}
+
+
+//*****************
+//  窗口按钮的功能
+//*****************
+
+
+//主窗口
+
+//驱动物体的导入
+global proc F_Import_Driver() 
+{
+    F_list_removeAll("DRIVER_1"); 
+    F_list_removeAll("DRIVER_2"); 
+    F_List_Obj("DRIVER_1"); 
+    F_Examine_Driver();
+}
+
+
+//被驱动物体的导入
+global proc F_Import_Driven() 
+{
+    F_list_removeAll("DRIVEN_1"); 
+    F_list_removeAll("DRIVEN_2");
+    F_List_Obj("DRIVEN_1"); 
+    F_Examine_Driver();
+}
+
+
+
+//关闭按钮
+global proc F_Close_Window()
+{
+    deleteUI F_Key_Window;
+    if (`window -q -exists F2_driver_Window`) deleteUI F2_driver_Window;
+}
+
+
+//副窗口
+
+//驱动按钮
+global proc F2_Driver_obj()
+{
+    global string $K_return_Driver_1[];
+    global string $K_return_Driver_2[];
+    global string $K_return_Driven_1[];
+    global string $K_return_Driven_2[];
+    string $K_Driven_obj_Attr_n[];
+
+    
+    //驱动物体的值范围
+    float $K_driver_min=`textField -q -tx Driver_from`;//返回驱动物体的最小值
+    float $K_driver_max=`textField -q -tx Driver_to`;//返回驱动物体的最大值
+    
+    
+    F_return_Driver_1();
+    F_return_Driver_2();
+    F_return_Driven_1();
+    F_return_Driven_2();
+    
+    string $K_Driver_obj_Attr=$K_return_Driver_1[0]+"."+$K_return_Driver_2[0];//定义驱动物体的属性的完整名称
+    if(size($K_return_Driven_1)==1)//如果被驱动属性为1个
+    {
+        int $K_selectNumItem[]=`textScrollList -q -sii DRIVEN_2`;//被驱动物体第三个列表框的选择的值的数量
+        int $x=0;
+        for($x;$x<size($K_return_Driven_1);$x++)
+        {
+            int $y=0;
+            for($y;$y<size($K_selectNumItem);$y++)
+            {
+                string $K_Driven_from="Driven_from_"+$x+$y;   
+                string $K_Driven_to="Driven_to_"+$x+$y;
+                $K_Driven_obj_Attr_n[0]=$K_return_Driven_1[0]+"."+$K_return_Driven_2[$y];//被驱动属性的完整名称
+                float $K_driven_min= `textField -q -tx $K_Driven_from`;
+                float $K_driven_max= `textField -q -tx $K_Driven_to`;
+                F2_Driver_setKeyFrame_1($K_driver_min,$K_driver_max,$K_driven_min,$K_driven_max,$K_Driver_obj_Attr,$K_Driven_obj_Attr_n[0]);
+            }
+        }
+    }
+    else//如果被驱动约束节点属性为多个
+    {
+        int $K_selectNumItem[]=`textScrollList -q -sii DRIVEN_2`;//被驱动物体第三个列表框的选择的值的数量
+        int $x=0;
+        for($x;$x<size($K_selectNumItem);$x++)
+        {
+            string $K_Driven_split[]=stringToStringArray($K_return_Driven_2[$x],".");
+            if (size($K_Driven_split)<2)
+            {
+            
+                int $y=0;
+                for($y;$y<size($K_return_Driven_1);$y++)
+                {
+                    
+                    string $K_Driven_from="Driven_from_"+$y+$x;    
+                    string $K_Driven_to="Driven_to_"+$y+$x;
+                    float $K_driven_min= `textField -q -tx $K_Driven_from`;
+                    float $K_driven_max= `textField -q -tx $K_Driven_to`;
+                    
+                    $K_Driven_obj_Attr_n[0]=$K_return_Driven_1[$y]+"."+$K_return_Driven_2[$x];//被驱动属性的完整名称
+                    F2_Driver_setKeyFrame_1($K_driver_min,$K_driver_max,$K_driven_min,$K_driven_max,$K_Driver_obj_Attr,$K_Driven_obj_Attr_n[0]);
+                }
+            }
+            else
+            {
+                string $K_Driven_from="Driven_from_"+$x;    
+                string $K_Driven_to="Driven_to_"+$x;
+                float $K_driven_min= `textField -q -tx $K_Driven_from`;
+                float $K_driven_max= `textField -q -tx $K_Driven_to`;
+                $K_Driven_obj_Attr_n[0]=$K_return_Driven_2[$x];
+                F2_Driver_setKeyFrame_1($K_driver_min,$K_driver_max,$K_driven_min,$K_driven_max,$K_Driver_obj_Attr,$K_Driven_obj_Attr_n[0]);
+            }
+        }
+    }
+}
+
+
+//窗口2的关闭按钮
+global proc F2_close_Window()
+{
+    deleteUI F2_driver_Window_1;
+}
+
+
+//*****************
+//     功能函数
+//*****************
+
+
+//驱动物体和被驱动物体的导入
+global proc F_List_Obj(string $name) 
+{ 
+    string $select_Now[]=`ls -sl`;
+    F_textScrollList_addList($name,$select_Now); 
+    textScrollList -e -si $select_Now[0] $name;
+}
+
+
+//读取物体属性
+global proc F_selectObj_Attr(string $obj){ 
+    global string $K_select_objAttr[];
+    string $K_select_objAttr[]=`listAttr -k $obj`;
+}
+
+
+//添加 textScrollList 列表里的内容
+global proc F_textScrollList_addList(string $name,string $list_Add[]){ 
+    int $F_F=0;
+    for ($F_F=0;$F_F<size($list_Add);$F_F++)
+    {
+        textScrollList -e -append $list_Add[$F_F] $name;
+    }
+}
+
+
+//返回选择的列表里的内容
+global proc F_Return_valueNumber(string $name){ 
+    global string $K_select_value[];
+    string $K_select_value[]=`textScrollList -q -si $name`;
+}
+
+
+//清空列表里的内容
+global proc F_list_removeAll(string $name) 
+{
+    textScrollList -e -ra $name;
+}
+
+
+//控制列表框只能单选
+global proc F_list_onlyOne(string $name)
+{
+    textScrollList -e -da $name;
+    textScrollList -e -sii 1 $name;
+}
+
+
+//检查驱动按钮按下的条件是否达成
+global proc F_Examine_Driver()
+{
+    global string $K_return_Driver_2[];
+    global string $K_return_Driven_2[];
+    F_return_Driver_2();
+    F_return_Driven_2();
+
+    if (`window -q -exists F2_driver_Window`) deleteUI F2_driver_Window;
+    
+    if(size($K_return_Driver_2)==0||size($K_return_Driven_2)==0)//如果驱动物体第二个列表框的值和被驱动物体第三个列表框的值都有一个或二个为空
+    {
+        button -e -en false Driver_0;
+    }
+    else
+    {
+        button -e -en true Driver_0;
+    }
+}
+
+
+//返回驱动物体第一个列表框的值
+global proc F_return_Driver_1()
+{
+    global string $K_return_Driver_1[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVER_1");
+    $K_return_Driver_1=$K_select_value;
+}
+
+
+//返回驱动物体第二个列表框的值
+global proc F_return_Driver_2()
+{
+    global string $K_return_Driver_2[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVER_2");
+    $K_return_Driver_2=$K_select_value;
+}
+
+
+//返回被驱动物体第一个列表框的值
+global proc F_return_Driven_1()
+{
+    global string $K_return_Driven_1[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVEN_1");
+    $K_return_Driven_1=$K_select_value;
+}
+
+
+//返回被驱动物体第二个列表框的值
+global proc F_return_Driven_2()
+{
+    global string $K_return_Driven_2[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVEN_2");
+    $K_return_Driven_2=$K_select_value;
+}
+
+
+//设置驱动功能
+global proc F2_Driver_setKeyFrame_1(float $Driver_min,float $Driver_max,float $Driven_min,float $Driven_max,string $Driver_Attr,string $Driven_Attr)
+{
+    setAttr $Driver_Attr $Driver_min;
+    setAttr $Driven_Attr $Driven_min;
+    setDrivenKeyframe -cd $Driver_Attr $Driven_Attr;//设置最小值的驱动关键帧
+    keyTangent -itt linear -ott linear $Driven_Attr;
+    setAttr $Driver_Attr $Driver_max;
+    setAttr $Driven_Attr $Driven_max;
+    setDrivenKeyframe -cd $Driver_Attr $Driven_Attr;//设置最大值的驱动关键帧
+    keyTangent -itt linear -ott linear $Driven_Attr;
+    print "驱动完毕";
+    print "\n";
+}
+
+F_KEY_Window();

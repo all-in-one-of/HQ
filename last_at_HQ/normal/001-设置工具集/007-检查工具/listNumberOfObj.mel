@@ -1,0 +1,25 @@
+global proc sizeOfSelectOBJ()
+{
+  if(`window -q -exists sizeWindow`) deleteUI sizeWindow;
+  window -title "列出选择物体数量" -wh 200 100 sizeWindow;
+  
+  columnLayout -adj 1;    
+  
+  separator -height 10 -style "none";   
+      
+  rowColumnLayout -nc 3 -cw 1 80 -cw 2 50 -cw 3 60;
+   text -l "选择物体数量：" -al "left";
+   textField -ed 1 -tx "" fldObjNumber;
+   button -l "<<获取" -c sizeOfOBJ;
+  setParent..;
+  
+  window -edit -widthHeight 280 50 sizeWindow;
+  
+  showWindow sizeWindow;
+}
+global proc sizeOfOBJ()
+{
+ int $numberOfOBJ = size(`ls -sl`);
+ textField -e -tx $numberOfOBJ fldObjNumber;   
+}
+sizeOfSelectOBJ();

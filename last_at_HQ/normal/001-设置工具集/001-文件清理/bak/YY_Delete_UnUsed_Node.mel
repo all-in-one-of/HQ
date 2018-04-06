@@ -1,0 +1,554 @@
+/*
+制作：由继亮
+QQ:78915620
+E-Mail yjl811028@tom.com
+制作时间：2009-03-26
+如使用此工具中有任何问题或漏洞请及时通知本人
+华强电影技术部 由继亮
+*/
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+/////////                       ///////////////////                        ///////////
+/////////                        /////////////////                        ////////////
+//////////                        ///////////////                        /////////////
+//////////                         /////////////                         /////////////
+///////////                         ///////////                         //////////////
+////////////                         //////////                        ///////////////
+////////////                         /////////                        ////////////////
+/////////////                         ///////                        /////////////////
+//////////////                         /////                        //////////////////
+///////////////                        /////                       ///////////////////
+////////////////                       ////                       ////////////////////
+//////////////////                      ///                     //////////////////////
+///////////////////                     //                    ////////////////////////
+/////////////////////                   //                  //////////////////////////
+///////////////////////                  /               /////////////////////////////
+////////////////////////                                //////////////////////////////
+///////////////////////////                           ////////////////////////////////
+/////////////////////////////                         ////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+if(`window -q -ex YY_Del_Node_Type_Add_Win`)
+{
+deleteUI YY_Del_Node_Type_Add_Win;
+};
+///////////////////////////////////////////
+if(`window -q -ex YY_Del_SecWin_A`)
+{
+deleteUI YY_Del_SecWin_A;
+};
+////////////////////////////////////////////////////////
+if(`window -q -ex YY_Del_Node_Main_Help_Win`)
+{
+deleteUI YY_Del_Node_Main_Help_Win;
+};
+///////////////////////////////////////////////////////////////////
+if(`window -q -ex YY_Del_Node_Item_Help_Win`)
+{
+deleteUI YY_Del_Node_Item_Help_Win;
+};
+///////////////////////////////////////////////////////////////////////////
+if(`window -q -ex YY_Del_Node_About_Win`)
+{
+deleteUI YY_Del_Node_About_Win;
+};
+////////////////////////////////////////////////////////////////////////////////////
+if(`window -q -ex YY_Del_Node_Win`)
+{
+deleteUI YY_Del_Node_Win;
+};
+////////////////////////////////////////////////////////////////////////////////////////////
+window -wh 420 520
+	   -s 1
+	   -mb 1
+	   -t "删除无链接节点窗口"
+	   YY_Del_Node_Win;
+//////////////////////////////////////////////
+menu -l "帮助" -to 0;
+menuItem -l "主窗口帮助" -c "YY_Del_Win_Help \" 0 \"";
+menuItem -l "高级选项窗口帮助" -c "YY_Del_Win_Help \" 1 \"";
+setParent ..;
+menu -l "关于" -to 0;
+menuItem -l "关于" -c YY_Del_Node_About;
+////////////////////////////////////////////////
+columnLayout -rs 10 -adj 1 -cat "left" 5 ;
+text -l "删除无用节点工具";
+separator;
+rowLayout -nc 3 -cw3 130 150 120 -cl3 "left" "center" "center";
+checkBox -h 30 -w 130 -l "UnKnow(未知节点)" YY_Del_Unknow;
+text -l "" YY_Del_Nu_D;
+button -h 30 -w 100 -l "删除未知节点" -c "YY_Del_UnKnow_Node";
+setParent ..;
+separator;
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "polySplitRing" YY_Del_Ch_0;
+checkBox -l "polySmoothFace" YY_Del_Ch_1;
+checkBox -l "polyBridgeEdge" YY_Del_Ch_2;
+setParent ..;
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "FurDescription" YY_Del_Ch_3;
+checkBox -l "rebuildCurve" YY_Del_Ch_4;
+checkBox -l "hyperView" YY_Del_Ch_5;
+setParent ..;
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "skinCluster" YY_Del_Ch_6;
+checkBox -l "rebuildCurve" YY_Del_Ch_7;
+checkBox -l "polyTransfer" YY_Del_Ch_8;
+setParent ..;
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "blendWeighted" YY_Del_Ch_9;
+checkBox -l "polySplit" YY_Del_Ch_10;
+checkBox -l "polySubdEdge" YY_Del_Ch_11;
+setParent ..;
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+//polyTweakUV polyTweak  polySoftEdge polySeparate
+checkBox -l "polyTweakUV" YY_Del_Ch_12;
+checkBox -l "polyTweak" YY_Del_Ch_13;
+checkBox -l "polySoftEdge" YY_Del_Ch_14;
+setParent ..;
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "polySeparate" YY_Del_Ch_15;
+checkBox -l "polyQuad" YY_Del_Ch_16;
+checkBox -l "polyPlanarProj" YY_Del_Ch_17;
+setParent ..;
+//deleteComponent  polyBevel
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "deleteComponent" YY_Del_Ch_18;
+checkBox -l "polyAutoProj" YY_Del_Ch_19;
+checkBox -l "polyAverageVertex" YY_Del_Ch_20;
+setParent ..;
+
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "polyBevel" YY_Del_Ch_21;
+checkBox -l "polyDelEdge" YY_Del_Ch_22;
+checkBox -l "polyAverageVertex" YY_Del_Ch_23;
+setParent ..;
+
+//"polySplitVert" ,"polyMergeVert" polyMapSewMove
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "polySplitVertl" YY_Del_Ch_24;
+checkBox -l "polyMergeVert" YY_Del_Ch_25;
+checkBox -l "polyMapSewMove" YY_Del_Ch_26;
+setParent ..;
+//"polyExtrudeFace","polyExtrudeEdge"
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "polyExtrudeFace" YY_Del_Ch_27;
+checkBox -l "polyExtrudeEdge" YY_Del_Ch_28;
+checkBox -l "polyMapCut" YY_Del_Ch_29;
+setParent ..;
+//polyAppend
+rowLayout -nc 3 -cl3 "left" "left" "left" -cw3 130 140 140;
+checkBox -l "polyAppend" YY_Del_Ch_30;
+checkBox -l "curveInfo" YY_Del_Ch_31;
+checkBox -l "dagPose" YY_Del_Ch_32;
+setParent ..;
+
+separator;
+rowLayout -nc 3 -cl3  "left" "center" "center"-cw3 120 150 150;
+checkBox -l "全选" -onc "YY_Del_Select_All \"1\"" -ofc "YY_Del_Select_All \"0\"" YY_Del_Sel_All;
+button -h 30 -w 100 -l "删除" -c YY_Del_Node_Proc;
+button -h 30 -w 100 -l "高级选项" -c YY_DeleteNode_Free_Win;
+setParent ..;
+separator;
+//rowLayout -nc 2 -cw2 300 10 -cl2 "left" "left";
+//setParent ..;
+showWindow YY_Del_Node_Win;
+
+
+
+global string $YY_Del_Ban;
+$YY_Del_Ban = `about -v`;
+if($YY_Del_Ban == "7.0.1")
+{
+checkBox -e -v 0 -en 0 YY_Del_Ch_2;
+
+};
+
+window -e
+	-wh 420 520
+	  
+	   YY_Del_Node_Win;
+
+global proc YY_Del_Node_Proc()
+{
+if(`window -q -ex YY_Del_SecWin_A`)
+{
+deleteUI YY_Del_SecWin_A;
+};
+window 
+	  -wh 200 600
+	  -s 1
+	  YY_Del_SecWin_A;
+columnLayout ;
+text -al "left" -l "" YY_Del_BackText;
+
+showWindow YY_Del_SecWin_A;
+
+string $YY_Del_DText = "";	
+//select -all;
+int $YY_Del_Node_Add = 0;
+//////////////////////////00000000000///////111111111///////2222222222///////33333333333/////44444444444////5555555555////66666666////7777777777////888888888888///99999999999/////101010101010////1111111111///1212121212////13131313////14141414141414////15151515//16161616/////171717171717///
+string $YY_Del_Type[] = {"polySplitRing","polySmoothFace","polyBridgeEdge","FurDescription","rebuildCurve","hyperView","skinCluster","rebuildCurve","polyTransfer","blendWeighted","polySplit","polySubdEdge","polyTweakUV","polyTweak","polySoftEdge","polySeparate","polyQuad","polyPlanarProj","deleteComponent","polyAutoProj","polyAverageVertex","polyBevel","polyDelEdge","polySplitVert" ,"polyMergeVert","polyMapSewMove","polyExtrudeFace","polyExtrudeEdge","polyMapCut","polyAppend","curveInfo","dagPose"};
+global int $YY_Del_Int;
+$YY_Del_Int = size($YY_Del_Type);
+int $YY_Del_Num = 0;	
+string $YY_Del_Type_Ev;
+for($YY_Del_Type_Ev in $YY_Del_Type)
+{
+int $YY_Del_Sel = `checkBox -q -v ("YY_Del_Ch_" + $YY_Del_Num)`;
+//print ("YY_Del_Ch_" + $YY_Del_Num);
+if($YY_Del_Sel == 1)
+{
+int $YY_Del_Cou = 0;	
+string $YY_Del_Node[] = `ls -type $YY_Del_Type_Ev`;
+string $YY_Del_Node_Ev;
+for($YY_Del_Node_Ev in $YY_Del_Node)
+{//int $YY_Del_Count = 0;
+//string $YY_Del_Node_List[] = `listConnections -s 1 -d 1 -scn 1 $YY_Del_Node_Ev`;
+string $YY_Del_Node_List[] = `listConnections -et 1 -sh 1 -s 1 -d 1 -c 1 $YY_Del_Node_Ev`;
+
+if(size($YY_Del_Node_List) == 0)
+{
+delete $YY_Del_Node_Ev;
+$YY_Del_Node_Add++;
+$YY_Del_Cou++;
+//$YY_Del_Count++;
+};
+clear $YY_Del_Node_List;
+//string $YY_Del_DText = `text -q -l YY_Del_BackText`;
+};
+clear $YY_Del_Node;
+
+//print $YY_Del_Num;
+
+$YY_Del_DText += "删除 " + $YY_Del_Type_Ev +" 节点 "+ $YY_Del_Cou +" 个!\n";
+
+};
+$YY_Del_Num++;
+};
+if(`checkBox -q -v YY_Del_Unknow`)
+{
+YY_Del_UnKnow_Node();
+};
+
+
+
+print ("Delete " + $YY_Del_Node_Add + " Nodes \n");
+$YY_Del_DText += "\n共删除无链接节点 " + $YY_Del_Node_Add + "个";
+text -e -l $YY_Del_DText YY_Del_BackText;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+global proc YY_Del_Select_All(int $YY_Del_SA)
+{
+global int $YY_Del_Int;	
+for($YY_D = 0;$YY_D<33;$YY_D++)
+{
+checkBox -e -v $YY_Del_SA ("YY_Del_Ch_" + $YY_D);	
+};
+checkBox -e -v 0 YY_Del_Ch_3;
+checkBox -e -v $YY_Del_SA YY_Del_Unknow;
+global string $YY_Del_Ban;
+if($YY_Del_Ban == "7.0.1")
+{
+checkBox -e -v 0 -en 0 YY_Del_Ch_2;
+
+};
+};
+//////////////////////////////////////////////////////////////////////
+global proc YY_Del_UnKnow_Node()
+{
+string $YY_del_unknow[] = `ls -type "unknown"`;
+string $YY_del_unknow_int = size($YY_del_unknow);
+for($ha = 0;$ha<size($YY_del_unknow);$ha++)
+{ 
+if(`objExists $YY_del_unknow[$ha]`)
+{	
+lockNode -lock 0 $YY_del_unknow[$ha];
+delete $YY_del_unknow[$ha];
+};
+};
+text -e -l ("共去除 " + $YY_del_unknow_int + " 个节点") YY_Del_Nu_D;
+
+};
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_DeleteNode_Free_Win()
+{
+if(`window -q -ex YY_Del_Node_Type_Add_Win`)
+{
+deleteUI YY_Del_Node_Type_Add_Win;
+}
+else{
+window 
+	   -wh 350 520
+	   -s 1
+	   -t "自定义删除无连接节点窗口"
+	   YY_Del_Node_Type_Add_Win;
+columnLayout -adj 1 -rs 5 -cat "both" 10;
+text -l "添加节点窗口";
+scrollField -h 100 YY_Del_Node_TF_Up;
+rowLayout -nc 2 -cw2 170 150  -cl2 "center" "center" ;
+button -h 30 -w 150 -l "添加输入节点到列表" -c YY_Del_Node_Add_Button_01;
+button -h 30 -w 150 -l "添加选择节点到列表" -c "YY_Del_Node_Select_Add (\"0\")";
+setParent ..;
+//scrollField -h 220;
+scrollField -en 1 -h 220 -ed 0 YY_Del_Node_TF_Dow;
+rowLayout -nc 3 -cw3 90 80 150 -cl3 "left" "center" "center";
+text  -l "节点数为0个" YY_Del_Node_NT_Num;
+button -h 30 -w 80  -l "清空列表" -c YY_Del_Clear_List;
+button -h 30 -w 150 -l "直接删除选择类型节点" -c "YY_Del_Node_Select_Add (\"1\")";
+setParent ..;
+separator -h 5 ;//-st "none";
+text -l "共删除0个无链接节点" YY_Del_Node_NoLink_Text;
+button -h 30 -l "删除列表中节点" -c YY_Del_Node_List_D;
+showWindow YY_Del_Node_Type_Add_Win;
+
+window -e
+	   -wh 350 520
+	   YY_Del_Node_Type_Add_Win;
+};
+};
+//////////////////////////////////////////////////////////////////////////////////////////
+ //transform
+
+
+global proc YY_Del_Node_Now(string $YY_Del_Node_Type_List_C[])
+{
+string $YY_Del_Node_Type_List_B[] = stringArrayRemove({"transform"},$YY_Del_Node_Type_List_C);	
+int $YY_Del_Node_List_Number = 0;	
+string $YY_Del_Node_Now_For;
+for($YY_Del_Node_Now_For in $YY_Del_Node_Type_List_B)
+{
+string $YY_Del_Node_Now_Type_List[] = `ls -type $YY_Del_Node_Now_For`;
+string $YY_Del_Node_Now_For_Ev;
+for($YY_Del_Node_Now_For_Ev in $YY_Del_Node_Now_Type_List)
+{
+string $YY_Del_Node_Now_Ev_C[] = `listConnections -et 1 -sh 1 -s 1 -d 1 -c 1 -scn 1 $YY_Del_Node_Now_For_Ev`;
+if(size($YY_Del_Node_Now_Ev_C) == 0)
+{
+delete $YY_Del_Node_Now_For_Ev;
+$YY_Del_Node_List_Number++;
+};
+     };	
+         };
+		 print "Delete OK";
+text -e -l ("共删除 " + $YY_Del_Node_List_Number + " 个无链接节点") YY_Del_Node_NoLink_Text;		 
+		 
+             };
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_Del_Node_Add_Button_01()
+{
+string $YY_Del_Node_Import_Text = `scrollField -q -tx YY_Del_Node_TF_Up`;
+string $YY_Del_Node_Tok[];
+tokenizeList($YY_Del_Node_Import_Text, $YY_Del_Node_Tok);
+string $YY_Del_Node_Add_Im_Lis = stringArrayToString($YY_Del_Node_Tok, " \n");
+$YY_Del_Node_Add_Im_Lis = " "+ $YY_Del_Node_Add_Im_Lis + "";
+scrollField -e -it $YY_Del_Node_Add_Im_Lis YY_Del_Node_TF_Dow;
+YY_Del_Node_End_List;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+global proc YY_Del_Node_Select_Add(int $YY_Del_Node_Se_Int)
+{
+string $YY_Del_Node_Sel[] = `ls -sl`;
+string $YY_Del_Node_String[];
+int $YY_Del_Node_Sel_Int = 0;
+string $YY_Del_Node_Sel_For;
+for($YY_Del_Node_Sel_For in $YY_Del_Node_Sel)
+{
+string $YY_Del_Ndoe_Sel_Type = `nodeType $YY_Del_Node_Sel_For`;
+//print $YY_Del_Ndoe_Sel_Type;
+
+$YY_Del_Node_String[$YY_Del_Node_Sel_Int] = $YY_Del_Ndoe_Sel_Type;
+//print $YY_Del_Node_Sel_Int;
+$YY_Del_Node_Sel_Int++;
+
+};
+string $YY_Del_Node_Sel_Type_String[] = stringArrayRemoveDuplicates($YY_Del_Node_String);
+//print (size($YY_Del_Node_Sel_Type_String));
+//print $YY_Del_Node_Sel_Type_String;
+if($YY_Del_Node_Se_Int == 0)
+{
+string $YY_Del_Node_Sel_Im_Lis = stringArrayToString($YY_Del_Node_Sel_Type_String, " \n");
+$YY_Del_Node_Sel_Im_Lis = " " + $YY_Del_Node_Sel_Im_Lis + " ";
+scrollField -e -it $YY_Del_Node_Sel_Im_Lis YY_Del_Node_TF_Dow;
+YY_Del_Node_End_List;
+};
+if($YY_Del_Node_Se_Int == 1)
+{
+YY_Del_Node_Now $YY_Del_Node_Sel_Type_String;
+};
+
+};
+
+/////////////////////////////////////////////////////////////////////////////////////
+global proc YY_Del_Node_End_List()
+{
+string $YY_Del_Node_Dow_List = `scrollField -q -tx YY_Del_Node_TF_Dow`;
+string $YY_Del_Node_End_Tok[];
+tokenizeList($YY_Del_Node_Dow_List, $YY_Del_Node_End_Tok);
+print (size($YY_Del_Node_End_Tok));
+string $YY_Del_Node_End_Dup_String[] = stringArrayRemoveDuplicates($YY_Del_Node_End_Tok);
+text -e -l ("节点数为"+size($YY_Del_Node_End_Dup_String)+"个" )YY_Del_Node_NT_Num;
+string $YY_Del_Node_End_Change_Text = stringArrayToString($YY_Del_Node_End_Dup_String, " \n");
+scrollField -e -tx $YY_Del_Node_End_Change_Text YY_Del_Node_TF_Dow;
+
+};
+
+////////////////////////////////////////////////////////////////////////////
+
+global proc YY_Del_Clear_List()
+{
+
+scrollField -e -tx "" YY_Del_Node_TF_Dow;
+text -e -l ("节点数为 0 个" )YY_Del_Node_NT_Num;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+
+global proc YY_Del_Node_List_D()
+{
+
+string $YY_Del_Node_List_D_Text = `scrollField -q -tx YY_Del_Node_TF_Dow`;
+string $YY_Del_Node_List_D_Change_Text[] ;
+tokenizeList($YY_Del_Node_List_D_Text, $YY_Del_Node_List_D_Change_Text);
+YY_Del_Node_Now $YY_Del_Node_List_D_Change_Text;
+	
+};
+
+global proc YY_Del_Win_Help(int $YY_Del_Node_Help_Win_Ch_Int)
+{
+switch($YY_Del_Node_Help_Win_Ch_Int)
+{
+case 0:
+	if(`window -q -ex YY_Del_Node_Main_Help_Win`)
+	{
+	deleteUI YY_Del_Node_Main_Help_Win;
+	};
+	window 
+		  -wh 200 420
+		  -s 1
+		  -mb 0
+		  -t "主窗口帮助"
+		  YY_Del_Node_Main_Help_Win;
+	string $YY_Del_Node_Help_Form = `formLayout`;
+	text -l "主窗口使用帮助" YY_Node_Main_Help_Text;
+    string $YY_Del_Node_Help_Scoll = `scrollField -ed 0 -po 1 -ww 1 -fn fixedWidthFont`;	
+	string $YY_Del_Node_Help_Maini_Text_A = "此脚本用来删除场景中存在的未链接的空节点，删除方式为指定删除和自由删除，自由删除帮助请参考高级选项帮助。";
+	$YY_Del_Node_Help_Maini_Text_A += "在主窗口中选择你想要删除的指定节点，或者选择\"全选\"按钮来选择脚本提供的全部节点，点击删除按钮，删除完成。";
+	$YY_Del_Node_Help_Maini_Text_A += "如果此工具在MAYA7.0下使用时脚本会自动禁用PolyBridgeEdge节点,因为MAYA7.0不支持此节点。";
+	$YY_Del_Node_Help_Maini_Text_A += "此工具中的FurDescription节点在点击全选按钮时也不被选择，如希望加载请手动加载此节点。";
+	scrollField -e -tx $YY_Del_Node_Help_Maini_Text_A $YY_Del_Node_Help_Scoll;
+	
+	formLayout -e
+		-af YY_Node_Main_Help_Text "left" 50
+		-af YY_Node_Main_Help_Text "right" 50
+		
+		-ac $YY_Del_Node_Help_Scoll "top" 5 YY_Node_Main_Help_Text 
+		-af $YY_Del_Node_Help_Scoll "left" 5
+	    -af $YY_Del_Node_Help_Scoll "right" 5
+		-af $YY_Del_Node_Help_Scoll "bottom" 5
+		$YY_Del_Node_Help_Form;
+	showWindow YY_Del_Node_Main_Help_Win;
+		window -e
+		  -wh 200 420
+		  		  YY_Del_Node_Main_Help_Win;
+	break;
+case 1 :
+		if(`window -q -ex YY_Del_Node_Item_Help_Win`)
+	{
+	deleteUI YY_Del_Node_Item_Help_Win;
+	};
+	window 
+		  -wh 200 420
+		  -s 1
+		  -mb 0
+		  -t "主窗口帮助"
+		  YY_Del_Node_Item_Help_Win;
+	string $YY_Del_Node_Help_Item_Form = `formLayout -nd 100`;
+	text -l "高级选项窗口使用帮助" YY_Node_Item_Help_Text;
+    string $YY_Del_Node_Item_Help_Scoll = `scrollField -ed 0 -po 1 -ww 1 -ip 0 -fn fixedWidthFont -tx ""`;	
+	string $YY_Del_Node_Help_Item_Text_A = "自定义删除节点窗口可自定义输入添加或选择添加方式来自定义删除所需要删除的场景中的指定无链接节点，";
+	$YY_Del_Node_Help_Item_Text_A += "窗口中最上面的输入框为自定义输入框，用户可以把自己需要删除的节点名称输入进去，名称之间用空格或换行分开，";
+	$YY_Del_Node_Help_Item_Text_A += "输入完毕后点击\"添加输入节点到列表\"按钮，即可把输入的节点储存到下面的列表中，如果需要在场景中选择指定的节点输入";
+	$YY_Del_Node_Help_Item_Text_A += "则先在场景中选择一个或多个节点，然后点击\"添加选择节点到列表\"按钮，所选择节点的节点类型就会添加到删除列表中";
+	$YY_Del_Node_Help_Item_Text_A += "点击\"删除类表中节点\"按钮，完成删除。用添加列表方式添加，无论是手动输入还是选择添加都不会出现节点重复现象，可节约系统资源。";
+	$YY_Del_Node_Help_Item_Text_A += "\"直接删除选择类型节点\"是删除所有和当前选择的节点类型相同的无链接节点，但此节点类型不出现在删除列表中。";
+	
+	scrollField -e -tx $YY_Del_Node_Help_Item_Text_A $YY_Del_Node_Item_Help_Scoll;
+	
+	formLayout -e
+		-af YY_Node_Item_Help_Text "left" 30
+		-af YY_Node_Item_Help_Text "right" 30
+		
+		-ac $YY_Del_Node_Item_Help_Scoll "top" 5 YY_Node_Item_Help_Text 
+		-af $YY_Del_Node_Item_Help_Scoll "left" 5
+	    -af $YY_Del_Node_Item_Help_Scoll "right" 5
+		-af $YY_Del_Node_Item_Help_Scoll "bottom" 5
+		$YY_Del_Node_Help_Item_Form;
+	showWindow YY_Del_Node_Item_Help_Win;
+	window -e
+		  -wh 200 420
+		  YY_Del_Node_Item_Help_Win;	
+	
+	break;
+	
+};	
+};
+global proc YY_Del_Node_About()
+{
+if(`window -q -ex YY_Del_Node_About_Win`)
+{
+deleteUI YY_Del_Node_About_Win;
+};
+window 
+	  -wh 350 180
+	  -s 1
+	  -mb 0
+	  -t "关于删除节点工具"
+	  YY_Del_Node_About_Win;
+columnLayout -rs 5 -cat "both" 5 -adj 1;
+text "制作：由继亮";
+text "QQ:78915620";
+text "E-Mail yjl811028@tom.com";
+text "制作时间：2009-03-26";
+text "如使用此工具中有任何问题或漏洞请及时通知本人";
+text "华强电影技术部 由继亮";
+
+
+
+showWindow YY_Del_Node_About_Win;
+
+window -e
+	  -wh 350 180
+	  YY_Del_Node_About_Win;
+};
+
+
+
+
+
+

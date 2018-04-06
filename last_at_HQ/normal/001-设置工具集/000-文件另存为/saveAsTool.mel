@@ -1,0 +1,62 @@
+global proc saveAsTool()
+{
+    if (`window -q -exists saveAsToolWindow`) deleteUI saveAsToolWindow;
+    window
+        -title "另存为" -wh 200 100
+              saveAsToolWindow;
+
+    columnLayout -adj 1; 
+       text -label "";
+       separator -style "none";
+       
+      rowLayout -nc 2 -cw 1 20 -cw 2 100;
+       text -l "";
+	   button -l "另存" -w 150 -h 50 -bgc 0.15 0.15 0.15 -c saveAs;
+     setParent ..;
+     
+      separator -h 10 -style "none";     
+      text -l "在文件所在路径下，自动递增序列另存！";	   
+     setParent ..; 
+  window -edit -widthHeight 200 100 saveAsToolWindow;   
+ showWindow saveAsToolWindow; 
+    
+} 
+
+global proc saveAs()
+{
+ string $filePath = `file -q -sn`;   
+ string $fliename = `file -q  -sn -shn`;
+ 
+ string $pathTemps[];
+ int $getNum = `tokenize $filePath "/" $pathTemps`; 
+ string $getFilePath;
+ int $p=0;
+ for($p;$p<($getNum-1);$p++)
+ {
+  $getFilePath += $pathTemps[$p] + "/";    
+ }
+ 
+ string $temps[];
+ tokenize $fliename "." $temps;
+ 
+ string $ab= `match "[0-9]+" $temps[0]`;
+ 
+ string $fileTemps[];
+ tokenize $temps[0] $ab $fileTemps;
+
+ int $number = $ab;
+
+ int $add;
+ $add = $number + 1;
+ string $e = (string) $add;
+ int $d = size($e);
+ int $t = 3-$d;
+ int $i;
+ for($i=0;$i<$t;$i++)
+ $e = "0" + $e;
+ $number +=001;
+ string $newFileName = $fileTemps[0]+$e+"."+$temps[1];
+ file -rename ($getFilePath+$newFileName);
+ file -s;
+}
+saveAsTool();

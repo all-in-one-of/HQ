@@ -1,0 +1,542 @@
+//自动切换
+global proc constraintobject()
+{
+    //$sel = `ls -sl`;
+    //$obj = $sel[0];
+    string $tex=`textField -q -tx tex`;
+    
+    string $GetConstraint[] = `listRelatives -c -typ "parentConstraint" $tex`;//获取约束
+    string $noSpaceTex;  
+    $noSpaceTex = $GetConstraint[0];  
+/*            
+    string $nameSpace[];
+    string $constraintSpace[];
+    string $noSpaceConstraint;    
+    int $nameNum = `tokenize $tex ":" $nameSpace`;//检查物体是否有命名空间
+    int $constraintNum = `tokenize $GetConstraint[0] ":" $constraintSpace`;//检查约束是否有命名空间
+    
+    if($nameNum ==1 && $constraintNum == 1)
+    {
+     $noSpaceTex = $tex;  
+    }            
+    if($nameNum >1  && $constraintNum == 1)
+    {
+     $noSpaceTex = $nameSpace[1];
+    }
+    if($nameNum >1  && $constraintNum > 1)
+    {
+     $noSpaceTex = $tex;       
+    }
+      
+*/    
+    
+    
+    string $attrs[];
+    $attrs = `listConnections -plugs on -s on ($tex+".tx")`;
+    string $tmp[];
+    tokenize $attrs[0] "." $tmp;
+    $node = $tmp[0];
+    if ("pairBlend" == `nodeType $node`)
+    {
+      $attrs = `listConnections -plugs on -s on ($node+".inTranslateX2")`;
+      tokenize $attrs[0] "." $tmp;
+      $node = $tmp[0];
+    }
+
+    $attrs = `ls ($node + ".target[*]")`;
+    string $result[];string $results[];
+    
+    for ($i = 0; $i < size($attrs); $i++) 
+    {
+        $attr = ($attrs[$i]+".targetParentMatrix");
+
+        tokenize $attr "." $tmp;
+        $node = $tmp[0];
+
+        string $t[] = `listConnections -plugs on -s on $attr`;
+        string $s[];string $c[];
+        tokenize $t[0] "." $s;
+        if (`gmatch $s[0] "*:*"`)
+        {
+            tokenize $s[0] ":" $c;
+            $result[$i] = $c[size($c)-1];
+        }
+        else
+        {
+            $result[$i] = $s[0];
+        }
+        $results[$i]=$s[0];
+        
+        //print ("target "+$i+" is "+$result[$i]+"\n");
+    }
+    intField -e -v $i val;
+    $cont=`intField -q -v val`;
+    int $cunt=`intField -q -v vel`;
+    //string $tex=`textField -q -tx tex`;
+    int $cuu=$cunt-1;
+    
+    print ("约束数量： "+$i+"\n");
+    print ($node+"\n");
+    print $result[$cunt];
+    //////////////////////
+
+    parentConstraint -e -maintainOffset $results[$cuu]  $noSpaceTex;
+
+    setKeyframe -ott flat ($noSpaceTex + ".tg["+$cuu+"].targetOffsetRotate") ;
+    setKeyframe -ott flat ($noSpaceTex + ".tg["+$cuu+"].targetOffsetTranslate") ;
+
+
+    float $WorldPosition[] = `xform -q -ws -t $tex`;
+    float $WorldRotate[] = `xform -q -ws -ro $tex`;
+
+    setAttr ($noSpaceTex + ".restTranslateX") $WorldPosition[0];
+    setAttr ($noSpaceTex + ".restTranslateY") $WorldPosition[1];
+    setAttr ($noSpaceTex + ".restTranslateZ") $WorldPosition[2];
+    setAttr ($noSpaceTex + ".restRotateX") $WorldRotate[0];
+    setAttr ($noSpaceTex + ".restRotateY") $WorldRotate[1];
+    setAttr ($noSpaceTex + ".restRotateZ") $WorldRotate[2];
+
+    setKeyframe ($noSpaceTex + ".rtx");
+    setKeyframe ($noSpaceTex + ".rty");
+    setKeyframe ($noSpaceTex + ".rtz");
+    setKeyframe ($noSpaceTex + ".rrx");
+    setKeyframe ($noSpaceTex + ".rry");
+    setKeyframe ($noSpaceTex + ".rrz");
+    
+    for($s=0;$s<$i;$s++)
+    {
+        if ($s == $cuu)
+        {
+            setAttr ($noSpaceTex + "." + $result[$s] + "W"+($cunt-1)) 1;
+            setKeyframe ($noSpaceTex + "." + $result[$s] + "W"+($cunt-1));
+        }
+        else
+        {
+            setAttr ($noSpaceTex + "." + $result[$s] + "W"+$s) 0;
+            setKeyframe ($noSpaceTex + "." + $result[$s] + "W"+$s);
+            
+        }
+            
+    }
+}
+
+
+
+//约束到空间
+global proc constraintworldspace()
+{
+    //$sel = `ls -sl`;
+    //$obj = $sel[0];
+    string $tex=`textField -q -tx tex`;
+    
+    string $GetConstraint[] = `listRelatives -c -typ "parentConstraint" $tex`;//获取约束
+    string $noSpaceTex;  
+    $noSpaceTex = $GetConstraint[0];  
+/*            
+    string $nameSpace[];
+    string $constraintSpace[];
+    string $noSpaceConstraint;    
+    int $nameNum = `tokenize $tex ":" $nameSpace`;//检查物体是否有命名空间
+    int $constraintNum = `tokenize $GetConstraint[0] ":" $constraintSpace`;//检查约束是否有命名空间
+    
+    if($nameNum ==1 && $constraintNum == 1)
+    {
+     $noSpaceTex = $tex;  
+    }            
+    if($nameNum >1  && $constraintNum == 1)
+    {
+     $noSpaceTex = $nameSpace[1];
+    }
+    if($nameNum >1  && $constraintNum > 1)
+    {
+     $noSpaceTex = $tex;       
+    }
+      
+*/ 
+ 
+    
+    
+    string $attrs[];
+    $attrs = `listConnections -plugs on -s on ($tex+".tx")`;
+    string $tmp[];
+    tokenize $attrs[0] "." $tmp;
+    $node = $tmp[0];
+    if ("pairBlend" == `nodeType $node`)
+    {
+      $attrs = `listConnections -plugs on -s on ($node+".inTranslateX2")`;
+      tokenize $attrs[0] "." $tmp;
+      $node = $tmp[0];
+    }
+
+    $attrs = `ls ($node + ".target[*]")`;
+    string $result[];string $results[];
+    for ($i = 0; $i < size($attrs); $i++) 
+    {
+        $attr = ($attrs[$i]+".targetParentMatrix");
+
+        tokenize $attr "." $tmp;
+        $node = $tmp[0];
+
+        string $t[] = `listConnections -plugs on -s on $attr`;
+        string $s[];
+        string $c[];
+        tokenize $t[0] "." $s;
+        if (`gmatch $s[0] "*:*"`)
+        {
+            tokenize $s[0] ":" $c;
+            $result[$i] = $c[size($c)-1];
+        }
+        else
+        {
+            $result[$i] = $s[0];
+        }
+        $results[$i]=$s[0];
+        //print ("target "+$i+" is "+$result[$i]+"\n");
+    }
+    
+    intField -e -v $i val;
+    $cont=`intField -q -v val`;
+    int $cunt=`intField -q -v vel`;
+    int $cuu=$cunt-1;
+    
+    print ("约束数量： "+$i+"\n");
+    print ($node+"\n");
+    print $result[0];
+    //////////////////////
+
+
+    float $WorldPosition[] = `xform -q -ws -t $tex`;
+    float $WorldRotate[] = `xform -q -ws -ro $tex`;
+
+    setAttr ($noSpaceTex + ".restTranslateX") $WorldPosition[0];
+    setAttr ($noSpaceTex + ".restTranslateY") $WorldPosition[1];
+    setAttr ($noSpaceTex + ".restTranslateZ") $WorldPosition[2];
+
+    setAttr ($noSpaceTex + ".restRotateX") $WorldRotate[0];
+    setAttr ($noSpaceTex + ".restRotateY") $WorldRotate[1];
+    setAttr ($noSpaceTex + ".restRotateZ") $WorldRotate[2];
+
+    setKeyframe ($noSpaceTex + ".rtx");
+    setKeyframe ($noSpaceTex + ".rty");
+    setKeyframe ($noSpaceTex + ".rtz");
+    setKeyframe ($noSpaceTex + ".rrx");
+    setKeyframe ($noSpaceTex + ".rry");
+    setKeyframe ($noSpaceTex + ".rrz");
+
+    parentConstraint -e -maintainOffset $results[0]  $noSpaceTex;
+
+    setKeyframe -ott flat ($noSpaceTex + ".tg["+$cuu+"].targetOffsetRotate") ;
+    setKeyframe -ott flat ($noSpaceTex + ".tg["+$cuu+"].targetOffsetTranslate") ;
+
+    for($s=0;$s<$i;$s++)
+    {
+        if ($s == $cuu)
+        {
+            setAttr ($noSpaceTex + "." + $result[$s] + "W"+($cunt-1)) 0;
+            setKeyframe ($noSpaceTex + "." + $result[$s] + "W"+($cunt-1));
+        }
+        else
+        {
+            setAttr ($noSpaceTex + "." + $result[$s] + "W"+$s) 0;
+            setKeyframe ($noSpaceTex + "." + $result[$s] + "W"+$s);
+            
+        }
+            
+    }
+
+}
+
+global proc delconstraintworldspace()
+{
+    //$sel = `ls -sl`;
+    //$obj = $sel[0];
+    string $tex=`textField -q -tx tex`;
+    
+    
+    string $GetConstraint[] = `listRelatives -c -typ "parentConstraint" $tex`;//获取约束
+    string $noSpaceTex;  
+    $noSpaceTex = $GetConstraint[0];  
+/*            
+    string $nameSpace[];
+    string $constraintSpace[];
+    string $noSpaceConstraint;    
+    int $nameNum = `tokenize $tex ":" $nameSpace`;//检查物体是否有命名空间
+    int $constraintNum = `tokenize $GetConstraint[0] ":" $constraintSpace`;//检查约束是否有命名空间
+    
+    if($nameNum ==1 && $constraintNum == 1)
+    {
+     $noSpaceTex = $tex;  
+    }            
+    if($nameNum >1  && $constraintNum == 1)
+    {
+     $noSpaceTex = $nameSpace[1];
+    }
+    if($nameNum >1  && $constraintNum > 1)
+    {
+     $noSpaceTex = $tex;       
+    }
+      
+*/ 
+ 
+    
+    
+    string $attrs[];
+    $attrs = `listConnections -plugs on -s on ($tex+".tx")`;
+    string $tmp[];
+    tokenize $attrs[0] "." $tmp;
+    $node = $tmp[0];
+    if ("pairBlend" == `nodeType $node`)
+    {
+      $attrs = `listConnections -plugs on -s on ($node+".inTranslateX2")`;
+      tokenize $attrs[0] "." $tmp;
+      $node = $tmp[0];
+    }
+
+    $attrs = `ls ($node + ".target[*]")`;
+    string $result[];string $results[];
+    for ($i = 0; $i < size($attrs); $i++) 
+    {
+        $attr = ($attrs[$i]+".targetParentMatrix");
+
+        tokenize $attr "." $tmp;
+        $node = $tmp[0];
+
+        string $t[] = `listConnections -plugs on -s on $attr`;
+        string $s[];
+        string $c[];
+        tokenize $t[0] "." $s;
+        $result[$i] = $s[0];
+        if (`gmatch $s[0] "*:*"`)
+        {
+            tokenize $s[0] ":" $c;
+            $result[$i] = $c[size($c)-1];
+        }
+        else
+        {
+            $result[$i] = $s[0];
+        }
+        $results[$i]=$s[0];
+        //print ("target "+$i+" is "+$result[$i]+"\n");
+    }
+    
+    intField -e -v $i val;
+    $cont=`intField -q -v val`;
+    int $cunt=`intField -q -v vel`;
+    int $cuu=$cunt-1;
+    
+    print ("约束数量： "+$i+"\n");
+    print ($node+"\n");
+    print $result[0];
+    //////////////////////
+    string $attrbute[]={".targetOffsetTranslateX",".targetOffsetTranslateY",".targetOffsetTranslateZ",".targetOffsetRotateX",".targetOffsetRotateY",".targetOffsetRotateZ"};
+    for( $j in $attrbute)
+    {
+        CBdeleteConnection ($noSpaceTex+"."+"target["+$cuu+"]"+$j);
+    }
+    CBdeleteConnection ($noSpaceTex+".w"+$cuu);
+}
+
+global proc CBdeleteConnection( string $destName )
+
+{
+	if ( `connectionInfo -isDestination $destName` ){
+		string $destination = `connectionInfo -getExactDestination $destName`;
+
+		string $srcConn[] = `listConnections -s 1 -d 0 -type character $destination`;
+		if (size($srcConn)) {
+			string $warnMsg = (uiRes("m_channelBoxCommand.kRemovedWarn"));
+			string $warnDisplay = `format -s $destination -s $srcConn[0] $warnMsg`;
+			warning($warnDisplay);
+			character -e -rm $srcConn[0] $destination;
+		}
+
+		string $sArr[1] = `ls -ro $destination`;
+		if (size($sArr)) {
+			string $src = `connectionInfo -sourceFromDestination $destination`;
+			disconnectAttr $src $destination;
+		} else {
+			delete -icn $destination;
+		}
+	}
+}
+
+global proc lode()
+{
+    $sel = `ls -sl`;
+    $obj = $sel[0];
+                
+    string $attrs[];
+    $attrs = `listConnections -plugs on -s on ($obj+".tx")`;
+    string $tmp[];
+    tokenize $attrs[0] "." $tmp;
+    $node = $tmp[0];
+    if ("pairBlend" == `nodeType $node`)
+    {
+      $attrs = `listConnections -plugs on -s on ($node+".inTranslateX2")`;
+      tokenize $attrs[0] "." $tmp;
+      $node = $tmp[0];
+    }
+
+    $attrs = `ls ($node + ".target[*]")`;
+    string $result[];
+    for ($i = 0; $i < size($attrs); $i++) 
+    {
+        $attr = ($attrs[$i]+".targetParentMatrix");
+
+        tokenize $attr "." $tmp;
+        $node = $tmp[0];
+
+        string $t[] = `listConnections -plugs on -s on $attr`;
+        string $s[];
+        string $c[];
+        tokenize $t[0] "." $s;
+         if (`gmatch $s[0] "*:*"`)
+        {
+            tokenize $s[0] ":" $c;
+            $result[$i] = $c[size($c)-1];
+        }
+        else
+        {
+            $result[$i] = $s[0];
+        }
+        $results[$i] = $s[0];
+        //print ("target "+$i+" is "+$result[$i]+"\n");
+    }
+    intField -e -v $i val;
+    textField -e -tx $sel[0] tex;
+}
+
+global proc delanim()
+{
+    string $tex=`textField -q -tx tex`;
+    
+    
+    
+    string $GetConstraint[] = `listRelatives -c -typ "parentConstraint" $tex`;//获取约束
+    string $noSpaceTex;  
+    $noSpaceTex = $GetConstraint[0];  
+/*            
+    string $nameSpace[];
+    string $constraintSpace[];
+    string $noSpaceConstraint;    
+    int $nameNum = `tokenize $tex ":" $nameSpace`;//检查物体是否有命名空间
+    int $constraintNum = `tokenize $GetConstraint[0] ":" $constraintSpace`;//检查约束是否有命名空间
+    
+    if($nameNum ==1 && $constraintNum == 1)
+    {
+     $noSpaceTex = $tex;  
+    }            
+    if($nameNum >1  && $constraintNum == 1)
+    {
+     $noSpaceTex = $nameSpace[1];
+    }
+    if($nameNum >1  && $constraintNum > 1)
+    {
+     $noSpaceTex = $tex;       
+    }
+      
+*/ 
+ 
+    
+    
+    
+    
+    if( `objExists $noSpaceTex`)
+    {
+        select $noSpaceTex;
+        //string $connect[]={"restTranslateX","restTranslateY","restTranslateZ","restRotateX","restRotateY","restRotateZ"};
+        timeSliderClearKey;
+    }
+}
+
+global proc delallanim()
+{
+    float $posi[];float $rosi[];
+    string $tex=`textField -q -tx tex`;
+    
+    
+    string $GetConstraint[] = `listRelatives -c -typ "parentConstraint" $tex`;//获取约束
+    string $noSpaceTex;  
+    $noSpaceTex = $GetConstraint[0];  
+/*            
+    string $nameSpace[];
+    string $constraintSpace[];
+    string $noSpaceConstraint;    
+    int $nameNum = `tokenize $tex ":" $nameSpace`;//检查物体是否有命名空间
+    int $constraintNum = `tokenize $GetConstraint[0] ":" $constraintSpace`;//检查约束是否有命名空间
+    
+    if($nameNum ==1 && $constraintNum == 1)
+    {
+     $noSpaceTex = $tex;  
+    }            
+    if($nameNum >1  && $constraintNum == 1)
+    {
+     $noSpaceTex = $nameSpace[1];
+    }
+    if($nameNum >1  && $constraintNum > 1)
+    {
+     $noSpaceTex = $tex;       
+    }
+      
+*/ 
+ 
+    
+    
+    
+    //string $connect[]={"targetOffsetTranslateX","targetOffsetTranslateY","targetOffsetTranslateZ","targetOffsetRotateX","targetOffsetRotateY","targetOffsetRotateZ","restTranslateX","restTranslateY","restTranslateZ","restRotateX","restRotateY","restRotateZ"};
+    string $connection[]=`listConnections $noSpaceTex`;
+    if( `objExists $tex`)
+    {
+        $posi=`xform -q -ws -t $tex`;
+        $rosi=`xform -q -ws -ro $tex`;
+            
+    }
+    for ($i in $connection)
+    {
+        if (`nodeType $i` == "animCurveTA"||`nodeType $i` == "animCurveTL"||`nodeType $i` == "animCurveTU")
+        {
+            delete $i;    
+        }
+    
+    }
+    xform -ws -t $posi[0] $posi[1] $posi[2] $tex;
+    xform -ro $rosi[0] $rosi[1] $rosi[2] $tex;
+}
+
+global proc ConstrainSwitch()
+{
+    if(`window -ex ConstrainSwitchWin`) deleteUI ConstrainSwitchWin;
+
+    window -t "父子约束切换工具" ConstrainSwitchWin;
+
+    frameLayout -l " 选择被约束物体" -cll true -borderStyle "etchedOut";
+
+    columnLayout -adj true;
+    
+    rowColumnLayout -nc 4 -cw 1 60 -cw 3 25 -cw 3 60; 
+    text -l " 约束物体:";
+    $tx=`textField tex`;
+    text -l "";
+    button -l "<<<" -c "lode()";
+    text -l " 约束数量:";
+    intField -editable 0 val;
+    text -l "个";
+    text -l "";
+    text -l " 启动第"; 
+    $count=`intField -v 1 vel`; 
+    text -l "个物体约束"; 
+    setParent ..;
+    separator -style "in";
+    rowColumnLayout -nc 2 -cw 1 80 -cw 3 80  
+                    -cat 1 "both" 5 -cat 2 "both" 5
+                    -cal 1 "center" -cal 2 "center"
+                    -rat 1 "top" 10 -rat 2 "top" 10 ;
+    button -l "约束到物体" -c "constraintobject()"; 
+    button -l "约束到空间" -c "constraintworldspace()";
+    setParent ..;
+    separator -style "in";
+    button -l "删除帧" -c "delanim()";
+    button -l "删除所有帧" -c "delallanim()";
+    showWindow ConstrainSwitchWin;
+}
+ConstrainSwitch;

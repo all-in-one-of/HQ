@@ -1,0 +1,63 @@
+proc Init(){
+    global int $con_num;
+    $con_num=0;
+    string $sele[]=`ls -sl`;
+    for ($n=0;$n<size($sele);$n++)
+    {
+        string $con[]=`listAttr -ud $sele[$n]`;
+        int $con_n=size($con);
+        $con_num=`max $con_num $con_n`;
+    }
+}
+
+proc Update_win(){
+    if (`window -q -exists Mod_window`) deleteUI Mod_window;
+    mod_window();
+}
+
+proc mod_window(){
+    global int $con_num;
+    Init();
+    int $n=1;
+    if (`window -q -exists Mod_window`) deleteUI Mod_window;
+    window -title "PL修改控制节点数值"
+           -wh 50 50 
+           Mod_window;
+    columnLayout;
+        button -l "选择的约束改变了 就点这个更新" -c "Update_win()";
+        for($n=1;$n<=$con_num;$n++)
+        {
+            string $t_t="第"+$n+"个数值：";
+            string $f_f="modify_"+$n;
+            string $comm="Cons_mod("+$n+")";
+            rowColumnLayout -nc 3 -cw 1 100 -cw 2 80 -cw 3 50;
+                text -l $t_t;
+                textField -tx 1 -ec $comm $f_f;
+                button -l "修改" -c $comm;
+            setParent ..; 
+            separator -height 5 -style "in"; 
+         }              
+    showWindow Mod_window;
+}
+
+proc Cons_mod(int $x){
+
+    string $sele[]=`ls -sl`;
+    string $f_f1="modify_"+$x;
+    float $mod_v1 = `textField -q -tx $f_f1`;
+    int $n=0;
+    for ($n=0;$n<size($sele);$n++)
+    {
+        string $con[]=`listAttr -ud $sele[$n]`;
+        if ($x<=size($con)){
+            string $cst=$sele[$n]+"."+$con[($x-1)];
+            setAttr $cst $mod_v1;           
+        }else{
+
+             break;
+        }
+    }
+}
+
+mod_window();
+

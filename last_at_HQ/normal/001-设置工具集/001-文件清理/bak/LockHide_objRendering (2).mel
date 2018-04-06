@@ -1,0 +1,514 @@
+//脚本名称：LockHide_objRendering
+//作者：Lsy(刘升耀)
+//编写时间：2015.4
+//版本：V2.0
+//备注：修改时间2015.12.11 增加了arnold属性的检查
+//说明：脚本主要针对绑定好的文件，检查隐藏的obj,进行锁定其Visibility属性
+//     设置poly和nunbsSurfaces不可渲染
+//**************************
+//****************************************
+//*********************************************************************
+
+
+
+
+//检查隐藏obj的UI
+//****************
+//************************
+global proc LockHide_objRendering(){
+	  
+	        if(`window -exists queryHideObjWindows`)deleteUI queryHideObjWindows;
+	        
+	        window -title "检查隐藏锁定和不可渲染" queryHideObjWindows;
+	          columnLayout -height 130 -width 280 -adj 1 ;
+	            text -label "";
+	            text -height 20 -label "选择绑定大组，可以多选" text_1;
+	            text -label "";
+	            button -command "progressWindows" -height 50 -label "开始检查" button_q1; 
+	        
+	        showWindow queryHideObjWindows;
+	
+}
+
+//显示隐藏的obj名称的UI
+//***************************
+//*************************************
+
+
+global proc HideObjNameUI(){
+	
+	    if(`window -exists HideObjNamewindows`) deleteUI HideObjNamewindows;
+	    
+	    window -title "Obj名称" HideObjNamewindows;
+	      columnLayout -width 300 -height 550 -adj 1 ;
+	        frameLayout -cll 1 -cl 1 -label "（0个）隐藏未锁定的物体名称" frameLayout_1;
+	          textScrollList -selectCommand "select_item1" -numberOfRows 10 -allowMultiSelection 1 textScrollList_1;
+	          setParent ..;
+	          text -label "";
+	         button -c "lockObjVis" -height 30 -label "锁定隐藏属性";
+	        frameLayout -cll 1 -cl 1 -label "（0个）未设置不可渲染的模型名称" frameLayout_2;
+	          textScrollList -selectCommand "select_item2" -numberOfRows 10 -allowMultiSelection 1 textScrollList_2;
+              setParent ..;
+              text -label "";
+            button -c "setRendering" -height 32 -label "设置不可渲染";
+
+}
+
+
+//进度UI
+//********
+//********************
+
+global proc  progressWindows(){
+            
+	 
+             HideObjNameUI;	        
+	        
+	         int $amount = 0;
+             progressWindow
+                 -title "处理中.."
+                 -progress $amount
+                 -isInterruptable true;
+            //处理窗口的进度
+    
+	        
+	        
+	        select -hierarchy;
+            string $ls_vis[]=`ls -sl -invisible`;
+	        int $int_pr=`size $ls_vis`;
+	        select -clear;
+	        //获取隐藏的物体
+	        
+	        
+	        if($int_pr>0){
+               for($i=0;$i<$int_pr;$i++){
+         	      
+         	     int $int_i=`getAttr -lock ($ls_vis[$i]+".v")`;
+         	     if($int_i==0){
+         	     	
+         	     	textScrollList -edit -append $ls_vis[$i] textScrollList_1;
+         	     	print("/////发现"+$ls_vis[$i]+"未锁定visibility"+"\n");
+         	     	
+         	     }else{
+         	     	
+         	     	print("/////发现"+$ls_vis[$i]+"已经锁定visibility"+"\n");
+         	     	
+         	     }
+         	     
+         	       	
+         	    };
+         }else{
+         	
+         	print("/////没有发现隐藏的物体"+"\n");
+         };
+         
+         /////把未锁定隐藏物体的vis属性的名称放到textScrollList_1里面
+
+         
+          $amount=10;
+          progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+             
+          //处理窗口的进度
+       
+         
+             string $all_lockObj1[]=`textScrollList -query -allItems textScrollList_1`; 
+             int $int_lo1 =`size $all_lockObj1`;
+             frameLayout -edit -label ("（" + $int_lo1 + "个）隐藏未锁定的物体名称") frameLayout_1;
+	      //获取隐藏的物体的数量
+
+	 
+	 
+	 
+          $amount=20;
+          progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+             
+          //处理窗口的进度
+
+
+	     if($int_pr>0){ 
+	         string $ls_nurbs[];
+	         int $int_iii=0;
+	         for($ls_vis_ii in $ls_vis){
+	         	select -r $ls_vis_ii;
+	            string $ls_vis_ii_shape[]=`pickWalk -d down`;
+	            select -cl;
+	         	string $obj_type_n=`objectType $ls_vis_ii_shape[0]`;
+	         	if($obj_type_n=="nurbsSurface"){
+	         		$ls_nurbs[$int_iii]=$ls_vis_ii;
+	         		$int_iii=$int_iii+1;
+	         	}
+	         }
+	         
+             int $nurbs_int=`size $ls_nurbs`;
+             if($nurbs_int==0){
+             	
+             	print("/////没有发现隐藏的nurbsSurface"+"\n");
+             }else {
+             	
+             	select $ls_nurbs;
+	            string $se_nurbs1[]=`ls -sl`;
+	            select -clear;
+	            //获取隐藏的nurbsSurface
+	            
+	            string $se_nurbs2;
+	            int $nurbs_int15;
+             for($se_nurbs2 in $se_nurbs1 ){
+             	
+		         int $nurbs_int1=`getAttr ($se_nurbs2 + ".visibility")`;
+		         select -r $se_nurbs2;
+		         string $se_nurbs2_shapes[]=`pickWalk -d down`;
+		         int $nurbs_int2=`getAttr ($se_nurbs2_shapes[0] +".castsShadows")`;
+		         int $nurbs_int3=`getAttr ($se_nurbs2_shapes[0] +".receiveShadows")`;
+		         int $nurbs_int4=`getAttr ($se_nurbs2_shapes[0] +".motionBlur")`;
+		         int $nurbs_int5=`getAttr ($se_nurbs2_shapes[0] +".primaryVisibility")`;
+		         int $nurbs_int6=`getAttr ($se_nurbs2_shapes[0] +".smoothShading")`;
+		         int $nurbs_int7=`getAttr ($se_nurbs2_shapes[0] +".visibleInReflections")`;
+		         int $nurbs_int8=`getAttr ($se_nurbs2_shapes[0] +".visibleInRefractions")`;		         
+		         int $nurbs_int9=`getAttr ($se_nurbs2_shapes[0] +".doubleSided")`;
+		         int $nurbs_i=`attributeExists "aiSelfShadows" $se_nurbs2_shapes[0]`;
+		         if($nurbs_i==1){
+		         	
+		         	int $nurbs_int11=`getAttr ($se_nurbs2 + ".aiSelfShadows")`;
+		         	int $nurbs_int12=`getAttr ($se_nurbs2 +".aiOpaque")`;
+		         	int $nurbs_int13=`getAttr ($se_nurbs2 +".aiVisibleInDiffuse")`;
+		         	int $nurbs_int14=`getAttr ($se_nurbs2 +".aiVisibleInGlossy")`;
+		         	$nurbs_int15=$nurbs_int11+ $nurbs_int12 + $nurbs_int13 + $nurbs_int14;
+		         	
+		         }else{
+		         	
+		         	$nurbs_int15=0;
+		         }
+		         		         
+		         int $nurbs_int10=$nurbs_int2 + $nurbs_int3 + $nurbs_int4 + $nurbs_int5 + $nurbs_int6 + $nurbs_int7 + $nurbs_int8 + $nurbs_int9 + $nurbs_int15;
+		        
+		         if($nurbs_int1==0){
+		         	    if($nurbs_int10==0){
+		         	    	
+		         	    	print("/////发现隐藏的"+ $se_nurbs2 + "已经设置为不可渲染"+"\n");
+		         	    }else {
+		                           	   
+		               textScrollList -edit -append  $se_nurbs2 textScrollList_2; 
+		               print ("/////发现"+$se_nurbs2+"是隐藏的nurbsSurface"+"\n") ; 
+		               };        	     
+		          }
+		                           	
+		              }
+	            
+	            
+             	
+             }
+
+		                       	  
+		    }else {
+		    	
+		    	print("/////没有发现隐藏的nurbsSurface"+"\n");
+		    }
+          /////把隐藏的nurbsSurface名称放到textScrollList_2里面
+          
+          
+          $amount=30;
+          progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+             
+          //处理窗口的进度
+          
+             
+	     if($int_pr>0){ 
+	         string $ls_mesh[];
+	         int $int_ii=0;
+	         for($ls_vis_i in $ls_vis){
+	         	select -r $ls_vis_i;
+	         	string $ls_vis_i_shape[]=`pickWalk -d down`;
+	         	select -cl;
+	         	string $obj_type=`objectType $ls_vis_i_shape[0]`;
+	         	if($obj_type=="mesh"){
+	         		$ls_mesh[$int_ii]=$ls_vis_i;
+	         		$int_ii=$int_ii+1;
+	         	}
+	         }
+             int  $mesh_int=`size $ls_mesh`;
+             if($mesh_int==0){
+             	
+             	print("/////没有发现隐藏poly"+"\n");
+             	
+             }else {
+             	
+             	 select $ls_mesh;
+	              string $se_mesh1[]=`ls -sl`;
+	              select -clear;
+                  //获取隐藏的poly
+             
+             
+             string $se_mesh2;
+             int $mesh_int15;
+             for($se_mesh2 in $se_mesh1 ){
+             	
+		         int $mesh_int1=`getAttr ($se_mesh2 + ".visibility")`;
+		         select -r $se_mesh2;
+		         string $se_mesh2_shapes[]=`pickWalk -d down`;
+		         int $mesh_int2=`getAttr ($se_mesh2_shapes[0] +".castsShadows")`;
+		         int $mesh_int3=`getAttr ($se_mesh2_shapes[0] +".receiveShadows")`;
+		         int $mesh_int4=`getAttr ($se_mesh2_shapes[0] +".motionBlur")`;
+		         int $mesh_int5=`getAttr ($se_mesh2_shapes[0] +".primaryVisibility")`;
+		         int $mesh_int6=`getAttr ($se_mesh2_shapes[0] +".smoothShading")`;
+		         int $mesh_int7=`getAttr ($se_mesh2_shapes[0] +".visibleInReflections")`;
+		         int $mesh_int8=`getAttr ($se_mesh2_shapes[0] +".visibleInRefractions")`;		         
+		         int $mesh_int9=`getAttr ($se_mesh2_shapes[0] +".doubleSided")`;
+		         int $mesh_i=`attributeExists "aiSelfShadows" $se_mesh2_shapes[0]`;
+		         
+		         if($mesh_i==1){
+		         	
+		         	int $mesh_int11=`getAttr ($se_mesh2_shapes[0] + ".aiSelfShadows")`;
+		         	int $mesh_int12=`getAttr ($se_mesh2_shapes[0] +".aiOpaque")`;
+		         	int $mesh_int13=`getAttr ($se_mesh2_shapes[0] +".aiVisibleInDiffuse")`;
+		         	int $mesh_int14=`getAttr ($se_mesh2_shapes[0] +".aiVisibleInGlossy")`;
+		         	$mesh_int15=$mesh_int11+ $mesh_int12 + $mesh_int13 + $mesh_int14;
+		         	
+		         }else{
+		         	
+		         	$mesh_int15=0;
+		         }     
+		         int $mesh_int10=$mesh_int2 + $mesh_int3 + $mesh_int4 + $mesh_int5 + $mesh_int6 + $mesh_int7 + $mesh_int8 + $mesh_int9 + $mesh_int15;
+		        
+		         if($mesh_int1==0){
+		         	   if($mesh_int10==0){
+		         	   	
+		         	   	     print("/////发现隐藏的" + $se_mesh2 + "已经设置为不可渲染"+"\n");
+		         	   	
+		         	   }else {
+		         	   	
+		         	   	    textScrollList -edit -append  $se_mesh2 textScrollList_2; 
+		                  print ("/////发现"+$se_mesh2+"是隐藏的poly"+"\n") ;     
+		         	   	
+		         	   };
+		                           	   
+		                    	     
+		          }
+		                           	
+		              }
+             	
+             	
+             }
+            
+		                       	  
+		    }else {
+		    	
+		    	print("/////没有发现隐藏的poly"+"\n");
+		    }
+		  
+          /////把隐藏的poly名称放到textScrollList_2里面
+ 
+      
+          $amount=40;
+          progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+             
+           string $foot_n[]={"*footmask_RB*","*footmask_LB*","*footmask_RF*","*footmask_LF*"};
+           string $foot_i;
+           int $foot_i_int15;
+           for($foot_i in $foot_n){
+           	    
+           	    int $objE_1=`objExists $foot_i`;
+           	    if($objE_1==1){
+           	    	
+           	     select -r $foot_i;
+           	     string $foot_i_n[]=`ls -sl`;
+           	     select -r $foot_i_n[0];
+		         string $foot_i_shapes[]=`pickWalk -d down`;
+		         select -cl;
+		         int $foot_i_int2=`getAttr ($foot_i_shapes[0] +".castsShadows")`;
+		         int $foot_i_int3=`getAttr ($foot_i_shapes[0] +".receiveShadows")`;
+		         int $foot_i_int4=`getAttr ($foot_i_shapes[0] +".motionBlur")`;
+		         int $foot_i_int5=`getAttr ($foot_i_shapes[0] +".primaryVisibility")`;
+		         int $foot_i_int6=`getAttr ($foot_i_shapes[0] +".smoothShading")`;
+		         int $foot_i_int7=`getAttr ($foot_i_shapes[0] +".visibleInReflections")`;
+		         int $foot_i_int8=`getAttr ($foot_i_shapes[0] +".visibleInRefractions")`;		         
+		         int $foot_i_int9=`getAttr ($foot_i_shapes[0] +".doubleSided")`;
+		         int $foot_i_i=`attributeExists "aiSelfShadows" $foot_i_shapes[0]`;
+		         
+		         if($foot_i_i==1){
+		         	
+		         	int $foot_i_int11=`getAttr ($foot_i_shapes[0] + ".aiSelfShadows")`;
+		         	int $foot_i_int12=`getAttr ($foot_i_shapes[0] +".aiOpaque")`;
+		         	int $foot_i_int13=`getAttr ($foot_i_shapes[0] +".aiVisibleInDiffuse")`;
+		         	int $foot_i_int14=`getAttr ($foot_i_shapes[0] +".aiVisibleInGlossy")`;
+		         	$foot_i_int15=$foot_i_int11+ $foot_i_int12 + $foot_i_int13 + $foot_i_int14;
+		         	
+		         }else{
+		         	
+		         	 $foot_i_int15=0;
+		         }     
+		         int  $foot_i_int10= $foot_i_int2 +  $foot_i_int3 +  $foot_i_int4 +  $foot_i_int5 +  $foot_i_int6 +  $foot_i_int7 +  $foot_i_int8 +  $foot_i_int9 +  $foot_i_int15;
+           	    
+           	    if( $foot_i_int10==0){
+		         	   	
+		         	   	     print("/////发现隐藏的" + $foot_i_n[0] + "已经设置为不可渲染"+"\n");
+		         	   	
+		         	   }else {
+		         	   	
+		         	   	    textScrollList -edit -append  $foot_i_n[0] textScrollList_2; 
+		                  print ("/////发现"+$foot_i+"是隐藏的poly"+"\n") ;     
+		         	   	
+		         	   }
+           	    }else{
+           	    	
+           	    	print ("/////没发现"+$foot_i+"\n") ; 
+           	    }
+           	
+           }
+             
+          //处理窗口的进度
+          
+          string $all_lockObj2[]=`textScrollList -query -allItems textScrollList_2`; 
+          int $int_lo2 =`size $all_lockObj2`;
+          frameLayout -edit -label ("（" + $int_lo2 + "个）未设置不可渲染的模型名称") frameLayout_2;
+	      //获取隐藏的物体的数量
+	      
+	      $amount=50;
+          progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+             
+          //处理窗口的进度
+   
+     while (true) {
+         // Check if the dialog has been cancelled
+         if ( `progressWindow -query -isCancelled` ) break;
+         // Check if end condition has been reached
+         if ( `progressWindow -query -progress` >= 100 ) break;
+  
+         $amount= $amount+10;
+         progressWindow -edit
+             -progress $amount
+             -status ("进度: "+$amount+"%");
+
+     }
+    
+    //执行进度的过程..... 
+     
+ 
+ progressWindow -endProgress;
+showWindow HideObjNamewindows;
+}
+
+
+
+//选择框内的物体名称等于直接选择到物体
+//************************************************
+//**********************************************************
+
+global proc select_item1(){
+	string $select_it1[]=`textScrollList -q -selectItem textScrollList_1`;
+    select -r $select_it1;
+}
+
+global proc select_item2(){
+	string $select_it2[]=`textScrollList -q -selectItem textScrollList_2`;
+    select -r $select_it2;
+}
+
+//锁定物体的visibility属性
+//*********************************
+//***********************************************
+
+global proc lockObjVis(){
+	
+	string $lock_it1[]=`textScrollList -q -allItems textScrollList_1`;
+	string $lock_it_se;
+	int $int_size1=`size$lock_it1`;
+	
+  if($int_size1==0){
+  	 
+  	  print("/////没有隐藏的物体需要隐藏vis属性"+"\n");
+  	
+  }else {
+  	
+  	for($lock_it_se in $lock_it1){
+		
+		 setAttr -lock true ($lock_it_se+".v");
+	     //锁定物体的Vis属性
+	    print ("setAttr -lock true "+ $lock_it_se +".visbility"+"\n");
+	};
+	 print("/////完成锁定隐藏物体的vis属性"+"\n");
+	
+  	
+  }
+	
+	
+	
+	
+}
+
+//设置物体不可渲染
+//***************************************
+//**********************************************************
+global proc setRendering(){
+	
+	string $set_it[]=`textScrollList -q -allItems textScrollList_2`;
+	int $int_size2=`size $set_it`;
+	string $set_it_se;
+	if($int_size2==0){
+		
+		print("/////没有模型的需要渲染隐藏属性"+"\n");
+		
+	}else {
+		
+	 for($set_it_se in $set_it ){
+		
+		select -r $set_it_se;
+		string $set_it_shapes[]=`pickWalk -d down`;
+		setAttr ($set_it_shapes[0]+".castsShadows") 0 ;
+		setAttr ($set_it_shapes[0]+".receiveShadows") 0 ;
+	    setAttr ($set_it_shapes[0]+".motionBlur") 0 ;
+	    setAttr ($set_it_shapes[0]+".primaryVisibility") 0 ;
+		setAttr ($set_it_shapes[0]+".smoothShading") 0 ;
+		setAttr ($set_it_shapes[0]+".visibleInReflections") 0 ;
+		setAttr ($set_it_shapes[0]+".visibleInRefractions") 0 ;
+		setAttr ($set_it_shapes[0]+".doubleSided") 0 ;
+		int $ai_i=`attributeExists "aiSelfShadows" $set_it_shapes[0]`;
+		if($ai_i==1){
+			
+			setAttr ($set_it_shapes[0]+".aiSelfShadows") 0 ;
+			setAttr ($set_it_shapes[0]+".aiOpaque") 0 ;
+			setAttr ($set_it_shapes[0]+".aiVisibleInDiffuse") 0 ;
+			setAttr ($set_it_shapes[0]+".aiVisibleInGlossy") 0 ;
+			
+			print("setAttr " + $set_it_shapes[0] +".aiSelfShadows"+" 0 " + "\n");
+			print("setAttr " + $set_it_shapes[0] +".aiOpaque"+" 0 " + "\n");
+			print("setAttr " + $set_it_shapes[0] +".aiVisibleInDiffuse"+" 0 " + "\n");
+			print("setAttr " + $set_it_shapes[0] +".aiVisibleInGlossy"+" 0 " + "\n");
+			
+		}
+		
+		//隐藏poly的渲染属性
+		
+		print("setAttr " + $set_it_shapes[0] +".castsShadows"+" 0 " + "\n");
+		print("setAttr " + $set_it_shapes[0] +".receiveShadows"+" 0 " + "\n");
+		print("setAttr " + $set_it_shapes[0] +".motionBlur"+" 0 " + "\n");
+		print("setAttr " + $set_it_shapes[0] +".primaryVisibility"+" 0 " + "\n");
+		print("setAttr " + $set_it_shapes[0] +".smoothShading"+" 0 " + "\n");
+		print("setAttr " + $set_it_shapes[0] +".visibleInReflections"+" 0 " + "\n");
+		print("setAttr " + $set_it_shapes[0] +".visibleInRefractions"+" 0 " + "\n");
+		print("setAttr " + $set_it_shapes[0] +".doubleSided"+" 0 " + "\n");
+		
+		
+		
+		
+	};
+	
+	print("/////完成模型的渲染属性隐藏"+"\n");
+
+ }
+	
+
+}
+
+
+LockHide_objRendering;
+

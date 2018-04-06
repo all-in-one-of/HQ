@@ -1,0 +1,25 @@
+global proc ot_BindAndCopySkinWeight()
+{
+string $objs[] = `ls -sl`;
+string $a;
+string $ot_Influ[]=`skinCluster -q -influence $objs[0]`;
+select -r $ot_Influ;
+string $isJoint[] = `ls -sl -type"joint"`;
+string $notJoint[] = `stringArrayRemove $isJoint $ot_Influ`;
+
+select -r $isJoint;
+select -tgl $objs[1];
+SmoothBindSkin;
+if(`size $notJoint`>0)
+{
+select -r $notJoint $objs[1];
+skinClusterInfluence 1"-ug -dr 4 -ps 0 -ns 10 -lw true -wt 0";
+}
+for ($a in $objs)
+{
+    select -r $objs;
+    copySkinWeights -noMirror -surfaceAssociation closestPoint -influenceAssociation closestJoint
+-influenceAssociation oneToOne -influenceAssociation oneToOne;
+}    
+};
+ot_BindAndCopySkinWeight();

@@ -1,0 +1,162 @@
+global proc removeNameSpace()
+{
+	if (`window -q -ex removeNameSpaceWindow`) deleteUI removeNameSpaceWindow;
+	window -title "命名空间" removeNameSpaceWindow;
+	 columnLayout -adj on -rs 10;
+	  frameLayout -label "去除命名空间" -collapsable on -borderStyle "etchedIn";
+         
+          radioButtonGrp -numberOfRadioButtons 2
+                         -label "适用范围:" 
+                         -cw 1 70 -cl3  center left left
+                         -labelArray2 "全文件" "特定前缀" 
+                         -sl 1 
+                         
+                         -onCommand1 "formLayout -e -en 0 FL"
+                         
+                         -onCommand2 "formLayout -e -en 1 FL"
+                         
+                         "removeNameSpaceStyle";
+
+					
+		
+	       formLayout -en 0 FL;
+	                  
+	                  
+           rowLayout -nc 2 -cw 1 180 -cw 2 80 
+					-cat 1 "both" 5 -cat 2 "both" 5
+					-cal 1 "center" -cal 2 "center";  	                  				
+					                                            
+           textFieldGrp -l "空间名:" -tx "" 
+					    -cw 1 50 -cw 2 150					   
+					    -cat 1 "left" 3 -cat 2 "both" 3
+                        nameSpaceNameFld;                                           
+                       
+           button -l "获取" -c "get_currNameSpace()";
+		 setParent..;
+      setParent..; 		 
+		 rowLayout -nc 2 -cw 1 135 -cw 2 135 
+				   -cat 1 "both" 10 -cat 2 "both" 10
+				   -cal 1 "center" -cal 2 "center";
+			button -l "去除" -c RemoveNameSpace;
+			button -l "取消" -c "deleteUI removeNameSpaceWindow";
+		 setParent ..;
+      setParent..; 
+
+	 frameLayout -label "添加命名空间" -collapsable on -borderStyle "etchedIn";
+
+      //separator -height 10 -style "in";
+        
+           rowLayout -nc 2 -cw 1 180 -cw 2 80 
+					-cat 1 "both" 5 -cat 2 "both" 5
+					-cal 1 "center" -cal 2 "center";  	                  				
+					                                            
+           textFieldGrp -l "空间名:" -tx "" 
+					    -cw 1 50 -cw 2 150					   
+					    -cat 1 "left" 3 -cat 2 "both" 3
+                        AddNameSpaceNameFld;                                          
+                       
+           button -l "添加" -c "AddNameSpace()";
+		 setParent..;
+      setParent..; 		 
+    setParent..;
+       
+         		       
+ 
+  	window -e -w 300 -h 100 removeNameSpaceWindow;		
+	showWindow removeNameSpaceWindow;
+}              
+                
+
+
+global proc get_currNameSpace()
+{     
+  string $sles[]=`ls -sl`;
+  string $buffer[];
+  string $n="";
+  $numTokens = `tokenize $sles[0]  ":" $buffer`;
+  for($i=0;$i<$numTokens-1;$i++)
+  {
+   $n+=$buffer[$i]+":";
+  }
+  if($numTokens>1)
+  {
+   textFieldGrp -e -tx $n nameSpaceNameFld;
+  }
+  else
+  {
+   textFieldGrp -e -tx "物体没命名空间" nameSpaceNameFld;
+  }
+}
+
+
+global proc  RemoveNameSpace()
+{
+  int $currentSelRadioButton = `radioButtonGrp -q -select removeNameSpaceStyle`;
+
+
+  if ($currentSelRadioButton == 1)
+  {
+    string $listAllNamespaces[] = `namespaceInfo -lon -r`;
+    string $defaultNamespaces[] = {"UI","shared"};
+    string $listNamespaces[] = stringArrayRemove($defaultNamespaces, $listAllNamespaces);
+    int $n;
+    for($n = 0;$n<size($listNamespaces);$n++)
+    {
+     string $listAllNamespaces[] = `namespaceInfo -lon -r`;
+     string $defaultNamespaces[] = {"UI","shared"};
+     string $listNamespaces[] = stringArrayRemove($defaultNamespaces, $listAllNamespaces);
+     if(size($listNamespaces) == 0)
+     {
+      break;      
+     }
+     if(size($listNamespaces) != 0)
+     {
+ 	  catch(`namespace -f -mv $listNamespaces[$n] ":"`);
+	  catch(`namespace -f -rm $listNamespaces[$n]`);
+	  $n = $n-1;    
+     }
+    }  
+  }
+
+
+   print "已经去除了文件中所有的空间命名！";             
+
+  if($currentSelRadioButton == 2)
+  {
+      
+
+    string $getTextField = `textFieldGrp -q -tx nameSpaceNameFld`;
+	namespace -f -mv $getTextField ":";
+	namespace -f -rm $getTextField;  
+  }
+    
+}
+
+global proc AddNameSpace()
+{
+ string $getAddNameSpace = ` textFieldGrp -q -tx AddNameSpaceNameFld`; 
+ 
+ namespace -add $getAddNameSpace;
+ namespace -set $getAddNameSpace;
+ 
+ string $sel[] = `ls -sl`;
+ select -hi $sel[0];
+ string $selAllObj[] = `ls -sl`;
+ string $selAllObjShape [] = `ls -s -sl`;
+ string $AllObj[] = stringArrayRemove($selAllObjShape, $selAllObj);
+
+ int $obj=0;
+ for($obj;$obj<size($AllObj);$obj++)
+ {
+  rename $AllObj[$obj] ($AllObj[$obj] + "_d");
+  rename ($getAddNameSpace + ":" + $AllObj[$obj] + "_d") ($getAddNameSpace + ":"  + $AllObj[$obj]); 
+ }
+
+ namespace -set ":";
+ select -cl;
+ print "添加完成！";
+ confirmDialog -title "确认" -message "添加完成！"
+               -button "确定"; 
+}
+
+removeNameSpace;

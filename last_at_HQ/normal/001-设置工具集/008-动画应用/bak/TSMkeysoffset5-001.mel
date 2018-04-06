@@ -1,0 +1,242 @@
+//====author yanzhili====2010.09.07======
+//====mender liangyong====2013.05.28======
+//===============UI=====================
+global proc ddStretchyIKUI()
+{
+if (`window -ex yzlAnimWin `)
+{deleteUI yzlAnimWin ;}
+
+if (`window -ex yzlAnimWin `)
+{	windowPref -remove yzlAnimWin ;}
+	window -widthHeight 460 220  -title  "AnimCurve v0.20 beta"  yzlAnimWin ;
+
+	menuBarLayout;
+	menu -label "Edit" editmenu;
+      menuItem -label "Save Settings";
+      menuItem -label "Reset Settings" -c "resetSettings()";
+	menu -label "Help" helpmenu;
+      menuItem -label "Help ..." ;
+	setParent ..;
+
+	columnLayout -w 460 -adjustableColumn true ;
+	//textFieldButtonGrp  -l "seleCharter"   -text  "select character"  -buttonLabel  "getIN" -bc "";
+		rowLayout -numberOfColumns 3  -columnWidth2 100 150 -columnAttach 3 "both"  30;
+			text -l "        Time range: ";
+			radioCollection;
+			radioButton -label "All" -select -changeCommand "setStartEndfield()" rix;
+			radioButton -label "Start/End" -changeCommand "setStartEndfield()" sd;
+			setParent ..; 
+
+		rowLayout -numberOfColumns 3  -columnWidth2 100 150 -columnAttach 1 "both"  7 -columnAttach 3 "both"  10;
+			text -l "  Time Start/End:";
+			intField -en 0 -w 80 startfield;
+			intField -en 0 -w 80 endfield;
+			setParent ..;
+
+		rowLayout -numberOfColumns 2  -columnWidth2 100 150  -columnAttach 2 "both"  30;
+			text -l "         Select Keys:       ";
+			button -l "select" -command "selectAllAttr()" ;
+			setParent ..; 
+
+		rowLayout -numberOfColumns 2  -columnWidth2 400 80 -columnAttach 2 "both"  10;
+			//text -l "        Keys offset:";
+			//intField -w 200  inTimeUI;
+			//button -l "offset" -command "setStartTime()";
+			//setParent ..;
+			intSliderGrp -label "Keys offset:"
+						 -field true
+    					 -minValue -30 
+    					 -maxValue 30
+    				     -fieldMinValue -100
+    				     -fieldMaxValue 100
+    				     -changeCommand "setStartTime();intSliderGrp -e -v 0 inTimeUI"
+    					 -value 0
+    					 inTimeUI;
+    		button -label "offset" -c "setStartTime()";
+			//floatSliderButtonGrp -label "Keys offset:" 
+			//					 -minValue -30
+			//					 -maxValue 30
+			//					 -fieldMinValue -100
+			//					 -fieldMaxValue 100
+			//					 -field true
+   			//				 	 -changeCommand "setStartTime()"
+   			//				 	 -buttonCommand "setStartTime()"
+   			//				 	 -buttonLabel "offset" 
+   			//				 	 -columnWidth 5 23
+   			//				 	 inTimeUI;
+   			setParent ..;
+   		separator -height 20 -style "doubleDash";
+		rowLayout -numberOfColumns 2  
+				  -columnWidth2 210 1 
+				  -columnAttach 1 "both"  20
+				  -columnAttach 2 "both"  -70;
+			text -l "Scale pivot:";
+			intField scalepoivt;
+			setParent ..;
+		rowLayout -numberOfColumns 1  -columnWidth2 120 150 ;
+			//text -l "        Keys  scale:";
+			//intField -w 200  inTimeUI0;
+			//button -l "scale  ";
+			//setParent ..;
+			floatSliderButtonGrp -label "Keys scale:" 
+								 -minValue -30
+								 -maxValue 30
+								 -fieldMinValue -100
+								 -fieldMaxValue 100
+								 -field true
+								 -value 1
+   							 	 -changeCommand "setScaleKeys();floatSliderButtonGrp -e -v 1 inTimeUI0;"
+   							 	 -buttonCommand "setScaleKeys()"
+   							 	-buttonLabel "scale"
+   							 	-columnWidth 5 23
+   							 	inTimeUI0;			
+			setParent ..;
+	showWindow yzlAnimWin ;
+}
+
+//================proc=============
+global proc string[] findAnimCurveyzl(){
+	string $allAnimCurve[]={"animCurveUA","animCurveUL","animCurveUT","animCurveUU"};
+	string $returnAllKeyNodee[];
+	select -hi;
+	$finalNodes =`ls -sl -type transform`;
+	select -cl;
+	
+	for ($x=0; $x<size($finalNodes) ; $x++)
+	{
+		int $allNodeKeysNum=`keyframe -q -keyframeCount $finalNodes[$x]`;
+		if ($allNodeKeysNum > 0)
+		{
+			string $attrOnly[] =`listAttr -k $finalNodes[$x]`;
+			for ($y=0; $y<size($attrOnly); $y++)
+			{	
+				string $nodesAttrs = $finalNodes[$x] + "." + $attrOnly[$y];
+				int $isExists=size(`ls $nodesAttrs`);
+				if ($isExists!=0)
+				{
+					int $singleNodeKeysNum=`keyframe -q -keyframeCount $nodesAttrs`;
+										
+					if ($singleNodeKeysNum > 1)
+					{	
+						string $nodesCurve[] = `listConnections -d off -s on ($finalNodes[$x]+"."+$attrOnly[$y])`;
+						string $curAnimCurve;	
+						if(size($nodesCurve)>0)
+						{
+							$curAnimCurve=`nodeType  $nodesCurve[0]`;
+							int $found=stringArrayContains($curAnimCurve,$allAnimCurve);
+							if(!$found)
+								$returnAllKeyNodee[size($returnAllKeyNodee)] = $nodesAttrs;
+						}
+					}
+				}
+			}
+		}
+	}
+	return $returnAllKeyNodee;
+}
+
+//===============================
+
+global proc selectAllAttr(){
+	int $theInTime=`intSliderGrp -q -v inTimeUI`;
+	
+	int $sdcount = `radioButton -q -select sd`;
+	
+	float $startTime = `intField -q -v startfield`;
+	float $endTime = `intField -q -v endfield`;
+	string $startTimes = (string)$startTime;
+	string $endTimes = (string)$endTime;
+
+	string $allKeyAttr[];
+	$allKeyAttr=findAnimCurveyzl();
+	select $allKeyAttr;
+	string $select[] = `ls -sl`;
+	select -cl;
+	string $objects[];
+	string $obj[]; 
+	for ($i in $select)
+	{
+		$obj = `listConnections $i`;
+		string $objs[] = `listConnections $obj`;
+		if (`nodeType $objs[0]` == "transform")
+			select -add $objs[0];
+	}
+	if ($sdcount)
+	{
+		selectKey -clear ;
+		selectKey -add -t ($startTimes+":"+$endTimes) -k $allKeyAttr;
+		keyframe -animation keys -option over -relative -timeChange (0+$theInTime) ;	
+	}
+	else
+	{
+		selectKey -add -k $allKeyAttr;
+		keyframe -animation keys -option over -relative -timeChange (0+$theInTime) ;
+
+	}
+
+}
+
+global proc setStartTime(){
+	float $theInTime=`intSliderGrp -q -v inTimeUI`;
+	string $sel[]=`ls -sl`;
+	if (size($sel))
+		keyframe -animation keys -option over -relative -timeChange (0+$theInTime) ;
+
+}
+
+
+ddStretchyIKUI();
+
+
+global proc float returnMax(){
+	int $theInTime=`intField -q -v inTimeUI`;
+	string $allKeyAttr[]=`ls -sl`;
+	$currVFirst=`keyframe -tc 1 -q $allKeyAttr[0]`;
+	float $maxV=$currVFirst[0];
+	for ( $obj in $allKeyAttr)
+		{	
+			$currV=`keyframe -tc 1 -q $obj`;
+			if($currV[0]<$maxV)
+				$maxV=$currV[0];
+		}
+	return  $maxV;
+}
+
+global proc setStartEndfield()
+{
+	int $rixcount = `radioButton -q -select rix`;
+	int $sdcount = `radioButton -q -select sd`;
+	if($rixcount==1)
+	{	intField -e -enable 0 startfield;
+		intField -e -enable 0 endfield;
+	}else if($sdcount)
+	{
+		intField -e -enable 1 startfield;
+		intField -e -enable 1 endfield;
+	}
+}
+
+global proc setScaleKeys()
+{
+	float $scalepovit=`intField -q -v scalepoivt`;
+	float $scalevalue=`floatSliderButtonGrp -q -v inTimeUI0`;
+	string $sel[]=`ls -sl`;
+	if (size($sel))
+		scaleKey -iub false -ts $scalevalue -tp $scalepovit -animation keys ;
+
+
+}
+
+global proc resetSettings()
+{
+	if (!`radioButton -q -select rix`)
+		radioButton -e -select rix;
+		intField -e -v 0 startfield;
+		intField -e -v 0 endfield;
+		intField -e -enable 0 startfield;
+		intField -e -enable 0 endfield;
+	intField -e -v 0 scalepoivt;
+	intSliderGrp -e -v 0 inTimeUI;
+	floatSliderButtonGrp -e -v 1 inTimeUI0;
+}
+//===========end!=================

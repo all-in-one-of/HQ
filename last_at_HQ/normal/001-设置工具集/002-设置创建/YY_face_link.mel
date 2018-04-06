@@ -1,0 +1,2634 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+/////////                       ///////////////////                        ///////////
+/////////                        /////////////////                        ////////////
+//////////                        ///////////////                        /////////////
+//////////                         /////////////                         /////////////
+///////////                         ///////////                         //////////////
+////////////                         //////////                        ///////////////
+////////////                         /////////                        ////////////////
+/////////////                         ///////                        /////////////////
+//////////////                         /////                        //////////////////
+///////////////                        /////                       ///////////////////
+////////////////                       ////                       ////////////////////
+//////////////////                      ///                     //////////////////////
+///////////////////                     //                    ////////////////////////
+/////////////////////                   //                  //////////////////////////
+///////////////////////                  /               /////////////////////////////
+////////////////////////                                //////////////////////////////
+///////////////////////////                           ////////////////////////////////
+/////////////////////////////                         ////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+//string $zong_jia = "";
+global int $YY_jishu = 0;
+if(`window -q -ex YY_faceWin`)
+{deleteUI YY_faceWin;};
+window -wh 620 700
+	   -s 1
+	   YY_faceWin;
+columnLayout ;
+frameLayout -l "创建表情名称"
+	       // -bgc 0.7 0.8 0.9
+	        -w 600
+	        -cll 1 -cl 0
+	        -bs "etchedIn";
+columnLayout //-bgc 0.6 0.6 0.8
+	         -cat "left" 5 -rs 5;
+separator -w 600;
+
+/////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////{"O","F_V","M","U","A_I"};
+/////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////
+//rowLayout -nc 2 -cw2 600 80;
+float $YY_head_bgc[3] = {0.6,0.63,0.6};
+rowLayout -nc 6 
+	     //-bgc 0.6 0.6 0.6
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "口型" 
+	-bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+	-c "speak";
+checkBox  -w 20 -l "" -v 1 a1;
+button -w 75 -l "O" -c "re_a1" but_a1;
+checkBox  -w 20 -l "" -v 1 a2;
+button -w 75 -l "F_V" -c "re_a2" but_a2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20 -l "" -v 1 a3;
+button -w 75 -l "M" -c "re_a3" but_a3;
+checkBox  -w 20 -l "" -v 1 a4;
+button -w 75 -l "U" -c "re_a4" but_a4;
+checkBox -w 20 -l "" -v 1 a5;
+button -w 75 -l "A_I" -c "re_a5" but_a5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+/////////BBBBBBBBBBBBBBBBBBBBBBBBBB////////////
+/////////BBBBBBBBBBBBBBBBBBBBBBBBBB///////////
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "眉弓" 
+	-bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+	-c "fore";
+checkBox  -w 20 -l "" -v 1 b1;
+button -w 75 -l "抬眉弓_↑" -c "re_b1" but_b1;
+checkBox  -w 20 -l "" -v 1 b2;
+button -w 75 -l "降眉弓_↓" -c "re_b2" but_b2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 0 -l "" -v 1 b3;
+button -w 75  -en 0 -l "Forehead";
+checkBox  -w 20  -en 0 -l "" -v 1 b4;
+button -w 75  -en 0 -l "Forehead";
+checkBox -w 20 -en 0 -l "" -v 1 b5;
+button -w 75 -en 0 -l "Forehead";
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+separator -w 600;
+separator -w 600;
+/////////CCCCCCCCCCCCCCCCCCCCCCCCCCC///////////////
+/////////CCCCCCCCCCCCCCCCCCCCCCCCCCCCC////////
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "左嘴角" 
+              -bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+	          -c "L_Mouth";
+checkBox  -w 20 -l "" -v 1 c1;
+button -w 75 -l "左张开_↑" -c "re_c1" but_c1;
+checkBox  -w 20 -l "" -v 1 c2;
+button -w 75 -l "左张开_↓" -c "re_c2" but_c2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 1 -l "" -v 1 c3;
+button -w 75  -en 1 -l "左闭嘴_↑" -c "re_c3" but_c3;
+checkBox  -w 20  -en 1 -l "" -v 1 c4;
+button -w 75  -en 1 -l "左闭嘴_↓" -c "re_c4" but_c4;
+checkBox -w 20 -en 1 -l "" -v 0 c5;
+button -w 75 -en 1 -l "左咧嘴" -c "re_c5" but_c5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+//////DDDDDDDDDDDDDDDDDDDDDDDD//////////////////////////
+//////DDDDDDDDDDDDDDDDDDDDDDDDD////////////////////////
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "右嘴角" 
+              -bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+            	-c "R_Mouth";
+checkBox  -w 20 -l "" -v 1 d1;
+button -w 75 -l "右张开_↑" -c "re_d1" but_d1;
+checkBox  -w 20 -l "" -v 1 d2;
+button -w 75 -l "右张开_↓" -c "re_d2" but_d2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 1 -l "" -v 1 d3;
+button -w 75  -en 1 -l "右闭嘴_↑" -c "re_d3" but_d3;
+checkBox  -w 20  -en 1 -l "" -v 1 d4;
+button -w 75  -en 1 -l "右闭嘴_↓" -c "re_d4" but_d4;
+checkBox -w 20 -en 1 -l "" -v 0 d5;
+button -w 75 -en 1 -l "右咧嘴" -c "re_d5" but_d5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+separator -w 600;
+///////EEEEEEEEEEEEEEEEEEEEEEE/////////////////////////////
+///////EEEEEEEEEEEEEEEEEEEEEEEEE//////////////////////////
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "左眼皮"  
+	    -bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2]
+		-c "L_Eyelid";
+checkBox  -w 20 -l "" -v 1 e1;
+button -w 75 -l "左上眼皮_↑" -c "re_e1" but_e1;
+checkBox  -w 20 -l "" -v 1 e2;
+button -w 75 -l "左上眼皮_↓" -c "re_e2" but_e2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 1 -l "" -v 1 e3;
+button -w 75  -en 1 -l "左下眼皮_↑" -c "re_e3" but_e3;
+checkBox  -w 20  -en 1 -l "" -v 1 e4;
+button -w 75  -en 1 -l "左下眼皮_↓" -c "re_e4" but_e4;
+checkBox -w 20 -en 0 -l "" -v 0 e5;
+button -w 75 -en 0 -l "左眼皮" but_e5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+////////FFFFFFFFFFFFFFFFFFFF/////////////////////////////
+////////FFFFFFFFFFFFFFFFFFFF////////////////////////////
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "右眼皮" 
+	          -bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+	          -c "R_Eyelid";
+checkBox  -w 20 -l "" -v 1 f1;
+button -w 75 -l "右上眼皮_↑"  -c "re_f1" but_f1;
+checkBox  -w 20 -l "" -v 1 f2;
+button -w 75 -l "右上眼皮_↓" -c "re_f2" but_f2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 1 -l "" -v 1 f3;
+button -w 75  -en 1 -l "右下眼皮_↑" -c "re_f3" but_f3;
+checkBox  -w 20  -en 1 -l "" -v 1 f4;
+button -w 75  -en 1 -l "右下眼皮_↓" -c "re_f4" but_f4;
+checkBox -w 20 -en 0 -l "" -v 0 f5;
+button -w 75 -en 0 -l "右眼皮" but_f5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+separator -w 600;
+///////////GGGGGGGGGGGGGGGG//////////////////////////
+//////////GGGGGGGGGGGGGGGGGGGGGGG////////////////////////
+
+/////////////////iiiiiiiiiiiiiiiiiiiiiiiiiii
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "左眉弓" 
+	          -bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+	          -c "L_Forehead";
+checkBox  -w 20 -l "" -v 1 i1;
+button -w 75 -l "左眉弓_↑"  -c "re_i1" but_i1;
+checkBox  -w 20 -l "" -v 1 i2;
+button -w 75 -l "左眉弓_↓" -c "re_i2" but_i2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 1 -l "" -v 1 i3;
+button -w 75  -en 1 -l "发愁_↑" -c "re_i3" but_i3;
+checkBox  -w 20  -en 1 -l "" -v 1 i4;
+button -w 75  -en 1 -l "生气_↓" -c "re_i4" but_i4;
+checkBox -w 20 -en 0 -l "" -v 0 i5;
+button -w 75 -en 0 -l "左眉弓" -c "re_i5" but_i5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+/////////HHHHHHHHHHHHHHHHHHHHH/////////////////////////
+/////////HHHHHHHHHHHHHHHHHHHHHH////////////////////////////
+
+///////////jjjjjjjjjjjjjjjjjjjjjjjjj
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "右眉弓" 
+	          -bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+	          -c "R_Forehead";
+checkBox  -w 20 -l "" -v 1 j1;
+button -w 75 -l "右眉弓_↑" -c "re_j1" but_j1;
+checkBox  -w 20 -l "" -v 1 j2;
+button -w 75 -l "右眉弓_↓" -c "re_j2" but_j2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 1 -l "" -v 1 j3;
+button -w 75  -en 1 -l "发愁_↑" -c "re_j3" but_j3;
+checkBox  -w 20  -en 1 -l "" -v 1 j4;
+button -w 75  -en 1 -l "生气_↓" -c "re_j4" but_j4;
+checkBox -w 20 -en 0 -l "" -v 0 j5;
+button -w 75 -en 0 -l "右眉弓" but_j5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+separator -w 600;
+separator -w 600;
+/////////IIIIIIIIIIIIIIIIIIIIIIIIIIIIII////////////////
+/////////IIIIIIIIIIIIIIIIIIIIIIIII///////////////////////////
+///////////ggggggggggggggggggggggggggggggggg
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "左眉毛" 
+	          -bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+	          -c "L_Brow";
+checkBox  -w 20 -l "" -v 1 g1;
+button -w 75 -l "左整抬眉↑"  -c "re_g1" but_g1;
+checkBox  -w 20 -l "" -v 1 g2;
+button -w 75 -l "左整降眉↓"  -c "re_g2" but_g2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 1 -l "" -v 1 g3;
+button -w 75  -en 1 -l "发愁_↑" -c "re_g3" but_g3;
+checkBox  -w 20  -en 1 -l "" -v 1 g4;
+button -w 75  -en 1 -l "生气_↓" -c "re_g4" but_g4;
+checkBox -w 20 -en 0 -l "" -v 0 g5;
+button -w 75 -en 0 -l "左眉毛" but_g5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+////////JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ///////////////
+/////////JJJJJJJJJJJJJJJJJJJJJJJJJ/////////////////////
+///////////////hhhhhhhhhhhhhhhhhhh
+rowLayout -nc 6 
+	     -cw6 90 20 80 20 80 20
+		 -cal 1 "center"
+		 -cal 3 "center"
+		 -cal 5 "center";
+
+button  -w 85 -l "右眉毛" 
+	          -bgc $YY_head_bgc[0] $YY_head_bgc[1] $YY_head_bgc[2] 
+              -c "R_Brow";
+checkBox  -w 20 -l "" -v 1 h1;
+button -w 75 -l "右整抬眉↑" -c "re_h1" but_h1;
+checkBox  -w 20 -l "" -v 1 h2;
+button -w 75 -l "右整降眉_↓" -c "re_h2" but_h2;
+
+rowLayout -nc 6
+	       -cw6 20 80 20 80 20 80
+		   -cal 2 "center"
+		   -cal 4 "center"
+		   -cal 6 "center";
+checkBox  -w 20  -en 1 -l "" -v 1 h3;
+button -w 75  -en 1 -l "发愁_↑" -c "re_h3" but_h3;
+checkBox  -w 20  -en 1 -l "" -v 1 h4;
+button -w 75  -en 1 -l "生气_↓" -c "re_h4" but_h4;
+checkBox -w 20 -en 0 -l "" -v 0 h5;
+button -w 75 -en 0 -l "右眉毛" but_h5;
+//button -l "Creat Name";
+
+setParent ..;
+setParent ..;
+separator -w 600;
+setParent -top;
+///////////////////////////////////////////////////
+////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+
+////
+//string $YY_bgc_str = "-bgc "
+float $YY_bgc_b[3] = {0.75 ,0.75 , 0.75 };
+frameLayout -l "连接表情面板"
+	        -w 600
+	        -cll 1 -cl 0
+	        -bs "etchedIn" 
+			bs_panel;
+//setParent -top;
+columnLayout -rs 5 -cat "left" 10 ;
+
+rowLayout -nc 5 -cw5 120 120 120 120 120
+	      -cal 1 "center"
+		  -cal 2 "center"
+          -cal 3 "center"
+		  -cal 4 "center"
+		  -cal 5 "center";
+button -w 100 -h 30 -l " 口型 " -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_speak_link" CFP1;
+button-w 100 -h 30 -l "左嘴角" -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_L_mouth_link"  CFP2;
+button-w 100 -h 30 -l "左眼皮" -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_L_Eyelid_link"  CFP3;
+button-w 100 -h 30 -l "左眉弓" -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_L_Forehead_link" CFP4;
+button-w 100 -h 30 -l "左眉毛" -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_L_Brow_link"   CFP5;
+
+setParent ..;
+
+rowLayout -nc 5 -cw5 120 120 120 120 120
+	      -cal 1 "center"
+		  -cal 2 "center"
+          -cal 3 "center"
+		  -cal 4 "center"
+		  -cal 5 "center";
+button -w 100 -h 30 -l " 眉弓 "  -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_forehead_link"  CFP6;
+button -w 100 -h 30 -l "右嘴角" -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_R_mouth_link"  CFP7;
+button -w 100 -h 30 -l "右眼皮" -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_R_Eyelid_link"  CFP8;
+button -w 100 -h 30 -l "右眉弓" -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_R_Forehead_link" CFP9;
+button -w 100 -h 30 -l "右眉毛"  -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] -c "YY_R_Brow_link"  CFP10;
+    setParent ..;
+       
+separator -w 580;
+//frameLayout -w 580 -h 30  -bs "etchedIn" -l "" ;
+text -w 580 -l "" YY_bs_text;
+//setParent ..;
+separator -w 580;
+rowLayout -nc 4
+	      -cw4 120 120 240 120 
+	      -cal 1 "center"
+		  -cal 2 "center"
+		  -cal 3 "center"
+		  -cal 4 "center";
+button -w 100 -h 30
+	   -l "张嘴"
+	   -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] 
+	   -c "YY_mouth";
+button -w 100 -h 30
+	   -l "舌头"
+	   -bgc $YY_bgc_b[0] $YY_bgc_b[1] $YY_bgc_b[2] 
+	   -c "YY_tongue";
+optionMenuGrp -label "Blend Shape 连接类型"  -cw2 100 100 -ct2 "left" "left" -co2 0 20  -cc "" YY_bs_type;
+	menuItem -label "Parallel";
+	menuItem -label "Front Of Chain"; 
+
+button -w 100 -h 30
+	   -l "BS自动连接"
+	   -bgc 0.3 0.5 0.6 
+	   -c "YY_bs_link_ruto";
+setParent ..;
+separator -w 580;
+rowLayout -nc 2 -cw2 358 240 ;
+	     // -cal 1 "center"
+	      //-cal 2 "center" 
+		 // -cal 3 "center";
+frameLayout //-l "Crate Face Name"
+	        -lv 0
+	        -w 346
+			-h 38
+	        //-cll 1 -cl 0
+	        -bs "etchedOut";
+rowLayout -nc 4 -cw4 80 90 90 80
+	            -cal 2 "center"
+				-cal 3 "center"
+				-cal 4 "center";;
+text -l "  导入表情面板" ;//-bgc 0.9 0.9 0.6;
+button -w 80 -h 30 -l "男人表情面板" -bgc 0.5 0.5 0.4 -c "YY_face_panel_man";
+button -w 80 -h 30 -l "女人表情面板" -bgc 0.9 0.6 0.9 -c "YY_face_panel_woman";
+button -w 80 -h 30 -l "添加角色组" -bgc 0.6 0.6 0.6 -c "YY_face_character";;
+setParent ..;
+setParent ..;
+
+
+frameLayout //-l "Crate Face Name"
+	        //-bgc 0.6 0.5 0.4
+	        -lv 0
+	        -w 228
+			-h 38
+			-bs "etchedOut";
+
+	         //-bgc 0.6 0.5 0.4;
+rowLayout -nc 2 -cw2 120 120
+	            //-bgc 0.6 0.5 0.4
+	            -cal 1 "center"
+				-cal 2 "center";
+
+button -w 100 -h 30 -en 1 -l "合并表达式" -bgc 0.8 0.1 0.3 -c "YY_ex_all_link";
+button -w 100 -h 30 -l "全部连接" -en 1 -bgc 0.3 0.3 0.8 -c "link_all";
+setParent ..;
+setParent ..;
+
+////////////////////////////////////////////////
+showWindow YY_faceWin;
+/////////AAAAA////////////////AAAAA///////////////AAAAAA//////////////AA
+////////AAAAA//////////////////AAAAA///////////////AAAAA/////////////AA
+/////////AAAAAA////////////////AAAAA////////////////AAAAAA/////////////AA
+/////////AAAAAAA////////////////AAAAAAA///////////////AAAAAA//////////////AA
+//global float $YY_button_bgc[3];
+//float $YY_button_bgc[3] = {0.2,0.5,0.9};
+////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+global proc speak()
+{
+//global float $YY_button_bgc[3];	
+string $YY_FBSa_a[5] = {"O","F_V","M","U","A_I"};
+	
+		int $YY_a1 = `checkBox -q -v a1`;
+		int $YY_a2 = `checkBox -q -v a2`;
+		int $YY_a3 = `checkBox -q -v a3`;
+		int $YY_a4 = `checkBox -q -v a4`;
+		int $YY_a5 = `checkBox -q -v a5`;
+//	int $YY_n_a ;
+int $YY_n_a = $YY_a1 + $YY_a2 + $YY_a3 + $YY_a4 + $YY_a5;
+int $YY_fname_a[5] = {$YY_a1,$YY_a2,$YY_a3,$YY_a4,$YY_a5};
+
+string $YY_sla_a[] = `ls -sl`;
+if($YY_n_a == (size($YY_sla_a)))
+{
+	int $YY_lin_a = 0;
+for($YY_BIa_a = 0;$YY_BIa_a < 5;$YY_BIa_a++)
+{
+	
+if( $YY_fname_a[$YY_BIa_a] == 1)
+{
+rename $YY_sla_a[$YY_lin_a] "YY_linshihuanming";
+rename "YY_linshihuanming" $YY_FBSa_a[$YY_BIa_a];
+	$YY_lin_a ++;
+	string $YY_button_num = "but_a" + $YY_BIa_a;
+//button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] $YY_button_num;
+};
+	
+};
+
+
+   };	
+       };
+
+////BBBBB///////////////BBBBB//////////////////BBBB////////////////
+/////BBBBBB//////////////BBBBB///////////////////BBBB//////////////////
+////////BBBBB////////////////BBBBB//////////////////BBBB///////////////
+///////////BBBBB////////////////BBBBB//////////////////BBBB//////////////
+
+global proc fore()
+{
+	print "OK!";
+	
+string $YY_FBS_b[2] = {"Forehead_Up","Forehead_Down"};
+	
+		int $YY_b1 = `checkBox -q -v b1`;
+		int $YY_b2 = `checkBox -q -v b2`;
+
+//	int $YY_n_b ;
+int $YY_n_b = $YY_b1 + $YY_b2 ;
+int $YY_fname_b[2] = {$YY_b1,$YY_b2};
+
+string $YY_sla_b[] = `ls -sl`;
+if($YY_n_b == (size($YY_sla_b)))
+{
+	int $YY_lin_b = 0;
+for($YY_BIa_b = 0;$YY_BIa_b < 5;$YY_BIa_b++)
+{
+	
+if( $YY_fname_b[$YY_BIa_b] == 1)
+{
+rename $YY_sla_b[$YY_lin_b] "YY_linshihuanming_b";
+rename "YY_linshihuanming_b" $YY_FBS_b[$YY_BIa_b];
+	$YY_lin_b ++;
+};
+	
+};
+
+   };	
+       };
+////CCCCCCCCC////////CCCCCCCCC/////////CCCCCC//////CCCCCC////////////////
+/////CCCCCCCCCC/////////CCCCCCCCC////////CCCCCCC////CCCC//////////////////
+////////CCCCCCCCC//////////CCCCCCCCC///////CCCCCC/////CCCC///////////////
+///////////CCCCCCCCCC////////CCCCCCCCC///////CCCCCC/////CCCC//////////////
+
+global proc L_Mouth()
+{
+	print "OK!";
+	
+string $YY_FBS_c[5] = {"L_Sneer_Up","L_Sneer_Down","L_Smile_Up","L_Smile_Down","L_List"};
+	
+		int $YY_c1 = `checkBox -q -v c1`;
+		int $YY_c2 = `checkBox -q -v c2`;
+        int $YY_c3 = `checkBox -q -v c3`;
+		int $YY_c4 = `checkBox -q -v c4`;
+		int $YY_c5 = `checkBox -q -v c5`;
+//	int $YY_n_c ;
+int $YY_n_c = $YY_c1 + $YY_c2 + $YY_c3 + $YY_c4 + $YY_c5;
+int $YY_fname_c[5] = {$YY_c1,$YY_c2,$YY_c3,$YY_c4,$YY_c5};
+
+string $YY_sla_c[] = `ls -sl`;
+if($YY_n_c == (size($YY_sla_c)))
+{
+	int $YY_lin_c = 0;
+for($YY_BIa_c = 0;$YY_BIa_c < 5;$YY_BIa_c++)
+{
+	
+if( $YY_fname_c[$YY_BIa_c] == 1)
+{
+rename $YY_sla_c[$YY_lin_c] "YY_linshihuanming_c";
+rename "YY_linshihuanming_c" $YY_FBS_c[$YY_BIa_c];
+	$YY_lin_c ++;
+	
+    };
+	
+           };
+
+                     };	
+                                 };
+
+////DDDDD///////////////DDDDD//////////////////DDDD////////////////
+/////DDDDDD//////////////DDDDD///////////////////DDDD//////////////////
+////////DDDDD////////////////DDDDD//////////////////DDDD///////////////
+///////////DDDDD////////////////DDDDD//////////////////DDDD//////////////
+global proc R_Mouth()
+{
+	print "OK!";
+	
+string $YY_FBS_d[5] = {"R_Sneer_Up","R_Sneer_Down","R_Smile_Up","R_Smile_Down","R_List"};
+	
+		int $YY_d1 = `checkBox -q -v d1`;
+		int $YY_d2 = `checkBox -q -v d2`;
+        int $YY_d3 = `checkBox -q -v d3`;
+		int $YY_d4 = `checkBox -q -v d4`;
+		int $YY_d5 = `checkBox -q -v d5`;
+//	int $YY_n_d ;
+int $YY_n_d = $YY_d1 + $YY_d2 + $YY_d3 + $YY_d4 + $YY_d5;
+int $YY_fname_d[5] = {$YY_d1,$YY_d2,$YY_d3,$YY_d4,$YY_d5};
+
+string $YY_sla_d[] = `ls -sl`;
+if($YY_n_d == (size($YY_sla_d)))
+{
+	int $YY_lin_d = 0;
+for($YY_BIa_d = 0;$YY_BIa_d < 5;$YY_BIa_d++)
+{
+	
+if( $YY_fname_d[$YY_BIa_d] == 1)
+{
+rename $YY_sla_d[$YY_lin_d] "YY_linshihuanming_d";
+rename "YY_linshihuanming_d" $YY_FBS_d[$YY_BIa_d];
+	$YY_lin_d ++;
+	
+    };
+	
+           };
+
+                     };	
+                                 };
+
+////EEEEE///////////////EEEEE//////////////////EEEE////////////////
+/////EEEEEE//////////////EEEEE///////////////////EEEE//////////////////
+////////EEEEE////////////////EEEEE//////////////////EEEE///////////////
+///////////EEEEE////////////////EEEEE//////////////////EEEE//////////////
+
+	global proc L_Eyelid()
+{
+	print "OK!";
+	
+string $YY_FBS_e[5] = {"L_Eyelid_Top_Up","L_Eyelid_Top_Down","L_Eyelid_Under_Up","L_Eyelid_Under_Down","L_Eyelid"};
+	
+		int $YY_e1 = `checkBox -q -v e1`;
+		int $YY_e2 = `checkBox -q -v e2`;
+        int $YY_e3 = `checkBox -q -v e3`;
+		int $YY_e4 = `checkBox -q -v e4`;
+		int $YY_e5 = `checkBox -q -v e5`;
+//	int $YY_n_e ;
+int $YY_n_e = $YY_e1 + $YY_e2 + $YY_e3 + $YY_e4 + $YY_e5;
+int $YY_fname_e[5] = {$YY_e1,$YY_e2,$YY_e3,$YY_e4,$YY_e5};
+
+string $YY_sla_e[] = `ls -sl`;
+if($YY_n_e == (size($YY_sla_e)))
+{
+	int $YY_lin_e = 0;
+for($YY_BIa_e = 0;$YY_BIa_e < 5;$YY_BIa_e++)
+{
+	
+if( $YY_fname_e[$YY_BIa_e] == 1)
+{
+rename $YY_sla_e[$YY_lin_e] "YY_linshihuanming_e";
+rename "YY_linshihuanming_e" $YY_FBS_e[$YY_BIa_e];
+	$YY_lin_e ++;
+	
+    };
+	
+           };
+
+                     };	
+                                 };
+								 
+////FFFFF///////////////FFFFF//////////////////FFFF////////////////
+/////FFFFFF//////////////FFFFF///////////////////FFFF//////////////////
+////////FFFFF////////////////FFFFF//////////////////FFFF///////////////
+///////////FFFFF////////////////FFFFF//////////////////FFFF//////////////
+	global proc R_Eyelid()
+{
+	print "OK!";
+	
+string $YY_FBS_f[5] = {"R_Eyelid_Top_Up","R_Eyelid_Top_Down","R_Eyelid_Under_Up","R_Eyelid_Under_Down","R_Eyelid"};
+	
+		int $YY_f1 = `checkBox -q -v f1`;
+		int $YY_f2 = `checkBox -q -v f2`;
+        int $YY_f3 = `checkBox -q -v f3`;
+		int $YY_f4 = `checkBox -q -v f4`;
+		int $YY_f5 = `checkBox -q -v f5`;
+//	int $YY_n_f ;
+int $YY_n_f = $YY_f1 + $YY_f2 + $YY_f3 + $YY_f4 + $YY_f5;
+int $YY_fname_f[5] = {$YY_f1,$YY_f2,$YY_f3,$YY_f4,$YY_f5};
+
+string $YY_sla_f[] = `ls -sl`;
+if($YY_n_f == (size($YY_sla_f)))
+{
+	int $YY_lin_f = 0;
+for($YY_BIa_f = 0;$YY_BIa_f < 5;$YY_BIa_f++)
+{
+	
+if( $YY_fname_f[$YY_BIa_f] == 1)
+{
+rename $YY_sla_f[$YY_lin_f] "YY_linshihuanming_f";
+rename "YY_linshihuanming_f" $YY_FBS_f[$YY_BIa_f];
+	$YY_lin_f ++;
+	
+    };
+	
+           };
+
+                     };	
+                                 };
+										 
+////GGGGG///////////////GGGGG//////////////////GGGG////////////////
+/////GGGGGG//////////////GGGGG///////////////////GGGG//////////////////
+////////GGGGG////////////////GGGGG//////////////////GGGG///////////////
+///////////GGGGG////////////////GGGGG//////////////////GGGG//////////////
+global proc L_Brow()
+{
+	print "OK!";
+	
+string $YY_FBS_g[5] = {"L_Brow_Up","L_Brow_Down","L_Brow_Worry","L_Brow_Anger","L_Brow"};
+	
+		int $YY_g1 = `checkBox -q -v g1`;
+		int $YY_g2 = `checkBox -q -v g2`;
+        int $YY_g3 = `checkBox -q -v g3`;
+		int $YY_g4 = `checkBox -q -v g4`;
+		int $YY_g5 = `checkBox -q -v g5`;
+//	int $YY_n_g ;
+int $YY_n_g = $YY_g1 + $YY_g2 + $YY_g3 + $YY_g4 + $YY_g5;
+int $YY_fname_g[5] = {$YY_g1,$YY_g2,$YY_g3,$YY_g4,$YY_g5};
+
+string $YY_sla_g[] = `ls -sl`;
+if($YY_n_g == (size($YY_sla_g)))
+{
+	int $YY_lin_g = 0;
+for($YY_BIa_g = 0;$YY_BIa_g < 5;$YY_BIa_g++)
+{
+	
+if( $YY_fname_g[$YY_BIa_g] == 1)
+{
+rename $YY_sla_g[$YY_lin_g] "YY_linshihuanming_g";
+rename "YY_linshihuanming_g" $YY_FBS_g[$YY_BIa_g];
+	$YY_lin_g ++;
+	
+    };
+	
+           };
+		   
+duplicate -rr -n "L_Brow_UP_a" $YY_FBS_g[0] ;
+duplicate -rr -n "L_Brow_Down_a" $YY_FBS_g[1] ;
+
+                     };	
+                                 };
+								 
+////HHHHH///////////////HHHHH//////////////////HHHH////////////////
+/////HHHHHH//////////////HHHHH///////////////////HHHH//////////////////
+////////HHHHH////////////////HHHHH//////////////////HHHH///////////////
+///////////HHHHH////////////////HHHHH//////////////////HHHH//////////////
+								 
+	global proc R_Brow()
+{
+	print "OK!";
+	
+string $YY_FBS_h[5] = {"R_Brow_Up","R_Brow_Down","R_Brow_Worry","R_Brow_Anger","R_Brow"};
+	
+		int $YY_h1 = `checkBox -q -v h1`;
+		int $YY_h2 = `checkBox -q -v h2`;
+        int $YY_h3 = `checkBox -q -v h3`;
+		int $YY_h4 = `checkBox -q -v h4`;
+		int $YY_h5 = `checkBox -q -v h5`;
+//	int $YY_n_h ;
+int $YY_n_h = $YY_h1 + $YY_h2 + $YY_h3 + $YY_h4 + $YY_h5;
+int $YY_fname_h[5] = {$YY_h1,$YY_h2,$YY_h3,$YY_h4,$YY_h5};
+
+string $YY_sla_h[] = `ls -sl`;
+if($YY_n_h == (size($YY_sla_h)))
+{
+	int $YY_lin_h = 0;
+for($YY_BIa_h = 0;$YY_BIa_h < 5;$YY_BIa_h++)
+{
+	
+if( $YY_fname_h[$YY_BIa_h] == 1)
+{
+rename $YY_sla_h[$YY_lin_h] "YY_linshihuanming_h";
+rename "YY_linshihuanming_h" $YY_FBS_h[$YY_BIa_h];
+	$YY_lin_h ++;
+	
+    };
+	
+           };
+
+duplicate -rr -n "R_Brow_UP_a" $YY_FBS_h[0] ;
+duplicate -rr -n "R_Brow_Down_a" $YY_FBS_h[1] ;		   
+                     };	
+                                 };
+							 
+////IIIII///////////////IIIII//////////////////IIII////////////////
+/////IIIIII//////////////IIIII///////////////////IIII//////////////////
+////////IIIII////////////////IIIII//////////////////IIII///////////////
+///////////IIIII////////////////IIIII//////////////////IIII//////////////
+global proc L_Forehead()
+{
+	print "OK!";
+	
+string $YY_FBS_i[5] = {"L_Forehead_Flat_Up","L_Forehead_Flat_Down","L_Forehead_Up","L_Forehead_Down","L_Forehead"};
+	
+		int $YY_i1 = `checkBox -q -v i1`;
+		int $YY_i2 = `checkBox -q -v i2`;
+        int $YY_i3 = `checkBox -q -v i3`;
+		int $YY_i4 = `checkBox -q -v i4`;
+		int $YY_i5 = `checkBox -q -v i5`;
+//	int $YY_n_i ;
+int $YY_n_i = $YY_i1 + $YY_i2 + $YY_i3 + $YY_i4 + $YY_i5;
+int $YY_fname_i[5] = {$YY_i1,$YY_i2,$YY_i3,$YY_i4,$YY_i5};
+
+string $YY_sla_i[] = `ls -sl`;
+if($YY_n_i == (size($YY_sla_i)))
+{
+	int $YY_lin_i = 0;
+for($YY_BIa_i = 0;$YY_BIa_i < 5;$YY_BIa_i++)
+{
+	
+if( $YY_fname_i[$YY_BIa_i] == 1)
+{
+rename $YY_sla_i[$YY_lin_i] "YY_linshihuanming_i";
+rename "YY_linshihuanming_i" $YY_FBS_i[$YY_BIa_i];
+	$YY_lin_i ++;
+	
+    };
+	
+           };
+
+                     };	
+                                 };
+								 
+////JJJJJ///////////////JJJJJ//////////////////JJJJ////////////////
+/////JJJJJJ//////////////JJJJJ///////////////////JJJJ//////////////////
+////////JJJJJ////////////////JJJJJ//////////////////JJJJ///////////////
+///////////JJJJJ////////////////JJJJJ//////////////////JJJJ//////////////
+global proc R_Forehead()
+{
+	print "OK!";
+	
+string $YY_FBS_j[5] = {"R_Forehead_Flat_Up","R_Forehead_Flat_Down","R_Forehead_Up","R_Forehead_Down","R_Forehead"};
+	
+		int $YY_j1 = `checkBox -q -v j1`;
+		int $YY_j2 = `checkBox -q -v j2`;
+        int $YY_j3 = `checkBox -q -v j3`;
+		int $YY_j4 = `checkBox -q -v j4`;
+		int $YY_j5 = `checkBox -q -v j5`;
+//	int $YY_n_j ;
+int $YY_n_j = $YY_j1 + $YY_j2 + $YY_j3 + $YY_j4 + $YY_j5;
+int $YY_fname_j[5] = {$YY_j1,$YY_j2,$YY_j3,$YY_j4,$YY_j5};
+
+string $YY_sla_j[] = `ls -sl`;
+if($YY_n_j == (size($YY_sla_j)))
+{
+	int $YY_lin_j = 0;
+for($YY_BIa_j = 0;$YY_BIa_j < 5;$YY_BIa_j++)
+{
+	
+if( $YY_fname_j[$YY_BIa_j] == 1)
+{
+rename $YY_sla_j[$YY_lin_j] "YY_linshihuanming_j";
+rename "YY_linshihuanming_j" $YY_FBS_j[$YY_BIa_j];
+	$YY_lin_j ++;
+	
+    };
+	
+           };
+
+                     };	
+                                 };
+
+/////////////////////////////////////////////////////////////
+////Link//Link//Link//Link//Link//Link//Link//Link//Link////////////////////////////////////////////////////////////////
+/////Link//Link//Link//Link//Link//Link//Link//Link//Link/////////////////////////////////////////////////////////////
+///////Link//Link//Link//Link//Link//Link//Link//Link//Link////////////
+////////Link//Link//Link//Link//Link//Link//Link//Link//Link////////
+//////////Link//Link//Link//Link//Link//Link//Link//Link//Link//Link//////////////
+/////////////////////////////00000000////11111111///2222222222////333333333///4444444444/////555555555555///6666666666///7777777777777////8888888888///99999999///10//10//10//10/////11//11//11
+global string $YY_expression[12];
+string $YY_expression[12] = {"ex_speak","ex_forehead","ex_L_mouth","ex_R_mouth","ex_L_Eyelid","ex_R_Eyelid","ex_L_Forehead","ex_R_Forehead","ex_L_Brow","ex_R_Brow","ex_mouth_joint","ex_tongue"};								 
+								 								 
+global proc YY_speak_link()
+	{
+global string $YY_expression[12];		
+string $YY_face_add_l[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+		
+	string $jia = "\n" + "/////Spead_link" + "\n" + "\n" ;
+	
+	//	$zong_jia += "//speak" + "\n";
+	string $YY_kou[5] = {"O","F_V","M","U","A_I"};
+	string $YY_lian_ming[5] = {"OOO.translateY","FV.translateY","MMM.translateY","UUU.translateY","I.translateY"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if($YY_nb[$YY_i] != "parallelBlender")
+	{
+		if($YY_nm == 2)
+		{
+			string $YY_bs = $YY_nb[$YY_i];
+		string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+string $YY_o = $YY_f + "=" +  $YY_lian_ming[$YY_nm] + "* 2.5 + clamp(0,1," + $YY_face_add_l[2] + "*4.1875 );";
+$jia += $YY_o + "\n";
+		
+		};
+	if($YY_nm != 2)
+	{
+string $YY_bs = $YY_nb[$YY_i];
+print $YY_bs;
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+string $YY_o = $YY_f + "=" +  $YY_lian_ming[$YY_nm] + "* 2.5;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+};
+    };
+         
+              };
+                   };
+                          };
+expression -n $YY_expression[0] -s $jia;
+                                 };
+								 
+///////////////////////////////////////////////
+////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+global proc YY_forehead_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_b[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};								 
+
+			string $jia = "\n" + "/////forehead_link" + "\n" + "\n" ;
+			
+	string $YY_kou[2] = {"Forehead_Up","Forehead_Down"};
+	string $YY_lian_ming[1] = {"eyes_close_control.translateY","eyes_close_control.translateY"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if($YY_nb[$YY_i] != "parallelBlender")
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "= clamp(0,1," + $YY_lian_ming[$YY_nm] + ") + clamp(0,1, (" + $YY_face_add_b[0] + "* 1.89) ) + -clamp(-1,0, (" + $YY_face_add_b[1] + "* 5) ) ;";
+
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "= -clamp(-1,0," + $YY_lian_ming[$YY_nm] + ") + - clamp(-1,0, (" + $YY_face_add_b[0] + "* 2.135) ) + clamp(0,1, (" + $YY_face_add_b[2] + "* 5) )" + " + clamp(0,1, (" + $YY_face_add_b[1] + "* 5) )" + " + -clamp(-1,0, (" + $YY_face_add_b[2] + "* 0.72) )" + ";";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+print $jia;
+expression -n $YY_expression[1] -s $jia ;
+									
+                                           };								 
+//////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
+
+global proc YY_L_mouth_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_a[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};								 
+
+string $jia = "\n" + "/////L_mouthd_link" + "\n" + "\n" ;
+	string $YY_kou[5] = {"L_Smile_Up","L_Smile_Down","L_Sneer_Up","L_Sneer_Down","L_List"};
+
+	string $YY_lian_ming[5] = {"Smile_Sad.translateY","Smile_Sad.translateY","L_sneer.translateX","L_sneer.translateX","L_sneer.translateY"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if($YY_nb[$YY_i] != "parallelBlender")
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "= clamp(0,1," + $YY_lian_ming[$YY_nm] + "*5 ) + clamp(0,1," + $YY_face_add_a[0] + "*3.625 ) + -clamp(-1,0," + $YY_face_add_a[0] + "*3.625 )"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "= - clamp(-1,0," + $YY_lian_ming[$YY_nm] + "*5 )  + -clamp(-1,0," + $YY_face_add_a[2] + "*5 )"+"\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+   if($YY_nm == 2)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "= - clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+      if($YY_nm == 3)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "= clamp(0,1," + $YY_lian_ming[$YY_nm] + ")  + clamp(0,1," + $YY_face_add_a[1] + "*5 )"+ ";";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+
+   };
+         if($YY_nm == 4)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "= clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + ";";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+expression -n $YY_expression[2] -s $jia;									
+                                           };					
+///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+global proc YY_R_mouth_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_c[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+
+string $jia = "\n" + "/////R_mouthd_link" + "\n" + "\n" ;
+
+	string $YY_kou[5] = {"R_Smile_Up","R_Smile_Down","R_Sneer_Up","R_Sneer_Down","R_List"};
+
+	string $YY_lian_ming[5] = {"R_Smile_Sad.translateY","R_Smile_Sad.translateY","R_sneer.translateX","R_sneer.translateX","R_sneer.translateY"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if($YY_nb[$YY_i] != "parallelBlender")
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" +  "clamp(0,1," + $YY_lian_ming[$YY_nm] + "*5"+ ") + clamp(0,1," + $YY_face_add_c[0] + "*3.625 ) + -clamp(-1,0," + $YY_face_add_c[0] + "*3.625 )"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + "*5"  + ")" + " + -clamp(-1,0," + $YY_face_add_c[2] + "*5 )"+"\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+   if($YY_nm == 2)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+      if($YY_nm == 3)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")"  + " + clamp(0,1," + $YY_face_add_c[1] + "*5 )"+ ";";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+         if($YY_nm == 4)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+expression -n $YY_expression[3] -s $jia;
+                                           };
+///////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+global proc YY_L_Eyelid_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_d[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+			
+string $jia = "\n" + "/////L_Eyelid_link" + "\n" + "\n" ;
+	string $YY_kou[5] =  {"L_Eyelid_Top_Up","L_Eyelid_Top_Down","L_Eyelid_Under_Up","L_Eyelid_Under_Down","L_Eyelid"};
+
+
+	string $YY_lian_ming[4] = {"L_Lids.translateY","L_Lids.translateY","L_Lids.translateX","L_Lids.translateX"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if($YY_nb[$YY_i] != "parallelBlender")
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" +  "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_d[1] + "*5)" + "+ clamp(0,1," + $YY_face_add_d[2] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_d[1] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_d[0] + "*0.44)"+ "+ -clamp(-1,0," + $YY_face_add_d[0] + "*1.56)"+ "+ -clamp(-1,0," + $YY_face_add_d[2] + "*0.935)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+   if($YY_nm == 2)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_d[0] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_d[0] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_d[2] + "*5)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+      if($YY_nm == 3)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "+ -clamp(-1,0," + $YY_face_add_d[1] + "*5)"+ "+ clamp(0,1," + $YY_face_add_d[1] + "*5)"+ "+ -clamp(-1,0," + $YY_face_add_d[2] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+         if($YY_nm == 4)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+expression -n $YY_expression[4] -s $jia;									
+                                           };
+////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+global proc YY_R_Eyelid_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_e[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+			
+string $jia = "\n" + "/////R_Eyelid_link" + "\n" + "\n" ; 
+	string $YY_kou[5] =  {"R_Eyelid_Top_Up","R_Eyelid_Top_Down","R_Eyelid_Under_Up","R_Eyelid_Under_Down","R_Eyelid"};
+
+
+	string $YY_lian_ming[4] = {"R_Lids.translateY","R_Lids.translateY","R_Lids.translateX","R_Lids.translateX"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if($YY_nb[$YY_i] != "parallelBlender")
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" +  "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_e[1] + "*5)" + "+ clamp(0,1," + $YY_face_add_e[2] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_e[1] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm]  + ")" + "+ clamp(0,1," + $YY_face_add_e[0] + "*0.44)"+ "+ -clamp(-1,0," + $YY_face_add_e[0] + "*1.56)"+ "+ -clamp(-1,0," + $YY_face_add_e[2] + "*0.935)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+   if($YY_nm == 2)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_e[0] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_e[0] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_e[2] + "*5)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+      if($YY_nm == 3)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "+ -clamp(-1,0," + $YY_face_add_e[1] + "*5)"+ "+ clamp(0,1," + $YY_face_add_e[1] + "*5)"+ "+ -clamp(-1,0," + $YY_face_add_e[2] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+         if($YY_nm == 4)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+	expression -n $YY_expression[5] -s $jia;								
+                                           };
+///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////										   
+/////////////////////////////////////////////////////////////////////////////    										   
+
+global proc YY_L_Forehead_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_f[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+	
+string $jia = "\n" + "/////L_Forehead_link" + "\n" + "\n" ;
+	string $YY_kou[5] =  {"L_Forehead_Flat_Down","L_Forehead_Flat_Up","L_Forehead_Up","L_Forehead_Down","L_Forehead"};
+
+
+	string $YY_lian_ming[4] = {"Left_Eye.translateX","Left_Eye.translateX","Left_Eye.translateY","Left_Eye.translateY"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if($YY_nb[$YY_i] != "parallelBlender")
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" +  "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm]  + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+   if($YY_nm == 2)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")"  + "+ clamp(0,1," + $YY_face_add_f[2] + "*1.655)" + "+ -clamp(-1,0," + $YY_face_add_f[2] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+      if($YY_nm == 3)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "+ -clamp(-1,0," + $YY_face_add_f[1] + "*5)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+         if($YY_nm == 4)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")"  + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+expression -n $YY_expression[6] -s $jia;
+                                           };										   
+										   
+										   
+///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////										   
+/////////////////////////////////////////////////////////////////////////////  										   
+
+global proc YY_R_Forehead_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_g[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+			
+string $jia = "\n" + "/////R_Forehead_link" + "\n" + "\n" ;
+	string $YY_kou[5] =  {"R_Forehead_Flat_Up","R_Forehead_Flat_Down","R_Forehead_Up","R_Forehead_Down","R_Forehead"};
+
+
+	string $YY_lian_ming[4] = {"Right_Eye.translateX","Right_Eye.translateX","Right_Eye.translateY","Right_Eye.translateY"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if($YY_nb[$YY_i] != "parallelBlender")
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" +  "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm]  + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+   if($YY_nm == 2)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")"  + "+ clamp(0,1," + $YY_face_add_g[2] + "*1.655)" + "+ -clamp(-1,0," + $YY_face_add_g[2] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+///// 
+   };
+      if($YY_nm == 3)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")"+ "+ -clamp(-1,0," + $YY_face_add_g[1] + "*5)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+         if($YY_nm == 4)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+expression -n $YY_expression[7] -s $jia;									
+                                           };		
+///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////										   
+/////////////////////////////////////////////////////////////////////////////  										   
+
+global proc YY_L_Brow_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_h[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+			
+string $jia = "\n" + "/////L_Brow_link" + "\n" + "\n" ;
+	string $YY_kou[7] =  {"L_Brow_Up","L_Brow_Down","L_Brow_Worry","L_Brow_Anger","L_Brow_Up_a","L_Brow_Down_a","L_Brow"};
+
+
+	string $YY_lian_ming[6] = {"eyes_close_control.translateY","eyes_close_control.translateY","Left_Eye.translateY","Left_Eye.translateY","Left_Eye.translateX","Left_Eye.translateX"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if(($YY_nb[$YY_i] != "parallelBlender")&&($YY_nb[$YY_i] != "parallelBlender1")&&($YY_nb[$YY_i] != "parallelBlender2")&&($YY_nb[$YY_i] != "parallelBlender3"))
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" +  "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm]  + ")"+ "+ clamp(0,1," + $YY_face_add_h[2] + "*5)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+   if($YY_nm == 2)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")"  + "+ clamp(0,1," + $YY_face_add_h[2] + "*1.655)" + "+ -clamp(-1,0," + $YY_face_add_h[2] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+      if($YY_nm == 3)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "+ -clamp(-1,0," + $YY_face_add_h[1] + "*5)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+         if($YY_nm == 4)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_h[0] + "*1.89)" + "+ -clamp(-1,0," + $YY_face_add_h[1] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+            if($YY_nm == 5)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_h[1] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_h[0] + "*2.135)" + "+ clamp(0,1," + $YY_face_add_h[0] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_h[2] + "*0.72)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+            if($YY_nm == 6)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+expression -n $YY_expression[8] -s $jia;									
+                                           };
+										   
+///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////										   
+/////////////////////////////////////////////////////////////////////////////  										   										   
+										  										   
+global proc YY_R_Brow_link()
+	
+		{
+global string $YY_expression[12];			
+string $YY_face_add_i[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+			
+string $jia = "\n" + "/////R_Brow_link" + "\n" + "\n" ;
+	string $YY_kou[7] =  {"R_Brow_Up","R_Brow_Down","R_Brow_Worry","R_Brow_Anger","R_Brow_Up_a","R_Brow_Down_a","R_Brow"};
+
+
+	string $YY_lian_ming[6] = {"eyes_close_control.translateY","eyes_close_control.translateY","Right_Eye.translateY","Right_Eye.translateY","Right_Eye.translateX","Right_Eye.translateX"};
+	for($YY_nm = 0;$YY_nm<(size($YY_kou));$YY_nm++)
+	{
+		select -cl;
+string $YY_lian_jieq[] = `ls $YY_kou[$YY_nm]`;
+for($YY_lian = 0;$YY_lian<size ($YY_lian_jieq);$YY_lian++)
+{
+	select -tgl $YY_lian_jieq[$YY_lian];
+};
+string $YY_obj_ply_kou[] = `filterExpand -sm 12`;
+print (($YY_obj_ply_kou[0]) + "\n");
+if(size($YY_obj_ply_kou) != 0)
+{
+//////////////////////////////////////////////////////
+string $YY_nb[] = `listHistory -f 1 $YY_obj_ply_kou[0]`;
+for($YY_i = 0;$YY_i<size($YY_nb);$YY_i++)
+{
+string $YY_node = `nodeType $YY_nb[$YY_i]`;
+if($YY_node == "blendShape")	
+{
+	if(($YY_nb[$YY_i] != "parallelBlender")&&($YY_nb[$YY_i] != "parallelBlender1")&&($YY_nb[$YY_i] != "parallelBlender2")&&($YY_nb[$YY_i] != "parallelBlender3"))
+	{
+string $YY_bs = $YY_nb[$YY_i];
+//print ($YY_bs + "\n");
+
+string $YY_f = $YY_bs + "." + $YY_kou[$YY_nm] ;
+print $YY_lian;
+if($YY_nm == 0)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" +  "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+};
+if($YY_nm == 1)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm]  + ")"+ "+ clamp(0,1," + $YY_face_add_i[2] + "*5)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+   if($YY_nm == 2)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")"  + "+ clamp(0,1," + $YY_face_add_i[2] + "*1.655)" + "+ -clamp(-1,0," + $YY_face_add_i[2] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+      if($YY_nm == 3)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "+ -clamp(-1,0," + $YY_face_add_i[1] + "*5)" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+         if($YY_nm == 4)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_i[0] + "*1.89)" + "+ -clamp(-1,0," + $YY_face_add_i[1] + "*5)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+            if($YY_nm == 5)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "-" + "clamp(-1,0," + $YY_lian_ming[$YY_nm] + ")" + "+ clamp(0,1," + $YY_face_add_i[1] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_i[0] + "*2.135)" + "+ clamp(0,1," + $YY_face_add_i[0] + "*5)" + "+ -clamp(-1,0," + $YY_face_add_i[2] + "*0.72)"+ "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+            if($YY_nm == 6)
+{
+	print ($YY_bs + "\n");
+string $YY_o = $YY_f + "=" + "clamp(0,1," + $YY_lian_ming[$YY_nm] + ")" + "\;";
+$jia += $YY_o + "\n";
+//expression -s $YY_o;
+   };
+          };
+                };  
+                      };
+                            };
+                                    };
+expression -n $YY_expression[9] -s $jia;									
+                                           };
+/////Import_Face_PanelImport_Face_PanelImport_Face_Panel//////////////////////////////////////////
+/////Import_Face_PanelImport_Face_PanelImport_Face_Panel//////////										   
+/////Import_Face_PanelImport_Face_PanelImport_Face_Panel////////////										   
+/////Import_Face_PanelImport_Face_PanelImport_Face_Panel//////////////////////////////////////////
+/////Import_Face_PanelImport_Face_PanelImport_Face_Panel//////////										   
+/////Import_Face_PanelImport_Face_PanelImport_Face_Panel////////////										   
+
+global proc YY_face_panel_man ()
+{
+	global string $address;
+string $YY_face = $address + "set/YY_face_panel_man.mb";	
+file -import -type "mayaBinary" -rpr "YY_face_panel"  -pr $YY_face;
+
+};
+										   
+global proc YY_face_panel_woman ()
+{
+	global string $address;
+string $YY_face = $address + "set/YY_face_panel_woman.mb";	
+file -import -type "mayaBinary" -rpr "YY_face_panel"  -pr $YY_face;
+
+};
+////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////										   
+//////////////{"O","F_V","M","U","A_I"};/////////////////////////////////////////////////////										   
+///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+global float $YY_button_bgc[3];
+float $YY_button_bgc[3] = {0.2,0.5,0.9};
+global  proc re_a1()
+{
+	
+string $re_a[] = `ls -sl`;
+if(size($re_a) == 1)
+{
+global float $YY_button_bgc[3];
+rename $re_a[0] "YY_linshihuanming_rename_o";
+rename "YY_linshihuanming_rename_o" "O";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_a1;
+
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_a2()
+{
+string $re_a[] = `ls -sl`;
+if(size($re_a) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_a[0] "YY_linshihuanming_rename_fv";
+rename "YY_linshihuanming_rename_fv" "F_V";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_a2;
+
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_a3()
+{
+string $re_a[] = `ls -sl`;
+if(size($re_a) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_a[0] "YY_linshihuanming_rename_M";
+rename "YY_linshihuanming_rename_M" "M";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_a3;
+
+};
+};
+//////////////////////////////////////////////////////	
+global proc re_a4()
+{
+string $re_a[] = `ls -sl`;
+if(size($re_a) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_a[0] "YY_linshihuanming_rename_U";
+rename "YY_linshihuanming_rename_U" "U";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_a4;
+
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_a5()
+{
+string $re_a[] = `ls -sl`;
+if(size($re_a) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_a[0] "YY_linshihuanming_rename_A_I";
+rename "YY_linshihuanming_rename_A_I" "A_I";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_a5;
+
+};
+};
+//////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+////////////{"Forehead_Up","Forehead_Down"};////////////////////////////////////////////
+global  proc re_b1()
+{
+string $re_a[] = `ls -sl`;
+if(size($re_a) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_a[0] "YY_linshihuanming_rename_Forehead_Up";
+rename "YY_linshihuanming_rename_Forehead_Up" "Forehead_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_b1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_b2()
+{
+string $re_a[] = `ls -sl`;
+if(size($re_a) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_a[0] "YY_linshihuanming_rename_Forehead_Down";
+rename "YY_linshihuanming_rename_Forehead_Down" "Forehead_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_b2;
+};
+};
+/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+/////////{"L_Sneer_Up","L_Sneer_Down","L_Smile_Up","L_Smile_Down","L_List"};/////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+global  proc re_c1()
+{
+string $re_c[] = `ls -sl`;
+if(size($re_c) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_c[0] "YY_linshihuanming_rename_L_Sneer_Up";
+rename "YY_linshihuanming_rename_L_Sneer_Up" "L_Sneer_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_c1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_c2()
+{
+string $re_c[] = `ls -sl`;
+if(size($re_c) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_c[0] "YY_linshihuanming_rename_L_Sneer_Down";
+rename "YY_linshihuanming_rename_L_Sneer_Down" "L_Sneer_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_c2;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_c3()
+{
+string $re_c[] = `ls -sl`;
+if(size($re_c) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_c[0] "YY_linshihuanming_rename_L_Smile_Up";
+rename "YY_linshihuanming_rename_L_Smile_Up" "L_Smile_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_c3;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_c4()
+{
+string $re_c[] = `ls -sl`;
+if(size($re_c) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_c[0] "YY_linshihuanming_rename_L_Smile_Down";
+rename "YY_linshihuanming_rename_L_Smile_Down" "L_Smile_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_c4;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_c5()
+{
+string $re_c[] = `ls -sl`;
+if(size($re_c) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_c[0] "YY_linshihuanming_rename_L_List";
+rename "YY_linshihuanming_rename_L_List" "L_List";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_c5;
+};
+};
+//////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////{"R_Sneer_Up","R_Sneer_Down","R_Smile_Up","R_Smile_Down","R_List"};///////////////////////////////////////////////
+global  proc re_d1()
+{
+string $re_d[] = `ls -sl`;
+if(size($re_d) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_d[0] "YY_linshihuanming_rename_R_Sneer_Up";
+rename "YY_linshihuanming_rename_R_Sneer_Up" "R_Sneer_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_d1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_d2()
+{
+string $re_d[] = `ls -sl`;
+if(size($re_d) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_d[0] "YY_linshihuanming_rename_R_Sneer_Down";
+rename "YY_linshihuanming_rename_R_Sneer_Down" "R_Sneer_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_d2;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_d3()
+{
+string $re_d[] = `ls -sl`;
+if(size($re_d) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_d[0] "YY_linshihuanming_rename_R_Smile_Up";
+rename "YY_linshihuanming_rename_R_Smile_Up" "R_Smile_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_d3;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_d4()
+{
+string $re_d[] = `ls -sl`;
+if(size($re_d) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_d[0] "YY_linshihuanming_rename_R_Smile_Down";
+rename "YY_linshihuanming_rename_R_Smile_Down" "R_Smile_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_d4;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_d5()
+{
+string $re_d[] = `ls -sl`;
+if(size($re_d) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_d[0] "YY_linshihuanming_rename_R_List";
+rename "YY_linshihuanming_rename_R_List" "R_List";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_d5;
+};
+};
+//////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+///////{"L_Eyelid_Top_Up","L_Eyelid_Top_Down","L_Eyelid_Under_Up","L_Eyelid_Under_Down","L_Eyelid"};//////////////////////////////////////////
+global  proc re_e1()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_L_Eyelid_Top_Up";
+rename "YY_linshihuanming_rename_L_Eyelid_Top_Up" "L_Eyelid_Top_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_e1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_e2()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_L_Eyelid_Top_Down";
+rename "YY_linshihuanming_rename_L_Eyelid_Top_Down" "L_Eyelid_Top_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_e2;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_e3()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_L_Eyelid_Under_Up";
+rename "YY_linshihuanming_rename_L_Eyelid_Under_Up" "L_Eyelid_Under_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_e3;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_e4()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_L_Eyelid_Under_Down";
+rename "YY_linshihuanming_rename_L_Eyelid_Under_Down" "L_Eyelid_Under_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_e4;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_e5()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_L_Eyelid";
+rename "YY_linshihuanming_rename_L_Eyelid" "L_Eyelid";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_e5;
+};
+};
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+///////{"R_Eyelid_Top_Up","R_Eyelid_Top_Down","R_Eyelid_Under_Up","R_Eyelid_Under_Down","R_Eyelid"};//////////////////////////////////////////
+global  proc re_f1()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_R_Eyelid_Top_Up";
+rename "YY_linshihuanming_rename_R_Eyelid_Top_Up" "R_Eyelid_Top_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_f1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_f2()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_R_Eyelid_Top_Down";
+rename "YY_linshihuanming_rename_R_Eyelid_Top_Down" "R_Eyelid_Top_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_f2;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_f3()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_R_Eyelid_Under_Up";
+rename "YY_linshihuanming_rename_R_Eyelid_Under_Up" "R_Eyelid_Under_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_f3;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_f4()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_R_Eyelid_Under_Down";
+rename "YY_linshihuanming_rename_R_Eyelid_Under_Down" "R_Eyelid_Under_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_f4;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_f5()
+{
+string $re_e[] = `ls -sl`;
+if(size($re_e) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_e[0] "YY_linshihuanming_rename_R_Eyelid";
+rename "YY_linshihuanming_rename_R_Eyelid" "R_Eyelid";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_f5;
+};
+};
+//////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+///////////{"L_Brow_Up","L_Brow_Down","L_Brow_Worry","L_Brow_Anger","L_Brow"};
+ global proc re_g1()
+{
+string $re_g[] = `ls -sl`;
+if(size($re_g) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_g[0] "YY_linshihuanming_rename_L_Brow_Up";
+rename "YY_linshihuanming_rename_L_Brow_Up" "L_Brow_Up";
+///////////////////////////////////////////////////////
+duplicate -rr -n "L_Brow_Up_a" "L_Brow_Up" ;
+/////////////////////////////////////////////////////
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_g1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_g2()
+{
+string $re_g[] = `ls -sl`;
+if(size($re_g) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_g[0] "YY_linshihuanming_rename_L_Brow_Down";
+rename "YY_linshihuanming_rename_L_Brow_Down" "L_Brow_Down";
+///////////////////////////////////////////////////////
+duplicate -rr -n "L_Brow_Down_a" "L_Brow_Down" ;
+/////////////////////////////////////////////////////////
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_g2;
+};
+};
+//////////////////////////////////////////////////////
+ global proc re_g3()
+{
+string $re_g[] = `ls -sl`;
+if(size($re_g) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_g[0] "YY_linshihuanming_rename_L_Brow_Worry";
+rename "YY_linshihuanming_rename_L_Brow_Worry" "L_Brow_Worry";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_g3;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_g4()
+{
+string $re_g[] = `ls -sl`;
+if(size($re_g) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_g[0] "YY_linshihuanming_rename_L_Brow_Anger";
+rename "YY_linshihuanming_rename_L_Brow_Anger" "L_Brow_Anger";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_g4;
+};
+};
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+///////////{"R_Brow_Up","R_Brow_Down","R_Brow_Worry","R_Brow_Anger","R_Brow"};
+global  proc re_h1()
+{
+string $re_h[] = `ls -sl`;
+if(size($re_h) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_h[0] "YY_linshihuanming_rename_R_Brow_Up";
+rename "YY_linshihuanming_rename_R_Brow_Up" "R_Brow_Up";
+//////////////////////////////////////////////////////////////////
+duplicate -rr -n "R_Brow_Up_a" "R_Brow_Up" ;
+//////////////////////////////////////////////////////////////////////
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_h1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_h2()
+{
+string $re_h[] = `ls -sl`;
+if(size($re_h) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_h[0] "YY_linshihuanming_rename_R_Brow_Down";
+rename "YY_linshihuanming_rename_R_Brow_Down" "R_Brow_Down";
+///////////////////////////////////////////////////////
+duplicate -rr -n "R_Brow_Down_a" "R_Brow_Down" ;
+/////////////////////////////////////////////////////////
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_h2;
+};
+};
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+global  proc re_h3()
+{
+string $re_h[] = `ls -sl`;
+if(size($re_h) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_h[0] "YY_linshihuanming_rename_R_Brow_Worry";
+rename "YY_linshihuanming_rename_R_Brow_Worry" "R_Brow_Worry";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_h3;
+};
+};
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+global  proc re_h4()
+{
+string $re_h[] = `ls -sl`;
+if(size($re_h) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_h[0] "YY_linshihuanming_rename_R_Brow_Anger";
+rename "YY_linshihuanming_rename_R_Brow_Anger" "R_Brow_Anger";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_h4;
+};
+};
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+///////////{"L_Forehead_Flat_Up","L_Forehead_Flat_Down","L_Forehead_Up","L_Forehead_Down","L_Forehead"};
+global  proc re_i1()
+{
+string $re_i[] = `ls -sl`;
+if(size($re_i) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_i[0] "YY_linshihuanming_rename_L_Forehead_Flat_Up";
+rename "YY_linshihuanming_rename_L_Forehead_Flat_Up" "L_Forehead_Flat_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_i1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_i2()
+{
+string $re_i[] = `ls -sl`;
+if(size($re_i) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_i[0] "YY_linshihuanming_rename_L_Forehead_Flat_Down";
+rename "YY_linshihuanming_rename_L_Forehead_Flat_Down" "L_Forehead_Flat_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_i2;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_i3()
+{
+string $re_i[] = `ls -sl`;
+if(size($re_i) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_i[0] "YY_linshihuanming_rename_L_Forehead_Up";
+rename "YY_linshihuanming_rename_L_Forehead_Up" "L_Forehead_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_i3;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_i4()
+{
+string $re_i[] = `ls -sl`;
+if(size($re_i) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_i[0] "YY_linshihuanming_rename_L_Forehead_Down";
+rename "YY_linshihuanming_rename_L_Forehead_Down" "L_Forehead_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_i4;
+};
+};
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+///////////{"R_Forehead_Flat_Up","R_Forehead_Flat_Down","R_Forehead_Up","R_Forehead_Down","R_Forehead"};
+global  proc re_j1()
+{
+string $re_j[] = `ls -sl`;
+if(size($re_j) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_j[0] "YY_linshihuanming_rename_R_Forehead_Flat_Up";
+rename "YY_linshihuanming_rename_R_Forehead_Flat_Up" "R_Forehead_Flat_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_j1;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_j2()
+{
+string $re_j[] = `ls -sl`;
+if(size($re_j) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_j[0] "YY_linshihuanming_rename_R_Forehead_Flat_Down";
+rename "YY_linshihuanming_rename_R_Forehead_Flat_Down" "R_Forehead_Flat_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_j2;
+};
+};
+//////////////////////////////////////////////////////
+global  proc re_j3()
+{
+string $re_j[] = `ls -sl`;
+if(size($re_j) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_j[0] "YY_linshihuanming_rename_R_Forehead_Up";
+rename "YY_linshihuanming_rename_R_Forehead_Up" "R_Forehead_Up";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_j3;
+};
+};
+//////////////////////////////////////////////////////
+global proc re_j4()
+{
+string $re_j[] = `ls -sl`;
+if(size($re_j) == 1)
+{
+	global float $YY_button_bgc[3];
+rename $re_j[0] "YY_linshihuanming_rename_R_Forehead_Down";
+rename "YY_linshihuanming_rename_R_Forehead_Down" "R_Forehead_Down";
+button -e -bgc $YY_button_bgc[0] $YY_button_bgc[1] $YY_button_bgc[2] but_j4;
+};
+};
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+global proc YY_ex_all_link()
+	{
+
+if(!`objExists ex_all`)
+{
+global string $YY_expression[12];		
+//string $YY_ex_all[] = `ls -type "expression" `;
+//if(size($YY_ex_all) != 0)
+//{
+//print (size($YY_ex_all));		
+string $YY_ex = "";
+//for($i = 0;$i<size($YY_expression);$i++)
+for($i = 0;$i<10;$i++)
+{
+if(`objExists $YY_expression[$i]`)
+{
+string $YY_lin_ex =	`expression -q -s $YY_expression[$i]`;
+//print $YY_lin_ex;
+$YY_ex += $YY_lin_ex;
+delete $YY_expression[$i];
+};
+
+};
+//print $YY_ex;
+//for($YY_ji = 0;$YY_ji<size($YY_expression);$YY_ji++)
+//for($YY_ji = 0;$YY_ji<10;$YY_ji++)
+//{
+//delete $YY_expression[$YY_ji];
+//};
+expression -n ex_all -s $YY_ex;
+
+//};
+};
+};
+
+global proc link_all()
+{
+global int $YY_jishu ;
+
+
+YY_speak_link();
+
+YY_forehead_link();
+
+YY_L_Brow_link();
+
+YY_L_Eyelid_link();
+
+YY_L_Forehead_link();
+
+YY_L_mouth_link();
+
+YY_R_Brow_link();
+
+YY_R_Eyelid_link();
+
+YY_R_Forehead_link();
+
+YY_R_mouth_link();
+
+//YY_ex_all_link();
+
+YY_mouth();
+
+YY_tongue ();
+
+	
+		
+YY_ex_all_link();
+if($YY_jishu = 0)
+{
+text -e -l "          表情面板连接已完成，但未连接下额和舌头         " YY_bs_text;
+};
+////////////////////////////////////////////////////////////////
+if($YY_jishu = 1)
+{
+text -e -l "          表情面板连接已完成，但未连接下额          " YY_bs_text;
+};
+//////////////////////////////////////////////////////////
+if($YY_jishu = 2)
+{
+text -e -l "         表情面板连接已完成         " YY_bs_text;
+};
+};
+
+global proc YY_mouth ()
+{
+global string $YY_expression[12];
+if(`objExists Chin`)
+{
+if(!`objExists $YY_expression[10]`)
+{	
+	
+string $YY_face_add_k[3] = {"mouth_control_happy.ty","mouth_control_angrySurprised.ty","mouth_control_shockedConpused.ty"};	
+	
+global int $YY_jishu;
+//string $YY_joint_list[] =`ls -type joint`;
+//for($YY_joint = 0;$YY_joint < size ($YY_joint_list);$YY_joint++)
+//{
+//if($YY_joint_list[$YY_joint] == "Chin")
+//{
+string $YY_mouth_link_tou = "\n" + "////mouth_link_joint" + "\n" + "\n" ;
+string $YY_mouth_link_y = "Chin.rotateX = (-Jaw_Rot.translateY * 100)" + "+clamp(-20,0," + $YY_face_add_k[0] + "*77.5)" + "+clamp(-20,0," + $YY_face_add_k[1] + "*100)" + "\;"+ "\n";
+string $YY_mouth_link_x = "Chin.rotateY = Jaw_Rot.translateX  * 80;" +"\n";
+string $YY_hebing_link_s = $YY_mouth_link_tou + $YY_mouth_link_y + $YY_mouth_link_x;
+expression -n $YY_expression[10] -s $YY_hebing_link_s;
+$YY_jishu ++;
+
+//};
+};
+//};
+};
+};
+//select -r `ls -type joint`;
+
+global proc YY_tongue ()
+{
+global string $YY_expression[12];	
+global int $YY_jishu;
+//string $YY_joint_list[] =`ls -type joint`;
+//for($YY_joint = 0;$YY_joint < size ($YY_joint_list);$YY_joint++)
+//{
+//if($YY_joint_list[$YY_joint] == "Tongue01")
+if(`objExists Tongue01`)
+{
+if(!`objExists $YY_expression[11]`)
+{
+string $YY_mouth_link_tou = "\n" + "////tongue_link_joint" + "\n" + "\n" ;
+//string $YY_mouth_link_a = "Tongue01.rotateX = -T_L.translateY * 100;" + "\n";
+string $YY_mouth_link_a = "Tongue02.rotateX = -T_L.translateY * 100;" + "\n";
+string $YY_mouth_link_b = "Tongue03.rotateX = -T_L.translateY  * 150;" + "\n";
+string $YY_mouth_link_c = "Tongue04.rotateX = -T_L.translateY  * 180;" + "\n";
+string $YY_mouth_link_d = "Tongue05.rotateX = -T_L.translateY  * 200;" + "\n";
+string $YY_mouth_link_e = "Tongue06.rotateX = -T_L.translateY  * 250;" + "\n";
+
+string $YY_hebing_link_s = $YY_mouth_link_tou + $YY_mouth_link_a + $YY_mouth_link_b + $YY_mouth_link_c + $YY_mouth_link_d + $YY_mouth_link_e;
+expression -n $YY_expression[11] -s $YY_hebing_link_s;
+$YY_jishu ++;
+};
+};
+//};
+};
+
+
+///////////////////////////////////////////
+////////////////////////////////////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+
+
+global proc YY_bs_link_ruto ()
+	{
+	string 	$YY_bs_type_sl;
+string $YY_bs_type_a =`optionMenuGrp -q  -sl YY_bs_type`;
+if($YY_bs_type_a == 1)
+{
+$YY_bs_type_sl = "-parallel";
+};
+if($YY_bs_type_a == 2)
+{
+$YY_bs_type_sl = "-frontOfChain";
+};
+
+print $YY_bs_type_sl ;
+string $YY_one_select[] = `ls -sl`;
+int $YY_bs_vv = size($YY_one_select);
+select -cl;
+	if($YY_bs_vv > 0 )
+	{
+		
+	
+string $YY_bs_num[] = {"O","F_V","M","U","A_I","Forehead_Up","Forehead_Down","L_Sneer_Up","L_Sneer_Down","L_Smile_Up","L_Smile_Down","L_List","R_Sneer_Up","R_Sneer_Down","R_Smile_Up","R_Smile_Down","R_List","L_Eyelid_Top_Up","L_Eyelid_Top_Down","L_Eyelid_Under_Up","L_Eyelid_Under_Down","L_Eyelid","R_Eyelid_Top_Up","R_Eyelid_Top_Down","R_Eyelid_Under_Up","R_Eyelid_Under_Down","R_Eyelid","L_Forehead_Flat_Up","L_Forehead_Flat_Down","L_Forehead_Up","L_Forehead_Down","L_Forehead","R_Forehead_Flat_Up","R_Forehead_Flat_Down","R_Forehead_Up","R_Forehead_Down","R_Forehead"};
+//print (size($YY_bs_num));
+string $YY_blendshape_link[] = `listTransforms "-type mesh"`;
+string $YY_bs_sum = "";
+select -cl;
+for($YY_bs_i = 0;$YY_bs_i <size($YY_blendshape_link);$YY_bs_i++)
+{
+//print ($YY_blendshape_link[$YY_bs_i] + "\n");
+	for($YY_bs_nb = 0;$YY_bs_nb <size($YY_bs_num);$YY_bs_nb++)
+	{
+	if($YY_blendshape_link[$YY_bs_i] == $YY_bs_num[$YY_bs_nb])
+	{//print "OK!";
+	
+	$YY_bs_sum+=  $YY_blendshape_link[$YY_bs_i] + " ";
+		//print ($YY_blendshape_link[$YY_bs_i] + "\n");
+		select -add $YY_blendshape_link[$YY_bs_i];
+			
+	};
+	};
+
+};
+select -add $YY_one_select[0];
+blendShape $YY_bs_type_sl;
+select -cl;
+text -e -l "          面部Blend Shape 连接已完成          " YY_bs_text;
+};
+//////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+if($YY_bs_vv > 1)
+
+	{
+
+	string $YY_bs_num[] = {"L_Brow_Up","L_Brow_Down","L_Brow_Worry","L_Brow_Anger","L_Brow_Up_a","L_Brow_Down_a","L_Brow"};
+//print (size($YY_bs_num_eye));
+string $YY_blendshape_link[] = `listTransforms "-type mesh"`;
+string $YY_bs_sum = "";
+select -cl;
+for($YY_bs_i = 0;$YY_bs_i <size($YY_blendshape_link);$YY_bs_i++)
+{
+//print ($YY_blendshape_link[$YY_bs_i] + "\n");
+	for($YY_bs_nb = 0;$YY_bs_nb <size($YY_bs_num);$YY_bs_nb++)
+	{
+	if($YY_blendshape_link[$YY_bs_i] == $YY_bs_num[$YY_bs_nb])
+	{//print "OK!";
+	
+	$YY_bs_sum+=  $YY_blendshape_link[$YY_bs_i] + " ";
+		//print ($YY_blendshape_link[$YY_bs_i] + "\n");
+		select -add $YY_blendshape_link[$YY_bs_i];
+		
+			
+	};
+	};
+
+};
+select -add $YY_one_select[1];
+blendShape $YY_bs_type_sl ;
+print $YY_bs_type_sl ;
+select -cl;
+text -e -l "          面部，左眉毛Blend Shape 连接已完成          " YY_bs_text;
+
+};
+//////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+if($YY_bs_vv > 2)
+		{
+	
+	string $YY_bs_num[] = {"R_Brow_Up","R_Brow_Down","R_Brow_Worry","R_Brow_Anger","R_Brow_Up_a","R_Brow_Down_a","R_Brow"};
+//print (size($YY_bs_num_eye));
+string $YY_blendshape_link[] = `listTransforms "-type mesh"`;
+string $YY_bs_sum = "";
+select -cl;
+for($YY_bs_i = 0;$YY_bs_i <size($YY_blendshape_link);$YY_bs_i++)
+{
+//print ($YY_blendshape_link[$YY_bs_i] + "\n");
+	for($YY_bs_nb = 0;$YY_bs_nb <size($YY_bs_num);$YY_bs_nb++)
+	{
+	if($YY_blendshape_link[$YY_bs_i] == $YY_bs_num[$YY_bs_nb])
+	{//print "OK!";
+	
+	$YY_bs_sum+=  $YY_blendshape_link[$YY_bs_i] + " ";
+		//print ($YY_blendshape_link[$YY_bs_i] + "\n");
+		select -add $YY_blendshape_link[$YY_bs_i];
+			
+	};
+	};
+
+};
+select -add $YY_one_select[2];
+blendShape $YY_bs_type_sl ;
+select -cl;
+text -e -l "          面部，左眉毛，右眉毛Blend Shape 连接已完成          " YY_bs_text;
+
+};
+
+
+};
+
+
+global proc YY_face_character()
+{
+string $YY_face_character_name[] = {"R_Lids","L_Lids","eyes_close_control","Right_Eye","Left_Eye","R_Smile_Sad","Smile_Sad","R_sneer","L_sneer","Jaw_Rot","T_L","OOO","FV","MMM","UUU","I","mouth_control_happy","mouth_control_angrySurprised","mouth_control_shockedConpused"};	
+	
+	
+if(`objExists "*_MASTER_character"`)
+{
+if(!`objExists face_character`)
+{
+for($YY_f = 0;$YY_f<size($YY_face_character_name);$YY_f++)
+{
+select -add -ne $YY_face_character_name[$YY_f];
+};
+
+select -add "*_MASTER_character";
+doCreateSubcharacterArgList 2 { "face_character","0","0","1","1","0","0" };
+
+};
+};
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

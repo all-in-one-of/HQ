@@ -1,0 +1,85 @@
+global proc shelf_hq_Houdini () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Try connect to houdini" 
+        -enableBackground 0
+        -align "center" 
+        -label "try:\n    import hrpyc\n    connection, hou=hrpyc.import_remote_mo..." 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -imageOverlayLabel "2Hou" 
+        -overlayLabelColor 1 1 1 
+        -overlayLabelBackColor 0 0 0 0 
+        -image "D:/Users/Administrator/Documents/qs/qs_tool/qs_icons/houdini/houdini.png" 
+        -image1 "D:/Users/Administrator/Documents/qs/qs_tool/qs_icons/houdini/houdini.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "connectToHou( )" 
+        -sourceType "python" 
+        -commandRepeatable 1
+            ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "QHM.w02_sendToHoudini( )" 
+        -enableBackground 0
+        -align "center" 
+        -label "QHM.w02_sendToHoudini( )" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -imageOverlayLabel "SendHou" 
+        -overlayLabelColor 1 1 1 
+        -overlayLabelBackColor 0 0 0 0 
+        -image "D:/Users/Administrator/Documents/sq/icons/houdini.png" 
+        -image1 "D:/Users/Administrator/Documents/sq/icons/houdini.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "HIM.w02_sendToHoudiniWin( )" 
+        -sourceType "python" 
+        -commandRepeatable 1
+            ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "import sys\n\n\nlibPaths = (\nr'D:\\Users\\Administrator\\Documents\\qs\\qs_tool\\qs_tool_temp',\n#r'C:\\Python27\\lib\\site-packages',\n)\n\nfor p in libPaths:\n    if p not in sys.path:\n        sys.path.append( p )\n\nimport pw_mGeoExporter_master as pw_mGeo\npw_mGeo.show()" 
+        -enableBackground 0
+        -align "center" 
+        -label "import sys\n\n\nlibPaths = (\nr'D:\\Users\\Administrator\\Documents\\qs\\..." 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.25 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import sys\n\n\nlibPaths = (\nr'D:\\Users\\Administrator\\Documents\\qs\\qs_tool\\qs_tool_temp',\n#r'C:\\Python27\\lib\\site-packages',\n)\n\nfor p in libPaths:\n    if p not in sys.path:\n        sys.path.append( p )\n\nimport pw_mGeoExporter_master as pw_mGeo\npw_mGeo.show()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+            ;
+
+} 

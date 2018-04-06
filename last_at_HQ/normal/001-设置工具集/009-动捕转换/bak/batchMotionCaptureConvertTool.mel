@@ -1,0 +1,654 @@
+//////////////////////////////////////////////////////////////
+//动作捕捉转换插件 —— 把捕捉动画转换成TSM设置插件的控制器动画。
+//本插件编写人：徐阳
+//2009-8-6 一版 ；2010-4-27 二版
+//改版人：晖
+//////////////////////////////////////////////////////////////
+//用户窗口
+global proc transformCatch()
+{
+  if(`window -ex transformCatch_1`)
+    deleteUI transformCatch_1;//删除打开旧版窗口
+  
+ window -t "替换捕捉角色" -wh 800 900 transformCatch_1;
+
+   columnLayout -adj 1;//
+
+     frameLayout -l "目标文件" -labelAlign "top" -cll true -borderStyle "etchedOut";
+
+	   formLayout findfile;
+
+         textFieldGrp -columnWidth 1 100 -adjustableColumn 2 -l "捕捉数据文件路径:" -text"" xyrigFile;
+         textFieldGrp -columnWidth 1 100 -adjustableColumn 2 -l "最终角色文件:" -editable false -text"" xycatchFile;
+         button -l "文件路径..."                -c ("catch_brow " + "xycatchFile") check2;
+
+         button -l "开始" -w 150 -c "F_PL_ZH()" check4;
+
+        
+         formLayout -edit
+           -af xyrigFile "top" 5
+	       -af xyrigFile "left" 5
+           -ap xyrigFile "right" 0 75
+
+
+	       -af xycatchFile "top" 30
+	       -af xycatchFile "left" 5
+	       -ap xycatchFile "right" 0 75
+
+	       -af check2 "top" 30
+	       -ac check2 "left" 5 xycatchFile
+	       
+	       -af check4 "top" 60
+	       -af check4 "left" 300
+         
+         findfile;
+         setParent ..;
+     setParent ..;	  
+
+showWindow transformCatch_1;
+}
+
+/*
+//执行脚本
+//取文件的路径的缓存
+global proc rig_brow(string $control)
+{
+  fileBrowserDialog -mode 0  -fileCommand ("rig_browProc " + $control) -fileType "mayaBinary" -actionName "Browse" -operationMode "Import";
+}
+
+global proc int rig_browProc(string $control, string $filename, string $fileType)
+{
+  textFieldGrp -e -text $filename $control;
+  return true;
+}
+*/
+global proc catch_brow(string $control)
+{
+ fileBrowserDialog -mode 0  -fileCommand ("catch_browProc " + $control) -fileType "mayaBinary" -actionName "Browse" -operationMode "Import";
+}
+
+global proc int catch_browProc(string $control, string $filename, string $fileType)
+{
+  textFieldGrp -e -text $filename $control;
+  return true;
+}
+
+
+global proc start_1(string $impname)
+{
+    imp_mb($impname);
+    CleanupCatchCha();
+    F_jiesu($impname);
+}
+
+
+
+//导入捕捉、绑定两个文件
+global proc imp_mb(string $impname)
+{
+  string $catname = `textFieldGrp -q -text xycatchFile`;
+  //string $dstDirectory = `textField -query -fileName dstDirectoryField`;
+  //file -import -type "mayaBinary" -rpr "dummy_ctrl" -options "v=0;p=17" -pr $impname;
+  file -f -options "v=0"  -ignoreVersion  -typ "mayaBinary" -o $impname;
+  file -import -type "mayaBinary" -rpr "dummy_ctrl" -options "v=0;p=17" -pr $catname;
+  //计算出捕捉动画结束帧
+  float $EndFrame = 0.000;
+  float $KeyFrame[] = `keyframe -q -tc Hips`;
+  int $x=0;
+  for ($x;$x<size($KeyFrame);$x++){
+      $EndFrame = `max $EndFrame $KeyFrame[$x]`;
+  }
+  int $SetEndFrame = $EndFrame;
+  playbackOptions -max ($SetEndFrame+1);
+  
+  playbackOptions -min -50;//设置初始帧//要设置回0 -ast
+  currentTime -50;
+  
+  if(`getAttr -l "Character.v"`==1){
+      setAttr -l 0 "Character.v";
+  }
+  if(`getAttr -l "Character.sx"`==1){
+      setAttr -l 0 "Character.sx";
+  }
+  if(`getAttr -l "Character.sy"`==1){
+      setAttr -l 0 "Character.sy";
+  }
+  if(`getAttr -l "Character.sz"`==1){
+      setAttr -l 0 "Character.sz";
+  }
+  
+  vector $K_scale=`getAttr Character.s`;
+  setAttr "character_joint.scaleX" ($K_scale.x);
+  setAttr "character_joint.scaleY" ($K_scale.y);
+  setAttr "character_joint.scaleZ" ($K_scale.z);
+  F_111();
+  F_duiguge();
+}
+
+//开始按钮
+global proc CleanupCatchCha()
+{
+  F_222();
+  setAttr Character.visibility 0;
+  F_333();
+  //playbackOptions -animationStartTime 0;
+  currentTime -50;
+  F_444();  
+  
+  setAttr "Upper_Body.LeftArm_FKIK" 0;
+  setAttr "Upper_Body.RightArm_FKIK" 0;
+  setAttr "Upper_Body.RightLeg_FKIK" 0;
+  setAttr "Upper_Body.LeftLeg_FKIK" 0;
+
+}
+
+//结束按钮
+global proc F_jiesu(string $impname){
+    setAttr "Upper_Body.LeftArm_FKIK" 1;
+    setAttr "Upper_Body.RightArm_FKIK" 1;
+    setAttr "Upper_Body.RightLeg_FKIK" 1;
+    setAttr "Upper_Body.LeftLeg_FKIK" 1;
+    
+    setAttr -l 1 "Character.v";
+    setAttr -l 1 "Character.sx";
+    setAttr -l 1 "Character.sy";
+    setAttr -l 1 "Character.sz";
+    
+    if (!`exists "*catch_all"`) {
+
+        delete "*catch_all";
+    }
+        
+    string $file_name[]=stringToStringArray($impname,"/");
+    string $file_name_last=$file_name[(size($file_name))-1];
+    string $file_name_last1[]=stringToStringArray($file_name_last,".");
+    stringArrayRemoveAtIndex((size($file_name)-1),$file_name);
+    stringArrayInsertAtIndex(size($file_name),$file_name,$file_name_last1[0]);
+    string $file_name_1=stringArrayToString($file_name,"/");
+    string $endName=$file_name_1+"_ok.mb";
+    file -rn $endName;
+    file -f -save  -options "v=0;" -type "mayaBinary";
+
+}
+
+
+
+//清除属性，清除对位节点
+global proc InitializeWithCha()
+{
+  //捕捉角色
+
+channelBoxCommand -break;
+
+select -r Hips;
+select -add Spine;
+select -add Spine1;
+select -add Spine2;
+select -add Spine3;
+select -add Neck;
+select -add Neck1;
+select -add Head;
+
+select -add LeftUpLeg;
+select -add LeftUpLegRoll;
+select -add LeftLeg;
+select -add LeftLegRoll;
+select -add LeftFoot;
+select -add LeftToeBase;
+select -add RightUpLeg;
+select -add RightUpLegRoll;
+select -add RightLeg;
+select -add RightLegRoll;
+select -add RightFoot;
+select -add RightToeBase;
+select -add LeftToes_End;
+select -add RightToes_End;
+
+select -add LeftShoulder;
+select -add LeftArm;
+select -add LeftArmRoll;
+select -add LeftForeArm;
+select -add LeftForeArmRoll;
+select -add LeftHand;
+select -add Leftjoint;
+select -add RightShoulder;
+select -add RightArm;
+select -add RightArmRoll;
+select -add RightForeArm;
+select -add RightForeArmRoll;
+select -add RightHand;
+select -add Rightjoint;
+
+//打断位移动动画链接
+string $catchjoint[] = `ls -sl`;
+for ($i= 1; $i< size($catchjoint); $i++ ) 
+{
+  CBdeleteConnection ($catchjoint[$i] + ".tx");
+  CBdeleteConnection ($catchjoint[$i] + ".ty");
+  CBdeleteConnection ($catchjoint[$i] + ".tz");
+}
+
+//旋转值归零
+string $catchjoint[] = `ls -sl`;
+for ($i= 0; $i< size($catchjoint); $i++ ) 
+{
+  setAttr ($catchjoint[$i] + ".rx") 0;
+  setAttr ($catchjoint[$i] + ".ry") 0;
+  setAttr ($catchjoint[$i] + ".rz") 0; 
+}
+
+//在骨骼初始pose上设置关键帧
+string $catchjoint[] = `ls -sl`;
+for ($i= 0; $i< size($catchjoint); $i++ ) 
+{
+  setKeyframe($catchjoint[$i] + ".rx");
+  setKeyframe ($catchjoint[$i] + ".ry");
+  setKeyframe ($catchjoint[$i] + ".rz"); 
+}
+select -cl;
+
+//中心点的补充
+setAttr Hips.tx 0;
+//setAttr Hips.ty 0.8953576 ;
+//setAttr Hips.tz 0;
+
+setKeyframe Hips.tx;
+setKeyframe Hips.ty;
+setKeyframe Hips.tz;
+
+//绑定角色
+setAttr Upper_Body.Spine_FKIK 0;
+setAttr Upper_Body.LeftArm_FKIK 1;
+setAttr Upper_Body.RightArm_FKIK 1;
+setAttr Upper_Body.Head_FKIK 0;
+
+}
+
+
+global proc F_111(){
+InitializeWithCha;
+
+/////////////////////////////////
+print "clean ok！！";
+}
+
+//start ====骨骼位点对位
+
+//float $torso_position[]=`xform -ws -q -t Spine_joint1`;
+//move $torso_position[0] $torso_position[1]  $torso_position[2]  Hips.scalePivot Hips.rotatePivot ;
+global proc F_222(){
+setKeyframe Hips;
+
+//导入中间控制器
+file -import -type "mayaBinary" -rpr "dummy_ctrl" -options "v=0;p=17"  -pr "E:/01.work/FBX_to_MB/maya_to_final/dummy_ctrl.mb";
+
+float $character_high[]=`xform -ws -q -t Head_joint4`;
+distanceDimension -sp 0 0 1 -ep 0 $character_high[1] 1 ;
+
+float $scale_high =`getAttr distanceDimensionShape1.distance`/2;
+setAttr dummy_Character.scaleX $scale_high;
+setAttr dummy_Character.scaleY $scale_high;
+setAttr dummy_Character.scaleZ $scale_high;
+
+
+//用绑定角色约束中间控制器_中间控制器对位
+//躯干
+pointConstraint Upper_Body dummy_Upper_Body_G;
+pointConstraint Spine_Pelvis_FK dummy_Spine_pelvisnullFK;
+pointConstraint Spine_Middle_FK dummy_Spine_middlenullFK;
+pointConstraint Spine_Torso_FK dummy_Spine_torsonullIFK;
+pointConstraint Head_Neck dummy_Head_rotationisolated;
+pointConstraint Head_FK dummy_Head_isolatecalculate;
+//腿
+pointConstraint LeftLeg_IK_Leg dummy_LeftLeg_directioncompensate;
+pointConstraint LeftLeg_Leg_Pole_Vector dummy_LeftLeg_polevectorgroup;
+pointConstraint LeftLeg_Upper_Leg dummy_LeftLeg_upperlegnull;
+pointConstraint LeftLeg_Lower_Leg dummy_LeftLeg_lowerlegnull;
+pointConstraint LeftLeg_Foot dummy_LeftLeg_footnull;
+pointConstraint LeftLeg_Toe dummy_LeftLeg_toenull;
+pointConstraint RightLeg_IK_Leg dummy_RightLeg_directioncompensate;
+pointConstraint RightLeg_Leg_Pole_Vector dummy_RightLeg_polevectorgroup;
+pointConstraint RightLeg_Upper_Leg dummy_RightLeg_upperlegnull;
+pointConstraint RightLeg_Lower_Leg dummy_RightLeg_lowerlegnull;
+pointConstraint RightLeg_Foot dummy_RightLeg_footnull;
+pointConstraint RightLeg_Toe dummy_RightLeg_toenull;
+//手臂
+pointConstraint LeftArm_Shoulder dummy_LeftArm_shouldernull;
+pointConstraint LeftArm_Arm_Pole_Vector dummy_LeftArm_upperarmcontrolnull;
+pointConstraint LeftArm_Arm_IK dummy_LeftArm_amiknull;
+pointConstraint LeftArm_Upper_Arm dummy_LeftArm_upperarmcontrolnull;
+pointConstraint LeftArm_Lower_Arm dummy_LeftArm_lowerarmcontrolnull;
+pointConstraint LeftArm_Hand dummy_LeftArm_HandTranslate;
+pointConstraint RightArm_Shoulder dummy_RightArm_shouldernull;
+//pointConstraint RightArm_Arm_Pole_Vector dummy_RightArm_upperarmcontrolnull;
+pointConstraint RightArm_Arm_IK dummy_RightArm_amiknull;
+pointConstraint RightArm_Upper_Arm dummy_RightArm_upperarmcontrolnull;
+pointConstraint RightArm_Lower_Arm dummy_RightArm_lowerarmcontrolnull;
+pointConstraint RightArm_Hand dummy_RightArm_HandTranslate;
+//清除控制器约束
+delete dummy_Head_isolatecalculate_pointConstraint1;
+delete dummy_Head_rotationisolated_pointConstraint1;
+delete dummy_LeftArm_HandTranslate_pointConstraint1;
+delete dummy_LeftArm_lowerarmcontrolnull_pointConstraint1;
+delete dummy_LeftArm_upperarmcontrolnull_pointConstraint1;
+//delete dummy_LeftArm_upperarmcontrolnull_pointConstraint1;
+delete dummy_LeftArm_shouldernull_pointConstraint1;
+delete dummy_RightArm_HandTranslate_pointConstraint1;
+delete dummy_RightArm_lowerarmcontrolnull_pointConstraint1;
+delete dummy_RightArm_upperarmcontrolnull_pointConstraint1;
+//delete dummy_RightArm_upperarmcontrolnull_pointConstraint1;
+delete dummy_RightArm_shouldernull_pointConstraint1;
+delete dummy_Spine_torsonullIFK_pointConstraint1;
+delete dummy_Spine_middlenullFK_pointConstraint1;
+delete dummy_RightLeg_polevectorgroup_pointConstraint1;
+delete dummy_LeftLeg_polevectorgroup_pointConstraint1;
+delete dummy_Spine_pelvisnullFK_pointConstraint1;
+delete dummy_Upper_Body_G_pointConstraint1;
+delete dummy_RightLeg_directioncompensate_pointConstraint1;
+delete dummy_LeftLeg_directioncompensate_pointConstraint1;
+delete dummy_LeftLeg_toenull_pointConstraint1;
+delete dummy_LeftLeg_upperlegnull_pointConstraint1;
+delete dummy_LeftLeg_lowerlegnull_pointConstraint1;
+delete dummy_LeftLeg_footnull_pointConstraint1;
+delete dummy_RightLeg_toenull_pointConstraint1;
+delete dummy_RightLeg_upperlegnull_pointConstraint1;
+delete dummy_RightLeg_lowerlegnull_pointConstraint1;
+delete dummy_RightLeg_footnull_pointConstraint1;
+delete dummy_RightArm_amiknull_pointConstraint1;
+delete dummy_LeftArm_amiknull_pointConstraint1;
+
+
+
+
+//约束dummy控制器
+//躯干
+parentConstraint -mo Hips dummy_Upper_Body_G;
+parentConstraint -mo Hips dummy_Spine_pelvisnullFK;
+parentConstraint -mo Spine1 dummy_Spine_middlenullFK;
+parentConstraint -mo Spine2 dummy_Spine_torsonullIFK;
+parentConstraint -mo Neck dummy_Head_rotationisolated;
+orientConstraint -mo Head dummy_Head_isolatecalculate;
+
+//手臂
+orientConstraint -mo LeftShoulder dummy_LeftArm_shouldernull;
+orientConstraint -mo LeftArmRoll dummy_LeftArm_upperarmcontrolnull;
+parentConstraint -mo Leftjoint dummy_LeftArm_amiknull;
+orientConstraint -mo RightShoulder dummy_RightArm_shouldernull;
+orientConstraint -mo RightArmRoll dummy_RightArm_upperarmcontrolnull;
+parentConstraint -mo Rightjoint dummy_RightArm_amiknull;
+
+
+//肘+膝盖表达式
+expression -s "dummy_LeftArm_lowerarmcontrolnull.rotateY = -LeftForeArm.rotateX -0.0038204;\r\ndummy_RightArm_lowerarmcontrolnull.rotateY = -RightForeArm.rotateX -0.0038204;\r\ndummy_LeftLeg_lowerlegnull.rotateZ = -LeftLeg.rotateX +7.620086;\r\ndummy_RightLeg_lowerlegnull.rotateZ = -RightLeg.rotateX +7.620086;"  -o "" -n "boll_rot_expression" -ae 1 -uc all ;
+
+//orientConstraint -mo LeftArm dummy_LeftArm_lowerarmcontrolnull;
+//orientConstraint -mo RightArm dummy_RightArm_lowerarmcontrolnull;
+orientConstraint -mo Leftjoint dummy_LeftArm_handcontrolnull;
+orientConstraint -mo Rightjoint dummy_RightArm_handcontrolnull;
+
+/*
+orientConstraint -mo LeftArm dummy_LeftArm_Upper_Arm;
+orientConstraint -mo -skip x -skip z -weight 1 LeftForeArm dummy_LeftArm_Lower_Arm;
+
+orientConstraint -mo RightArm dummy_RightArm_Upper_Arm;
+orientConstraint -mo -skip x -skip z -weight 1 RightForeArm dummy_RightArm_Lower_Arm;
+*/
+
+//腿
+orientConstraint -mo LeftUpLegRoll dummy_LeftLeg_polevectorgroup;
+parentConstraint -mo LeftToeBase dummy_LeftLeg_directioncompensate;
+orientConstraint -mo RightUpLegRoll dummy_RightLeg_polevectorgroup;
+parentConstraint -mo RightToeBase dummy_RightLeg_directioncompensate;
+
+orientConstraint -mo LeftUpLegRoll dummy_LeftLeg_upperlegnull;
+//orientConstraint -mo -skip x -skip y -weight 1 LeftLeg dummy_LeftLeg_lowerlegnull;
+orientConstraint -mo LeftFoot dummy_LeftLeg_footnull;
+orientConstraint -mo LeftToeBase dummy_LeftLeg_toenull;
+orientConstraint -mo RightUpLegRoll dummy_RightLeg_upperlegnull;
+//orientConstraint -mo -skip x -skip y -weight 1 RightLeg dummy_RightLeg_lowerlegnull;
+orientConstraint -mo RightFoot dummy_RightLeg_footnull;
+orientConstraint -mo RightToeBase dummy_RightLeg_toenull;
+
+
+
+//手指
+expression -s "LeftThumb_finger_control.rotateZ = LeftHandThumb1.rotateZ;\r\LeftThumb_finger_control.MiddleJoint = LeftHandThumb2.rotateZ;\r\LeftThumb_finger_control.LastJoint = LeftHandThumb3.rotateZ;\r\LeftThumb_finger_control.rotateX = LeftHandThumb1.rotateX;\r\LeftThumb_finger_control.rotateY = LeftHandThumb1.rotateY;\r\r\LeftFinger1_finger_control.rotateZ = LeftHandIndex1.rotateZ;\r\LeftFinger1_finger_control.MiddleJoint = LeftHandIndex2.rotateZ;\r\LeftFinger1_finger_control.LastJoint = LeftHandIndex3.rotateZ;\r\LeftFinger1_finger_control.rotateY = LeftHandIndex1.rotateY;\r\LeftFinger1_finger_control.rotateX = LeftHandIndex1.rotateX;\r\r\LeftFinger2_finger_control.rotateZ = LeftHandMiddle1.rotateZ;\r\LeftFinger2_finger_control.MiddleJoint = LeftHandMiddle2.rotateZ;\r\LeftFinger2_finger_control.LastJoint = LeftHandMiddle3.rotateZ;\r\LeftFinger2_finger_control.rotateX = LeftHandMiddle1.rotateX;\r\LeftFinger2_finger_control.rotateY = LeftHandMiddle1.rotateY;\r\r\LeftFinger3_finger_control.rotateZ = LeftHandRing1.rotateZ;\r\LeftFinger3_finger_control.MiddleJoint = LeftHandRing2.rotateZ;\r\LeftFinger3_finger_control.LastJoint = LeftHandRing3.rotateZ;\r\LeftFinger3_finger_control.rotateX = LeftHandRing1.rotateX;\r\LeftFinger3_finger_control.rotateY = LeftHandRing1.rotateY;\r\r\LeftFinger4_finger_control.rotateZ = LeftHandPinky1.rotateZ;\r\LeftFinger4_finger_control.MiddleJoint = LeftHandPinky2.rotateZ;\r\LeftFinger4_finger_control.LastJoint = LeftHandPinky3.rotateZ;\r\LeftFinger4_finger_control.rotateX = LeftHandPinky1.rotateX;\r\LeftFinger4_finger_control.rotateY = LeftHandPinky1.rotateY;\r\r\RightThumb_finger_control.rotateZ = RightHandThumb1.rotateZ;\r\RightThumb_finger_control.MiddleJoint = RightHandThumb2.rotateZ;\r\RightThumb_finger_control.LastJoint = RightHandThumb3.rotateZ;\r\RightThumb_finger_control.rotateX = RightHandThumb1.rotateX;\r\RightThumb_finger_control.rotateY = RightHandThumb1.rotateY;\r\r\RightFinger1_finger_control.rotateZ = RightHandIndex1.rotateZ;\r\RightFinger1_finger_control.MiddleJoint = RightHandIndex2.rotateZ;\r\RightFinger1_finger_control.LastJoint = RightHandIndex3.rotateZ;\r\RightFinger1_finger_control.rotateY = -RightHandIndex1.rotateY;\r\RightFinger1_finger_control.rotateX = -RightHandIndex1.rotateX;\r\r\RightFinger2_finger_control.rotateZ = RightHandMiddle1.rotateZ;\r\RightFinger2_finger_control.MiddleJoint = RightHandMiddle2.rotateZ;\r\RightFinger2_finger_control.LastJoint = RightHandMiddle3.rotateZ;\r\RightFinger2_finger_control.rotateX = -RightHandMiddle1.rotateX;\r\RightFinger2_finger_control.rotateY = -RightHandMiddle1.rotateY;\r\RightFinger3_finger_control.rotateZ = RightHandRing1.rotateZ;\r\RightFinger3_finger_control.MiddleJoint = RightHandRing2.rotateZ;\r\RightFinger3_finger_control.LastJoint = RightHandRing3.rotateZ;\r\RightFinger3_finger_control.rotateX = -RightHandRing1.rotateX;\r\RightFinger3_finger_control.rotateY = -RightHandRing1.rotateY;\r\r\RightFinger4_finger_control.rotateZ = RightHandPinky1.rotateZ;\r\RightFinger4_finger_control.MiddleJoint = RightHandPinky2.rotateZ;\r\RightFinger4_finger_control.LastJoint = RightHandPinky3.rotateZ;\r\RightFinger4_finger_control.rotateX = -RightHandPinky1.rotateX;\r\RightFinger4_finger_control.rotateY = -RightHandPinky1.rotateY;"  -o "" -n "finger_rot_expression" -ae 1 -uc all ;
+
+delete locator1;
+delete locator2;
+
+
+
+select -cl;
+//end=========
+}
+
+
+//备刻动画
+//躯干
+global proc F_333(){
+select -r dummy_Upper_Body_G;
+select -add dummy_Spine_pelvisnullFK;
+select -add dummy_Spine_middlenullFK;
+select -add dummy_Spine_torsonullIFK;
+select -add dummy_Head_rotationisolated;
+select -add dummy_Head_isolatecalculate;
+//手臂
+select -add dummy_LeftArm_shouldernull;
+select -add dummy_LeftArm_upperarmcontrolnull;
+select -add dummy_LeftArm_amiknull;
+select -add dummy_RightArm_shouldernull;
+select -add dummy_RightArm_upperarmcontrolnull;
+select -add dummy_RightArm_amiknull;
+
+select -add dummy_LeftArm_lowerarmcontrolnull;
+select -add dummy_LeftArm_handcontrolnull;
+select -add dummy_RightArm_lowerarmcontrolnull;
+select -add dummy_RightArm_handcontrolnull;
+
+
+//腿
+select -add dummy_LeftLeg_polevectorgroup;
+select -add dummy_LeftLeg_directioncompensate;
+select -add dummy_RightLeg_polevectorgroup;
+select -add dummy_RightLeg_directioncompensate;
+
+select -add dummy_LeftLeg_upperlegnull;
+select -add dummy_LeftLeg_lowerlegnull;
+select -add dummy_LeftLeg_footnull;
+select -add dummy_LeftLeg_toenull;
+select -add dummy_RightLeg_upperlegnull;
+select -add dummy_RightLeg_lowerlegnull;
+select -add dummy_RightLeg_footnull;
+select -add dummy_RightLeg_toenull;
+
+string $dummyctrl[] = `ls -sl`;
+float $endtime = `playbackOptions -q -maxTime`;
+
+  bakeResults -simulation true -t ("-50:"+$endtime) -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -controlPoints false -shape true ($dummyctrl);
+
+select -cl;
+
+
+
+//拷贝脚尖动画
+copyKey -time ":" -float ":" -hierarchy none -controlPoints 0 -shape 1 {"LeftToeBase.rotateX"};
+select -r dummy_LeftLeg_IK_Leg ;
+setKeyframe "dummy_LeftLeg_IK_Leg.RaiseHeel";
+pasteKey -option replace -copies 1 -connect 1 -timeOffset 0 -floatOffset 0 -valueOffset 0 {"dummy_LeftLeg_IK_Leg.RaiseHeel"};
+
+connectAttr -f dummy_LeftLeg_IK_Leg.RaiseHeel LeftLeg_IK_Leg.RaiseHeel;
+connectAttr -f dummy_LeftLeg_IK_Leg.LegStretch LeftLeg_IK_Leg.LegStretch;
+connectAttr -f dummy_LeftLeg_IK_Leg.AutoStretch LeftLeg_IK_Leg.AutoStretch;
+
+copyKey -time ":" -float ":" -hierarchy none -controlPoints 0 -shape 1 {"RightToeBase.rotateX"};
+select -r dummy_RightLeg_IK_Leg ;
+setKeyframe "dummy_RightLeg_IK_Leg.RaiseHeel";
+pasteKey -option replace -copies 1 -connect 1 -timeOffset 0 -floatOffset 0 -valueOffset 0 {"dummy_RightLeg_IK_Leg.RaiseHeel"};
+
+connectAttr -f dummy_RightLeg_IK_Leg.RaiseHeel RightLeg_IK_Leg.RaiseHeel;
+connectAttr -f dummy_RightLeg_IK_Leg.LegStretch RightLeg_IK_Leg.LegStretch;
+connectAttr -f dummy_RightLeg_IK_Leg.AutoStretch RightLeg_IK_Leg.AutoStretch;
+
+select -cl;
+
+
+
+//////////////////////////////////////
+  currentTime -50;
+
+
+//用中间控制器约束绑定角色
+//躯干
+parentConstraint -mo dummy_Character Character;
+scaleConstraint -mo -weight 1 dummy_Character Character;
+parentConstraint -mo dummy_Upper_Body Upper_Body;
+parentConstraint -mo dummy_Spine_Pelvis_FK Spine_Pelvis_FK;
+parentConstraint -mo dummy_Spine_Middle_FK Spine_Middle_FK;
+parentConstraint -mo dummy_Spine_Torso_FK Spine_Torso_FK;
+orientConstraint -mo dummy_Head_Neck Head_Neck;
+orientConstraint -mo dummy_Head_FK Head_FK;
+
+parentConstraint -mo dummy_Spine_Pelvis_FK Spine_Pelvis_IK;
+parentConstraint -mo dummy_Spine_Middle_FK Spine_Middle_IK;
+parentConstraint -mo dummy_Spine_Torso_FK Spine_Torso_IK;
+
+//手臂
+orientConstraint -mo dummy_LeftArm_Shoulder LeftArm_Shoulder;
+orientConstraint -mo dummy_LeftArm_Arm_Pole_Vector LeftArm_Arm_Pole_Vector;
+parentConstraint -mo dummy_LeftArm_Arm_IK LeftArm_Arm_IK;
+orientConstraint -mo dummy_LeftArm_Upper_Arm LeftArm_Upper_Arm;
+//orientConstraint -mo -skip x -skip z -weight 1 dummy_LeftArm_Lower_Arm LeftArm_Lower_Arm;
+orientConstraint -mo dummy_LeftArm_Hand LeftArm_Hand;
+orientConstraint -mo dummy_RightArm_Shoulder RightArm_Shoulder;
+orientConstraint -mo dummy_RightArm_Arm_Pole_Vector RightArm_Arm_Pole_Vector;
+parentConstraint -mo dummy_RightArm_Arm_IK RightArm_Arm_IK;
+orientConstraint -mo dummy_RightArm_Upper_Arm RightArm_Upper_Arm;
+//orientConstraint -mo -skip x -skip z -weight 1 dummy_RightArm_Lower_Arm RightArm_Lower_Arm;
+orientConstraint -mo dummy_RightArm_Hand RightArm_Hand;
+
+//肘+膝盖
+expression -s "LeftArm_Lower_Arm.rotateY = dummy_LeftArm_Lower_Arm.rotateY + dummy_LeftArm_lowerarmcontrolnull.rotateY;\r\nRightArm_Lower_Arm.rotateY = dummy_RightArm_Lower_Arm.rotateY + dummy_RightArm_lowerarmcontrolnull.rotateY;\r\nLeftLeg_Lower_Leg.rotateZ = dummy_LeftLeg_Lower_Leg.rotateZ + dummy_LeftLeg_lowerlegnull.rotateZ - 7.620086;\r\nRightLeg_Lower_Leg.rotateZ = dummy_RightLeg_Lower_Leg.rotateZ + dummy_RightLeg_lowerlegnull.rotateZ - 7.620086;"  -o "" -n "midball_end_expression" -ae 1 -uc all ;
+
+//腿
+parentConstraint -mo dummy_LeftLeg_IK_Leg LeftLeg_IK_Leg;
+parentConstraint -mo dummy_LeftLeg_Leg_Pole_Vector LeftLeg_Leg_Pole_Vector;
+orientConstraint -mo dummy_LeftLeg_Upper_Leg LeftLeg_Upper_Leg;
+//orientConstraint -mo -skip x -skip y -weight 1 dummy_LeftLeg_Lower_Leg LeftLeg_Lower_Leg;
+orientConstraint -mo dummy_LeftLeg_Foot LeftLeg_Foot;
+orientConstraint -mo dummy_LeftLeg_Toe LeftLeg_Toe;
+parentConstraint -mo dummy_RightLeg_IK_Leg RightLeg_IK_Leg;
+parentConstraint -mo dummy_RightLeg_Leg_Pole_Vector RightLeg_Leg_Pole_Vector;
+orientConstraint -mo dummy_RightLeg_Upper_Leg RightLeg_Upper_Leg;
+//orientConstraint -mo -skip x -skip y -weight 1 dummy_RightLeg_Lower_Leg RightLeg_Lower_Leg;
+orientConstraint -mo dummy_RightLeg_Foot RightLeg_Foot;
+orientConstraint -mo dummy_RightLeg_Toe RightLeg_Toe;
+
+connectAttr -f dummy_Upper_Body.Spine_FKIK Upper_Body.Spine_FKIK;
+connectAttr -f dummy_Upper_Body.LeftArm_FKIK Upper_Body.LeftArm_FKIK;
+connectAttr -f dummy_Upper_Body.RightArm_FKIK Upper_Body.RightArm_FKIK;
+connectAttr -f dummy_Upper_Body.RightLeg_FKIK Upper_Body.RightLeg_FKIK;
+connectAttr -f dummy_Upper_Body.LeftLeg_FKIK Upper_Body.LeftLeg_FKIK;
+
+
+select -cl;
+
+print "bake ok！！";
+}
+
+
+//生成最终动画
+//躯干
+global proc F_444(){
+select -r Character;
+select -add Upper_Body;
+select -add Spine_Pelvis_FK;
+select -add Spine_Middle_FK;
+select -add Spine_Torso_FK;
+select -add Head_Neck;
+select -add Head_FK;
+
+select -add Spine_Pelvis_IK;
+select -add Spine_Middle_IK;
+select -add Spine_Torso_IK;
+//手臂
+select -add LeftArm_Shoulder;
+select -add LeftArm_Arm_Pole_Vector;
+select -add LeftArm_Arm_IK;
+select -add RightArm_Shoulder;
+select -add RightArm_Arm_Pole_Vector;
+select -add RightArm_Arm_IK;
+select -add LeftArm_Upper_Arm;
+select -add LeftArm_Lower_Arm;
+select -add LeftArm_Hand;
+select -add RightArm_Upper_Arm;
+select -add RightArm_Lower_Arm;
+select -add RightArm_Hand;
+//腿
+select -add LeftLeg_IK_Leg;
+select -add LeftLeg_Leg_Pole_Vector;
+select -add RightLeg_IK_Leg;
+select -add RightLeg_Leg_Pole_Vector;
+select -add LeftLeg_Upper_Leg;
+select -add LeftLeg_Lower_Leg;
+select -add LeftLeg_Foot;
+select -add LeftLeg_Toe;
+select -add RightLeg_Upper_Leg;
+select -add RightLeg_Lower_Leg;
+select -add RightLeg_Foot;
+select -add RightLeg_Toe;
+
+
+string $dummyctrl[] = `ls -sl`;
+float $endtime = `playbackOptions -q -maxTime`;
+
+  bakeResults -simulation true -t ("-50:"+$endtime) -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -controlPoints false -shape true ($dummyctrl);
+
+select -cl;
+
+
+////////////////////////////
+channelBoxCommand -break;
+CBdeleteConnection "Character.v";
+ setAttr Character.visibility 1;
+ 
+ delete dummy_Character;
+
+  print "animation ok！！";
+  }
+
+
+//对根骨骼
+global proc F_duiguge(){
+    vector $aa=`xform -q -ws -t "Spine_joint1"`;
+    setAttr Hips.t ($aa.x) ($aa.y) ($aa.z);
+    setKeyframe "Hips.t";
+}
+
+
+global proc F_PL_ZH()
+{
+    string $file_name[];
+    string $path = `textFieldGrp -q -text xyrigFile`;
+    string $path_dir=substituteAllString($path,"\\","/");//换符号
+    string $fbx_file[]=`getFileList -fld ($path_dir+"/") -fs "*.mb"`;//读取所有.fbx文件
+ 
+   
+    int $num=size($fbx_file);        
+    
+    int $f_num=0;
+    for($f_num;$f_num<$num;$f_num++)
+    {
+         $file_name=stringToStringArray($fbx_file[$f_num],".");
+         $aaa_name=$path_dir+"/"+$fbx_file[$f_num];
+         start_1($aaa_name);
+         file -rn ($path_dir+"/"+$file_name[0]+"_ok.mb");
+         file -f -save  -options "v=0;" -type "mayaBinary";
+         print ($fbx_file[$f_num]+"OK\n"); 
+         file -f -new;
+    }
+}
+
+
+
+transformCatch();

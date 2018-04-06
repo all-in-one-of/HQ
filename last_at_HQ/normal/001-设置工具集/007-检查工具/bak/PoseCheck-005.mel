@@ -1,0 +1,425 @@
+global proc PoseCheck()
+{
+    if (`window -q -exists PoseCheckWindow`) deleteUI PoseCheckWindow;
+    window
+        -title "动作检查" -wh 200 100
+              PoseCheckWindow;
+   columnLayout -adjustableColumn 1;
+    text -l "";
+    rowColumnLayout -nc 2 -cw 1 200 -cw 2 70; 
+    optionMenuGrp -label "动作测试："  -columnWidth 1 100 PoseOMG;
+         menuItem -label "基础动作";
+         menuItem -label "xy动作";
+         menuItem -label "动捕动作";
+    button -l "开始测试" -c importAnimCam;
+     setParent ..; 
+ showWindow   PoseCheckWindow; 
+    
+} 
+
+
+global proc importAnimCam()
+{	
+  int $GetPoseOMG = `optionMenuGrp -q -sl PoseOMG`;
+  string $prefix = "";
+    
+  switch($GetPoseOMG)
+  {
+    case 1: 
+       if(`objExists "*:*Upper_Body"`)
+       {
+        select -r "*:*Upper_Body";
+        $prefix = "*:*";
+       }       
+       if(`objExists "*Upper_Body"`) 
+       {
+        select -r "*Upper_Body";
+        $prefix = "";	      
+       } 
+	   string $selUppderBody[] = `ls -sl`;
+	   if(size($selUppderBody) == 1 )
+	   { 
+         file -import -type "animImport" -ra true -namespace "pose" -options "targetTime=4;copies=1;option=replace;pictures=0;connect=0;"  -pr -loadReferenceDepth "all" "//10.99.1.2/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/007-检查工具/upperBody.anim";  	   	       
+	   } 
+	   else
+	   error "文件中有多个与大圈重命名的物体,无法导入动画曲线！";	
+    break;
+    
+    case 2:
+
+    break; 
+    
+    case 3:
+
+    break; 
+   
+  }
+
+  	   
+	   
+	   
+
+	   
+	   /*
+	   select -r "IK";
+	   string $selIK[] = `ls -sl`;
+	   if(size($selIK) == 1 )
+	   { 
+         file -import -type "animImport" -ra true -namespace "pose" -options "targetTime=4;copies=1;option=replace;pictures=0;connect=0;"  -pr -loadReferenceDepth "all" "//10.99.1.2/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/007-检查工具/IK.anim";  	   	       
+	   } 
+	   else
+	   error "文件中有多个与大圈重命名的物体,无法导入动画曲线！";
+	   */
+	   
+	   file -i "//10.99.1.2/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/007-检查工具/Pose_Check_cam.mb";
+       requires "stereoCamera" "10.0";
+	   
+ 
+	   playbackOptions -min 0 -max 1750;	         
+       
+       
+////////////////////////////////////////////////////////头动画///////////////////////////////////////////////////////////////////
+              
+       float $headP [] = `xform -q -ws -t ($prefix+"Head_joint4")`;
+       float $chestP [] = `xform -q -ws -t ($prefix+"Spine_joint5")`;
+       float $headChesty = abs($chestP[1]- $headP[1]);
+       
+       float $LelbowP [] = `xform -q -ws -t ($prefix+"LeftArm_joint5")`;
+       float $RelbowP [] = `xform -q -ws -t ($prefix+"RightArm_joint5")`;
+       float $LRelbowx = abs($LelbowP[0]- $RelbowP[0]);   
+       
+       float $headChestBiger = `max $headChesty $LRelbowx`;
+ 
+       setAttr cam_G.scaleX $headChestBiger;
+       setAttr cam_G.scaleY $headChestBiger;
+       setAttr cam_G.scaleZ $headChestBiger;  
+       
+       float $NeckMidP [] = `xform -q -ws -t ($prefix+"Head_joint2")`;
+       setAttr cam_G.translateX $NeckMidP[0];
+       setAttr cam_G.translateY $NeckMidP[1];
+  
+            
+       setAttr "cam_G.rotateY" 20;
+       setAttr "camera1.translateZ" 1.2;                    	    
+       setKeyframe -t 0 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 40 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 170 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 0 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+       setKeyframe -t 40 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+       setKeyframe -t 170 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+      
+/////////////////////////////////////////////////////手臂动画/////////////////////////////////////////////////////////////////// 
+
+
+       float $LeftArmP [] = `xform -q -ws -t ($prefix+"LeftFinger2_joint5")`;
+       float $RightArmP [] = `xform -q -ws -t ($prefix+"RightFinger2_joint5")`;      
+       float $Armx = abs($LeftArmP[0]- $RightArmP[0]);
+
+       setAttr cam_G.scaleX $Armx;
+       setAttr cam_G.scaleY $Armx;
+       setAttr cam_G.scaleZ $Armx;
+       
+       float $ArmMidP [] = `xform -q -ws -t ($prefix+"Spine_joint8")`;
+
+       setAttr cam_G.translateX $ArmMidP[0];
+       setAttr cam_G.translateY $ArmMidP[1];
+
+       setAttr "cam_G.rotateY" 20; 
+       setAttr "camera1.translateZ" 1.2;       
+       setKeyframe -t 180 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 340 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 180 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+       setKeyframe -t 340 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";      
+       
+////////////////////////////////////////////////手肘动画////////////////////////////////////////////////////////////////////       
+                           
+       	   
+       float $LeftHandP [] = `xform -q -ws -t ($prefix+"LeftArm_joint8")`;
+       float $LeftShoulderP [] = `xform -q -ws -t ($prefix+"LeftArm_joint1")`;
+       float $LeftElbowP [] = `xform -q -ws -t ($prefix+"LeftArm_joint5")`;        
+       float $LeftHandTipP [] = `xform -q -ws -t ($prefix+"LeftFinger2_joint5")`;
+           
+       float $LeftArmx = abs($LeftHandP[0]- $LeftShoulderP[0]);
+       float $LeftElbowx = abs($LeftHandTipP[0]- $LeftElbowP[0]);
+              
+       setAttr cam_G.scaleX ($LeftArmx+$LeftElbowx);
+       setAttr cam_G.scaleY ($LeftArmx+$LeftElbowx);
+       setAttr cam_G.scaleZ ($LeftArmx+$LeftElbowx);
+       
+       float $ElbowMidP [] = `xform -q -ws -t ($prefix+"LeftArm_joint5")`;
+
+       setAttr cam_G.translateX $ElbowMidP[0];
+       setAttr cam_G.translateY $ElbowMidP[1];
+
+       setAttr "cam_G.rotateX" -70;
+       setAttr "cam_G.rotateY" 20; 
+       setAttr "camera1.translateZ" 1.2;        
+       setKeyframe -t 345 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 380 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 345 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+       setKeyframe -t 380 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";       
+       
+       
+////////////////////////////////////////////////手指动画////////////////////////////////////////////////////////////////     
+     		   
+        
+       float $LeftHandTipP [] = `xform -q -ws -t ($prefix+"LeftFinger2_joint5")`;
+       float $LeftElbowP [] = `xform -q -ws -t ($prefix+"LeftArm_joint5")`;   
+       float $LeftHandP [] = `xform -q -ws -t ($prefix+"LeftArm_joint8")`; 
+                  
+       float $LeftWristx = abs($LeftHandTipP[0]- $LeftElbowP[0]);
+       float $LeftHandx = abs($LeftHandTipP[0]- $LeftHandP[0]);
+
+       setAttr cam_G.scaleX ($LeftWristx+$LeftHandx);
+       setAttr cam_G.scaleY ($LeftWristx+$LeftHandx);
+       setAttr cam_G.scaleZ ($LeftWristx+$LeftHandx);
+       
+       float $WristMidP [] = `xform -q -ws -t ($prefix+"LeftArm_joint8")`;
+
+       setAttr cam_G.translateX $WristMidP[0];
+       setAttr cam_G.translateY $WristMidP[1];
+
+       setAttr "cam_G.rotateX" -20;
+       setAttr "cam_G.rotateY" 20; 
+       setAttr "camera1.translateZ" 1.2;                      
+       setKeyframe -t 388 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 492 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;       		        		   
+       setKeyframe -t 388 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+       setKeyframe -t 492 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";  
+
+///////////////////////////////////////////////身体动画/////////////////////////////////////////////////////////////////
+
+
+       float $characterTop [] = `xform -q -ws -t ($prefix+"Head_joint4")`;
+       float $characterBttm [] = `xform -q -ws -t ($prefix+"LeftLeg_joint4")`;
+       float $characterLeft [] = `xform -q -ws -t ($prefix+"LeftFinger2_joint5")`;
+       float $characterRight [] = `xform -q -ws -t ($prefix+"RightFinger2_joint5")`; 
+       //float $characterTop [] = `xform -q -ws -t Head_joint4`;
+       //float $characterBttm [] = `xform -q -ws -t LeftLeg_joint9`;
+       float $bodyy = abs($characterTop[1]- $characterBttm[1]);
+       
+       setAttr cam_G.scaleX $bodyy;
+       setAttr cam_G.scaleY $bodyy;
+       setAttr cam_G.scaleZ $bodyy;
+       
+       float $BodyMidxp = $characterLeft[0] + $characterRight[0];
+       float $BodyMidyp = $characterTop[1] + $characterBttm[1];
+                  
+       setAttr cam_G.translateX ($BodyMidxp/2);
+       setAttr cam_G.translateY ($BodyMidyp/2);
+
+       setAttr "cam_G.rotateX" -10;
+       setAttr "cam_G.rotateY" 10;
+       setAttr "camera1.translateZ" 1.8;          
+       setKeyframe -t 500 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 635 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 500 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+       setKeyframe -t 635 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+       float $characterLeft [] = `xform -q -ws -t ($prefix+"LeftFinger2_joint5")`;
+       float $characterRight [] = `xform -q -ws -t ($prefix+"RightFinger2_joint5")`; 
+       float $characterTop [] = `xform -q -ws -t ($prefix+"Head_joint4")`;
+       float $characterBttm [] = `xform -q -ws -t ($prefix+"LeftLeg_joint9")`;
+       
+       float $characterWidth = abs($characterLeft [0] - $characterRight [0]);
+       float $characterHeight = abs($characterTop [1] - $characterBttm [1]);
+       float $h = `max $characterWidth $characterHeight`;
+       
+       setAttr cam_G.scaleX $h;
+       setAttr cam_G.scaleY $h;
+       setAttr cam_G.scaleZ $h;
+
+       float $BodyMidxp = $characterLeft[0] + $characterRight[0];
+       float $BodyMidyp = $characterTop[1] + $characterBttm[1];
+                  
+       setAttr cam_G.translateX ($BodyMidxp/2);
+       setAttr cam_G.translateY ($BodyMidyp/2);
+
+       setAttr "cam_G.rotateX" 0; 
+       setAttr "cam_G.rotateY" 80;
+       setAttr "camera1.translateZ" 1.7;        
+       setKeyframe -t 650 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;                                  
+       setKeyframe -t 900 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G; 
+       setKeyframe -t 650 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";                                  
+       setKeyframe -t 900 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";        
+//////////////////////////////////////////////////////////////////////////////////////////////
+       
+       float $LeftArmP [] = `xform -q -ws -t ($prefix+"LeftFinger2_joint5")`;
+       float $RightArmP [] = `xform -q -ws -t ($prefix+"RightFinger2_joint5")`;      
+       float $Armx = abs($LeftArmP[0]- $RightArmP[0]);
+
+       setAttr cam_G.scaleX $Armx;
+       setAttr cam_G.scaleY $Armx;
+       setAttr cam_G.scaleZ $Armx;
+       
+       float $ArmMidP [] = `xform -q -ws -t ($prefix+"Spine_joint8")`;
+
+       setAttr cam_G.translateX $ArmMidP[0];
+       setAttr cam_G.translateY $ArmMidP[1];                    
+             
+       setAttr "cam_G.rotateY" 10;
+       setAttr "camera1.translateZ" 1.2;       
+       setKeyframe -t 915 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;  
+       setKeyframe -t 1172 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G; 
+       setKeyframe -t 915 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";  
+       setKeyframe -t 1172 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+       float $characterLeft [] = `xform -q -ws -t ($prefix+"LeftFinger2_joint5")`;
+       float $characterRight [] = `xform -q -ws -t ($prefix+"RightFinger2_joint5")`; 
+       float $characterTop [] = `xform -q -ws -t ($prefix+"Head_joint4")`;
+       float $characterBttm [] = `xform -q -ws -t ($prefix+"LeftLeg_joint9")`;
+       
+       float $characterWidth = abs($characterLeft [0] - $characterRight [0]);
+       float $characterHeight = abs($characterTop [1] - $characterBttm [1]);
+       float $h = `max $characterWidth $characterHeight`;
+       
+       setAttr cam_G.scaleX $h;
+       setAttr cam_G.scaleY $h;
+       setAttr cam_G.scaleZ $h;
+
+       float $BodyMidxp = $characterLeft[0] + $characterRight[0];
+       float $BodyMidyp = $characterTop[1] + $characterBttm[1];
+                  
+       setAttr cam_G.translateX ($BodyMidxp/2);
+       setAttr cam_G.translateY ($BodyMidyp/2);
+
+
+       setAttr "cam_G.rotateY" 30; 
+       setAttr "camera1.translateZ" 1.6;     
+       setKeyframe -t 1180 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;  
+       setKeyframe -t 1629 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;  
+       setKeyframe -t 1180 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";  
+       setKeyframe -t 1629 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";       
+//////////////////////////////////////////////////////////////////////////////////////////////
+       
+       float $LeftArmP [] = `xform -q -ws -t ($prefix+"LeftFinger2_joint5")`;
+       float $RightArmP [] = `xform -q -ws -t ($prefix+"RightFinger2_joint5")`;      
+       float $Armx = abs($LeftArmP[0]- $RightArmP[0]);
+
+       setAttr cam_G.scaleX $Armx;
+       setAttr cam_G.scaleY $Armx;
+       setAttr cam_G.scaleZ $Armx;
+       
+       float $ArmMidP [] = `xform -q -ws -t ($prefix+"Spine_joint8")`;
+
+       setAttr cam_G.translateX $ArmMidP[0];
+       setAttr cam_G.translateY $ArmMidP[1];
+             
+       setAttr "cam_G.rotateY" 0;
+       setAttr "camera1.translateZ" 1.2; 
+       setKeyframe -t 1635 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 1635 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 "camera1.tz";                                     
+/*              
+//////////////////////////////////////////////腿动画///////////////////////////////////////////////////////////////////       
+       
+       float $spinep [] = `xform -q -ws -t Spine_joint7`;
+       float $LeftToeTipp [] = `xform -q -ws -t LeftLeg_joint9`;
+       float $legp [] = `xform -q -ws -t LeftLeg_joint1`;
+       float $kneep [] = `xform -q -ws -t LeftLeg_joint4`;
+                     
+       float $legy = abs($spinep[1]- $LeftToeTipp[1]);
+       float $kneey = abs($kneep[1]- $legp[1]);       
+
+       setAttr cam_G.scaleX ($legy+$kneey);
+       setAttr cam_G.scaleY ($legy+$kneey);
+       setAttr cam_G.scaleZ ($legy+$kneey);
+       
+       float $SpineMidP [] = `xform -q -ws -t LeftLeg_joint4`;
+
+       setAttr cam_G.translateX $SpineMidP[0];
+       setAttr cam_G.translateY $SpineMidP[1];
+
+       setAttr "cam_G.rotateX" 0; 
+       setAttr "cam_G.rotateY" 80; 
+              
+       setKeyframe -t 750 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;                     
+       setKeyframe -t 900 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       
+ ///////////////////////////////////////////////脚动画///////////////////////////////////////////////////////////////////
+ 
+ 
+       float $legp [] = `xform -q -ws -t LeftLeg_joint1`;
+       float $LeftToeTipp [] = `xform -q -ws -t LeftLeg_joint9`;
+       float $ankley = abs($legp[1]- $LeftToeTipp[1]);
+       
+       setAttr cam_G.scaleX ($ankley*2);
+       setAttr cam_G.scaleY ($ankley*2);
+       setAttr cam_G.scaleZ ($ankley*2); 
+          
+       float $AnkleMidp [] = `xform -q -ws -t LeftLeg_joint7`;
+       
+       setAttr cam_G.translateX $AnkleMidp[0];
+       setAttr cam_G.translateY $AnkleMidp[1];
+      
+       setAttr "cam_G.rotateX" 0; 
+       setAttr "cam_G.rotateY" 80; 
+              
+       setKeyframe -t 750 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+       setKeyframe -t 900 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;
+ 
+ 
+ 
+       
+       
+ /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+ 
+       
+       float $characterLeft [] = `xform -q -ws -t LeftFinger2_joint5`;
+       float $characterRight [] = `xform -q -ws -t RightFinger2_joint5`; 
+       float $characterTop [] = `xform -q -ws -t Head_joint4`;
+       float $characterBttm [] = `xform -q -ws -t LeftLeg_joint9`;
+       
+       float $characterWidth = abs($characterLeft [0] - $characterRight [0]);
+       float $characterHeight = abs($characterTop [1] - $characterBttm [1]);
+       float $h = `max $characterWidth $characterHeight`;
+       
+       setAttr cam_G.scaleX $h;
+       setAttr cam_G.scaleY $h;
+       setAttr cam_G.scaleZ $h;
+
+       float $BodyMidxp = $characterLeft[0] + $characterRight[0];
+       float $BodyMidyp = $characterTop[1] + $characterBttm[1];
+                  
+       setAttr cam_G.translateX ($BodyMidxp/2);
+       setAttr cam_G.translateY ($BodyMidyp/2);
+      
+       setAttr "cam_G .rotateY" 15;
+        
+       setKeyframe -t 900 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;	  
+       setKeyframe -t 910 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;	       
+       
+/////////////////////////////////////////////整体动画/////////////////////////////////////////////////////////////////////
+
+       setAttr "cam_G .rotateY" 45; 
+       setKeyframe -t 950 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;     
+       setKeyframe -t 1550 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G; 
+       setAttr "cam_G .rotateY" 15;               
+       setKeyframe -t 1600 -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 cam_G;        	              
+*/       	   	   	  	   
+	   lookThru camera1;
+
+         setAttr -lock true "camera1.tx";
+         setAttr -lock true "camera1.ty";
+         setAttr -lock true "camera1.tz";
+         setAttr -lock true "camera1.rx";
+         setAttr -lock true "camera1.ry";
+         setAttr -lock true "camera1.rz";
+         setAttr -lock true "camera1.sx";
+         setAttr -lock true "camera1.sy";
+         setAttr -lock true "camera1.sz";
+         setAttr -lock true "camera1.v";
+
+	   currentTime 1750;
+
+         print "完成！";
+
+	           
+}
+PoseCheck();
+
+
+
+ 

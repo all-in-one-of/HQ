@@ -1,0 +1,143 @@
+global proc xxx(){
+select -r L_brow4_FC_faceMapShape;
+select -add L_brow4_directFC_faceMapShape;
+select -add L_brow3_FC_faceMapShape;
+select -add L_brow3_directFC_faceMapShape;
+select -add L_brow2_FC_faceMapShape;
+select -add L_brow2_directFC_faceMapShape;
+select -add L_brow1_FC_faceMapShape;
+select -add L_brow1_directFC_faceMapShape;
+select -add L_noseWing_FC_faceMapShape;
+select -add L_noseWing_directFC_faceMapShape;
+select -add R_noseWing_FC_faceMapShape;
+select -add L_upperMouth_FC_faceMapShape;
+select -add L_upperMouth_directFC_faceMapShape;
+select -add L_mouth_FC_faceMapShape;
+select -add L_mouth_directFC_faceMapShape;
+select -add L_lowerMouth_FC_faceMapShape;
+select -add L_lowerMouth_directFC_faceMapShape;
+select -add L_innerEye_FC_faceMapShape;
+select -add L_innerEye_directFC_faceMapShape;
+select -add L_outerEye_FC_faceMapShape;
+select -add L_outerEye_directFC_faceMapShape;
+select -add L_lowerLid_FC_faceMapShape;
+select -add L_upperLid_FC_faceMapShape;
+select -add L_innerLowerLid_FC_faceMapShape;
+select -add L_outerLowerLid_FC_faceMapShape;
+select -add L_outerUpperLid_FC_faceMapShape;
+select -add L_innerUpperLid_FC_faceMapShape;
+select -add L_lowerEye_FC_faceMapShape;
+select -add L_upperEye_FC_faceMapShape;
+select -add R_brow1_FC_faceMapShape;
+select -add R_brow1_directFC_faceMapShape;
+select -add R_brow2_FC_faceMapShape;
+select -add R_brow2_directFC_faceMapShape;
+select -add R_brow3_FC_faceMapShape;
+select -add R_brow3_directFC_faceMapShape;
+select -add R_brow4_FC_faceMapShape;
+select -add R_brow4_directFC_faceMapShape;
+select -add R_noseWing_directFC_faceMapShape;
+select -add R_upperMouth_FC_faceMapShape;
+select -add R_upperMouth_directFC_faceMapShape;
+select -add R_lowerMouth_FC_faceMapShape;
+select -add R_lowerMouth_directFC_faceMapShape;
+select -add R_mouth_FC_faceMapShape;
+select -add R_mouth_directFC_faceMapShape;
+select -add R_innerEye_FC_faceMapShape;
+select -add R_innerEye_directFC_faceMapShape;
+select -add R_outerEye_FC_faceMapShape;
+select -add R_outerEye_directFC_faceMapShape;
+select -add R_lowerLid_FC_faceMapShape;
+select -add R_upperLid_FC_faceMapShape;
+select -add R_innerLowerLid_FC_faceMapShape;
+select -add R_outerLowerLid_FC_faceMapShape;
+select -add R_outerUpperLid_FC_faceMapShape;
+select -add R_innerUpperLid_FC_faceMapShape;
+select -add R_lowerEye_FC_faceMapShape;
+select -add R_upperEye_FC_faceMapShape;
+select -add chin_FC_faceMapShape;
+select -add lowerForehead_FC_faceMapShape;
+select -add upperForehead_FC_faceMapShape;
+select -add L_jawCorner_FC_faceMapShape;
+select -add L_lowerOrbital_FC_faceMapShape;
+select -add L_cheekBone_FC_faceMapShape;
+select -add L_cheekPocket_FC_faceMapShape;
+select -add L_cheek_FC_faceMapShape;
+select -add L_chin_FC_faceMapShape;
+select -add L_outerOrbital_FC_faceMapShape;
+select -add L_lowerForehead_FC_faceMapShape;
+select -add L_upperForehead_FC_faceMapShape;
+select -add R_jawCorner_FC_faceMapShape;
+select -add R_lowerOrbital_FC_faceMapShape;
+select -add R_cheekBone_FC_faceMapShape;
+select -add R_cheekPocket_FC_faceMapShape;
+select -add R_cheek_FC_faceMapShape;
+select -add R_chin_FC_faceMapShape;
+select -add R_outerOrbital_FC_faceMapShape;
+select -add R_lowerForehead_FC_faceMapShape;
+select -add R_upperForehead_FC_faceMapShape;
+select -add upperNose_FC_faceMapShape;
+select -add upperTeeth_FC_faceMapShape;
+select -add tongue_FC_faceMapShape;
+select -add lowerTeeth_FC_faceMapShape;
+select -add L_eye_FC_faceMapShape;
+select -add R_eye_FC_faceMapShape;
+select -add IK_eye_FC_faceMapShape;
+select -add jaw_FC_faceMapShape;
+select -add lowerMouth_FC_faceMapShape;
+select -add lowerMouth_directFC_faceMapShape;
+select -add browCrease_FC_faceMapShape;
+select -add browCrease_directFC_faceMapShape;
+select -add noseControl_FC_faceMapShape;
+select -add noseControl_directFC_faceMapShape;
+select -add upperMouth_FC_faceMapShape;
+select -add upperMouth_directFC_faceMapShape;
+select -add primaryControls_faceMapToggleShape;
+select -add secondaryControls_faceMapToggleShape;
+select -add faceMap_backgroundShape;
+
+string $sel[] = `ls -sl`;
+pickWalk -d down;
+string $sel001;
+int $num = size($sel);
+for($i =0;$i<$num;$i=$i+1)
+ {
+$sel001 = $sel[$i];
+select -add $sel001;	
+setAttr ($sel001+".castsShadows") 0;
+setAttr ($sel001+".receiveShadows") 0;
+setAttr ($sel001+".motionBlur") 0;
+setAttr ($sel001+".primaryVisibility") 0;
+setAttr ($sel001+".smoothShading") 0;
+setAttr ($sel001+".visibleInReflections") 0;
+setAttr ($sel001+".visibleInRefractions") 0;
+
+setAttr -l true { $sel001 + ".csh" };
+setAttr -l true { $sel001 + ".rcsh" };
+setAttr -l true { $sel001 + ".mb" };
+setAttr -l true { $sel001 + ".vis" };
+setAttr -l true { $sel001 + ".smo" };
+setAttr -l true { $sel001 + ".vir" };
+setAttr -l true { $sel001 + ".vif" };
+
+  }
+  
+string $myhandover = "不可渲染属性设置成功!";
+print   $myhandover;
+
+select -cl;
+
+setAttr "L_noseWing_FC.autoSneer" 0;
+setAttr "R_noseWing_FC.autoSneer" 0;
+setAttr -lock true "L_noseWing_FC.autoSneer";
+setAttr -lock true "R_noseWing_FC.autoSneer";
+
+scaleConstraint -mo -weight 1 FM_middleOfHead FM_faceMapGroup;
+
+setAttr "L_noseWing_FC_autoBuffer_parentConstraint1.noseControl_directFCW2" 0;
+setAttr "L_noseWing_FC_autoBuffer_parentConstraint1.nose_targetW1" 0;
+
+setAttr "R_noseWing_FC_autoBuffer_parentConstraint1.noseControl_directFCW2" 0;
+setAttr "R_noseWing_FC_autoBuffer_parentConstraint1.nose_targetW1" 0;
+
+};xxx;

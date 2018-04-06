@@ -1,0 +1,520 @@
+global proc createOBJonCurve()
+{
+    if (`window -q -exists createOBJonCurveWin`) deleteUI createOBJonCurveWin;
+    window
+        -title "曲线创建物体" -wh 330 150
+        -maximizeButton 0 -minimizeButton 1
+              createOBJonCurveWin;
+
+    columnLayout -adjustableColumn 0;
+        ///添加新的命名
+        frameLayout -label "曲线创建物体" -borderStyle "etchedIn"
+                -collapse 0 -collapsable 1
+                -marginWidth 5 -marginHeight 5;
+              columnLayout;
+                   text -l " 选择曲线！";
+                   separator  -height 10;
+                   
+                   rowColumnLayout -numberOfColumns 2
+                            -cw 1 60 -cw 2 60 
+                             -cs 1 0 -cs 2 0 ;
+                        text -label "物体数量：";
+                        intField -minValue 1 -v 1 sl_jointOnCurvesFirst;                   
+                   setParent ..;
+                   
+                   separator  -height 5;
+                   
+                   radioButtonGrp -numberOfRadioButtons 3
+                              -label " 物体类型:" 
+                              -cw 1 100 -cl4  left left left left
+                              -labelArray3 "骨骼链" "单个骨骼" "自选物体" 
+                              -sl 1 
+                              -onCommand1 "formLayout -e -en 1 FL"                         
+                              -onCommand2 "formLayout -e -en 0 FL"
+                              -onCommand3 "formLayout -e -en 0 FL"                              
+                             "JointSytle";
+                             
+                   separator  -height 5;                
+
+                   radioButtonGrp -numberOfRadioButtons 2
+                              -label " 创建路径动画:" 
+                              -cw 1 100 -cl3  left left left
+                              -labelArray2 "是" "否" 
+                              -sl 1 
+                              -onCommand1 "formLayout -e -en 0 RB"                         
+                              -onCommand2 "formLayout -e -en 1 RB"                              
+                             "MotionPath";
+                   separator  -height 5;                                                                                  
+                  
+ 	       formLayout -en 1 FL; 
+             columnLayout;             
+                checkBoxGrp -label " 打断inverseScale:" -cw 1 100 -cl2 left left InverseScaleCBX;
+                   
+                separator  -height 10;                                                 
+                              
+	         formLayout -en 0 RB;	                                                              
+               checkBoxGrp -label " 创建IK:" -cw 1 100 -cl2 left left IKCBX;
+              setParent ..;                  
+            setParent ..;
+         setParent ..; 
+                    
+         separator  -height 10; 
+                                                                                          
+                 
+           button -label "创建" -w 80 -c "create";                        
+                                     
+        setParent..;
+        window -edit -widthHeight 420 220 createOBJonCurveWin;
+        showWindow  createOBJonCurveWin;
+
+}
+
+
+global proc create()
+{
+  int $MotionPath = `radioButtonGrp -q -select MotionPath`;
+  int $JointType = `radioButtonGrp -q -select JointSytle`;    
+  int $IKspline = `checkBoxGrp -q -v1 IKCBX`;
+  int $inverseScale = `checkBoxGrp -q -v1 InverseScaleCBX`;
+  int $GetJointNum = `intField -q -v sl_jointOnCurvesFirst`; 
+  
+//有路径动画的///////////////////////////////////////////////////////////////////////////////////////
+  if($MotionPath == 1)
+  {
+   string $select[] = `ls -sl`;
+   if(size($select) == 0)
+   {
+    error "没有曲线被选择！！！";   
+    }
+   if(size($select) != 0)
+   {
+    
+   //单个骨骼的/////////////////////////////////////////////////////////////////////////////////////
+    if($JointType == 2)
+    { 
+      select -cl;
+      joint -p 0 0 0 -n "base_joint1";
+      string $selJoint[] = `ls -sl`;
+      select -cl;
+      int $n;
+      group -em -n ($select[0]+"_G");
+      if($GetJointNum == 1)
+      {
+        select -r $selJoint[0];
+        string $duplicateJoint[] = `duplicate -rr`;
+        rename $duplicateJoint[0] "path_joint1";
+        string $Obj[] = `ls -sl`;
+        pathAnimation -fractionMode true -follow true -followAxis z -upAxis y -worldUpType "vector" -worldUpVector 0 1 0 -inverseUp false -inverseFront false -bank false -startTimeU `playbackOptions -query -minTime` -endTimeU  `playbackOptions -query -maxTime` -c $select[0] $Obj[0];
+        string $GetMotionPathNode[] = `listConnections -s 1 ($Obj[0]+".rx")`;
+        string $GetMotionPathUValue[] = `listConnections -s 1 ($GetMotionPathNode[0] +".uValue")`;
+        delete $GetMotionPathUValue[0];
+        setAttr ($GetMotionPathNode[0] + ".u") 0.5;
+        parent $Obj[0] ($select[0]+"_G");            
+       }
+      if($GetJointNum > 1)
+      {
+        for($n = 0;$n<$GetJointNum;$n++)
+        {
+          select -r $selJoint[0];
+          string $duplicateJoint[] = `duplicate -rr`;
+          rename $duplicateJoint[0] "path_joint1";
+          string $Obj[] = `ls -sl`;
+          //pathAnimation -follow on -fa z -ua y -startTimeU `playbackOptions -query -minTime` -endTimeU  `playbackOptions -query -maxTime` -c $select[0] $Obj[0];
+          pathAnimation -fractionMode true -follow true -followAxis z -upAxis y -worldUpType "vector" -worldUpVector 0 1 0 -inverseUp false -inverseFront false -bank false -startTimeU `playbackOptions -query -minTime` -endTimeU  `playbackOptions -query -maxTime` -c $select[0] $Obj[0];
+          string $GetMotionPathNode[] = `listConnections -s 1 ($Obj[0]+".rx")`;
+          string $GetMotionPathUValue[] = `listConnections -s 1 ($GetMotionPathNode[0] +".uValue")`;
+          delete $GetMotionPathUValue[0];
+          float $uValue = float($n)/float($GetJointNum-1);
+          setAttr ($GetMotionPathNode[0] + ".u") $uValue;
+          parent $Obj[0] ($select[0]+"_G");
+        }        
+      
+      }
+      
+      delete base_joint1;
+      select -cl;
+      print "创建完成！";
+      
+    }
+
+
+
+  //骨骼链/////////////////////////////////////////////////////////////////////////////////////////
+    if($JointType == 1)
+    {
+        
+      if($GetJointNum == 1)
+      {
+       error "骨骼链的骨骼数量最小为2！！";   
+      }
+      if($GetJointNum > 1)
+      {
+      select -cl;
+      joint -p 0 0 0 -n "base_joint1";
+      string $selJoint[] = `ls -sl`;
+      select -cl;
+      int $m;
+      group -em -n ($select[0]+"_G");
+      for($m = 0;$m<$GetJointNum;$m++)
+      {
+          select -r $selJoint[0];
+          string $duplicateJoint[] = `duplicate -rr`;
+          rename $duplicateJoint[0] ("path_joint"+($m+1));
+          string $Obj[] = `ls -sl`;
+          pathAnimation -fractionMode true -follow true -followAxis z -upAxis y -worldUpType "vector" -worldUpVector 0 1 0 -inverseUp false -inverseFront false -bank false -startTimeU `playbackOptions -query -minTime` -endTimeU  `playbackOptions -query -maxTime` -c $select[0] $Obj[0];
+          string $GetMotionPathNode[] = `listConnections -s 1 ($Obj[0]+".rx")`;
+          string $GetMotionPathUValue[] = `listConnections -s 1 ($GetMotionPathNode[0] +".uValue")`;
+          delete $GetMotionPathUValue[0];
+          float $uValue = float($m)/float($GetJointNum-1);
+          setAttr ($GetMotionPathNode[0] + ".u") $uValue;
+          parent $Obj[0] ($select[0]+"_G");
+          catch (`parent $Obj[0] ("path_joint"+($m))`);
+      }              
+    
+     }
+      
+
+      select -hi "path_joint1";
+      string $getPathJointChain[] = `ls -sl`;     
+     
+      //打断inverseScale
+      if($inverseScale == 1)
+      {
+        int $k,$l;
+        for($k=0;$k<size($getPathJointChain);$k++) 
+        {
+          string $connectPathJoint[] = `listConnections -s 0 -d 1 -t joint $getPathJointChain[$k]`;
+          for($l=0;$l<size($connectPathJoint);$l++)
+          {
+            disconnectAttr ($getPathJointChain[$k]+".scale") ($connectPathJoint[$l]+".inverseScale");       
+          }        
+        }            
+      }
+  
+ 
+    /*      
+     //创建IK////////////////////////////////////////////////////////////////////////////////////
+      if($IKspline == 1)
+      {
+        
+        int $GetJointNum = `intField -q -v sl_jointOnCurvesFirst`;  
+
+        ikHandle -sol ikSplineSolver -ccv false -scv false -pcv false -ns 2 -sj $getPathJointChain[0] -ee $getPathJointChain[$GetJointNum-1] -c $select[0];
+                    
+      }
+    */  
+      
+      delete base_joint1;
+      select -cl;
+      print "创建完成！";
+                 
+    }
+    
+
+    
+  }
+      
+ }
+  
+  
+
+
+
+
+
+
+
+  
+//不带路径动画的////////////////////////////////////////////////////////////////////////////////////
+  if($MotionPath == 2)
+  {  
+          
+   //单个骨骼的///////////////////////////////////////////////////////////////////////////////////
+   if($JointType == 2)
+   {
+
+    int $GetJointNum = `intField -q -v sl_jointOnCurvesFirst`;
+    
+    if($GetJointNum  == 1)
+    {
+      string $select[] = `ls -sl`;
+      group -em -n ($select[0]+"_G");
+      
+      if(size($select) == 0)
+      {
+       error "没有曲线被选择！！！";   
+      }
+      if(size($select) != 0)
+      {
+      select -cl;
+      joint -p 0 0 0 -n "del_jnt";
+      string $selJoint[] = `ls -sl`;
+      select -cl;
+
+      pathAnimation -fractionMode true -follow true -followAxis z -upAxis y -worldUpType "vector" -worldUpVector 0 1 0 -inverseUp false -inverseFront false -bank false -startTimeU `playbackOptions -query -minTime` -endTimeU  `playbackOptions -query -maxTime` -c $select[0] $selJoint[0];
+      string $GetMotionPathNode[] = `listConnections -s 1 ($selJoint[0]+".rx")`;
+      string $GetMotionPathUValue[] = `listConnections -s 1 ($GetMotionPathNode[0] +".uValue")`;
+      delete $GetMotionPathUValue[0];      
+      setAttr ($GetMotionPathNode[0] + ".u") 0.5;
+      string $newJoint = `joint -p 0 0 0 -n "joint1"`;  
+      float $getJointTran[] = `xform -q -ws -t $selJoint[0]`; 
+     
+      setAttr ($newJoint+".tx") $getJointTran[0];
+      setAttr ($newJoint+".ty") $getJointTran[1];
+      setAttr ($newJoint+".tz") $getJointTran[2];
+      
+      parent $newJoint ($select[0]+"_G");
+            
+           
+      delete $selJoint[0];
+     }  
+    }
+    if($GetJointNum > 1)
+    {
+    string $type = "joint";
+     
+   // int $JointType = `radioButtonGrp -q -select JointSytle`; 
+         
+	string $curves[] = `ls -sl -long`;
+	group -em -n ($curves[0]+"_G");
+	int $NumberOfCurves = `size($curves)`;
+	if($NumberOfCurves == 0)
+	{
+	  error "没有曲线被选择！！！";	
+	}
+	if($NumberOfCurves != 0)
+	{
+
+	string $t;
+	int $curveCount = 0;
+	for ($t in $curves)
+	{
+		select -r $t;
+		string $iShape[] = `pickWalk -d down`;
+
+		if (`objectType -isType "nurbsCurve" $iShape[0]`)
+		{
+			string $pathNodes[];
+			int $numTokens = tokenize($t, "|", $pathNodes);
+			string $myObj = $pathNodes[$numTokens - 1];
+
+			// faccio il query del nome originale della curva (per poterlo riutilizzare in seguito)
+			string $OriginalCurveName_ = $t;
+
+			// duplico la curva
+			select -r $t ;
+			string $newCurve_[] = `duplicate -smartTransform`;
+
+			// seleziono la curva duplicata e la freezo
+			select $newCurve_[0];
+			makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+
+			// faccio il rebuild della curva in base al numero di joints che la mia joint Chain deve avere
+			//int $numberOfSpans = $GetJointNum - 1;
+			int $numberOfSpans;
+	
+			$numberOfSpans = $GetJointNum - 1;
+
+			rebuildCurve -ch 1 -rpo 1 -rt 0 -end 1 -kr 0 -kcp 0 -kep 1 -kt 0 -s $numberOfSpans -d 3 -tol 0.01 $newCurve_[0];
+
+		    // faccio il query delle spans della curva
+			float $NumberOfSpans = `getAttr ($newCurve_[0] + ".spans")`;
+			// calcolo il numero degli EP della curva
+			// EP = Span + 1
+			float $NumberOfEP = $NumberOfSpans + 1;
+
+			// faccio il query della posizione del primo EditPoint della curva
+			string $ep_0 = $newCurve_[0] + ".ep[0]";
+			string $tempCluster[0] = `cluster $ep_0`;
+			float $cluster_xyz[] = `xform -q -rp -ws $tempCluster[1]`;
+
+			// creo il primo joint della catena
+			select -cl;
+			string $RootJoint;
+
+			$RootJoint = `joint -p $cluster_xyz[0] $cluster_xyz[1] $cluster_xyz[2]`;
+
+			delete $tempCluster[1];
+
+            parent $RootJoint ($curves[0]+"_G");
+
+			// creo la catena di joint
+			string $BaseJoint = $RootJoint;
+			int $r;
+			for ($r = 1; $r < $NumberOfEP; $r++)
+			{
+				$ep_0 = $newCurve_[0] + ".ep[" + $r + "]";
+				string $tempCluster[0] = `cluster $ep_0`;
+				float $cluster_xyz[] = `xform -q -rp -ws $tempCluster[1]`;
+	
+				string $newJoint = `joint -p $cluster_xyz[0] $cluster_xyz[1] $cluster_xyz[2]`;
+
+				parent -w $newJoint;
+
+				delete $tempCluster[1];
+				
+                parent $newJoint ($curves[0]+"_G");				 
+								
+			}
+
+			delete $newCurve_[0];
+			$curveCount++;
+		
+		  }
+	   }
+	 
+	 } 
+	
+   }     
+    select -cl;
+    print "创建完成！";                      
+  }
+  
+ 
+  //骨骼链////////////////////////////////////////////////////////////////////////////////////////
+    if($JointType == 1)
+    {
+
+     string $type = "jointChain";       
+	 string $curves[] = `ls -sl -long`;
+	 group -em -n ($curves[0]+"_G");	 
+	 int $NumberOfCurves = `size($curves)`;
+	 if($NumberOfCurves == 0)
+	{
+	  error "没有曲线被选择！！！";	
+	}
+	if($NumberOfCurves != 0)
+	{
+	 
+	 int $GetJointNum = `intField -q -v sl_jointOnCurvesFirst`;
+	 if($GetJointNum == 1)
+	 {
+	  error "骨骼链的骨骼数量最小为2！！";   
+	 }
+	 if($GetJointNum > 1)
+	 {
+	 string $i;
+	 int $curveCount = 0;
+	 for ($i in $curves)
+	 {
+		select -r $i;
+		string $iShape[] = `pickWalk -d down`;
+
+		if (`objectType -isType "nurbsCurve" $iShape[0]`)
+		{
+			string $pathNodes[];
+			int $numTokens = tokenize($i, "|", $pathNodes);
+			string $myObj = $pathNodes[$numTokens - 1];
+
+			// faccio il query del nome originale della curva (per poterlo riutilizzare in seguito)
+			string $OriginalCurveName_ = $i;
+
+			// duplico la curva
+			select -r $i ;
+			string $newCurve_[] = `duplicate -smartTransform`;
+
+			// seleziono la curva duplicata e la freezo
+			select $newCurve_[0];
+			makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+
+			// faccio il rebuild della curva in base al numero di joints che la mia joint Chain deve avere
+			//int $numberOfSpans = $GetJointNum - 1;
+			int $numberOfSpans;
+
+			$numberOfSpans = $GetJointNum - 1;						
+
+			rebuildCurve -ch 1 -rpo 1 -rt 0 -end 1 -kr 0 -kcp 0 -kep 1 -kt 0 -s $numberOfSpans -d 3 -tol 0.01 $newCurve_[0];
+
+			// faccio il query delle spans della curva
+			float $NumberOfSpans = `getAttr ($newCurve_[0] + ".spans")`;
+			// calcolo il numero degli EP della curva
+			// EP = Span + 1
+			float $NumberOfEP = $NumberOfSpans + 1;
+
+			// faccio il query della posizione del primo EditPoint della curva
+			string $ep_0 = $newCurve_[0] + ".ep[0]";
+			string $tempCluster[0] = `cluster $ep_0`;
+			float $cluster_xyz[] = `xform -q -rp -ws $tempCluster[1]`;
+
+			// creo il primo joint della catena
+			select -cl;
+			string $RootJoint = `joint -p $cluster_xyz[0] $cluster_xyz[1] $cluster_xyz[2] `;							
+
+			delete $tempCluster[1];
+
+			// creo la catena di joint
+			string $BaseJoint = $RootJoint;
+			int $j;
+			for ($j = 1; $j < $NumberOfEP; $j++)
+			{
+									
+			  $ep_0 = $newCurve_[0] + ".ep[" + $j + "]";
+			  string $tempCluster[0] = `cluster $ep_0`;
+			  float $cluster_xyz[] = `xform -q -rp -ws $tempCluster[1]`;
+
+			  //string $boneName = $myObj + "_joint_" + ($j + 1);
+			  string $newJoint = `joint -p $cluster_xyz[0] $cluster_xyz[1] $cluster_xyz[2]`;
+
+			  parent $newJoint $BaseJoint;
+			  $BaseJoint = $newJoint;
+
+			  delete $tempCluster[1];
+
+			}
+
+
+			// ri-oriento la catena
+			select -r $RootJoint;
+			joint -e -oj xyz -secondaryAxisOrient yup -ch -zso;
+
+			// elimino la curva duplicata e utilizzata per la costruzione della catena
+			delete $newCurve_[0];
+			$curveCount++;
+		}
+
+	 }
+	
+  } 	
+	
+      string $getJointChainRoot[] = `ls -sl`;
+      parent $getJointChainRoot[0] ($curves[0]+"_G");
+      select -hi $getJointChainRoot[0];
+      string $getJointChain[] = `ls -sl`;
+
+
+     //打断inverseScale//////////////////////////////////////////////////////////////////////////////
+      if($inverseScale == 1)
+      {
+        int $g,$f;
+        for($g=0;$g<size($getJointChain);$g++) 
+        {
+          string $connectJoint[] = `listConnections -s 0 -d 1 -t joint $getJointChain[$g]`;
+          for($f=0;$f<size($connectJoint);$f++)
+          {
+            disconnectAttr ($getJointChain[$g]+".scale") ($connectJoint[$f]+".inverseScale");       
+          }        
+        }
+        
+      } 
+        
+      //创建IK//////////////////////////////////////////////////////////////////////////////////////
+      if($IKspline == 1)
+      {
+        int $GetJointNum = `intField -q -v sl_jointOnCurvesFirst`; 
+
+        ikHandle -sol ikSplineSolver -ccv false -scv false -pcv false -ns 2 -sj $getJointChain[0] -ee $getJointChain[$GetJointNum-1] -c $curves[0];
+  
+      }                          
+                     
+    select -cl;
+    print "创建完成！";  
+                 
+    }
+    
+   }
+    
+  }
+     
+}
+
+createOBJonCurve()

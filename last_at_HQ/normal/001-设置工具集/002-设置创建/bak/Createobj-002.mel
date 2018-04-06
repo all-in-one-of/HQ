@@ -1,0 +1,58 @@
+global proc createOBJonCurve()
+{
+    // Builds the interface for the splitSelJointUI
+
+    string $win  = "createOBJonCurveWin";
+    if (`window -exists $win`)
+        deleteUI $win;
+
+    window -t "create obj on curve" $win;
+
+    columnLayout -adj 1;
+    text -l "先选择物体，再选择曲线！";
+    separator -h 10 -st "none";
+    intSliderGrp -label "count:" -field true -fieldMinValue 1 -minValue 1 -v 1 getObjNum_SLGrp;	
+    separator -h 10 -st "none";
+	button -l "create" -c create;
+
+    showWindow $win;
+}
+
+
+global proc create()
+{
+ int $GetNum = `intSliderGrp -q -v getObjNum_SLGrp`; 
+ string $select[] = `ls -sl`;
+ int $n;
+ group -em -n ($select[1]+"_G");
+ if($GetNum == 1)
+ {
+   select -r $select[0];
+   duplicate -rr;
+   string $Obj[] = `ls -sl`;
+   pathAnimation -follow on -fa z -ua y -c $select[1] $Obj[0];
+   string $GetMotionPathNode[] = `listConnections -s 1 ($Obj[0]+".rx")`;
+   string $GetMotionPathUValue[] = `listConnections -s 1 ($GetMotionPathNode[0] +".uValue")`;
+   delete $GetMotionPathUValue[0];
+   setAttr ($GetMotionPathNode[0] + ".u") 0.5;
+   parent $Obj[0] ($select[1]+"_G");   
+ }
+ if($GetNum > 1)
+ {
+  for($n = 0;$n<$GetNum;$n++)
+  {
+   select -r $select[0];
+   duplicate -rr;
+   string $Obj[] = `ls -sl`;
+   pathAnimation -follow on -fa z -ua y -c $select[1] $Obj[0];
+   string $GetMotionPathNode[] = `listConnections -s 1 ($Obj[0]+".rx")`;
+   string $GetMotionPathUValue[] = `listConnections -s 1 ($GetMotionPathNode[0] +".uValue")`;
+   delete $GetMotionPathUValue[0];
+   float $uValue = float($n)/float($GetNum-1);
+   setAttr ($GetMotionPathNode[0] + ".u") $uValue;
+   parent $Obj[0] ($select[1]+"_G");
+  }        
+ }
+ 
+}
+createOBJonCurve();

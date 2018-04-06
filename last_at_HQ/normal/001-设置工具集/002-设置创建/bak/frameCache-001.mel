@@ -1,0 +1,286 @@
+global proc createFrameCache()
+{
+  if (`window -q -exists createFrameCacheWin`) deleteUI createFrameCacheWin;
+  window
+       -title "创建延迟设置" -wh 330 150
+       -maximizeButton 0 -minimizeButton 1
+       createFrameCacheWin;
+       
+  columnLayout -adjustableColumn 1;
+  
+    rowColumnLayout -nc 2 -cw 1 310 -cw 2 60; 
+     textFieldGrp -label "指定源物体：" -text "" -cw 1 80 -cw 2 220 getOriginalOBJTFG;  
+     button -l "<<获取" -c getOriginalOBJ;                   
+    setParent ..; 
+    
+    rowColumnLayout -nc 2 -cw 1 310 -cw 2 60; 
+     textFieldGrp -label "指定延迟物体：" -text "" -cw 1 80 -cw 2 220 getCacheOBJTFG;  
+     button -l "<<获取" -c getCacheOBJ;                   
+    setParent ..;     
+
+    rowColumnLayout -nc 2 -cw 1 210 -cw 2 60; 
+     textFieldGrp -label "指定总控制器：" -text "" -cw 1 80 -cw 2 100 getCtrlTFG;  
+     button -l "<<获取" -c getCtrl;                   
+    setParent ..; 
+    
+    separator -height 10 -style "in"; 
+    
+    columnLayout;
+     checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  translate:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 60 -cw 3 60 -cw 4 60 -cl4 left left left left
+        translateCBG;                
+        
+     checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  rotate:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 60 -cw 3 60 -cw 4 60 -cl4 left left left left
+        rotateCBG;
+     checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  scale:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 60 -cw 3 60 -cw 4 60 -cl4 left left left left
+        scaleCBG;  
+     checkBoxGrp
+        -numberOfCheckBoxes 1
+        -label "  visibility:"        
+        -cw 1 80 -cw 2 60 -cl2 left left
+        visbilityCBG;                          
+    setParent..;
+     
+    separator -height 10 -style "in"; 
+  
+    rowColumnLayout -nc 2 -cw 1 210 -cw 2 60; 
+     textFieldGrp -label "延迟帧数：" -text "" -cw 1 80 -cw 2 100 getCacheFrameTFG;  
+     button -l "生成" -c frameCache;                   
+    setParent ..;              
+   setParent ..;  
+     
+  window -edit -widthHeight 420 210 createFrameCacheWin;
+  showWindow  createFrameCacheWin;    
+}
+
+
+global proc getOriginalOBJ()
+{
+  string $selOriginalOBJ[] = `ls -sl`; 
+  textFieldGrp -e -tx $selOriginalOBJ[0] getOriginalOBJTFG;  
+}
+
+global proc getCacheOBJ()
+{
+  string $selCacheOBJ[] = `ls -sl`;
+  int $i;
+  string $listSelCacheOBJ;
+  for($i=0;$i<size($selCacheOBJ);$i++)
+  {
+    $listSelCacheOBJ += $selCacheOBJ[$i] + ",";   
+  } 
+  textFieldGrp -e -tx $listSelCacheOBJ getCacheOBJTFG;  
+}
+
+global proc getCtrl()
+{
+  string $selCtrl[] = `ls -sl`; 
+  textFieldGrp -e -tx $selCtrl[0] getCtrlTFG;  
+}
+
+
+global proc frameCache()
+{
+ string $getOriginalOBJ = `textFieldGrp -q -tx getOriginalOBJTFG`;
+ string $getCacheOBJ = `textFieldGrp -q -tx getCacheOBJTFG`;
+ string $getCtrl = `textFieldGrp -q -tx getCtrlTFG`;
+  
+ int $translateX = `checkBoxGrp -q -v1 translateCBG`;
+ int $translateY = `checkBoxGrp -q -v2 translateCBG`;
+ int $translateZ = `checkBoxGrp -q -v3 translateCBG`;  
+ int $rotateX = `checkBoxGrp -q -v1 rotateCBG`;
+ int $rotateY = `checkBoxGrp -q -v2 rotateCBG`; 
+ int $rotateZ = `checkBoxGrp -q -v3 rotateCBG`; 
+ int $scaleX = `checkBoxGrp -q -v1 scaleCBG`;
+ int $scaleY = `checkBoxGrp -q -v2 scaleCBG`;
+ int $scaleZ = `checkBoxGrp -q -v3 scaleCBG`; 
+ int $visibility = `checkBoxGrp -q -v1 visbilityCBG`;
+
+ int $getCacheFrame = `textFieldGrp -q -tx getCacheFrameTFG`;
+
+ string $eachCacheOBJ[];
+ int $numOfCacheOBJ = `tokenize $getCacheOBJ "," $eachCacheOBJ`;
+ int $o;
+ 
+ string $expression_tx = "";
+ string $expression_ty = "";
+ string $expression_tz = ""; 
+ string $expression_rx = ""; 
+ string $expression_ry = "";
+ string $expression_rz = ""; 
+ string $expression_sx = ""; 
+ string $expression_sy = "";  
+ string $expression_sz = ""; 
+ string $expression_visbility = "";  
+ string $wholeExpression;
+ 
+ string $listExpression[] = `ls -type "expression" "frameCache_switch"`; 
+ if(size($listExpression) == 1)
+ {
+   delete "frameCache_switch";      
+ } 
+
+ for($o=0;$o<$numOfCacheOBJ;$o++)
+ {
+///创建frameCache节点///////////////////////////////////////
+   if($translateX == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_tx")`)
+   {
+    delete ("frameCache_"+$o+"*_tx");   
+   }
+   createNode frameCache -n ("frameCache_" + $o + "_tx"); 
+   connectAttr -f ($getOriginalOBJ + ".tx") ("frameCache_" + $o + "_tx.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_tx.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".tx");
+   
+   $expression_tx += "frameCache_" + $o + "_tx.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";     
+  } 
+  
+  
+   if($translateY == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_ty")`)
+   {
+    delete ("frameCache_"+$o+"*_ty");   
+   }   
+   createNode frameCache -n ("frameCache_" + $o + "_ty"); 
+   connectAttr -f ($getOriginalOBJ + ".ty") ("frameCache_" + $o + "_ty.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_ty.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".ty");         
+   
+   $expression_ty += "frameCache_" + $o + "_ty.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";   
+  }
+  
+     
+   if($translateZ == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_tz")`)
+   {
+    delete ("frameCache_"+$o+"*_tz");   
+   }    
+   createNode frameCache -n ("frameCache_" + $o + "_tz"); 
+   connectAttr -f ($getOriginalOBJ + ".tz") ("frameCache_" + $o + "_tz.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_tz.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".tz"); 
+   
+   $expression_tz += "frameCache_" + $o + "_tz.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";           
+  }   
+  
+   if($rotateX == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_rx")`)
+   {
+    delete ("frameCache_"+$o+"*_rx");   
+   }   
+   createNode frameCache -n ("frameCache_" + $o + "_rx");  
+   connectAttr -f ($getOriginalOBJ + ".rx") ("frameCache_" + $o + "_rx.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_rx.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".rx");  
+   
+   $expression_rx += "frameCache_" + $o + "_rx.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";         
+  } 
+  
+    
+   if($rotateY == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_ry")`)
+   {
+    delete ("frameCache_"+$o+"*_ry");   
+   }    
+   createNode frameCache -n ("frameCache_" + $o + "_ry");
+   connectAttr -f ($getOriginalOBJ + ".ry") ("frameCache_" + $o + "_ry.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_ry.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".ry");
+   
+   $expression_ry += "frameCache_" + $o + "_ry.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";              
+  }
+  
+   
+   if($rotateZ == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_rz")`)
+   {
+    delete ("frameCache_"+$o+"*_rz");   
+   }    
+   createNode frameCache -n ("frameCache_" + $o + "_rz");
+   connectAttr -f ($getOriginalOBJ + ".rz") ("frameCache_" + $o + "_rz.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_rz.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".rz");
+   
+   $expression_rz += "frameCache_" + $o + "_rz.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";              
+  }   
+  
+   if($scaleX == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_sx")`)
+   {
+    delete ("frameCache_"+$o+"*_sx");   
+   }   
+   createNode frameCache -n ("frameCache_" + $o + "_sx");  
+   connectAttr -f ($getOriginalOBJ + ".sx") ("frameCache_" + $o + "_sx.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_sx.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".sx"); 
+   
+   $expression_sx += "frameCache_" + $o + "_sx.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";           
+  } 
+  
+    
+   if($scaleY == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_sy")`)
+   {
+    delete ("frameCache_"+$o+"*_sy");   
+   }    
+   createNode frameCache -n ("frameCache_" + $o + "_sy"); 
+   connectAttr -f ($getOriginalOBJ + ".sy") ("frameCache_" + $o + "_sy.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_sy.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".sy");
+   
+   $expression_sy += "frameCache_" + $o + "_sy.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";             
+  } 
+  
+  
+   if($scaleZ == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_sz")`)
+   {
+    delete ("frameCache_"+$o+"*_sz");   
+   }    
+   createNode frameCache -n ("frameCache_" + $o + "_sz");
+   connectAttr -f ($getOriginalOBJ + ".sz") ("frameCache_" + $o + "_sz.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_sz.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".sz"); 
+   
+   $expression_sz += "frameCache_" + $o + "_sz.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";               
+  } 
+  
+  
+   if($visibility == 1)
+  {
+   if(`objExists ("frameCache_"+$o+"*_visbility")`)
+   {
+    delete ("frameCache_"+$o+"*_visbility");   
+   }     
+   createNode frameCache -n ("frameCache_" + $o + "_visbility");  
+   connectAttr -f ($getOriginalOBJ + ".visbility") ("frameCache_" + $o + "_visbility.stream"); 
+   connectAttr -f ("frameCache_" + $o + "_visbility.past[" + $getCacheFrame + "]") ($eachCacheOBJ[$o] + ".visbility");
+   
+   $expression_visbility += "frameCache_" + $o + "_visbility.nodeState = (1-" + $getCtrl + ".frameCache)*2;\n";            
+  } 
+               
+ }
+ 
+   $wholeExpression = $expression_tx + $expression_ty + $expression_tz + $expression_rx + $expression_ry +$expression_rz +$expression_sx + $expression_sy + $expression_sz + $expression_visbility;
+   expression -s $wholeExpression -n "frameCache_switch"; 
+   print "完成！";   
+    
+}
+createFrameCache();
+
+
+
+
+

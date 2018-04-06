@@ -1,0 +1,321 @@
+global proc mod_clean()
+{
+    if (`window -q -exists mod_cleanWindow`) deleteUI mod_cleanWindow;
+    window
+        -title "模型清理" -wh 200 500
+              mod_cleanWindow;
+
+        columnLayout -adjustableColumn 1;
+        ///添加新的命名
+     frameLayout -l "模型清理" -labelAlign "top" -cll true -borderStyle "etchedOut"; 
+       rowColumnLayout -nc 3 -cw 1 80 -cw 2 200 -cw 3 80;
+       	text -l " 前缀名：" -al "left";
+        textField -ed 1 -tx "" addPrefixFld;       
+        button -label "清理"  -c Clean;       
+       //setParent ..;
+         //text -l "\n 请在下滑线前输入前缀名\n" -al "left";
+      setParent ..;
+      setParent..;
+ 
+     frameLayout -l "导出模型" -labelAlign "top" -cll true -borderStyle "etchedOut";
+      columnLayout;        
+       rowColumnLayout -nc 3 -cw 1 80 -cw 2 200 -cw 3 80;
+	     text -l " 导出路径：" -al "left";
+	     textField -ed 1 -tx "" fldPath;
+	     button -l "浏览..." -c getPATH;
+	   setParent ..;
+       rowColumnLayout -nc 3 -cw 1 80 -cw 2 200 -cw 3 80;
+	     text -l " 导出文件名：" -al "left";
+	     textField -ed 1 -tx "" fldName;	   
+	     button -l "导出" -c ExportMod;
+         //text -l "\n 导出的模型为路径下的角色前缀名_cleanMod.mb文件\n" -al "left";
+      setParent ..;           
+    setParent ..; 
+    
+ showWindow  mod_cleanWindow;
+}
+
+global string $path;
+global string $return[];
+global proc getPATH ()
+{
+	string $return[] = `fileDialog2 -ds 2 -fm 3 -cap btnEXPORT -okc "Select" -cc "Cancel"`;
+    string $path = $return[0];
+
+	if ( size ( $path ) != 0)
+	{
+		textField -e -tx $path fldPath;
+	}
+};
+
+global proc ExportMod()
+{
+  string $GetPrefix = `textField -q -text addPrefixFld`;
+  string $GetName = `textField -q -text fldName`;
+  string $GetPath = `textField -q -text fldPath`;
+
+  string $PathNameChange = substituteAllString($GetPath, "/", "//");
+  string $getPathFileName[] = `getFileList -folder ($PathNameChange + "//") -filespec "*.mb"`;
+  string $ExportFileName = $GetName + ".mb";
+  string $wholePath = $GetPath+"/"+$ExportFileName;
+  
+  int $matchName = stringArrayContains($ExportFileName,$getPathFileName);
+
+   if($matchName ==1)
+   {       
+     //confirmDialog -title "Warning" -message ("此路径中有重命名的文件，请重新命名！" ) -button "确认";
+    string $getAnswer = ` confirmDialog -title "Confirm" 
+              -message "already exists.\nDo you want to replace it?"
+              -button "Yes"
+              -button "No"`;
+               
+    if($getAnswer == "Yes" )
+    {        
+    file -force -options "v=0" -typ "mayaBinary" -pr -es $wholePath; 
+    confirmDialog -title "ExportComfirm" -message ("文件已经导出到指定路径,文件名为："+$ExportFileName) -button "确认";            
+    }
+    else
+    {
+    //confirmDialog -title "ExportComfirm" -message ("请返回重命名") -button "确认";            
+    }
+   } 
+   else if($matchName ==0)
+   {       
+    file -force -options "v=0" -typ "mayaBinary" -pr -es $wholePath;   
+    confirmDialog -title "ExportComfirm" -message ("文件已经导出到指定路径,文件名为："+$ExportFileName) -button "确认";       
+   }  
+         
+}
+
+
+
+global proc Clean()
+{
+
+/////////////////////////////////////////复制，打组，清历史，解锁，归零//////////////////////////////////////////////////////////////
+ string $GetPrefix = `textField -q -text addPrefixFld`;  
+ duplicate -rr;
+ parent -w;
+ group -n ($GetPrefix + "geo");
+ select -hi ($GetPrefix + "geo");
+ string $selMod[] = `ls -sl -tr`;
+  
+ int $i;
+ for($i=1;$i<size($selMod);$i++)
+ {
+  string $tx = $selMod[$i]+".tx";
+  string $ty = $selMod[$i]+".ty";
+  string $tz = $selMod[$i]+".tz";
+  string $rx = $selMod[$i]+".rx";
+  string $ry = $selMod[$i]+".ry";
+  string $rz = $selMod[$i]+".rz";
+  string $sx = $selMod[$i]+".sx";
+  string $sy = $selMod[$i]+".sy";
+  string $sz = $selMod[$i]+".sz";
+  string $vis = $selMod[$i]+".v";
+  
+  select -r $selMod[$i];
+  
+  setAttr -lock off $tx;
+  setAttr -lock off $ty;
+  setAttr -lock off $tz;  
+  setAttr -lock off $rx;
+  setAttr -lock off $ry; 
+  setAttr -lock off $rz;
+  setAttr -lock off $sx;
+  setAttr -lock off $sy; 
+  setAttr -lock off $sz; 
+  setAttr -lock off $vis; 
+              
+  DeleteHistory; 
+  FreezeTransformations;
+  makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;  
+  rename $selMod[$i] ($GetPrefix + "geo"+$i);
+ }
+ select -cl;
+ 
+/////////////////////////////////////////////////////////清理未知节点//////////////////////////////////////////////////////////////////////////////
+
+string $del_unknow[] = `ls -type "unknown"`;
+string $del_unknow_int = size($del_unknow);
+int $j;
+for($j = 0;$j<size($del_unknow);$j++)
+{ 
+if(`objExists $del_unknow[$j]`)
+{	
+lockNode -lock 0 $del_unknow[$j];
+delete $del_unknow[$j];
+};
+};
+print ("总共清理 " + $del_unknow_int + " 个未知节点！\n" );
+//text -e -l ("共去除 " + $del_unknow_int + " 个节点");
+
+//////////////////////////////////////////////////////////清理灯光链接////////////////////////////////////////////////////////////////////////////////
+
+int $debug=0;
+    int $uselessLinkCount;
+    int $dlsLinkers, $dosLinkers, $isgLinkers, $ipseLinkers, $drgLinkers, $dhrgLinkers;
+    string $ws = `workspace -q -fn`;
+    string $fn = `file -sn -q -shn`;
+    string $file = $ws + "/linkers_in_" + $fn + ".txt";
+    int $fileId;
+    $startTime = `timerX`;
+    waitCursor -st on;
+    string $linkers_dls[] = `listConnections -plugs true -source no defaultLightSet.message`;
+    string $linkers_dos[] = `listConnections -plugs true -source no defaultObjectSet.message`;
+    string $linkers_isg[] = `listConnections -plugs true -source no initialShadingGroup.message`;
+    string $linkers_ipse[] = `listConnections -plugs true -source no initialParticleSE.message`;
+    string $linkers_drg[] = `listConnections -plugs true -source no defaultRenderGlobals.message`;
+    string $linkers_dhrg[] = `listConnections -plugs true -source no defaultHardwareRenderGlobals.message`;
+    int $linkersCount =
+        size($linkers_dls) +
+        size($linkers_dos) +
+        size($linkers_isg) +
+        size($linkers_ipse) +
+        size($linkers_dhrg) +
+        size($linkers_dhrg);
+    if ($debug) {
+        $fileId = `fopen $file "w"`;
+        fprint $fileId ($linkersCount + " linkers found!\r\n");
+        fprint $fileId ("Below are linkers considered useless, \r\n" +
+            "which can be disconnected by running { fh_cleanUpLightlinkers(0) }!\r\n");
+        fprint $fileId ("\r\n");
+    } else if ( $linkersCount > 5000 ) {
+        print "Maya 正在断开无用灯光链接，请稍候……\n";
+    }
+    if (size($linkers_dls) != 0) {
+        for ( $linker in $linkers_dls ) {
+            string $srcAttr;
+            string $tmp[] = stringToStringArray($linker, ".");
+            int $len = size($tmp);
+            string $linkerNode = $tmp[0]+"."+$tmp[1];
+            if ( $tmp[$len-1] == "shadowLight" ) {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".shadowObject")`;
+            } else {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".object")`;
+            }
+            if ( $srcAttr == "" ) {
+                continue;
+            } else if
+                ( $srcAttr == "initialShadingGroup.message" // connections between initialShadingGroup.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "initialParticleSE.message" // connections between initialParticleSE.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultObjectSet.message" // connections between defaultObjectSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultLightSet.message" // connections between defaultLightSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "hyperGraphLayout.message" // connections between hyperGraphLayout.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultRenderGlobals.message" // connections between defaultRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultHardwareRenderGlobals.message" // connections between defaultHardwareRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                )
+            {
+                if ($debug) {
+                    fprint $fileId ("connection defaultLightSet.msg "+$linker+";\r\n");
+                } else {
+                    disconnectAttr defaultLightSet.message $linker;
+                }
+                $dlsLinkers++;
+            }
+        }
+    }
+    clear $linkers_dls;
+    if (size($linkers_dos) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dos ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultObjectSet.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultObjectSet.message $linker;
+            }
+            $dosLinkers++;
+        }
+    }
+    clear $linkers_dos;
+    if (size($linkers_isg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_isg ) {
+            if($linker != "initialMaterialInfo.shadingGroup") {
+                if ($debug) {
+                    fprint $fileId ("connection initialShadingGroup.msg " + $linker + ";\r\n");
+                } else {
+                    disconnectAttr initialShadingGroup.message $linker;
+                }
+                $isgLinkers++;
+            }
+        }
+    }
+    clear $linkers_isg;
+    if (size($linkers_ipse) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_ipse ) {
+            if ($debug) {
+                fprint $fileId ("connection initialParticleSE.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr initialParticleSE.message $linker;
+            }
+            $ipseLinkers++;
+        }
+    }
+    clear $linkers_ipse;
+    if (size($linkers_drg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_drg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultRenderGlobals.message $linker;
+            }
+            $drgLinkers++;
+        }
+    }
+    clear $linkers_drg;
+    if (size($linkers_dhrg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dhrg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultHardwareRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultHardwareRenderGlobals.message $linker;
+            }
+            $dhrgLinkers++;
+        }
+    }
+    clear $linkers_dhrg;
+    $uselessLinkCount =
+        $dlsLinkers + $dosLinkers +
+        $isgLinkers + $ipseLinkers +
+        $dhrgLinkers + $drgLinkers;
+    if (!$debug) {
+        print ($dlsLinkers + " 个链接从 defaultLightSet 断开！\n");
+        print ($dosLinkers + " 个链接从 defaultObjectSet 断开！\n");
+        print ($isgLinkers + " 个链接从 initialShadingGroup 断开！\n");
+        print ($ipseLinkers + " 个链接从 initialParticleSE 断开！\n");
+        print ($drgLinkers + " 个链接从 defaultRenderGlobals 断开！\n");
+        print ($dhrgLinkers + " 个链接从 defaultHardwareRenderGlobals 断开！\n");
+    }
+    print ("总共清理 " + $uselessLinkCount + " 个无用灯光链接！\n" );
+    clear $linkers_dos;
+    clear $linkers_dls;
+    clear $linkers_isg;
+    clear $linkers_ipse;
+    if ($debug) {
+        fprint $fileId ("\r\n");
+        fprint $fileId ("场景中共有 " + $uselessLinkCount + " 个无用链接！\r\n");
+        fclose $fileId;
+        print ("链接信息已写入到 "+$file+"\n");
+        print ("你可以运行 { fh_cleanUpLightlinkers(0); } 把它们断开!\n");
+    }
+    waitCursor -st off;
+    $elaspedTime = `timerX -startTime $startTime`;
+    //print ("总共耗时： "+$elaspedTime+" 秒!\n");
+    string $lign[] = `ls "lightLinker1.link[*].lightIgnored"`;
+    string $oign[] = `ls "lightLinker1.link[*].objectIgnored"`;
+    string $sllk[]= `ls "lightLinker1.slnk[*].shadowLight"`;
+    string $solk[]= `ls "lightLinker1.slnk[*].shadowObject"`;
+    string $slig[]= `ls "lightLinker1.sign[*].shadowLightIgnored"`;
+    string $soig[]= `ls "lightLinker1.sign[*].shadowObjectIgnored"`;
+    int $linkersCount = size($lign)+size($oign)+size($sllk)+size($solk)+size($slig)+size($soig);
+    if ($linkersCount > 1000) {
+        warning ("找到 "+$linkersCount + " 个非照明（使某灯光不照明某物体的）灯光链接，这可能导致 maya 变慢！\n");
+    }
+
+
+}
+mod_clean();

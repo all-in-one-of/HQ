@@ -1,0 +1,636 @@
+python("import pathforuser");
+//python("reload(pathforuser)");
+string $absolutPath=`python("pathforuser.path_dir()")`;
+global string $path;
+$path = $absolutPath+"003-骨骼链对位/关节肌肉系统/jirouguge_jnt.mb";
+
+
+
+global proc catchWindow()
+{
+
+if(`window -ex catchWindow`)
+		deleteUI catchWindow;
+
+ window -t "肌肉骨骼对位" catchWindow;
+	columnLayout -adj 1 catch_columnLayout; // 主布局
+
+button -l "导入骨骼" -c "importCatchJoint";
+button -l "对位肌肉骨骼" -c "duiweiCatchJoint";
+
+setParent ..;
+setParent ..;
+
+showWindow catchWindow;
+}
+catchWindow;
+
+global proc importCatchJoint()
+{	
+  global string $path;      
+
+       //string $scriptPath = `internalVar -usd`;//得到脚本目录
+       //string $mbPath = $scriptPath + "MocapCharacter_jnt.mb";
+       if (!`objExists MocapCharacter_jnt.mb`)
+       file -i $path;//导入控制图标们
+       else
+	   error "基本骨骼已经存在!!!";   
+}
+
+
+
+global proc duiweiCatchJoint()
+{
+select -r ("*"+"Spine_joint1") ;
+select -add Hips ;
+pointConstraint -offset 0 0 0 -weight 1;
+delete Hips_pointConstraint1 ;
+
+
+
+select -cl;
+
+select -add ("*"+"Spine_joint2") ;
+select -add ("*"+"Spine_joint3") ;
+select -add ("*"+"Spine_joint4") ;
+select -add ("*"+"Spine_joint5");
+select -add ("*"+"Spine_joint6") ;
+select -add ("*"+"Spine_joint7") ;
+select -add ("*"+"Spine_joint8");
+select -add ("*"+"Head_joint1");
+select -add ("*"+"Head_joint2");
+select -add ("*"+"Head_joint3");
+select -add ("*"+"Head_joint4");
+
+select -add ("*"+"LeftArm_joint1");
+select -add ("*"+"LeftArm_joint2");
+select -add ("*"+"LeftArm_joint3");
+select -add ("*"+"LeftArm_joint4");
+select -add ("*"+"LeftArm_joint5");
+select -add ("*"+"LeftArm_joint6");
+select -add ("*"+"LeftArm_joint7");
+select -add ("*"+"LeftArm_joint8");
+select -add ("*"+"LeftThumb_joint1");
+select -add ("*"+"LeftThumb_joint2");
+select -add ("*"+"LeftThumb_joint3");
+select -add ("*"+"LeftThumb_joint4");
+select -add ("*"+"LeftFinger1_joint2");
+select -add ("*"+"LeftFinger1_joint3");
+select -add ("*"+"LeftFinger1_joint4");
+select -add ("*"+"LeftFinger1_joint5");
+select -add ("*"+"LeftFinger2_joint2");
+select -add ("*"+"LeftFinger2_joint3");
+select -add ("*"+"LeftFinger2_joint4");
+select -add ("*"+"LeftFinger2_joint5");
+select -add ("*"+"LeftFinger3_joint2");
+select -add ("*"+"LeftFinger3_joint3");
+select -add ("*"+"LeftFinger3_joint4");
+select -add ("*"+"LeftFinger3_joint5");
+select -add ("*"+"LeftFinger4_joint2");
+select -add ("*"+"LeftFinger4_joint3");
+select -add ("*"+"LeftFinger4_joint4");
+select -add ("*"+"LeftFinger4_joint5");
+select -add ("*"+"LeftLeg_joint1");
+select -add ("*"+"LeftLeg_joint2");
+select -add ("*"+"LeftLeg_joint3");
+select -add ("*"+"LeftLeg_joint4");
+select -add ("*"+"LeftLeg_joint5");
+select -add ("*"+"LeftLeg_joint6");
+select -add ("*"+"LeftLeg_joint7");
+select -add ("*"+"LeftLeg_joint8");
+select -add ("*"+"LeftLeg_joint9");
+
+select -add ("*"+"RightArm_joint1");
+select -add ("*"+"RightArm_joint2");
+select -add ("*"+"RightArm_joint3");
+select -add ("*"+"RightArm_joint4");
+select -add ("*"+"RightArm_joint5");
+select -add ("*"+"RightArm_joint6");
+select -add ("*"+"RightArm_joint7");
+select -add ("*"+"RightArm_joint8");
+select -add ("*"+"RightThumb_joint1");
+select -add ("*"+"RightThumb_joint2");
+select -add ("*"+"RightThumb_joint3");
+select -add ("*"+"RightThumb_joint4");
+select -add ("*"+"RightFinger1_joint2");
+select -add ("*"+"RightFinger1_joint3");
+select -add ("*"+"RightFinger1_joint4");
+select -add ("*"+"RightFinger1_joint5");
+select -add ("*"+"RightFinger2_joint2");
+select -add ("*"+"RightFinger2_joint3");
+select -add ("*"+"RightFinger2_joint4");
+select -add ("*"+"RightFinger2_joint5");
+select -add ("*"+"RightFinger3_joint2");
+select -add ("*"+"RightFinger3_joint3");
+select -add ("*"+"RightFinger3_joint4");
+select -add ("*"+"RightFinger3_joint5");
+select -add ("*"+"RightFinger4_joint2");
+select -add ("*"+"RightFinger4_joint3");
+select -add ("*"+"RightFinger4_joint4");
+select -add ("*"+"RightFinger4_joint5");
+select -add ("*"+"RightLeg_joint1");
+select -add ("*"+"RightLeg_joint2");
+select -add ("*"+"RightLeg_joint3");
+select -add ("*"+"RightLeg_joint4");
+select -add ("*"+"RightLeg_joint5");
+select -add ("*"+"RightLeg_joint6");
+select -add ("*"+"RightLeg_joint7");
+select -add ("*"+"RightLeg_joint8");
+select -add ("*"+"RightLeg_joint9");
+string $character_jnt[] =`ls -sl`;
+int $character_size = `size $character_jnt`;
+
+select -cl;
+
+select -add Spine ;
+select -add Spine1 ;
+select -add Spine2 ;
+select -add Spine3 ;
+select -add Spine4 ;
+select -add Spine5 ;
+select -add Spine6 ;
+select -add Neck ;
+select -add Neck1 ;
+select -add Head ;
+select -add Head_End ;
+select -add LeftShoulder ;
+select -add LeftArm ;
+select -add LeftArmRoll ;
+select -add LeftArmRoll1 ;
+select -add LeftForeArm ;
+select -add LeftForeArmRoll ;
+select -add LeftForeArmRoll1 ;
+select -add LeftHand ;
+select -add LeftHandThumb1 ;
+select -add LeftHandThumb2 ;
+select -add LeftHandThumb3 ;
+select -add LeftHandThumb4 ;
+select -add LeftHandIndex1 ;
+select -add LeftHandIndex2 ;
+select -add LeftHandIndex3 ;
+select -add LeftHandIndex4 ;
+select -add LeftHandMiddle1 ;
+select -add LeftHandMiddle2 ;
+select -add LeftHandMiddle3 ;
+select -add LeftHandMiddle4 ;
+select -add LeftHandRing1 ;
+select -add LeftHandRing2 ;
+select -add LeftHandRing3 ;
+select -add LeftHandRing4 ;
+select -add LeftHandPinky1 ;
+select -add LeftHandPinky2 ;
+select -add LeftHandPinky3 ;
+select -add LeftHandPinky4 ;
+select -add LeftUpLeg ; 
+select -add LeftUpLegRoll ;  
+select -add LeftUpLegRoll1 ;        
+select -add LeftLeg ;
+select -add LeftLegRoll ;
+select -add LeftLegRoll1 ;
+select -add LeftFoot ;
+select -add LeftToeBase ;
+select -add LeftToes_End ;
+
+select -add RightShoulder ;
+select -add RightArm ;
+select -add RightArmRoll ;
+select -add RightArmRoll1 ;
+select -add RightForeArm ;
+select -add RightForeArmRoll ;
+select -add RightForeArmRoll1 ;
+select -add RightHand ;
+select -add RightHandThumb1 ;
+select -add RightHandThumb2 ;
+select -add RightHandThumb3 ;
+select -add RightHandThumb4 ;
+select -add RightHandIndex1 ;
+select -add RightHandIndex2 ;
+select -add RightHandIndex3 ;
+select -add RightHandIndex4 ;
+select -add RightHandMiddle1 ;
+select -add RightHandMiddle2 ;
+select -add RightHandMiddle3 ;
+select -add RightHandMiddle4 ;
+select -add RightHandRing1 ;
+select -add RightHandRing2 ;
+select -add RightHandRing3 ;
+select -add RightHandRing4 ;
+select -add RightHandPinky1 ;
+select -add RightHandPinky2 ;
+select -add RightHandPinky3 ;
+select -add RightHandPinky4 ;
+select -add RightUpLeg ; 
+select -add RightUpLegRoll ;  
+select -add RightUpLegRoll1 ;        
+select -add RightLeg ;
+select -add RightLegRoll ;
+select -add RightLegRoll1 ;
+select -add RightFoot ;
+select -add RightToeBase ;
+select -add RightToes_End ;
+string $catch_jnt[] = `ls -sl`;
+int $catch_size =`size $catch_jnt`;
+select -cl;
+
+int $i;
+for($i=0 ;$i<$character_size;$i++ )
+{
+parentConstraint -weight 1 $character_jnt[$i] $catch_jnt[$i];
+}
+select -cl;
+
+select -add Spine_parentConstraint1 ;
+select -add Spine1_parentConstraint1 ;
+select -add Spine2_parentConstraint1 ;
+select -add Spine3_parentConstraint1 ;
+select -add Spine4_parentConstraint1 ;
+select -add Spine5_parentConstraint1 ;
+select -add Spine6_parentConstraint1 ;
+
+select -add Neck_parentConstraint1 ;
+select -add Neck1_parentConstraint1 ;
+select -add Head_parentConstraint1 ;
+select -add Head_End_parentConstraint1 ;
+
+select -add LeftUpLeg_parentConstraint1 ;
+select -add LeftUpLegRoll_parentConstraint1 ;
+select -add LeftUpLegRoll1_parentConstraint1 ;
+select -add LeftLeg_parentConstraint1 ;
+select -add LeftLegRoll_parentConstraint1 ;
+select -add LeftLegRoll1_parentConstraint1 ;
+select -add LeftFoot_parentConstraint1 ;
+select -add LeftToeBase_parentConstraint1 ;
+select -add LeftToes_End_parentConstraint1 ;
+
+select -add LeftShoulder_parentConstraint1 ;
+select -add LeftArm_parentConstraint1 ;
+select -add LeftArmRoll_parentConstraint1 ;
+select -add LeftArmRoll1_parentConstraint1 ;
+select -add LeftForeArm_parentConstraint1 ;
+select -add LeftForeArmRoll_parentConstraint1 ;
+select -add LeftForeArmRoll1_parentConstraint1 ;
+select -add LeftHand_parentConstraint1 ;
+select -add LeftHandPinky1_parentConstraint1 ;
+select -add LeftHandPinky2_parentConstraint1 ;
+select -add LeftHandPinky3_parentConstraint1 ;
+select -add LeftHandPinky4_parentConstraint1 ;
+select -add LeftHandRing1_parentConstraint1 ;
+select -add LeftHandRing2_parentConstraint1 ;
+select -add LeftHandRing3_parentConstraint1 ;
+select -add LeftHandRing4_parentConstraint1 ;
+select -add LeftHandIndex1_parentConstraint1 ;
+select -add LeftHandIndex2_parentConstraint1 ;
+select -add LeftHandIndex3_parentConstraint1 ;
+select -add LeftHandIndex4_parentConstraint1 ;
+select -add LeftHandThumb1_parentConstraint1 ;
+select -add LeftHandThumb2_parentConstraint1 ;
+select -add LeftHandThumb3_parentConstraint1 ;
+select -add LeftHandThumb4_parentConstraint1 ;
+select -add LeftHandMiddle1_parentConstraint1 ;
+select -add LeftHandMiddle2_parentConstraint1 ;
+select -add LeftHandMiddle3_parentConstraint1 ;
+select -add LeftHandMiddle4_parentConstraint1 ;
+
+
+
+select -add RightUpLeg_parentConstraint1 ;
+select -add RightUpLegRoll_parentConstraint1 ;
+select -add RightUpLegRoll1_parentConstraint1 ;
+select -add RightLeg_parentConstraint1 ;
+select -add RightLegRoll_parentConstraint1 ;
+select -add RightLegRoll1_parentConstraint1 ;
+select -add RightFoot_parentConstraint1 ;
+select -add RightToeBase_parentConstraint1 ;
+select -add RightToes_End_parentConstraint1 ;
+
+select -add RightShoulder_parentConstraint1 ;
+select -add RightArm_parentConstraint1 ;
+select -add RightArmRoll_parentConstraint1 ;
+select -add RightArmRoll1_parentConstraint1 ;
+select -add RightForeArm_parentConstraint1 ;
+select -add RightForeArmRoll_parentConstraint1 ;
+select -add RightForeArmRoll1_parentConstraint1 ;
+select -add RightHand_parentConstraint1 ;
+select -add RightHandPinky1_parentConstraint1 ;
+select -add RightHandPinky2_parentConstraint1 ;
+select -add RightHandPinky3_parentConstraint1 ;
+select -add RightHandPinky4_parentConstraint1 ;
+select -add RightHandRing1_parentConstraint1 ;
+select -add RightHandRing2_parentConstraint1 ;
+select -add RightHandRing3_parentConstraint1 ;
+select -add RightHandRing4_parentConstraint1 ;
+select -add RightHandIndex1_parentConstraint1 ;
+select -add RightHandIndex2_parentConstraint1 ;
+select -add RightHandIndex3_parentConstraint1 ;
+select -add RightHandIndex4_parentConstraint1 ;
+select -add RightHandThumb1_parentConstraint1 ;
+select -add RightHandThumb2_parentConstraint1 ;
+select -add RightHandThumb3_parentConstraint1 ;
+select -add RightHandThumb4_parentConstraint1 ;
+select -add RightHandMiddle1_parentConstraint1 ;
+select -add RightHandMiddle2_parentConstraint1 ;
+select -add RightHandMiddle3_parentConstraint1 ;
+select -add RightHandMiddle4_parentConstraint1 ;
+
+
+
+string $parentCons[] = `ls -sl`;
+delete $parentCons;
+
+
+
+
+//////////////////////////////////////矫正轴向
+
+select -cl  ;
+select -r Hips;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+joint -e  -oj xyz -secondaryAxisOrient zup -ch -zso;
+
+select -cl  ;
+select -r LeftShoulder;
+select -tgl RightShoulder;
+joint -e  -oj xyz -secondaryAxisOrient yup -ch -zso;
+
+
+
+
+///////////////////////////parent约束
+
+select -r ("*"+"Spine_joint1") ;
+select -add ("*"+"Spine_joint2") ;
+select -add ("*"+"Spine_joint3") ;
+select -add ("*"+"Spine_joint4") ;
+select -add ("*"+"Spine_joint5");
+select -add ("*"+"Spine_joint6") ;
+select -add ("*"+"Spine_joint7") ;
+select -add ("*"+"Spine_joint8");
+select -add ("*"+"Head_joint1");
+select -add ("*"+"Head_joint2");
+select -add ("*"+"Head_joint3");
+select -add ("*"+"Head_joint4");
+
+select -add ("*"+"LeftArm_joint1");
+select -add ("*"+"LeftArm_joint2");
+select -add ("*"+"LeftArm_joint3");
+select -add ("*"+"LeftArm_joint4");
+select -add ("*"+"LeftArm_joint5");
+select -add ("*"+"LeftArm_joint6");
+select -add ("*"+"LeftArm_joint7");
+select -add ("*"+"LeftArm_joint8");
+select -add ("*"+"LeftThumb_joint1");
+select -add ("*"+"LeftThumb_joint2");
+select -add ("*"+"LeftThumb_joint3");
+select -add ("*"+"LeftThumb_joint4");
+select -add ("*"+"LeftFinger1_joint2");
+select -add ("*"+"LeftFinger1_joint3");
+select -add ("*"+"LeftFinger1_joint4");
+select -add ("*"+"LeftFinger1_joint5");
+select -add ("*"+"LeftFinger2_joint2");
+select -add ("*"+"LeftFinger2_joint3");
+select -add ("*"+"LeftFinger2_joint4");
+select -add ("*"+"LeftFinger2_joint5");
+select -add ("*"+"LeftFinger3_joint2");
+select -add ("*"+"LeftFinger3_joint3");
+select -add ("*"+"LeftFinger3_joint4");
+select -add ("*"+"LeftFinger3_joint5");
+select -add ("*"+"LeftFinger4_joint2");
+select -add ("*"+"LeftFinger4_joint3");
+select -add ("*"+"LeftFinger4_joint4");
+select -add ("*"+"LeftFinger4_joint5");
+select -add ("*"+"LeftLeg_joint1");
+select -add ("*"+"LeftLeg_joint2");
+select -add ("*"+"LeftLeg_joint3");
+select -add ("*"+"LeftLeg_joint4");
+select -add ("*"+"LeftLeg_joint5");
+select -add ("*"+"LeftLeg_joint6");
+select -add ("*"+"LeftLeg_joint7");
+select -add ("*"+"LeftLeg_joint8");
+select -add ("*"+"LeftLeg_joint9");
+
+select -add ("*"+"RightArm_joint1");
+select -add ("*"+"RightArm_joint2");
+select -add ("*"+"RightArm_joint3");
+select -add ("*"+"RightArm_joint4");
+select -add ("*"+"RightArm_joint5");
+select -add ("*"+"RightArm_joint6");
+select -add ("*"+"RightArm_joint7");
+select -add ("*"+"RightArm_joint8");
+select -add ("*"+"RightThumb_joint1");
+select -add ("*"+"RightThumb_joint2");
+select -add ("*"+"RightThumb_joint3");
+select -add ("*"+"RightThumb_joint4");
+select -add ("*"+"RightFinger1_joint2");
+select -add ("*"+"RightFinger1_joint3");
+select -add ("*"+"RightFinger1_joint4");
+select -add ("*"+"RightFinger1_joint5");
+select -add ("*"+"RightFinger2_joint2");
+select -add ("*"+"RightFinger2_joint3");
+select -add ("*"+"RightFinger2_joint4");
+select -add ("*"+"RightFinger2_joint5");
+select -add ("*"+"RightFinger3_joint2");
+select -add ("*"+"RightFinger3_joint3");
+select -add ("*"+"RightFinger3_joint4");
+select -add ("*"+"RightFinger3_joint5");
+select -add ("*"+"RightFinger4_joint2");
+select -add ("*"+"RightFinger4_joint3");
+select -add ("*"+"RightFinger4_joint4");
+select -add ("*"+"RightFinger4_joint5");
+select -add ("*"+"RightLeg_joint1");
+select -add ("*"+"RightLeg_joint2");
+select -add ("*"+"RightLeg_joint3");
+select -add ("*"+"RightLeg_joint4");
+select -add ("*"+"RightLeg_joint5");
+select -add ("*"+"RightLeg_joint6");
+select -add ("*"+"RightLeg_joint7");
+select -add ("*"+"RightLeg_joint8");
+select -add ("*"+"RightLeg_joint9");
+string $character_other_jnt[] =`ls -sl`;
+int $character_other_size = `size $character_other_jnt`;
+
+select -cl;
+select -r Hips ;
+select -add Spine ;
+select -add Spine1 ;
+select -add Spine2 ;
+select -add Spine3 ;
+select -add Spine4 ;
+select -add Spine5 ;
+select -add Spine6 ;
+select -add Neck ;
+select -add Neck1 ;
+select -add Head ;
+select -add Head_End ;
+select -add LeftShoulder ;
+select -add LeftArm ;
+select -add LeftArmRoll ;
+select -add LeftArmRoll1 ;
+select -add LeftForeArm ;
+select -add LeftForeArmRoll ;
+select -add LeftForeArmRoll1 ;
+select -add LeftHand ;
+select -add LeftHandThumb1 ;
+select -add LeftHandThumb2 ;
+select -add LeftHandThumb3 ;
+select -add LeftHandThumb4 ;
+select -add LeftHandIndex1 ;
+select -add LeftHandIndex2 ;
+select -add LeftHandIndex3 ;
+select -add LeftHandIndex4 ;
+select -add LeftHandMiddle1 ;
+select -add LeftHandMiddle2 ;
+select -add LeftHandMiddle3 ;
+select -add LeftHandMiddle4 ;
+select -add LeftHandRing1 ;
+select -add LeftHandRing2 ;
+select -add LeftHandRing3 ;
+select -add LeftHandRing4 ;
+select -add LeftHandPinky1 ;
+select -add LeftHandPinky2 ;
+select -add LeftHandPinky3 ;
+select -add LeftHandPinky4 ;
+select -add LeftUpLeg ; 
+select -add LeftUpLegRoll ;  
+select -add LeftUpLegRoll1 ;        
+select -add LeftLeg ;
+select -add LeftLegRoll ;
+select -add LeftLegRoll1 ;
+select -add LeftFoot ;
+select -add LeftToeBase ;
+select -add LeftToes_End ;
+
+select -add RightShoulder ;
+select -add RightArm ;
+select -add RightArmRoll ;
+select -add RightArmRoll1 ;
+select -add RightForeArm ;
+select -add RightForeArmRoll ;
+select -add RightForeArmRoll1 ;
+select -add RightHand ;
+select -add RightHandThumb1 ;
+select -add RightHandThumb2 ;
+select -add RightHandThumb3 ;
+select -add RightHandThumb4 ;
+select -add RightHandIndex1 ;
+select -add RightHandIndex2 ;
+select -add RightHandIndex3 ;
+select -add RightHandIndex4 ;
+select -add RightHandMiddle1 ;
+select -add RightHandMiddle2 ;
+select -add RightHandMiddle3 ;
+select -add RightHandMiddle4 ;
+select -add RightHandRing1 ;
+select -add RightHandRing2 ;
+select -add RightHandRing3 ;
+select -add RightHandRing4 ;
+select -add RightHandPinky1 ;
+select -add RightHandPinky2 ;
+select -add RightHandPinky3 ;
+select -add RightHandPinky4 ;
+select -add RightUpLeg ; 
+select -add RightUpLegRoll ;  
+select -add RightUpLegRoll1 ;        
+select -add RightLeg ;
+select -add RightLegRoll ;
+select -add RightLegRoll1 ;
+select -add RightFoot ;
+select -add RightToeBase ;
+select -add RightToes_End ;
+string $catch_other_jnt[] = `ls -sl`;
+int $catch_other_size =`size $catch_other_jnt`;
+select -cl;
+
+int $j;
+for($j=0 ;$j<$character_other_size;$j++ )
+{
+parentConstraint  -mo -weight 1 $character_other_jnt[$j] $catch_other_jnt[$j];
+
+
+}
+
+
+select -cl;
+select -r ("*"+"LeftLeg_joint1");
+select -tgl LeftHipLeg;
+parentConstraint -weight 1;
+delete LeftHipLeg_parentConstraint1;
+
+select -r ("*"+"Spine_joint1") ;
+select -tgl LeftHipLeg;
+pointConstraint -offset 0 0 0 -skip x -weight 1;
+delete LeftHipLeg_pointConstraint1;
+
+
+select -r ("*"+"RightLeg_joint1");
+select -tgl RightHipLeg;
+parentConstraint -weight 1;
+delete RightHipLeg_parentConstraint1;
+
+select -r ("*"+"Spine_joint1") ;
+select -tgl RightHipLeg;
+pointConstraint -offset 0 0 0 -skip x -weight 1;
+delete RightHipLeg_pointConstraint1;
+
+select -cl;
+delete LeftUpLeg_parentConstraint1;
+delete RightUpLeg_parentConstraint1;
+
+select -r LeftUpLegRoll ;
+select -tgl RightUpLegRoll ;
+parent -w;
+
+select -r LeftHipLeg ;
+select -tgl RightHipLeg ;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+joint -e  -oj xyz -secondaryAxisOrient zup -zso;
+
+
+select -r LeftUpLegRoll ;
+select -tgl LeftUpLeg ;
+parent;
+select -r RightUpLegRoll ;
+select -tgl RightUpLeg ;
+parent;
+
+parentConstraint  -mo -weight 1 ("*"+"LeftLeg_joint1") LeftUpLeg ;
+parentConstraint  -mo -weight 1 ("*"+"RightLeg_joint1") RightUpLeg ;
+
+select -cl;
+
+
+parentConstraint -mo -weight 1 ("*"+"Spine_joint1") LeftHipLeg;
+parentConstraint -mo -weight 1 ("*"+"Spine_joint1") LeftHip;
+parentConstraint -mo -weight 1 ("*"+"Spine_joint1") RightHipLeg;
+parentConstraint -mo -weight 1 ("*"+"Spine_joint1") RightHip;
+scaleConstraint -mo -weight 1 ("*"+"Character") muscle_joint;
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////给肌肉骨骼加Mus_前缀///////////////////////////////////////////////////////////////////////////
+
+
+select -hi Hips;
+string $catch_bone[] = `ls -sl`;
+int $k;
+for($k=0;$k<size($catch_bone);$k++)
+{
+  select -r $catch_bone[$k];
+  rename $catch_bone[$k] ("Mus_"+$catch_bone[$k]);
+}
+
+select -cl;
+
+string $wu_shuchu = "骨骼生成完毕!" ;
+print $wu_shuchu;
+}
+
+
+
+
+
+
+
+
+

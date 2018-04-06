@@ -1,0 +1,145 @@
+////////////////////////////////
+//Author: yanzhili
+//email: piqyzl@163.com
+//QQ:342555216
+////////////////////////////
+global int $myScriptJobNum_=0;
+python "execfile('O:/mocap/001-设置工具集/008-动画应用/ref_select.py');";
+
+global proc yzlrefUI()
+{
+
+ if(`window -exists yzlrefWin`)
+ {
+  deleteUI yzlrefWin;
+  if(`windowPref -exists yzlrefWin`)
+  {
+   windowPref -remove yzlrefWin;
+  }
+ }
+window -widthHeight 400 220-title "y_copy weights "yzlrefWin;
+
+menuBarLayout;
+menu -label "yzl" ; 
+menuItem -label "Exit" ;
+  menu -label "Help" ;
+     menuItem -label "yanzhili"  -command "";
+ setParent ..;
+
+columnLayout -adjustableColumn 1;
+frameLayout -l "choose mode"  -cll 1  -cl 0  -borderStyle "out";
+columnLayout;
+text -l "";
+radioButtonGrp  -l "mode" -labelArray3  "from ref to cam"  "from cam to ref"  "deauft" -sl 3 -numberOfRadioButtons  3 
+		-on1 "refTOcam();close_camTOref();" 
+		-on2 "close_refTOcam();camTOref();" 
+		-on3 "toDef();";
+text -l "";
+textFieldButtonGrp -l "" -text "Close windows and setting Deauft >>>"  -ed 0 -buttonLabel "close" -bc  "toDef();deleteUI -window  yzlrefWin;";
+setParent ..;
+showWindow yzlrefWin;
+}
+
+////////////////////////////////////////////
+global proc ST_y(){
+   global string $gReferenceEditorPanel;   
+   if ( size(`sceneEditor -q -parent $gReferenceEditorPanel`) > 0 ) 
+      python "doo()";
+}
+
+global proc  referenceEdSelectCB_x()
+{
+    global string $gReferenceEditorPanel;
+    string $selRefNode[] = `sceneEditor -q -selectReference -onlyParents   $gReferenceEditorPanel`;
+    if (size($selRefNode)>0){
+    python  "import string";
+    python  "from maya.cmds import *";
+    python  "allSel=[]";
+    for ( $i =0; $i <`size($selRefNode)`; $i++ ) {
+         string $curr_alls[]=`file -selectAll -referenceNode $selRefNode[$i]`;
+         python "curr=ls(sl=1,type='transform')";
+         python "[allSel.append(i) for i in curr if len(curr)<=10]";
+         python "[allSel.append(curr[i]) for i in range(10) if len(curr)>10]";
+    }  
+    python "select(allSel)";
+    }
+    if (size($selRefNode)==1){
+    textField -e -enable true unresolvedNameValue;
+    string $selFileRaw[] = `sceneEditor -q -unresolvedName -withoutCopyNumber -selectItem   $gReferenceEditorPanel`;
+    textField -e -text $selFileRaw[0] unresolvedNameValue;
+
+    textField -e -enable true fileRenamePrefixValue;
+    string $selFileReal[] = `sceneEditor -q -selectItem 
+							 $gReferenceEditorPanel`;
+    string $namePrefix = `file -q -rpr $selFileReal[0]`;
+    textField -e -text $namePrefix fileRenamePrefixValue;
+    }
+    else{
+        textField -e -text "N/A" unresolvedNameValue;
+        textField -e -text "N/A" fileRenamePrefixValue;
+        textField -e -enable 0 unresolvedNameValue;
+        textField -e -enable 0 fileRenamePrefixValue;
+        }
+}
+
+global proc  referenceEdSelectCB_def()
+{
+    global string $gReferenceEditorPanel;
+    string $selRefNode[] = `sceneEditor -q -selectReference -onlyParents   $gReferenceEditorPanel`;
+    if (size($selRefNode)==1){
+    textField -e -enable true unresolvedNameValue;
+    string $selFileRaw[] = `sceneEditor -q -unresolvedName -withoutCopyNumber -selectItem   $gReferenceEditorPanel`;
+    textField -e -text $selFileRaw[0] unresolvedNameValue;
+
+    textField -e -enable true fileRenamePrefixValue;
+    string $selFileReal[] = `sceneEditor -q -selectItem 
+							 $gReferenceEditorPanel`;
+    string $namePrefix = `file -q -rpr $selFileReal[0]`;
+    textField -e -text $namePrefix fileRenamePrefixValue;
+    }
+    else{
+        textField -e -text "N/A" unresolvedNameValue;
+        textField -e -text "N/A" fileRenamePrefixValue;
+        textField -e -enable 0 unresolvedNameValue;
+        textField -e -enable 0 fileRenamePrefixValue;
+        }
+}
+
+/////////----------------------------------------------//////////
+global proc refTOcam(){
+global string $gReferenceEditorPanel;
+sceneEditor -e -sc "referenceEdSelectCB_x()"  $gReferenceEditorPanel;
+}
+
+///////------------------------------------------------//////////
+
+global  proc close_refTOcam(){
+  global string $gReferenceEditorPanel;
+sceneEditor -e -sc "referenceEdSelectCB_def()"  $gReferenceEditorPanel;
+}
+////////-----------------------------------------------////////////
+global  proc camTOref(){
+global   string   $gReferenceEditorModelEditor;
+global int $myScriptJobNum_;
+$myScriptJobNum_=`scriptJob -parent $gReferenceEditorModelEditor  
+          -replacePrevious 
+	-event "SelectionChanged" 
+	   "ST_y"`;
+}
+
+////////--------------------------------------------------////////////
+global  proc close_camTOref(){
+global int $myScriptJobNum_;
+if($myScriptJobNum_!=0){
+if(`scriptJob -ex $myScriptJobNum_`)
+scriptJob -kill $myScriptJobNum_ -force;
+}
+}
+
+//////---------------------------------------------------///////////
+global  proc toDef(){
+close_refTOcam();
+close_camTOref();
+}
+////////--------------end!---------------------------------/////////////
+yzlrefUI();

@@ -1,0 +1,47 @@
+global proc CL_removeNameSpace(string $name)
+{
+	namespace -f -mv $name ":";
+	namespace -f -rm $name;
+}
+
+global proc CL_removeNameSpaceUI()
+{
+	if (`window -q -ex CL_RNSwindow`) deleteUI CL_RNSwindow;
+	window -title "Colorland Remove Namespace" CL_RNSwindow;
+		columnLayout -adj on -rs 10;
+                      rowLayout -nc 2  -cw 1 230 -cw 2 130;
+			    textFieldGrp -l "Namespace"     -tx "" 
+										-cw 1 80 -cw 2 150
+										-cat 1 "left" 20 -cat 2 "both" 5
+												CL_RNStextFieldGrp;
+                             button -l "get" -c "get_currNameSpace()";
+			setParent..;
+
+				rowLayout -nc 2 -cw 1 130 -cw 2 136 
+												-cat 1 "both" 10 -cat 2 "both" 10
+												-cal 1 "center" -cal 2 "center";
+					button -l "Remove" -c "CL_removeNameSpace (`textFieldGrp -q -tx CL_RNStextFieldGrp`)";
+					button -l "Cancel" -c "deleteUI CL_RNSwindow";
+			setParent..;
+
+	window -e -w 300 -h 100 CL_RNSwindow;		
+	showWindow CL_RNSwindow;
+}
+
+global proc get_currNameSpace()
+{     
+       string $sles[]=`ls -sl`;
+       string $buffer[];
+       string $a="";
+       $numTokens = `tokenize $sles[0]  ":" $buffer`;
+  	for($i=0;$i<$numTokens-1;$i++){
+	  $a+=$buffer[$i]+":";
+	}
+	if($numTokens>1){
+       textFieldGrp -e -tx $a CL_RNStextFieldGrp;
+	}
+	else{
+	textFieldGrp -e -tx "物体没命名空间" CL_RNStextFieldGrp;
+	}
+}
+CL_removeNameSpaceUI();

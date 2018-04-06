@@ -1,0 +1,3 @@
+global proc float[]  walkingOnCurve( string $curveShape, float $len ){
+    return python( "qm.walkingOnCurve('" + $curveShape + "', "  +  string( $len ) + ")" );
+}

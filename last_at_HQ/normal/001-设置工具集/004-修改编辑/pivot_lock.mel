@@ -1,0 +1,15 @@
+string $myselection[] = `ls -long -selection`;
+for ($item in $myselection)
+{string $attrs[];
+$attrs[0] = "rotatePivotTranslateX";
+$attrs[1] = "rotatePivotTranslateY";
+$attrs[2] = "rotatePivotTranslateZ";
+$attrs[3] = "rotatePivotX";
+$attrs[4] = "rotatePivotY";
+$attrs[5] = "rotatePivotZ";
+$attrs[6] = "scalePivotX";
+$attrs[7] = "scalePivotY";
+$attrs[8] = "scalePivotZ";
+for($attr in $attrs)
+setAttr -keyable true -lock false ($item + "."+$attr);
+}

@@ -1,0 +1,103 @@
+python "execfile('O:/mocap/001-设置工具集/005-变形权重/clusterTool.py');";
+
+
+global proc clusterTool()
+{
+/*
+//拷贝文件到我的的文档////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     
+  string $oldFolder = "//10.99.1.12/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/插件/簇权重面板/new/";
+
+  string $ScriptPath =`internalVar -userScriptDir`;
+  
+  $oldPath = `getFileList -folder ($oldFolder + "/")`;
+   
+     for($sele in $oldPath)
+       {
+         sysFile -copy ($ScriptPath + $sele) ($oldFolder + $sele);
+       }
+*/
+//创建窗口////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+
+
+    if (`window -q -exists clusterToolWindow`) deleteUI clusterToolWindow;
+    window -title "簇工具" -wh 230 100
+           clusterToolWindow;
+
+    columnLayout -adjustableColumn 1;
+    
+    string $form= `formLayout`;
+    
+    string $UI0=`button -w 160 -h 20 -label "创建簇" -command "python(\"lz_cluster()\")"`;
+	string $UI1=`button -w 160 -h 20 -label "镜像簇" -command "python(\"lz_dupCluster()\")"`;
+    string $UI2=`button -w 160 -h 20 -label "复制簇" -command "python(\"lz_cluToclu()\")"`;
+    string $UI3=`nodeIconButton -h 50 -style "iconAndTextVertical" -command lz_subCtl_clu_paint -image "paintCluster.xpm"`;
+ 
+    formLayout -edit
+               -attachForm $UI0 "top" 10
+               -attachForm $UI0 "left" 10
+               -attachForm $UI1 "top" 40
+               -attachForm $UI1 "left" 10
+               -attachForm $UI2 "top" 70
+               -attachForm $UI2 "left" 10
+               -attachForm $UI3 "top" 25
+               -attachForm $UI3 "right" 10              
+               $form;
+     setParent ..;
+   setParent..; 
+ window -edit -widthHeight 230 100 clusterToolWindow;
+ showWindow  clusterToolWindow;
+  
+ }
+clusterTool(); 
+
+
+global proc lz_subCtl_clu_paint()
+{
+	global string $cluster_tar;
+	string $sl[] = `ls -sl -o`;
+	string $clu = "";
+	string $clu_conn1[];string $clu_conn2[];
+	if(size ($sl) == 0)
+	{
+		artAttrToolScript 4 "cluster";
+		toolPropertyWindow;
+		toolPropertyWindow1 ("clusterPaint");
+		artAttrValues artAttrContext;
+		toolPropertyShow;
+		return;
+	}
+	string $shapes[] = `listRelatives -s -pa $sl`;
+	if(`objectType $shapes[0]` == "nurbsCurve")
+		if (`objExists ($sl[0]+"_hide")`){
+			$clu_conn1[0] = python("lz_sub_CtlToClu('"+$sl[0]+"')");
+			$clu_conn2 = `listConnections ($clu_conn1[0]+".worldMatrix[0]")`;
+			$clu = $clu_conn2[0];
+		}	
+	if(`objectType $shapes[0]` =="clusterHandle")
+	{
+		$clu_conn2 = `listConnections ($sl[0]+".worldMatrix[0]")`;
+		$clu = $clu_conn2[0];
+	}
+	if($clu == "")
+	{
+		artAttrToolScript 4 "cluster";
+		toolPropertyWindow;
+		toolPropertyWindow1 ("clusterPaint");
+		artAttrValues artAttrContext;
+		toolPropertyShow;
+		toolPropertyShow;
+		return;
+	}
+	string $tar = ($clu+"-weights");
+	string $sets[] = `listConnections ($clu+".message")`;
+	string $polys[] = `listConnections ($sets[0]+".dagSetMembers")`;
+	select($polys);
+	$cluster_tar = $tar;
+	artAttrToolScript 4 "cluster";
+	toolPropertyWindow;
+	toolPropertyWindow1 ("clusterPaint");
+	artAttrValues artAttrContext;
+	toolPropertyShow;	
+	toolPropertyShow;		
+}

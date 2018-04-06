@@ -1,0 +1,9 @@
+TSM控制器约束群集动画骨骼
+
+1,把《qunjiguge_jnt》骨骼拖进maya里面，再把mel《qunjiguge_jnt_1.0_scaleconstrain》拖进maya里面运行.
+2,点第一按钮“对位群集动画骨骼”后，对骨骼和模型放大100倍，然后再清零。
+3，再点“对骨骼parent约束”按钮，进行骨骼约束。
+4，最近点更改骨骼前缀名。
+
+
+qunjiguge_jnt.mb为打断了骨骼间inverScale关联的骨骼链。

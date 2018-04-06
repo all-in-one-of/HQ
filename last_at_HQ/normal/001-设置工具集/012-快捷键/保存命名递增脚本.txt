@@ -1,0 +1,22 @@
+string $fliename = `file -q  -sn -shn`;
+string $temps[];
+tokenize $fliename"." $temps;
+string $ab= `match "[0-9]+" $fliename`;
+string $aq= `match "[a-z]+" $fliename`;
+string $aw= `match "_" $fliename`;
+string $ae= `match "-" $fliename`;
+int $number = $ab;
+
+int $add;
+$add = $number + 1;
+string $e = (string) $add;
+int $d = size($e);
+int $t = 3-$d;
+ int $i;
+for($i=0;$i<$t;$i++)
+$e = "0" + $e;
+print ($e);
+$number +=001;
+string $newFileName = $aq+$aw+$ae+$e+"."+$temps[1];
+file -rename ($newFileName);
+file -s ;

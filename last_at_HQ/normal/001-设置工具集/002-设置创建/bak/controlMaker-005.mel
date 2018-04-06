@@ -1,0 +1,1407 @@
+ global proc ControlWin ()
+{
+  if (`window -ex ControlWin `) deleteUI ControlWin  ;
+
+  window
+    -wh 400 80
+    -title "创建控制器工具"
+    -minimizeButton 0
+    -maximizeButton 0
+    -rtf true
+    -s 1    
+ ControlWin ;
+ 
+  formLayout -numberOfDivisions 100 "f1";
+    scrollLayout  "sc";
+  setParent ..; 
+  scrollLayout "sc2";
+     
+ columnLayout -adj 1;  
+  
+    rowColumnLayout -nc 6 -cw 1 40 -cw 2 90 -cw 3 60 -cw 4 60 -cw 5 80 -cw 6 80;
+    text -l "命名:";
+    textField -text"" PrefixTFG;
+    text -l "_ctrl       G:";
+    checkBox -l "Driven" drivenKeyCBX;
+    checkBox -l "Expression" expressionCBX;
+    checkBox -l "Constrain" constrainCBX;         
+   setParent..;
+   
+separator -height 10 -style "in"; 
+
+   rowColumnLayout -nc 3 -cw 1 75 -cw 2 80 -cw 3 250;
+    text -l "朝向:            "; 
+    checkBox -label "inverse" InverseCBX;  
+    radioButtonGrp -numberOfRadioButtons 4
+                   -cw 1 60 -cw 2 50 -cw 3 50 -cw 4 50 -cw 5 50 -cl5 left left left left left
+                   -labelArray4 "x" "y" "z" "world"
+                   ctrlOrient; 
+   
+                      
+  setParent..;
+   
+separator -height 10 -style "in"; 
+ 
+ columnLayout;
+    text -l "  形状：";
+    string $iconPath = "//10.99.1.2/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/002-设置创建/icons/";
+    
+  
+    gridLayout -numberOfColumns 8 -cellWidthHeight 50 50;
+      symbolButton -image ($iconPath+"circle.png") -c Circle; 
+      symbolButton -image ($iconPath+"square.png") -c Square;    
+      symbolButton -image ($iconPath+"cube.png") -c Cube; 
+      symbolButton -image ($iconPath+"sphere.png") -c Sphere;       
+      symbolButton -image ($iconPath+"handle.png") -c Handle;
+      symbolButton -image ($iconPath+"circleHandle.png") -c CircleHandle;
+      symbolButton -image ($iconPath+"diamond.png") -c Diamond;      
+      symbolButton -image ($iconPath+"FourArrow.png") -c FourArrow; 
+      symbolButton -image ($iconPath+"singleArrow.png") -c SingleArrow;                             
+      symbolButton -image ($iconPath+"doubleArrow.png") -c DoubleArrow;
+      symbolButton -image ($iconPath+"rotateArrow.png") -c RotateArrow;       
+      symbolButton -image ($iconPath+"ArrowOnBall.png") -c ArrowOnBall; 
+      symbolButton -image ($iconPath+"eye.png") -c Eye;                                     
+      symbolButton -image ($iconPath+"hand.png") -c Hand; 
+      symbolButton -image ($iconPath+"foot.png") -c Foot;
+      symbolButton;      
+      symbolButton -image ($iconPath+"Z.png") -c Automatic;
+      symbolButton -image ($iconPath+"S.png") -c Simulation;
+      symbolButton -image ($iconPath+"M.png") -c Muscle;  
+      symbolButton -image ($iconPath+"H.png") -c Hide; 
+      symbolButton -image ($iconPath+"C.png") -c Cloth;                 
+      symbolButton -image ($iconPath+"T.png") -c Transformer;
+      symbolButton -image ($iconPath+"J.png");                   
+                         
+    setParent..; 
+ setParent..;      
+separator -height 10 -style "in";
+
+
+   rowColumnLayout -nc 4 -cw 1 60 -cw 2 50 -cw 3 50 -cw 4 50;  
+    text -l "旋转90°：";
+    button -l "x" -c rotateX;
+    button -l "y" -c rotateY;
+    button -l "z" -c rotateZ;
+  setParent..;     
+separator -height 10 -style "in";
+
+   rowColumnLayout -nc 2 -cw 1 50 -cw 2 300;
+    text -l "颜色："; 
+    colorIndexSliderGrp -min 0 -max 32 -value 0 
+                        -changeCommand "controlColor()"
+                        controlColor;
+
+  setParent..;
+separator -height 10 -style "in";
+
+
+   rowColumnLayout -nc 4 -cw 1 50 -cw 2 280 -cw 3 45 -cw 4 40;
+    text -l "大小："; 
+    floatSliderGrp -minValue 0.01
+			       -maxValue 3
+			       -value 1
+			       -field true
+			       -precision 3
+			       -cw 1 50 -cw 2 230			      
+   			       -changeCommand "controlSize();floatSliderGrp -e -v 1 ctrlSizeFBG;"
+   				   ctrlSizeFBG;
+    textField -text "1.0" ctrlSizeField;		   					
+    button -l "scale" -c ctrlSizeButton;
+  setParent..;
+separator -height 10 -style "in";  
+
+ columnLayout;    
+   rowColumnLayout -nc 3 -cw 1 70 -cw 2 60 -cw 3 60;
+    text -l "属性隐藏："; 
+    text -l "       All :";    
+    checkBox -l "" -v 1 -cc HideAll allCBX;
+  setParent..;     
+   rowColumnLayout -nc 5 -cw 1 130 -cw 2 60 -cw 3 60 -cw 4 60 -cw 5 60;    
+    text -l "                Translate :";
+    checkBox -l "All" -v 1 -cc HideTranslate allTranslateCBX;
+    checkBox -l "X" -v 1 -cc HideTx TXCBX;
+    checkBox -l "Y" -v 1 -cc HideTy TYCBX;  
+    checkBox -l "Z" -v 1 -cc HideTz TZCBX;          
+  setParent..; 
+   rowColumnLayout -nc 5 -cw 1 130 -cw 2 60 -cw 3 60 -cw 4 60 -cw 5 60;
+    text -l "                    Rotate :";
+    checkBox -l "All" -v 1 -cc HideRotate allRotateCBX;
+    checkBox -l "X" -v 1 -cc HideRx RXCBX;
+    checkBox -l "Y" -v 1 -cc HideRy RYCBX;  
+    checkBox -l "Z" -v 1 -cc HideRz RZCBX;          
+  setParent..;   
+   rowColumnLayout -nc 5 -cw 1 130 -cw 2 60 -cw 3 60 -cw 4 60 -cw 5 60;
+    text -l "                    Scale :";
+    checkBox -l "All" -v 1 -cc HideScale allScaleCBX;
+    checkBox -l "X" -v 1 -cc HideSx SXCBX;
+    checkBox -l "Y" -v 1 -cc HideSy SYCBX;  
+    checkBox -l "Z" -v 1 -cc HideSz SZCBX;          
+  setParent..; 
+   rowColumnLayout -nc 2 -cw 1 130 -cw 2 60;
+    text -l "                Visibility :";
+    checkBox -l "" -v 1 -cc HideVis VisCBX;        
+  setParent..; 
+            
+  setParent..;  
+ setParent ..;
+setParent ..;
+
+formLayout -edit
+    -af    "sc"     "top"    5
+    -af    "sc"     "left"   5
+    -af    "sc"     "bottom" 5 
+    -af    "sc"     "right"  5 
+    -af    "sc2"     "top"    8 
+    -af    "sc2"     "left"   8 
+    -af    "sc2"     "bottom" 8 
+    -af    "sc2"     "right"  8 
+    "f1";
+
+ showWindow ControlWin ;
+}
+
+
+////////////////////////////////////////////////////////圆圈控制器//////////////////////////////////////////////////////////////
+global proc Circle()
+{
+  string $selObj[] = `ls -sl`;
+  
+  string $listSelShape[] = `listRelatives -s $selObj[0]`;//判断所选物体是否有shape节点，骨骼没有，控制器有
+  
+  if(size($listSelShape) ==0 )
+  {
+  
+   int $obj=0;  
+   string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+   if(size($selObj) == 0)
+   {
+    circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0;
+    addPrefix();         
+   }
+   if(size($selObj) != 0)
+   {
+      
+     for($obj;$obj<size($selObj);$obj++)
+     {         
+      circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0; 
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+     }      
+   }
+   select -cl;      
+  } 
+  
+  
+  if(size($listSelShape) !=0 )
+  {
+    string $getSelType = `nodeType ($selObj[0]+"Shape")`; //判断shape节点的类型
+    int $SelShape = 0;
+    if($getSelType ==  "nurbsCurve")
+    {   
+      for($SelShape;$SelShape<size($selObj);$SelShape++)
+      {      
+       string $GetCtrlParentObj[] = `pickWalk -d up $selObj[$SelShape]`;
+       
+       delete $selObj[$SelShape];  
+       circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0 -n $selObj[$SelShape];
+       orient();         
+       parent $selObj[$SelShape] $GetCtrlParentObj;
+       setAttr ($selObj[$SelShape]+".translateX") 0;
+       setAttr ($selObj[$SelShape]+".translateY") 0;
+       setAttr ($selObj[$SelShape]+".translateZ") 0;
+       setAttr ($selObj[$SelShape]+".rotateX") 0;    
+       setAttr ($selObj[$SelShape]+".rotateY") 0; 
+       setAttr ($selObj[$SelShape]+".rotateZ") 0;                               
+      }
+      select -cl;  
+     } 
+     
+     
+    else 
+    {
+      int $obj=0;
+  
+      string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+      if(size($selObj) == 0)
+      {
+       circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0;
+       addPrefix();         
+      }
+      if(size($selObj) != 0)
+      {
+      
+        for($obj;$obj<size($selObj);$obj++)
+       {         
+         circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0; 
+         orient();      
+         addPrefix();
+  
+         string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+         searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+         parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+         delete (($Ctrl+"_G")+"_parentConstraint1 ");           
+        }      
+      }
+      select -cl;         
+     }         
+  }      
+            
+}
+
+
+////////////////////////////////////////////////////////四边形控制器//////////////////////////////////////////////////////////////
+global proc Square()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p 1 0 -1 -p -1 0 -1 -p -1 0 1 -p 1 0 1 -p 1 0 -1 -k 0 -k 1 -k 2 -k 3 -k 4;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p 1 0 -1 -p -1 0 -1 -p -1 0 1 -p 1 0 1 -p 1 0 -1 -k 0 -k 1 -k 2 -k 3 -k 4;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+ select -cl;     
+}
+
+
+////////////////////////////////////////////////////////立方体控制器//////////////////////////////////////////////////////////////
+global proc Cube()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p 1 1 1 -p 1 1 -1 -p -1 1 -1 -p -1 -1 -1 -p 1 -1 -1 -p 1 1 -1 -p -1 1 -1 -p -1 1 1 -p 1 1 1 -p 1 -1 1 -p 1 -1 -1 -p -1 -1 -1 -p -1 -1 1 -p 1 -1 1 -p -1 -1 1 -p -1 1 1 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15;    
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p 0.5 0.5 0.5 -p 0.5 0.5 -0.5 -p -0.5 0.5 -0.5 -p -0.5 -0.5 -0.5 -p 0.5 -0.5 -0.5 -p 0.5 0.5 -0.5 -p -0.5 0.5 -0.5 -p -0.5 0.5 0.5 -p 0.5 0.5 0.5 -p 0.5 -0.5 0.5 -p 0.5 -0.5 -0.5 -p -0.5 -0.5 -0.5 -p -0.5 -0.5 0.5 -p 0.5 -0.5 0.5 -p -0.5 -0.5 0.5 -p -0.5 0.5 0.5 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  } 
+ select -cl;   
+}
+
+
+////////////////////////////////////////////////////////圆形控制器//////////////////////////////////////////////////////////////
+global proc Sphere()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {      
+   
+   string $GetCVInfo[] = {"-0.999999983","-0.0001821259143","-1.608122622e-016","-0.9999674614","-0.1745790446","-1.608070324e-016","-0.9064639959","-0.5234173324","-1.457705283e-016","-0.5233728906","-0.9065084378","-8.416477995e-017","-5.766767883e-016","-1.046745781","-5.536002986e-032","0.5233728906","-0.9065084378","8.416477995e-017","0.9065084378","-0.5233728906","1.457776751e-016","1.046745781","-8.931418499e-016","1.683295599e-016","0.9065084378","0.5233728906","1.457776751e-016","0.5364781395","0.8934031888","8.627226471e-017","0.1928598067","0.9950552101","3.101422233e-017","0.001386821245","0.9999996446","1.084202172e-019","0.001386573934","0.9999996596","-3.10553313e-005","2.113960203e-016","1.000075159","-0.1741771318","1.692379612e-016","0.9065084378","-0.5233728906","6.070449388e-017","0.5233728906","-0.9065084378","-6.409469352e-017","-2.967277895e-016","-1.046745781","-1.717197595e-016","-0.5233728906","-0.9065084378","-2.333326547e-016","-0.9065084378","-0.5233728906","-2.324242534e-016","-1.046745781","-3.442525349e-016","-1.692379612e-016","-0.9065084378","0.5233728906","-6.070449388e-017","-0.5233728906","0.9065084378","6.409469352e-017","-6.607175965e-016","1.046745781","1.717197595e-016","0.5233728906","0.9065084378","2.312458705e-016","0.8935319138","0.5363494146","2.327564702e-016","0.9951594037","0.1924913138","0.001386821245","0.9999996446","1.827003333e-019","0.001386821245","0.9999996446","1.54924007e-019","-0.1740012903","1.000122276","-2.79815416e-017","-0.5233728906","0.9065084378","-8.416477995e-017","-0.9065084378","0.5233728906","-1.457776751e-016","-1.00001464","0.1744029924","-1.608146193e-016","-0.9999999949","-0.000115346413","-1.608122641e-016","-0.9999999808","1.185947312e-020","-0.0001936798941","-0.9999999942","7.510999686e-021","-0.0001226639337","-1.000015569","-1.067889108e-017","0.1743995262","-0.9065084378","-3.204734676e-017","0.5233728906","-0.5233728906","-5.550763283e-017","0.9065084378","-6.607175965e-016","-6.409469352e-017","1.046745781","0.5233728906","-5.550763283e-017","0.9065084378","0.9065084378","-3.204734676e-017","0.5233728906","1.046745781","-6.043388073e-032","9.869601712e-016","0.9065084378","3.204734676e-017","-0.5233728906","0.5233728906","5.550763283e-017","-0.9065084378","-2.967277895e-016","6.409469352e-017","-1.046745781","-0.5233728906","5.550763283e-017","-0.9065084378","-0.9064611766","3.205024067e-017","-0.5234201517","-0.9999653969","1.069035504e-017","-0.1745867469","-0.9999999808","1.185947312e-020","-0.0001936798941"};
+   float $cvPosition[]; 
+   int $cv=0;
+   string $mel = " " ;
+   string $wholeMEL = " ";
+   for($cv;$cv<size($GetCVInfo);$cv++)
+   {
+    $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+    $cv=$cv + 2;  
+   }
+   $wholeMEL = "curve -d 3" + $mel + ";";
+   eval $wholeMEL;
+   
+   addPrefix();           
+  }
+  
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      
+      string $GetCVInfo[] = {"-0.999999983","-0.0001821259143","-1.608122622e-016","-0.9999674614","-0.1745790446","-1.608070324e-016","-0.9064639959","-0.5234173324","-1.457705283e-016","-0.5233728906","-0.9065084378","-8.416477995e-017","-5.766767883e-016","-1.046745781","-5.536002986e-032","0.5233728906","-0.9065084378","8.416477995e-017","0.9065084378","-0.5233728906","1.457776751e-016","1.046745781","-8.931418499e-016","1.683295599e-016","0.9065084378","0.5233728906","1.457776751e-016","0.5364781395","0.8934031888","8.627226471e-017","0.1928598067","0.9950552101","3.101422233e-017","0.001386821245","0.9999996446","1.084202172e-019","0.001386573934","0.9999996596","-3.10553313e-005","2.113960203e-016","1.000075159","-0.1741771318","1.692379612e-016","0.9065084378","-0.5233728906","6.070449388e-017","0.5233728906","-0.9065084378","-6.409469352e-017","-2.967277895e-016","-1.046745781","-1.717197595e-016","-0.5233728906","-0.9065084378","-2.333326547e-016","-0.9065084378","-0.5233728906","-2.324242534e-016","-1.046745781","-3.442525349e-016","-1.692379612e-016","-0.9065084378","0.5233728906","-6.070449388e-017","-0.5233728906","0.9065084378","6.409469352e-017","-6.607175965e-016","1.046745781","1.717197595e-016","0.5233728906","0.9065084378","2.312458705e-016","0.8935319138","0.5363494146","2.327564702e-016","0.9951594037","0.1924913138","0.001386821245","0.9999996446","1.827003333e-019","0.001386821245","0.9999996446","1.54924007e-019","-0.1740012903","1.000122276","-2.79815416e-017","-0.5233728906","0.9065084378","-8.416477995e-017","-0.9065084378","0.5233728906","-1.457776751e-016","-1.00001464","0.1744029924","-1.608146193e-016","-0.9999999949","-0.000115346413","-1.608122641e-016","-0.9999999808","1.185947312e-020","-0.0001936798941","-0.9999999942","7.510999686e-021","-0.0001226639337","-1.000015569","-1.067889108e-017","0.1743995262","-0.9065084378","-3.204734676e-017","0.5233728906","-0.5233728906","-5.550763283e-017","0.9065084378","-6.607175965e-016","-6.409469352e-017","1.046745781","0.5233728906","-5.550763283e-017","0.9065084378","0.9065084378","-3.204734676e-017","0.5233728906","1.046745781","-6.043388073e-032","9.869601712e-016","0.9065084378","3.204734676e-017","-0.5233728906","0.5233728906","5.550763283e-017","-0.9065084378","-2.967277895e-016","6.409469352e-017","-1.046745781","-0.5233728906","5.550763283e-017","-0.9065084378","-0.9064611766","3.205024067e-017","-0.5234201517","-0.9999653969","1.069035504e-017","-0.1745867469","-0.9999999808","1.185947312e-020","-0.0001936798941"};
+      float $cvPosition[]; 
+      int $cv=0;
+      string $mel = " " ;
+      string $wholeMEL = " ";
+      for($cv;$cv<size($GetCVInfo);$cv++)
+      {
+       $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+       $cv=$cv + 2;  
+      }
+      $wholeMEL = "curve -d 3" + $mel + ";";
+      eval $wholeMEL;      
+      
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  } 
+  select -cl;   
+}
+
+
+////////////////////////////////////////////////////////圈叉手柄控制器//////////////////////////////////////////////////////////////
+global proc Handle()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p 0 0 0 -p 0 2.062357 0 -p 0 2.200638 -0.276562 -p 0 2.4772 -0.414843 -p 0 2.753762 -0.276562 -p 0 2.892043 0 -p 0 2.753762 0.276562 -p 0 2.4772 0.414843 -p 0 2.200638 0.276562 -p 0 2.062357 0 -p 0 2.200638 -0.276562 -p 0 2.753762 0.276562 -p 0 2.892043 0 -p 0 2.753762 -0.276562 -p 0 2.200638 0.276562 -p 0 2.062357 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 ;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p 0 0 0 -p 2.062357 0 0 -p 2.200638 0 0.276562 -p 2.4772 0 0.414843 -p 2.753762 0 0.276562 -p 2.892043 0 0 -p 2.753762 0 -0.276562 -p 2.4772 0 -0.414843 -p 2.200638 0 -0.276562 -p 2.062357 0 0 -p 2.200638 0 0.276562 -p 2.753762 0 -0.276562 -p 2.892043 0 0 -p 2.753762 0 0.276562 -p 2.200638 0 -0.276562 -p 2.062357 0 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 ;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;    
+}
+
+
+
+////////////////////////////////////////////////////////圆圈手柄控制器//////////////////////////////////////////////////////////////
+global proc CircleHandle()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+
+   //string $GetCVInfo[] = {"0","0","-0.7899355215","0.003743829341","-0.1127858121","-0.7899355215","0.003743829341","-0.1127858121","-1.015631385","-0.003743829341","0.1127858121","-1.015631385","-0.003743829341","0.1127858121","-0.7899355215","0","0","-0.7899355215","0","0","-0.7899355215","0","0","-0.5642396582","0","0","-1.391712073e-015","0","0","0.5642396582","0","0","0.7899355215","0","0","0.7899355215","0.003743829341","-0.1127858121","0.7899355215","0.003743829341","-0.1127858121","1.015631385","-0.003743829341","0.1127858121","1.015631385","-0.003743829341","0.1127858121","0.7899355215","0","0","0.7899355215"};
+   string $GetCVInfo[] = {"0","0.7899355215","-1.754009208e-016","0.003743829341","0.7899355215","-0.1127858121","0.003743829341","1.015631385","-0.1127858121","-0.003743829341","1.015631385","0.1127858121","-0.003743829341","0.7899355215","0.1127858121","0","0.7899355215","-1.754009208e-016","0","0.7899355215","-1.754009208e-016","0","0.5642396582","-1.25286372e-016","0","1.391712073e-015","-3.090221574e-031","0","-0.5642396582","1.25286372e-016","0","-0.7899355215","1.754009208e-016","0","-0.7899355215","1.754009208e-016","0.003743829341","-0.7899355215","-0.1127858121","0.003743829341","-1.015631385","-0.1127858121","-0.003743829341","-1.015631385","0.1127858121","-0.003743829341","-0.7899355215","0.1127858121","0","-0.7899355215","1.754009208e-016"};        
+   float $cvPosition[]; 
+   int $cv=0;
+   string $mel = " " ;
+   string $wholeMEL = " ";
+   for($cv;$cv<size($GetCVInfo);$cv++)
+  {
+   $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+   $cv=$cv + 2;  
+  }
+
+   $wholeMEL = "curve -d 3" + $mel + ";";
+   eval $wholeMEL;
+   
+   addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+   
+     //string $GetCVInfo[] = {"0","0","-0.7899355215","0.003743829341","-0.1127858121","-0.7899355215","0.003743829341","-0.1127858121","-1.015631385","-0.003743829341","0.1127858121","-1.015631385","-0.003743829341","0.1127858121","-0.7899355215","0","0","-0.7899355215","0","0","-0.7899355215","0","0","-0.5642396582","0","0","-1.391712073e-015","0","0","0.5642396582","0","0","0.7899355215","0","0","0.7899355215","0.003743829341","-0.1127858121","0.7899355215","0.003743829341","-0.1127858121","1.015631385","-0.003743829341","0.1127858121","1.015631385","-0.003743829341","0.1127858121","0.7899355215","0","0","0.7899355215"};
+     string $GetCVInfo[] = {"0","0.7899355215","-1.754009208e-016","0.003743829341","0.7899355215","-0.1127858121","0.003743829341","1.015631385","-0.1127858121","-0.003743829341","1.015631385","0.1127858121","-0.003743829341","0.7899355215","0.1127858121","0","0.7899355215","-1.754009208e-016","0","0.7899355215","-1.754009208e-016","0","0.5642396582","-1.25286372e-016","0","1.391712073e-015","-3.090221574e-031","0","-0.5642396582","1.25286372e-016","0","-0.7899355215","1.754009208e-016","0","-0.7899355215","1.754009208e-016","0.003743829341","-0.7899355215","-0.1127858121","0.003743829341","-1.015631385","-0.1127858121","-0.003743829341","-1.015631385","0.1127858121","-0.003743829341","-0.7899355215","0.1127858121","0","-0.7899355215","1.754009208e-016"};     
+     float $cvPosition[]; 
+     int $cv=0;
+     string $mel = " " ;
+     string $wholeMEL = " ";
+     for($cv;$cv<size($GetCVInfo);$cv++)
+     {
+      $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+      $cv=$cv + 2;  
+     }
+
+     $wholeMEL = "curve -d 3" + $mel + ";";
+
+     eval $wholeMEL;
+     
+     orient();            
+     addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  } 
+  select -cl;   
+}
+
+
+////////////////////////////////////////////////////////钻石控制器/////////////////////////////////////////////////////////////
+global proc Diamond()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    string $GetCVInfo[] = {"0","-0.7071067691","0","-3.090861966e-008","0","0.7071067691","-0.7071067691","0","-6.181723933e-008","0","-0.7071067691","0","9.272584833e-008","0","-0.7071067691","-0.7071067691","0","-6.181723933e-008","0","0.7071067691","0","9.272584833e-008","0","-0.7071067691","0.7071067691","0","0","0","-0.7071067691","0","-3.090861966e-008","0","0.7071067691","0.7071067691","0","0","0","0.7071067691","0","-3.090861966e-008","0","0.7071067691","9.272584833e-008","0","-0.7071067691","0.7071067691","0","0","-0.7071067691","0","-6.181723933e-008","0","-0.7071067691","0","0","0.7071067691","0"};
+    float $cvPosition[]; 
+    int $cv=0;
+    string $mel = " " ;
+    string $wholeMEL = " ";
+    for($cv;$cv<size($GetCVInfo);$cv++)
+    {
+     $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+     $cv=$cv + 2;  
+    }
+
+    $wholeMEL = "curve -d 1" + $mel + ";";
+
+    eval $wholeMEL;
+   
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+
+     string $GetCVInfo[] = {"0","-0.7071067691","0","-3.090861966e-008","0","0.7071067691","-0.7071067691","0","-6.181723933e-008","0","-0.7071067691","0","9.272584833e-008","0","-0.7071067691","-0.7071067691","0","-6.181723933e-008","0","0.7071067691","0","9.272584833e-008","0","-0.7071067691","0.7071067691","0","0","0","-0.7071067691","0","-3.090861966e-008","0","0.7071067691","0.7071067691","0","0","0","0.7071067691","0","-3.090861966e-008","0","0.7071067691","9.272584833e-008","0","-0.7071067691","0.7071067691","0","0","-0.7071067691","0","-6.181723933e-008","0","-0.7071067691","0","0","0.7071067691","0"};
+     float $cvPosition[]; 
+     int $cv=0;
+     string $mel = " " ;
+     string $wholeMEL = " ";
+     for($cv;$cv<size($GetCVInfo);$cv++)
+     {
+      $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+      $cv=$cv + 2;  
+      }
+
+     $wholeMEL = "curve -d 1" + $mel + ";";
+
+     eval $wholeMEL;
+     
+     orient();            
+     addPrefix();
+
+     string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+     searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+     parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+     delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;        
+}
+
+
+////////////////////////////////////////////////////////立体箭头控制器/////////////////////////////////////////////////////////
+global proc FourArrow()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p 0 1.32 0 -p 0 0 0.99 -p 0 0 -0.99 -p 0 1.32 0 -p 0.99 0 0 -p -0.99 0 0 -p 0 1.32 0 -p 0.99 0 0 -p 0.33 0 0 -p 0.33 -0.99 0 -p -0.33 -0.99 0 -p -0.33 0 0 -p -0.99 0 0 -p 0 1.32 0 -p 0 0 -0.99 -p 0 0 -0.33 -p 0 -0.99 -0.33 -p 0 -0.99 0.33 -p 0 0 0.33 -p 0 0 0.99 -p 0 1.32 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 ;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p 0 1.32 0 -p 0 0 0.99 -p 0 0 -0.99 -p 0 1.32 0 -p 0.99 0 0 -p -0.99 0 0 -p 0 1.32 0 -p 0.99 0 0 -p 0.33 0 0 -p 0.33 -0.99 0 -p -0.33 -0.99 0 -p -0.33 0 0 -p -0.99 0 0 -p 0 1.32 0 -p 0 0 -0.99 -p 0 0 -0.33 -p 0 -0.99 -0.33 -p 0 -0.99 0.33 -p 0 0 0.33 -p 0 0 0.99 -p 0 1.32 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 ;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;    
+}
+
+
+////////////////////////////////////////////////////////箭头控制器/////////////////////////////////////////////////////////////
+global proc SingleArrow()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p 0 1 0 -p 0 0 1 -p 0 0 0.5 -p 0 -1 0.5 -p 0 -1 -0.5 -p 0 0 -0.5 -p 0 0 -1 -p 0 1 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 ;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p 0 1 0 -p 0 0 1 -p 0 0 0.5 -p 0 -1 0.5 -p 0 -1 -0.5 -p 0 0 -0.5 -p 0 0 -1 -p 0 1 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 ;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;    
+}
+
+/////////////////////////////////////////////////////////双向箭头////////////////////////////////////////////////////////////
+
+global proc DoubleArrow()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p 0 1.997568 0 -p 0 0.855406 0.983158 -p 0 0.855406 0.327719 -p 0 -0.857838 0.327719 -p 0 -0.857838 0.983158 -p 0 -2 0 -p 0 -0.857838 -0.983158 -p 0 -0.857838 -0.327719 -p 0 0.855406 -0.327719 -p 0 0.855406 -0.983158 -p 0 1.997568 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 ;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p 0 1.997568 0 -p 0 0.855406 0.983158 -p 0 0.855406 0.327719 -p 0 -0.857838 0.327719 -p 0 -0.857838 0.983158 -p 0 -2 0 -p 0 -0.857838 -0.983158 -p 0 -0.857838 -0.327719 -p 0 0.855406 -0.327719 -p 0 0.855406 -0.983158 -p 0 1.997568 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 ;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;    
+}
+
+//////////////////////////////////////////////////////旋转箭头/////////////////////////////////////////////////////////////////
+
+global proc RotateArrow()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p -0.251045 0 -1.015808 -p -0.761834 0 -0.979696 -p -0.486547 0 -0.930468 -p -0.570736 0 -0.886448 -p -0.72786 0 -0.774834 -p -0.909301 0 -0.550655 -p -1.023899 0 -0.285854 -p -1.063053 0 9.80765e-009 -p -1.023899 0 0.285854 -p -0.909301 0 0.550655 -p -0.72786 0 0.774834 -p -0.570736 0 0.886448 -p -0.486547 0 0.930468 -p -0.761834 0 0.979696 -p -0.251045 0 1.015808 -p -0.498915 0 0.567734 -p -0.440202 0 0.841857 -p -0.516355 0 0.802034 -p -0.658578 0 0.701014 -p -0.822676 0 0.498232 -p -0.926399 0 0.258619 -p -0.961797 0 8.87346e-009 -p -0.926399 0 -0.258619 -p -0.822676 0 -0.498232 -p -0.658578 0 -0.701014 -p -0.516355 0 -0.802034 -p -0.440202 0 -0.841857 -p -0.498915 0 -0.567734 -p -0.251045 0 -1.015808 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 25 -k 26 -k 27 -k 28 -n "controller1" ;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p -0.251045 0 -1.015808 -p -0.761834 0 -0.979696 -p -0.486547 0 -0.930468 -p -0.570736 0 -0.886448 -p -0.72786 0 -0.774834 -p -0.909301 0 -0.550655 -p -1.023899 0 -0.285854 -p -1.063053 0 9.80765e-009 -p -1.023899 0 0.285854 -p -0.909301 0 0.550655 -p -0.72786 0 0.774834 -p -0.570736 0 0.886448 -p -0.486547 0 0.930468 -p -0.761834 0 0.979696 -p -0.251045 0 1.015808 -p -0.498915 0 0.567734 -p -0.440202 0 0.841857 -p -0.516355 0 0.802034 -p -0.658578 0 0.701014 -p -0.822676 0 0.498232 -p -0.926399 0 0.258619 -p -0.961797 0 8.87346e-009 -p -0.926399 0 -0.258619 -p -0.822676 0 -0.498232 -p -0.658578 0 -0.701014 -p -0.516355 0 -0.802034 -p -0.440202 0 -0.841857 -p -0.498915 0 -0.567734 -p -0.251045 0 -1.015808 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 25 -k 26 -k 27 -k 28 -n "controller1" ;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;    
+}
+
+////////////////////////////////////////////////////////ArrowOnBall////////////////////////////////////////////////////////////
+
+global proc ArrowOnBall()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p 0 0.35 -1.001567 -p -0.336638 0.677886 -0.751175 -p -0.0959835 0.677886 -0.751175 -p -0.0959835 0.850458 -0.500783 -p -0.0959835 0.954001 -0.0987656 -p -0.500783 0.850458 -0.0987656 -p -0.751175 0.677886 -0.0987656 -p -0.751175 0.677886 -0.336638 -p -1.001567 0.35 0 -p -0.751175 0.677886 0.336638 -p -0.751175 0.677886 0.0987656 -p -0.500783 0.850458 0.0987656 -p -0.0959835 0.954001 0.0987656 -p -0.0959835 0.850458 0.500783 -p -0.0959835 0.677886 0.751175 -p -0.336638 0.677886 0.751175 -p 0 0.35 1.001567 -p 0.336638 0.677886 0.751175 -p 0.0959835 0.677886 0.751175 -p 0.0959835 0.850458 0.500783 -p 0.0959835 0.954001 0.0987656 -p 0.500783 0.850458 0.0987656 -p 0.751175 0.677886 0.0987656 -p 0.751175 0.677886 0.336638 -p 1.001567 0.35 0 -p 0.751175 0.677886 -0.336638 -p 0.751175 0.677886 -0.0987656 -p 0.500783 0.850458 -0.0987656 -p 0.0959835 0.954001 -0.0987656 -p 0.0959835 0.850458 -0.500783 -p 0.0959835 0.677886 -0.751175 -p 0.336638 0.677886 -0.751175 -p 0 0.35 -1.001567 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 25 -k 26 -k 27 -k 28 -k 29 -k 30 -k 31 -k 32 -n "controller1" ;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p 0 0.35 -1.001567 -p -0.336638 0.677886 -0.751175 -p -0.0959835 0.677886 -0.751175 -p -0.0959835 0.850458 -0.500783 -p -0.0959835 0.954001 -0.0987656 -p -0.500783 0.850458 -0.0987656 -p -0.751175 0.677886 -0.0987656 -p -0.751175 0.677886 -0.336638 -p -1.001567 0.35 0 -p -0.751175 0.677886 0.336638 -p -0.751175 0.677886 0.0987656 -p -0.500783 0.850458 0.0987656 -p -0.0959835 0.954001 0.0987656 -p -0.0959835 0.850458 0.500783 -p -0.0959835 0.677886 0.751175 -p -0.336638 0.677886 0.751175 -p 0 0.35 1.001567 -p 0.336638 0.677886 0.751175 -p 0.0959835 0.677886 0.751175 -p 0.0959835 0.850458 0.500783 -p 0.0959835 0.954001 0.0987656 -p 0.500783 0.850458 0.0987656 -p 0.751175 0.677886 0.0987656 -p 0.751175 0.677886 0.336638 -p 1.001567 0.35 0 -p 0.751175 0.677886 -0.336638 -p 0.751175 0.677886 -0.0987656 -p 0.500783 0.850458 -0.0987656 -p 0.0959835 0.954001 -0.0987656 -p 0.0959835 0.850458 -0.500783 -p 0.0959835 0.677886 -0.751175 -p 0.336638 0.677886 -0.751175 -p 0 0.35 -1.001567 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 25 -k 26 -k 27 -k 28 -k 29 -k 30 -k 31 -k 32 -n "controller1" ;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  } 
+  select -cl;   
+}
+
+//////////////////////////////////////////////////////眼睛控制器//////////////////////////////////////////////////////////////////
+global proc Eye()
+{
+ string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    file -i "//10.99.1.2/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/002-设置创建/shape/eye.mb";
+    select -r "eye_ctrl_G";    
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      file -i "//10.99.1.2/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/002-设置创建/shape/eye.mb";
+      select -r "eye_ctrl_G";          
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;        
+}
+
+
+//////////////////////////////////////////////////////手控制器/////////////////////////////////////////////////////////////////////
+global proc Hand()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 3 -p 0.199508 0 1.145571 -p 0.455729 0 1.400887 -p 0.968169 0 1.91152 -p 1.185688 0 1.264678 -p 0.59045 0 0.78248 -p 0.961097 0 0.65355 -p 1.680396 0 1.145921 -p 2.129244 0 1.174722 -p 2.189978 0 0.748334 -p 1.203164 0 0.427617 -p 1.265764 0 0.111487 -p 2.161754 0 0.218999 -p 2.735643 0 0.0589123 -p 2.397497 0 -0.390202 -p 1.354116 0 -0.179206 -p 1.158291 0 -0.429188 -p 1.732382 0 -0.629073 -p 1.995582 0 -0.953684 -p 1.70846 0 -1.06337 -p 1.464722 0 -0.956178 -p 0.890017 0 -0.756074 -p 0.4738 0 -0.807208 -p -0.272129 0 -0.634136 -p -0.623808 0 -0.274109 -p -0.613014 0 0.564603 -p -0.0713325 0 0.951915 -p 0.199508 0 1.145571 -k 0 -k 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 24 -k 24 ;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 3 -p 0.199508 0 1.145571 -p 0.455729 0 1.400887 -p 0.968169 0 1.91152 -p 1.185688 0 1.264678 -p 0.59045 0 0.78248 -p 0.961097 0 0.65355 -p 1.680396 0 1.145921 -p 2.129244 0 1.174722 -p 2.189978 0 0.748334 -p 1.203164 0 0.427617 -p 1.265764 0 0.111487 -p 2.161754 0 0.218999 -p 2.735643 0 0.0589123 -p 2.397497 0 -0.390202 -p 1.354116 0 -0.179206 -p 1.158291 0 -0.429188 -p 1.732382 0 -0.629073 -p 1.995582 0 -0.953684 -p 1.70846 0 -1.06337 -p 1.464722 0 -0.956178 -p 0.890017 0 -0.756074 -p 0.4738 0 -0.807208 -p -0.272129 0 -0.634136 -p -0.623808 0 -0.274109 -p -0.613014 0 0.564603 -p -0.0713325 0 0.951915 -p 0.199508 0 1.145571 -k 0 -k 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 24 -k 24 ;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;            
+}
+
+
+//////////////////////////////////////////////////////脚印控制器///////////////////////////////////////////////////////////////////
+global proc Foot()
+{
+  string $selObj[] = `ls -sl`;
+  int $obj=0;
+  
+  string $getPrefix = `textField -q -tx PrefixTFG`;  
+
+  if(size($selObj) == 0)
+  {
+    curve -d 1 -p -0.081122 0 -1.11758 -p 0.390719 0 -0.921584 -p 0.514124 0 -0.616704 -p 0.412496 0 0.0293557 -p 0.86256 0 0.552008 -p 0.920632 0 1.161772 -p 0.775452 0 1.669908 -p 0.38346 0 2.011088 -p -0.131936 0 2.330484 -p -0.552964 0 2.308708 -p -0.654588 0 1.691688 -p -0.57474 0 0.63912 -p -0.364226 0 0.109206 -p -0.531184 0 -0.39893 -p -0.465852 0 -0.841736 -p -0.081122 0 -1.11758 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -n "controller1" ;
+    addPrefix();         
+  }
+  if(size($selObj) != 0)
+  {
+    for($obj;$obj<size($selObj);$obj++)
+    {
+      curve -d 1 -p -0.081122 0 -1.11758 -p 0.390719 0 -0.921584 -p 0.514124 0 -0.616704 -p 0.412496 0 0.0293557 -p 0.86256 0 0.552008 -p 0.920632 0 1.161772 -p 0.775452 0 1.669908 -p 0.38346 0 2.011088 -p -0.131936 0 2.330484 -p -0.552964 0 2.308708 -p -0.654588 0 1.691688 -p -0.57474 0 0.63912 -p -0.364226 0 0.109206 -p -0.531184 0 -0.39893 -p -0.465852 0 -0.841736 -p -0.081122 0 -1.11758 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -n "controller1" ;
+      orient();      
+      addPrefix();
+
+      string $Ctrl = $getPrefix + "_ctrl" + ($obj+1);        
+      searchReplaceNames ($getPrefix + "_ctrl") $Ctrl "hierarchy";      
+      parentConstraint -weight 1 $selObj[$obj] ($Ctrl+"_G");
+      delete (($Ctrl+"_G")+"_parentConstraint1 ");         
+    }      
+  }
+  select -cl;        
+}
+
+
+///////////////////////////////////////////////////自动动画Z////////////////////////////////////////////////////////////////////////
+global proc Automatic()
+{
+  string $GetCVInfo[] = {"0.953125811","1.3","0","0.116407263","0.05","0","-0.720311284","-1.2","0","-0.1492179751","-1.2","0","0.421875334","-1.2","0","0.684376287","-1.2","0","0.912500191","-0.9749996185","0","1","-0.6312489509","0","1.05","-0.6367177844","0","1.1","-0.6421866178","0","1.04062562","-0.9710933089","0","0.98125124","-1.3","0","-0.05937438","-1.3","0","-1.1","-1.3","0","-1.1","-1.277343404","0","-1.1","-1.254686809","0","-0.2781246662","-0.027343404","0","0.543750668","1.2","0","0.133594263","1.2","0","-0.2765621424","1.2","0","-0.4812497139","1.2","0","-0.6640619516","1.110937667","0","-0.7609369039","0.94062562","0","-0.8","0.707812619","0","-0.85","0.707812619","0","-0.9","0.707812619","0","-0.85","1.00390631","0","-0.8","1.3","0","0.076562905","1.3","0","0.953125811","1.3","0"};  
+  float $cvPosition[]; 
+  int $cv=0;
+  string $mel = " " ;
+  string $wholeMEL = " ";
+  for($cv;$cv<size($GetCVInfo);$cv++)
+  {
+   $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+   $cv=$cv + 2;  
+  }
+
+  $wholeMEL = "curve -d 1" + $mel + "-n " + "automatic" + ";";
+
+  eval $wholeMEL; 
+ 
+  string $selCtrl[] = `ls -sl`;
+  string $selCtrlShape[] = `listRelatives -s -f $selCtrl[0]`;   
+ 
+  setAttr ($selCtrlShape[0] + ".overrideEnabled") 1; 
+  setAttr ($selCtrlShape[0] + ".overrideColor") 13;
+ 
+  group -n ($selCtrl[0]+"_G"); xform -os -piv 0 0 0;
+   
+}
+
+//////////////////////////////////////////////////解算S/////////////////////////////////////////////////////////////////////////////
+global proc Simulation()
+{
+  string $GetCVInfo[] = {"0.65","1.3","0","0.65","0.85","0","0.65","0.4","0","0.6","0.4","0","0.55","0.4","0","0.5171885252","0.6781261921","0","0.3515625238","1.006250095","0","0.04375143053","1.2","0","-0.120312047","1.2","0","-0.3062493324","1.2","0","-0.55","0.9578133822","0","-0.55","0.8031250477","0","-0.55","0.6859388113","0","-0.4656237125","0.5875013352","0","-0.3453124285","0.4453131914","0","0.109375906","0.2078126192","0","0.479687953","0.01406271458","0","0.7203135729","-0.1859372854","0","0.85","-0.4578118563","0","0.85","-0.6078110933","0","0.85","-0.8906248569","0","0.400000763","-1.3","0","0.04687647822","-1.3","0","-0.06406118868","-1.3","0","-0.160936141","-1.289062333","0","-0.220312047","-1.281249714","0","-0.5859365225","-1.2","0","-0.6359372854","-1.2","0","-0.6828114748","-1.2","0","-0.7374998093","-1.23906157","0","-0.75","-1.3","0","-0.8","-1.3","0","-0.85","-1.3","0","-0.85","-0.85","0","-0.85","-0.4","0","-0.8","-0.4","0","-0.75","-0.4","0","-0.699999237","-0.7015609979","0","-0.5296871901","-1.001560998","0","-0.1796864271","-1.2","0","0.02812619211","-1.2","0","0.2703128099","-1.2","0","0.55","-0.9390615702","0","0.55","-0.7609369039","0","0.55","-0.6624994278","0","0.4484390021","-0.4609369039","0","0.3421889067","-0.3734370947","0","0.2703128099","-0.3140611887","0","-0.4156244755","0.04375066758","0","-0.7015617609","0.2531258106","0","-0.85","0.5046875715","0","-0.85","0.6562508583","0","-0.85","0.9203128099","0","-0.4453124285","1.3","0","-0.1312497139","1.3","0","0.06406271458","1.3","0","0.2828130007","1.232813001","0","0.3828130007","1.2","0","0.4250011444","1.2","0","0.4718753338","1.2","0","0.5312512398","1.239063096","0","0.55","1.3","0","0.6","1.3","0","0.65","1.3","0"};
+  float $cvPosition[]; 
+  int $cv=0;
+  string $mel = " " ;
+  string $wholeMEL = " ";
+  for($cv;$cv<size($GetCVInfo);$cv++)
+  {
+   $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+   $cv=$cv + 2;  
+  }
+
+  $wholeMEL = "curve -d 3" + $mel + "-n " + "simulation" + ";";
+
+  eval $wholeMEL; 
+ 
+ 
+  string $selCtrl[] = `ls -sl`;
+  string $selCtrlShape[] = `listRelatives -s -f $selCtrl[0]`;   
+ 
+  setAttr ($selCtrlShape[0] + ".overrideEnabled") 1; 
+  setAttr ($selCtrlShape[0] + ".overrideColor") 13;
+ 
+  addAttr -ln "simulation"  -at "enum" -en "on:off:"  $selCtrl[0];
+  setAttr -e-keyable true ($selCtrl[0]+".simulation"); 
+ 
+  group -n ($selCtrl[0]+"_G"); xform -os -piv 0 0 0; 
+      
+}
+
+
+//////////////////////////////////////////////肌肉Muscle//////////////////////////////////////////////////////////////////////////////////
+global proc Muscle()
+{  
+  string $GetCVInfo[] = { "-0.05","-1.3","0","-0.6","-0.2062493324","0","-1.15","0.8875013352","0","-1.15","0.04375066758","0","-1.15","-0.8","0","-1.15","-1.053124285","0","-1.093749142","-1.115623713","0","-1.017186999","-1.2","0","-0.85","-1.2","0","-0.8","-1.2","0","-0.75","-1.2","0","-0.75","-1.25","0","-0.75","-1.3","0","-1.25","-1.3","0","-1.75","-1.3","0","-1.75","-1.25","0","-1.75","-1.2","0","-1.7","-1.2","0","-1.65","-1.2","0","-1.470311284","-1.2","0","-1.395311666","-1.095312428","0","-1.35","-1.029686427","0","-1.35","-0.8","0","-1.35","0","0","-1.35","0.8","0","-1.35","0.9812512398","0","-1.392186618","1.062500954","0","-1.420312047","1.121875334","0","-1.576561379","1.2","0","-1.75","1.2","0","-1.75","1.25","0","-1.75","1.3","0","-1.390624857","1.3","0","-1.031249714","1.3","0","-0.4890623331","0.2226565957","0","0.05312504768","-0.8546868086","0","0.5445319295","0.2226565957","0","1.035938811","1.3","0","1.392969406","1.3","0","1.75","1.3","0","1.75","1.25","0","1.75","1.2","0","1.700781262","1.2","0","1.651562524","1.2","0","1.47031281","1.2","0","1.395313191","1.095313954","0","1.35","1.029687953","0","1.35","0.8","0","1.35","0","0","1.35","-0.8","0","1.35","-1.053124285","0","1.407813382","-1.115623713","0","1.485938048","-1.2","0","1.651562524","-1.2","0","1.700781262","-1.2","0","1.75","-1.2","0","1.75","-1.25","0","1.75","-1.3","0","1.2","-1.3","0","0.65","-1.3","0","0.65","-1.25","0","0.65","-1.2","0","0.7","-1.2","0","0.75","-1.2","0","0.9312512398","-1.2","0","1.004688334","-1.095312428","0","1.05","-1.029686427","0","1.05","-0.8","0","1.05","0.04375066758","0","1.05","0.8875013352","0","0.55","-0.2062493324","0","0.05","-1.3","0","-2.220446049e-016","-1.3","0","-0.05","-1.3","0"};  
+  float $cvPosition[]; 
+  int $cv=0;
+  string $mel = " " ;
+  string $wholeMEL = " ";
+  for($cv;$cv<size($GetCVInfo);$cv++)
+  {
+   $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+   $cv=$cv + 2;  
+  }
+
+  $wholeMEL = "curve -d 3" + $mel + "-n " + "muscle" + ";";
+
+  eval $wholeMEL; 
+ 
+ 
+  string $selCtrl[] = `ls -sl`;
+  string $selCtrlShape[] = `listRelatives -s -f $selCtrl[0]`;   
+ 
+  setAttr ($selCtrlShape[0] + ".overrideEnabled") 1; 
+  setAttr ($selCtrlShape[0] + ".overrideColor") 13;
+ 
+  addAttr -ln "muscle"  -at "enum" -en "on:off:"  $selCtrl[0];
+  setAttr -e-keyable true ($selCtrl[0]+".muscle"); 
+ 
+  group -n ($selCtrl[0]+"_G"); xform -os -piv 0 0 0;   
+    
+}
+
+
+
+//////////////////////////////////////////////显隐H//////////////////////////////////////////////////////////////////////////////////////
+global proc Hide()
+{
+  string $GetCVInfo[] = { "-0.65","0.1","0","0","0.1","0","0.65","0.1","0","0.65","0.45","0","0.65","0.8","0","0.65","1.004687572","0","0.6234386206","1.068751049","0","0.6031258106","1.117187762","0","0.5359388113","1.153125811","0","0.4484390021","1.2","0","0.3484390021","1.2","0","0.299219501","1.2","0","0.25","1.2","0","0.25","1.25","0","0.25","1.3","0","0.8","1.3","0","1.35","1.3","0","1.35","1.25","0","1.35","1.2","0","1.300781262","1.2","0","1.251562524","1.2","0","1.151562524","1.2","0","1.064062715","1.154688334","0","0.9968757153","1.123437858","0","0.95","0.9953139544","0","0.95","0.8","0","0.95","0","0","0.95","-0.8","0","0.95","-1.003123522","0","0.9765629053","-1.068749523","0","0.9968757153","-1.117186236","0","1.060937667","-1.153124285","0","1.151562524","-1.2","0","1.251562524","-1.2","0","1.300781262","-1.2","0","1.35","-1.2","0","1.35","-1.25","0","1.35","-1.3","0","0.8","-1.3","0","0.25","-1.3","0","0.25","-1.25","0","0.25","-1.2","0","0.299219501","-1.2","0","0.3484390021","-1.2","0","0.5203135729","-1.2","0","0.5984382391","-1.103123522","0","0.65","-1.040624094","0","0.65","-0.8","0","0.65","-0.4","0","0.65","0","0","0","0","0","-0.65","0","0","-0.65","-0.4","0","-0.65","-0.8","0","-0.65","-1.003123522","0","-0.6234370947","-1.068749523","0","-0.6031242847","-1.117186236","0","-0.5374998093","-1.153124285","0","-0.4484374762","-1.2","0","-0.35","-1.2","0","-0.3","-1.2","0","-0.25","-1.2","0","-0.25","-1.25","0","-0.25","-1.3","0","-0.8","-1.3","0","-1.35","-1.3","0","-1.35","-1.25","0","-1.35","-1.2","0","-1.300780499","-1.2","0","-1.251560998","-1.2","0","-1.078123903","-1.2","0","-0.999999237","-1.103123522","0","-0.95","-1.040624094","0","-0.95","-0.8","0","-0.95","0","0","-0.95","0.8","0","-0.95","1.004687572","0","-0.9765613794","1.068751049","0","-0.9968741894","1.117187762","0","-1.060936141","1.153125811","0","-1.151560998","1.2","0","-1.251560998","1.2","0","-1.300780499","1.2","0","-1.35","1.2","0","-1.35","1.25","0","-1.35","1.3","0","-0.8","1.3","0","-0.25","1.3","0","-0.25","1.25","0","-0.25","1.2","0","-0.3","1.2","0","-0.35","1.2","0","-0.4484374762","1.2","0","-0.5374998093","1.154688334","0","-0.599999237","1.123437858","0","-0.65","0.9953139544","0","-0.65","0.8","0","-0.65","0.45","0","-0.65","0.1","0"}; 
+  float $cvPosition[]; 
+  int $cv=0;
+  string $mel = " " ;
+  string $wholeMEL = " ";
+  for($cv;$cv<size($GetCVInfo);$cv++)
+  {
+   $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+   $cv=$cv + 2;  
+  }
+
+  $wholeMEL = "curve -d 3" + $mel + "-n " + "hide" + ";";
+
+  eval $wholeMEL; 
+ 
+ 
+  string $selCtrl[] = `ls -sl`;
+  string $selCtrlShape[] = `listRelatives -s -f $selCtrl[0]`;   
+ 
+  setAttr ($selCtrlShape[0] + ".overrideEnabled") 1; 
+  setAttr ($selCtrlShape[0] + ".overrideColor") 13; 
+ 
+  group -n ($selCtrl[0]+"_G"); xform -os -piv 0 0 0; 
+}
+
+
+
+//////////////////////////////////////////////布料C//////////////////////////////////////////////////////////////////////////////////
+global proc Cloth()
+{ 
+  string $GetCVInfo[] = { "0.95","1.3","0","1","0.85","0","1.05","0.4","0","1","0.4","0","0.95","0.4","0","0.8375013352","0.8250003815","0","0.4171885252","1.2","0","0.1234386206","1.2","0","-0.1234370947","1.2","0","-0.5218745708","0.950000763","0","-0.75","0.4015625238","0","-0.75","-0.006248569467","0","-0.75","-0.3437491417","0","-0.5296871901","-0.8374990463","0","-0.08593652247","-1.1","0","0.1984382391","-1.1","0","0.4453139544","-1.1","0","0.8234386206","-0.8984374762","0","1.05","-0.6","0","1.1","-0.6","0","1.15","-0.6","0","0.9578126192","-0.9624994278","0","0.4453139544","-1.3","0","0.09375066758","-1.3","0","-0.5421873808","-1.3","0","-0.890624094","-0.8421866178","0","-1.15","-0.5","0","-1.15","-0.03906157015","0","-1.15","0.3343755245","0","-0.8265621424","0.9578133822","0","-0.2578110933","1.3","0","0.07812542916","1.3","0","0.339063859","1.3","0","0.5937506676","1.223437858","0","0.6687502861","1.2","0","0.700000763","1.2","0","0.7484390021","1.2","0","0.7843755245","1.22031281","0","0.829688716","1.248438239","0","0.85","1.3","0","0.9","1.3","0","0.95","1.3","0"}; 
+  float $cvPosition[]; 
+  int $cv=0;
+  string $mel = " " ;
+  string $wholeMEL = " ";
+  for($cv;$cv<size($GetCVInfo);$cv++)
+  {
+   $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+   $cv=$cv + 2;  
+  }
+
+  $wholeMEL = "curve -d 3" + $mel + "-n " + "cloth" + ";";
+
+  eval $wholeMEL; 
+ 
+ 
+  string $selCtrl[] = `ls -sl`;
+  string $selCtrlShape[] = `listRelatives -s -f $selCtrl[0]`;   
+ 
+  setAttr ($selCtrlShape[0] + ".overrideEnabled") 1; 
+  setAttr ($selCtrlShape[0] + ".overrideColor") 13; 
+ 
+  group -n ($selCtrl[0]+"_G"); xform -os -piv 0 0 0;  
+ 
+    
+}
+
+
+//////////////////////////////////////////////系列变形T///////////////////////////////////////////////////////////////////////////////////
+global proc Transformer()
+{
+
+  string $GetCVInfo[] = { "1.05","1.3","0","1.05","1.028125429","0","1.05","0.7562508583","0","1","0.7562508583","0","0.95","0.7562508583","0","0.929688716","0.9156252384","0","0.8953131914","0.9843762875","0","0.839063859","1.095313954","0","0.6515625238","1.2","0","0.4984382391","1.2","0","0.3242191196","1.2","0","0.15","1.2","0","0.15","0.2","0","0.15","-0.8","0","0.15","-1.053124285","0","0.2062508583","-1.115623713","0","0.2859380484","-1.2","0","0.4515625238","-1.2","0","0.5007812619","-1.2","0","0.55","-1.2","0","0.55","-1.25","0","0.55","-1.3","0","0","-1.3","0","-0.55","-1.3","0","-0.55","-1.25","0","-0.55","-1.2","0","-0.5","-1.2","0","-0.45","-1.2","0","-0.270311284","-1.2","0","-0.1953116655","-1.095312428","0","-0.15","-1.029686427","0","-0.15","-0.8","0","-0.15","0.2","0","-0.15","1.2","0","-0.3015617609","1.2","0","-0.4531235218","1.2","0","-0.6281246662","1.2","0","-0.7031242847","1.173438621","0","-0.799999237","1.137500572","0","-0.9374998093","0.9312504768","0","-0.95","0.7562508583","0","-1","0.7562508583","0","-1.05","0.7562508583","0","-1.05","1.028125429","0","-1.05","1.3","0","0","1.3","0","1.05","1.3","0"};  float $cvPosition[]; 
+  int $cv=0;
+  string $mel = " " ;
+  string $wholeMEL = " ";
+  for($cv;$cv<size($GetCVInfo);$cv++)
+  {
+   $mel += "-p " + $GetCVInfo[$cv] + " " + $GetCVInfo[$cv+1] + " " + $GetCVInfo[$cv+2] + " "; 
+   $cv=$cv + 2;  
+  }
+
+  $wholeMEL = "curve -d 3" + $mel + "-n " + "transform" + ";";
+
+  eval $wholeMEL; 
+ 
+ 
+  string $selCtrl[] = `ls -sl`;
+  string $selCtrlShape[] = `listRelatives -s -f $selCtrl[0]`;   
+ 
+  setAttr ($selCtrlShape[0] + ".overrideEnabled") 1; 
+  setAttr ($selCtrlShape[0] + ".overrideColor") 13; 
+ 
+  group -n ($selCtrl[0]+"_G"); xform -os -piv 0 0 0;  
+     
+}
+
+
+/////////////////////////////////////////////////////////添加前缀，创建组///////////////////////////////////////////////////////
+
+global proc addPrefix()
+{
+ string $getPrefix = `textField -q -tx PrefixTFG`; 
+ int $getdrivenKey = `checkBox -q -v drivenKeyCBX`;
+ int $getexpression = `checkBox -q -v expressionCBX`;
+ int $getconstrain = `checkBox -q -v constrainCBX`; 
+ 
+ string $selCtrl[] = `ls -sl`;
+ string $Ctrl = $getPrefix + "_ctrl"; 
+ rename $selCtrl[0] $Ctrl;
+ group -n ($Ctrl+"_G") $Ctrl;
+ xform -os -piv 0 0 0;
+ if($getconstrain == 1)
+ {
+  group -n ($Ctrl+"_C") $Ctrl;    
+ }
+ if($getexpression == 1)
+ {
+  group -n ($Ctrl+"_E") $Ctrl;      
+ }
+ if($getdrivenKey == 1)
+ {
+  group -n ($Ctrl+"_D") $Ctrl;      
+ } 
+ select -r ($Ctrl+"_G");
+ 
+}
+
+
+//////////////////////////////////////////////////////////控制器朝向/////////////////////////////////////////////////////////////
+
+global proc orient()
+{
+  int $getCtrlOrient = `radioButtonGrp -q -select ctrlOrient`;
+  int $getOrientInverse = `checkBox -q -v InverseCBX`;
+  string $selCtrl[] = `ls -sl`;
+  switch($getCtrlOrient)
+  {
+    case 1:    
+    selectCurveCV($selCtrl[0]);
+    if($getOrientInverse == 0)
+    {
+      rotate -r -os 90 0 0;          
+    }
+    if($getOrientInverse == 1)
+    {
+      rotate -r -os -90 0 0;          
+    }            
+    break;
+    
+    case 2:    
+    selectCurveCV($selCtrl[0]);
+    if($getOrientInverse == 0)
+    {
+     rotate -r -os 0 90 0;          
+    }
+    if($getOrientInverse == 1)
+    {
+     rotate -r -os 0 -90 0;          
+    }            
+    break;
+    
+    case 3:  
+    
+    selectCurveCV($selCtrl[0]);
+    if($getOrientInverse == 0)
+    {
+     rotate -r -os 0 0 90;          
+    } 
+    if($getOrientInverse == 1)
+    {
+     rotate -r -os 0 0 -90;          
+    }                   
+    break; 
+    
+    case 4:                      
+    break;           
+  }
+  
+  select -r $selCtrl[0];
+    
+}
+
+
+////////////////////////////////////////////////////////////调整控制器旋转/////////////////////////////////////////////////////
+
+global proc rotateX()
+{
+ string $selCtrl[] = `ls -sl`;
+ selectCurveCV($selCtrl[0]);
+ rotate -r -os 90 0 0;         
+}
+global proc rotateY()
+{
+ string $selCtrl[] = `ls -sl`;
+ selectCurveCV($selCtrl[0]);
+ rotate -r -os 0 90 0;          
+}
+global proc rotateZ()
+{
+ string $selCtrl[] = `ls -sl`;
+ selectCurveCV($selCtrl[0]);
+ rotate -r -os 0 0 90;         
+}
+
+
+/////////////////////////////////////////////////////////调整控制器颜色//////////////////////////////////////////////////////////
+
+
+global proc controlColor()
+{
+
+ int $getColor = `colorIndexSliderGrp -q -v controlColor`;
+ int $color=0;
+ int $ctrlShape=0;
+ string $selCtrl[] = `ls -sn -sl`;
+ string $getCtrlShape[];
+ for($ctrlShape;$ctrlShape<size($selCtrl);$ctrlShape++)
+ {
+    string $selCtrlShape[] = `listRelatives -s -f $selCtrl[$ctrlShape]`; 
+    $getCtrlShape[$ctrlShape] = $selCtrlShape[0];    
+ }
+ 
+ for($color;$color<size($getCtrlShape);$color++)
+ {
+   string $overrideEnabled = $getCtrlShape[$color] + ".overrideEnabled";
+   string $overrideColor = $getCtrlShape[$color] + ".overrideColor"; 
+   setAttr $overrideEnabled 1;
+   setAttr $overrideColor ($getColor-1);      
+ }
+   
+}
+
+/////////////////////////////////////////////////////////调整控制器大小//////////////////////////////////////////////////////////
+/*
+global proc controlSize()
+{
+  float $getCtrlSize =`floatSliderGrp -q -v ctrlSizeFBG`;
+  string $selCtrl[] = `ls -sl`; 
+  selectCurveCV($selCtrl[0]);
+  
+  scale -r -ocp $getCtrlSize $getCtrlSize $getCtrlSize;     
+
+}
+*/
+
+global proc controlSize(){
+  string $sels[] = `ls -sl`; 
+  float $getCtrlSize =`floatSliderGrp -q -v ctrlSizeFBG`;
+  //select -cl;
+  for($sel in $sels)
+  {
+      string $points[] = `ls ($sel + ".cv[*]")`;
+      float $pv[] = `xform -q -ws -t ($sel + ".cv[0]")`;
+      scale -r -p $pv[0] $pv[1] $pv[2] $getCtrlSize $getCtrlSize $getCtrlSize $points;
+  }
+} 
+
+
+global proc ctrlSizeButton()
+{
+  float $getCtrlSize =`textField -q -tx ctrlSizeField`;
+  string $sels[] = `ls -sl`; 
+  for($sel in $sels)
+  {
+      string $points[] = `ls ($sel + ".cv[*]")`;
+      float $pv[] = `xform -q -ws -t ($sel + ".cv[0]")`;
+      scale -r -p $pv[0] $pv[1] $pv[2] $getCtrlSize $getCtrlSize $getCtrlSize $points;
+  }   
+
+}
+////////////////////////////////////////////////////////隐藏显示属性/////////////////////////////////////////////////////////////
+global proc HideAll()////////////////////////////////////////////////////////////////////隐藏所有属性
+{
+ int $getAll = `checkBox -q -v allCBX`;
+ string $sel[] = `ls -sl`;
+ int $All=0;
+ for($All;$All<size($sel);$All++)
+ {
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".tx");
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".ty");
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".tz");
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".rx");
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".ry");
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".rz");
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".sx");
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".sy");
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".sz"); 
+  setAttr -lock (1-$getAll) -keyable $getAll -channelBox $getAll ($sel[$All]+".visibility"); 
+   
+  if($getAll == 1)
+  {
+   setAttr -keyable $getAll ($sel[$All]+".tx");
+   setAttr -keyable $getAll ($sel[$All]+".ty");
+   setAttr -keyable $getAll ($sel[$All]+".tz"); 
+   setAttr -keyable $getAll ($sel[$All]+".rx");
+   setAttr -keyable $getAll ($sel[$All]+".ry");
+   setAttr -keyable $getAll ($sel[$All]+".rz"); 
+   setAttr -keyable $getAll ($sel[$All]+".sx");
+   setAttr -keyable $getAll ($sel[$All]+".sy");
+   setAttr -keyable $getAll ($sel[$All]+".sz");    
+   setAttr -keyable $getAll ($sel[$All]+".visibility");   
+                  
+  }
+  if($getAll == 0)  {       }     
+ }   
+}    
+ 
+
+
+
+global proc HideTranslate()////////////////////////////////////////////////////////////////////隐藏所有位移属性
+{
+ int $getTr = `checkBox -q -v allTranslateCBX`;
+ string $sel[] = `ls -sl`;
+ int $Alltr=0;
+ for($Alltr;$Alltr<size($sel);$Alltr++)
+ {
+  setAttr -lock (1-$getTr) -keyable $getTr -channelBox $getTr ($sel[$Alltr]+".tx");
+  setAttr -lock (1-$getTr) -keyable $getTr -channelBox $getTr ($sel[$Alltr]+".ty");
+  setAttr -lock (1-$getTr) -keyable $getTr -channelBox $getTr ($sel[$Alltr]+".tz");
+  
+  if($getTr == 1)
+  {
+   setAttr -keyable $getTr ($sel[$Alltr]+".tx");
+   setAttr -keyable $getTr ($sel[$Alltr]+".ty");
+   setAttr -keyable $getTr ($sel[$Alltr]+".tz");             
+  }
+  if($getTr == 0)  {       }     
+ }   
+}
+
+global proc HideTx()////////////////////////////////////////////////////////////////////隐藏所有位移X
+{
+ int $getTx = `checkBox -q -v TXCBX`;
+ string $sel[] = `ls -sl`;
+ int $tx=0;
+ for($tx;$tx<size($sel);$tx++)
+ {
+  setAttr -lock (1-$getTx) -keyable $getTx -channelBox $getTx ($sel[$tx]+".tx");
+  
+  if($getTx == 1)
+  {
+   setAttr -keyable $getTx ($sel[$tx]+".tx");          
+  }
+  if($getTx == 0)  {       }     
+ }   
+}
+global proc HideTy()////////////////////////////////////////////////////////////////////隐藏所有位移Y
+{
+ int $getTy = `checkBox -q -v TYCBX`;
+ string $sel[] = `ls -sl`;
+ int $ty=0;
+ for($ty;$ty<size($sel);$ty++)
+ {
+  setAttr -lock (1-$getTy) -keyable $getTy -channelBox $getTy ($sel[$ty]+".ty");
+  
+  if($getTy == 1)
+  {
+   setAttr -keyable $getTy ($sel[$ty]+".ty");          
+  }
+  if($getTy == 0)  {       }     
+ }   
+}
+global proc HideTz()////////////////////////////////////////////////////////////////////隐藏所有位移Z
+{
+ int $getTz = `checkBox -q -v TZCBX`;
+ string $sel[] = `ls -sl`;
+ int $tz=0;
+ for($tz;$tz<size($sel);$tz++)
+ {
+  setAttr -lock (1-$getTz) -keyable $getTz -channelBox $getTz ($sel[$tz]+".tz");
+  
+  if($getTz == 1)
+  {
+   setAttr -keyable $getTz ($sel[$tz]+".tz");          
+  }
+  if($getTz == 0)  {       }     
+ }   
+}
+
+global proc HideRotate()////////////////////////////////////////////////////////////////////隐藏所有旋转属性
+{
+ int $getRo = `checkBox -q -v allRotateCBX`;
+ string $sel[] = `ls -sl`;
+ int $Allro=0;
+ for($Allro;$Allro<size($sel);$Allro++)
+ {
+  setAttr -lock (1-$getRo) -keyable $getRo -channelBox $getRo ($sel[$Allro]+".rx");
+  setAttr -lock (1-$getRo) -keyable $getRo -channelBox $getRo ($sel[$Allro]+".ry");
+  setAttr -lock (1-$getRo) -keyable $getRo -channelBox $getRo ($sel[$Allro]+".rz");
+  
+  if($getRo == 1)
+  {
+   setAttr -keyable $getRo ($sel[$Allro]+".rx");
+   setAttr -keyable $getRo ($sel[$Allro]+".ry");
+   setAttr -keyable $getRo ($sel[$Allro]+".rz");             
+  }
+  if($getRo == 0)  {       }     
+ }   
+}
+global proc HideRx()////////////////////////////////////////////////////////////////////隐藏所有旋转属性X
+{
+ int $getRx = `checkBox -q -v RXCBX`;
+ string $sel[] = `ls -sl`;
+ int $rx=0;
+ for($rx;$rx<size($sel);$rx++)
+ {
+  setAttr -lock (1-$getRx) -keyable $getRx -channelBox $getRx ($sel[$rx]+".rx");
+  
+  if($getRx == 1)
+  {
+   setAttr -keyable $getRx ($sel[$rx]+".rx");         
+  }
+  if($getRx == 0)  {       }     
+ }   
+}
+global proc HideRy()////////////////////////////////////////////////////////////////////隐藏所有旋转属性Y
+{
+ int $getRy = `checkBox -q -v RYCBX`;
+ string $sel[] = `ls -sl`;
+ int $ry=0;
+ for($ry;$ry<size($sel);$ry++)
+ {
+  setAttr -lock (1-$getRy) -keyable $getRy -channelBox $getRy ($sel[$ry]+".ry");
+  
+  if($getRy == 1)
+  {
+   setAttr -keyable $getRy ($sel[$ry]+".ry");         
+  }
+  if($getRy == 0)  {       }     
+ }   
+}
+global proc HideRz()////////////////////////////////////////////////////////////////////隐藏所有旋转属性Z
+{
+ int $getRz = `checkBox -q -v RZCBX`;
+ string $sel[] = `ls -sl`;
+ int $rz=0;
+ for($rz;$rz<size($sel);$rz++)
+ {
+  setAttr -lock (1-$getRz) -keyable $getRz -channelBox $getRz ($sel[$rz]+".rz");
+  
+  if($getRz == 1)
+  {
+   setAttr -keyable $getRz ($sel[$rz]+".rz");         
+  }
+  if($getRz == 0)  {       }     
+ }   
+}
+
+global proc HideScale()////////////////////////////////////////////////////////////////////隐藏所有缩放属性
+{
+ int $getSc = `checkBox -q -v allScaleCBX`;
+ string $sel[] = `ls -sl`;
+ int $Allsc=0;
+ for($Allsc;$Allsc<size($sel);$Allsc++)
+ {
+  setAttr -lock (1-$getSc) -keyable $getSc -channelBox $getSc ($sel[$Allsc]+".sx");
+  setAttr -lock (1-$getSc) -keyable $getSc -channelBox $getSc ($sel[$Allsc]+".sy");
+  setAttr -lock (1-$getSc) -keyable $getSc -channelBox $getSc ($sel[$Allsc]+".sz");
+  
+  if($getSc == 1)
+  {
+   setAttr -keyable $getSc ($sel[$Allsc]+".sx");
+   setAttr -keyable $getSc ($sel[$Allsc]+".sy");
+   setAttr -keyable $getSc ($sel[$Allsc]+".sz");             
+  }
+  if($getSc == 0)  {       }     
+ }   
+}
+global proc HideSx()////////////////////////////////////////////////////////////////////隐藏所有缩放属性X
+{
+ int $getSx = `checkBox -q -v SXCBX`;
+ string $sel[] = `ls -sl`;
+ int $sx=0;
+ for($sx;$sx<size($sel);$sx++)
+ {
+  setAttr -lock (1-$getSx) -keyable $getSx -channelBox $getSx ($sel[$sx]+".sx");
+  
+  if($getSx == 1)
+  {
+   setAttr -keyable $getSx ($sel[$sx]+".sx");           
+  }
+  if($getSx == 0)  {       }     
+ }   
+}
+
+global proc HideSy()////////////////////////////////////////////////////////////////////隐藏所有缩放属性Y
+{
+ int $getSy = `checkBox -q -v SYCBX`;
+ string $sel[] = `ls -sl`;
+ int $sy=0;
+ for($sy;$sy<size($sel);$sy++)
+ {
+  setAttr -lock (1-$getSy) -keyable $getSy -channelBox $getSy ($sel[$sy]+".sy");
+  
+  if($getSy == 1)
+  {
+   setAttr -keyable $getSy ($sel[$sy]+".sy");           
+  }
+  if($getSy == 0)  {       }     
+ }   
+}
+
+global proc HideSz()////////////////////////////////////////////////////////////////////隐藏所有缩放属性Z
+{
+ int $getSz = `checkBox -q -v SZCBX`;
+ string $sel[] = `ls -sl`;
+ int $sz=0;
+ for($sz;$sz<size($sel);$sz++)
+ {
+  setAttr -lock (1-$getSz) -keyable $getSz -channelBox $getSz ($sel[$sz]+".sz");
+  
+  if($getSz == 1)
+  {
+   setAttr -keyable $getSz ($sel[$sz]+".sz");           
+  }
+  if($getSz == 0)  {       }     
+ }   
+}
+global proc HideVis()////////////////////////////////////////////////////////////////////隐藏显隐属性
+{
+ int $getVis = `checkBox -q -v VisCBX`;
+ string $sel[] = `ls -sl`;
+ int $vis=0;
+ for($vis;$vis<size($sel);$vis++)
+ {
+  setAttr -lock (1-$getVis) -keyable $getVis -channelBox $getVis ($sel[$vis]+".visibility");
+  
+  if($getVis == 1)
+  {
+   setAttr -keyable $getVis ($sel[$vis]+".sz");           
+  }
+  if($getVis == 0)  {       }     
+ }   
+}
+
+ControlWin ();

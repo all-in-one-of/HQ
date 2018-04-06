@@ -1,0 +1,25 @@
+global proc CL_removeNameSpace(string $name)
+{
+	namespace -f -mv $name ":";
+	namespace -f -rm $name;
+}
+
+global proc CL_removeNameSpaceUI()
+{
+	if (`window -q -ex CL_RNSwindow`) deleteUI CL_RNSwindow;
+	window -title "Colorland Remove Namespace" CL_RNSwindow;
+		columnLayout -adj on -rs 10;
+			textFieldGrp -l "Namespace" -tx "" 
+										-cw 1 80 -cw 2 150
+										-cat 1 "left" 20 -cat 2 "both" 5
+												CL_RNStextFieldGrp;
+				rowLayout -nc 2 -cw 1 130 -cw 2 130 
+												-cat 1 "both" 10 -cat 2 "both" 10
+												-cal 1 "center" -cal 2 "center";
+					button -l "Remove" -c "CL_removeNameSpace (`textFieldGrp -q -tx CL_RNStextFieldGrp`)";
+					button -l "Cancel" -c "deleteUI CL_RNSwindow";
+	window -e -w 300 -h 100 CL_RNSwindow;		
+	showWindow CL_RNSwindow;
+}
+
+CL_removeNameSpaceUI;

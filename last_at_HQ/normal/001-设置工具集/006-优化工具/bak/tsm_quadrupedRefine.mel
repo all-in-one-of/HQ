@@ -1,0 +1,282 @@
+//////////////////////////////////////////////////////////////
+//四足动物绑定
+//基于是TSM
+//////////////////////////////////////////////////////////////
+//用户窗口
+global proc fourLegAnimal()
+{
+  if(`window -ex fourLegAnimal`)
+    deleteUI fourLegAnimal;//删除打开旧版窗口
+  
+ window -t "四足动物绑定（form TSM）" -wh 400 500 fourLegAnimal;
+
+frameLayout -l " 创建四足动物范本" -labelAlign "top" -cll true -borderStyle "etchedOut";
+ columnLayout -adj 0;
+text "注意：确定TSM插件为激活状态！";
+separator -height 15 -style "none";
+
+rowColumnLayout  -nc 2 -columnWidth 1 88 -columnWidth 2 70;
+text "1、生成四足模板:";
+button -l "生成" -c baseTemplet;
+setParent..;
+
+separator -height 15 -style "none";
+text "2、添加脚趾、尾巴等附加物 ";
+separator -height 15 -style "none";
+text "3、点TSM的 rig生成绑定";
+separator -height 5 -style "none";
+text "注：关节以及附加物的总控制器必须P给相应挂钩！！！";
+separator -height 15 -style "none";
+text "4、手工添加肩、臀的设置。并约束四足。 ";
+separator -height 15 -style "none";
+
+rowColumnLayout  -nc 2 -columnWidth 1 68 -columnWidth 2 70;
+text "5、优化设置:";
+button -l "优化" -c addOtherRig;
+setParent..;
+
+window -e -wh 300 250 fourLegAnimal;  
+showWindow fourLegAnimal;
+}
+
+global proc baseTemplet()
+{
+//创建四足动物
+//创建身体
+TSM2Biped;
+parent -w LeftLeg_LEG;
+parent LeftLeg_LEG Character;
+rotate -r -os 90 0 0 Upper_Body;
+setAttr "Spine_SPINE.translateY" 0;
+setAttr "LeftLeg_LEG.translateZ" -3;
+delete LeftArm_ARM;
+delete RightArm_ARM;
+
+//创建前足
+TSM2Legs;
+parent RightLeg2_LEG Spine_hook7;
+parent LeftLeg2_LEG Character;
+setAttr "LeftLeg2_LEG.translateZ" 3.2;
+select -cl;
+
+setAttr "LeftLeg2_LEG.scaleX" 0.7;
+setAttr "LeftLeg_LEG.scaleX" 0.7;
+setAttr "LeftLeg2_LEG.scaleY" 0.7;
+setAttr "LeftLeg_LEG.scaleY" 0.7;
+setAttr "LeftLeg2_LEG.scaleZ" 0.7;
+setAttr "LeftLeg_LEG.scaleZ" 0.7;
+}
+
+global proc addOtherRig()
+{
+//tsm四足补充设置
+//添加脚控制属性//
+addAttr -ln "ankleX"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.ankleX;
+addAttr -ln "ankleX"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.ankleX;
+addAttr -ln "ankleX"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.ankleX;
+addAttr -ln "ankleX"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.ankleX;
+addAttr -ln "ankleY"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.ankleY;
+addAttr -ln "ankleY"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.ankleY;
+addAttr -ln "ankleY"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.ankleY;
+addAttr -ln "ankleY"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.ankleY;
+addAttr -ln "ankleZ"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.ankleZ;
+addAttr -ln "ankleZ"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.ankleZ;
+addAttr -ln "ankleZ"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.ankleZ;
+addAttr -ln "ankleZ"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.ankleZ;
+
+addAttr -ln "toetipX"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.toetipX;
+addAttr -ln "toetipX"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.toetipX;
+addAttr -ln "toetipX"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.toetipX;
+addAttr -ln "toetipX"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.toetipX;
+addAttr -ln "toetipY"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.toetipY;
+addAttr -ln "toetipY"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.toetipY;
+addAttr -ln "toetipY"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.toetipY;
+addAttr -ln "toetipY"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.toetipY;
+addAttr -ln "toetipZ"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.toetipZ;
+addAttr -ln "toetipZ"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.toetipZ;
+addAttr -ln "toetipZ"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.toetipZ;
+addAttr -ln "toetipZ"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.toetipZ;
+
+addAttr -ln "toeX"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.toeX;
+addAttr -ln "toeX"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.toeX;
+addAttr -ln "toeX"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.toeX;
+addAttr -ln "toeX"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.toeX;
+addAttr -ln "toeY"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.toeY;
+addAttr -ln "toeY"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.toeY;
+addAttr -ln "toeY"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.toeY;
+addAttr -ln "toeY"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.toeY;
+addAttr -ln "toeZ"  -at double  |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg2_IK|LeftLeg2_iknull|LeftLeg2_directioncompensate|LeftLeg2_IK_Leg.toeZ;
+addAttr -ln "toeZ"  -at double  |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg2_IK|RightLeg2_iknull|RightLeg2_directioncompensate|RightLeg2_IK_Leg.toeZ;
+addAttr -ln "toeZ"  -at double  |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|LeftLeg_IK|LeftLeg_iknull|LeftLeg_directioncompensate|LeftLeg_IK_Leg.toeZ;
+addAttr -ln "toeZ"  -at double  |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg;
+setAttr -e-keyable true |Character|IK|RightLeg_IK|RightLeg_iknull|RightLeg_directioncompensate|RightLeg_IK_Leg.toeZ;
+
+//添加脚踝控制关联组
+group -n ankle_LB_rot LeftLeg_recompensate;
+float $ankleRot_LB[]=`xform -ws -q -t LeftLeg_joint7`;
+move $ankleRot_LB[0] $ankleRot_LB[1]  $ankleRot_LB[2]  ankle_LB_rot.scalePivot ankle_LB_rot.rotatePivot ;
+
+group -n ankle_RB_rot RightLeg_recompensate;
+float $ankleRot_RB[]=`xform -ws -q -t RightLeg_joint7`;
+move $ankleRot_RB[0] $ankleRot_RB[1]  $ankleRot_RB[2]  ankle_RB_rot.scalePivot ankle_RB_rot.rotatePivot ;
+
+group -n ankle_LF_rot LeftLeg2_recompensate;
+float $ankleRot_LF[]=`xform -ws -q -t LeftLeg2_joint7`;
+move $ankleRot_LF[0] $ankleRot_LF[1]  $ankleRot_LF[2]  ankle_RB_rot.scalePivot ankle_LF_rot.rotatePivot ;
+
+group -n ankle_RF_rot RightLeg2_recompensate;
+float $ankleRot_RF[]=`xform -ws -q -t RightLeg2_joint7`;
+move $ankleRot_RF[0] $ankleRot_RF[1]  $ankleRot_RF[2]  ankle_RF_rot.scalePivot ankle_RF_rot.rotatePivot ;
+
+connectAttr -f LeftLeg_IK_Leg.ankleX ankle_LB_rot.rotateX;
+connectAttr -f LeftLeg_IK_Leg.ankleY ankle_LB_rot.rotateY;
+connectAttr -f LeftLeg_IK_Leg.ankleZ ankle_LB_rot.rotateZ;
+
+connectAttr -f RightLeg_IK_Leg.ankleX ankle_RB_rot.rotateX;
+connectAttr -f RightLeg_IK_Leg.ankleY ankle_RB_rot.rotateY;
+connectAttr -f RightLeg_IK_Leg.ankleZ ankle_RB_rot.rotateZ;
+
+connectAttr -f LeftLeg2_IK_Leg.ankleX ankle_LF_rot.rotateX;
+connectAttr -f LeftLeg2_IK_Leg.ankleY ankle_LF_rot.rotateY;
+connectAttr -f LeftLeg2_IK_Leg.ankleZ ankle_LF_rot.rotateZ;
+
+connectAttr -f RightLeg2_IK_Leg.ankleX ankle_RF_rot.rotateX;
+connectAttr -f RightLeg2_IK_Leg.ankleY ankle_RF_rot.rotateY;
+connectAttr -f RightLeg2_IK_Leg.ankleZ ankle_RF_rot.rotateZ;
+
+//关联脚尖踮起的属性
+
+connectAttr -f LeftLeg_IK_Leg.toetipX LeftLeg_toepivotnull.rotateX;
+connectAttr -f LeftLeg_IK_Leg.toetipY LeftLeg_toepivotnull.rotateY;
+connectAttr -f LeftLeg_IK_Leg.toetipZ LeftLeg_toepivotnull.rotateZ;
+
+connectAttr -f RightLeg_IK_Leg.toetipX RightLeg_toepivotnull.rotateX;
+connectAttr -f RightLeg_IK_Leg.toetipY RightLeg_toepivotnull.rotateY;
+connectAttr -f RightLeg_IK_Leg.toetipZ RightLeg_toepivotnull.rotateZ;
+
+connectAttr -f LeftLeg2_IK_Leg.toetipX LeftLeg2_toepivotnull.rotateX;
+connectAttr -f LeftLeg2_IK_Leg.toetipY LeftLeg2_toepivotnull.rotateY;
+connectAttr -f LeftLeg2_IK_Leg.toetipZ LeftLeg2_toepivotnull.rotateZ;
+
+connectAttr -f RightLeg2_IK_Leg.toetipX RightLeg2_toepivotnull.rotateX;
+connectAttr -f RightLeg2_IK_Leg.toetipY RightLeg2_toepivotnull.rotateY;
+connectAttr -f RightLeg2_IK_Leg.toetipZ RightLeg2_toepivotnull.rotateZ;
+///////////////////////////////
+//手工调整脚尖组的轴心点位置
+///////////////////////////////
+
+//关联脚趾整体活动
+connectAttr -f LeftLeg_IK_Leg.toeX LeftLeg_rig_joint5.rotateX;
+connectAttr -f LeftLeg_IK_Leg.toeY LeftLeg_rig_joint5.rotateY;
+connectAttr -f LeftLeg_IK_Leg.toeZ LeftLeg_rig_joint5.rotateZ;
+
+connectAttr -f RightLeg_IK_Leg.toeX RightLeg_rig_joint5.rotateX;
+connectAttr -f RightLeg_IK_Leg.toeY RightLeg_rig_joint5.rotateY;
+connectAttr -f RightLeg_IK_Leg.toeZ RightLeg_rig_joint5.rotateZ;
+
+connectAttr -f LeftLeg2_IK_Leg.toeX LeftLeg2_rig_joint5.rotateX;
+connectAttr -f LeftLeg2_IK_Leg.toeY LeftLeg2_rig_joint5.rotateY;
+connectAttr -f LeftLeg2_IK_Leg.toeZ LeftLeg2_rig_joint5.rotateZ;
+
+connectAttr -f RightLeg2_IK_Leg.toeX RightLeg2_rig_joint5.rotateX;
+connectAttr -f RightLeg2_IK_Leg.toeY RightLeg2_rig_joint5.rotateY;
+connectAttr -f RightLeg2_IK_Leg.toeZ RightLeg2_rig_joint5.rotateZ;
+
+//纠正位移偏差//
+group -em -n Character_G;
+parent Character_G Character;
+float $characterGScale = `getAttr LeftLeg_IK.scaleX`;
+setAttr Character_G.scaleX $characterGScale;
+setAttr Character_G.scaleY $characterGScale;
+setAttr Character_G.scaleZ $characterGScale;
+
+parent Upper_Body Character_G;
+parent IK Character_G;
+
+parent -w TSM2ProxySwitch_Geo;
+parent -w TSM2ProxySwitch_Proxy;
+parent -w JOINTS;
+parent -w LeftLeg2_rotationisolate;
+parent -w RightLeg2_rotationisolate;
+parent -w Head_rotationisolate;
+parent -w RightLeg_rotationisolate;
+parent -w LeftLeg_rotationisolate;
+parent -w RIG;
+
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 Upper_Body;
+
+parent TSM2ProxySwitch_Geo Upper_Body;
+parent TSM2ProxySwitch_Proxy Upper_Body;
+parent JOINTS Upper_Body;
+parent LeftLeg2_rotationisolate Upper_Body;
+parent RightLeg2_rotationisolate Upper_Body;
+parent Head_rotationisolate Upper_Body;
+parent RightLeg_rotationisolate Upper_Body;
+parent LeftLeg_rotationisolate Upper_Body;
+parent RIG Upper_Body;
+
+parent -w LeftLeg2_IK;
+parent -w RightLeg2_IK;
+parent -w Head_IK;
+parent -w RightLeg_IK;
+parent -w LeftLeg_IK;
+
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 IK;
+
+parent LeftLeg2_IK IK;
+parent RightLeg2_IK IK;
+parent Head_IK IK;
+parent RightLeg_IK IK;
+parent LeftLeg_IK IK;
+
+//添加组级
+curve -n move_G -d 1 -p -5 0 5 -p -5 0 -5 -p 5 0 -5 -p 5 0 5 -p -5 0 5 -k 0 -k 1 -k 2 -k 3 -k 4 ;
+parent Character move_G;
+
+group -n _rig move_G;
+move 0 0 0 _rig.scalePivot _rig.rotatePivot ;
+
+select -cl  ;
+
+//end
+
+}
+
+
+
+fourLegAnimal;

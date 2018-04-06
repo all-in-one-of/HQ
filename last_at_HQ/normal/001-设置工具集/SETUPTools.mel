@@ -1,0 +1,494 @@
+python("import sys");
+python("dir='//ftdyproject/digital/film_project/mocap/001-设置工具集'");
+python("if dir not in sys.path:sys.path.append(dir)");
+python("import pathforuser");
+//python("reload(pathforjuese)");
+string $absolutPath=`python("pathforuser.path_dir()")`;
+
+global string $address;
+$address= $absolutPath;
+
+global string $address_face;
+$address_face = toNativePath($address);
+
+{
+global string $end = "\"";
+
+
+///////////////////////////////文件清理///////////////////////
+global string $zz01;
+global string $mod_clean;
+global string $rig_clean;
+global string $remove_nameSpace;
+global string $clearUndo;
+global string $renameTool;
+//////////////////////////////////设置创建//////////////////////////////////////
+global string $controlMaker;
+global string $createObj;
+global string $polyAddHair;
+global string $addLocator;
+global string $secondControl;
+global string $autoRig;
+global string $curvesOnPoly;
+global string $addExpression;
+global string $frameCache;
+global string $createFollicelOnNurbs;
+global string $createPointOnPoly;
+global string $softSelCreateCtrl;
+global string $clusterTool;
+global string $AddSmooth;
+global string $addMediumJoint;
+global string $C_ctrlOnCurve;
+global string $C_jointOnCurve;
+global string $C_polyCenterCurves;
+global string $polyAttach;
+global string $dressRig_adv;
+/////////////////////////////////创建肌肉系统///////////////////////////////////
+global string $C_muscle_2013;
+global string $C_muscle_2015;
+
+/////////////////////////////////创建翅膀系统///////////////////////////////////
+
+global string $wingRig;
+/////////////////////////////////骨骼链对位///////////////////////////////////
+global string $pcx_MB;
+global string $pcx_muscle;
+global string $pcx_tx;
+
+global string $adv_Mocap;
+global string $adv_qunji;
+
+/////////////////////////////////修改编辑//////////////////////////////////////
+global string $un_lock;
+global string $Attr_link;
+global string $jointScale;
+global string $pivot_lock;
+global string $AllHairConnect;
+//global string $removenamespace;
+global string $batch_constrain;
+global string $nodeLock;
+global string $drivenTool;
+
+
+/////////////////////////////////变形权重//////////////////////////////////////////
+global string $shapeBuilder;
+//global string $pointToPoint;
+global string $clusterTool_old;
+global string $MirrorBS;
+global string $muscleWeightTransfer;
+global string $wireWeight;
+global string $copySkinWeight;
+global string $texChangeTool;
+
+///////////////////////////////优化工具///////////////////////////////////////
+global string $tsm_optimize;
+global string $tfm_clean;
+global string $tsm_refine;
+global string $tsm_quadrupedRefine;
+//////////////////////////////检查工具///////////////////////////////////////
+global string $poseCheck;
+global string $numberOfOBJ;
+global string $riggingCheckTool;
+//////////////////////////////动画应用//////////////////////////////////////////
+
+global string $copy_anim;
+global string $yzl_cam;
+global string $FKIK_switch;
+global string $yzl_anim;
+global string $yzl_tfmWhere;
+global string $gl;
+global string $delanim;
+global string $optimize_anim_line;
+global string $showFrame;
+global string $parentswitch;
+global string $FootStep;
+global string $interactiveCtrl;
+
+/////////////////////////////////动捕转换////////////////////////////////
+global string $faceCatch;
+global string $listFrameRange;
+global string $frameChange;
+global string $batchMotionCapConvert;
+global string $MotionCapConvert;
+global string $mirrorJointAnim;
+
+///////////////////////////////角色模型工具集////////////////////////////////////////
+global string $modTool_sj;
+//global string $maya2015Version;
+
+///////////////////////////////帮助和信息和刷新///////////////////////////////////////////
+global string $refresh;
+
+
+
+
+/////////////////////////////end global///////////////////////////////////////
+
+
+
+///////////////////////////////文件清理////////////////////////////////////////
+$zz01 = "source \"" + $address + "001-文件清理/"+"zz01.mel"+ $end;
+$mod_clean = "source \"" + $address + "001-文件清理/"+"mod_clean.mel"+ $end;
+$rig_clean = "source \"" + $address + "001-文件清理/"+"rig_clean.mel"+ $end;
+$remove_nameSpace = "source \"" + $address + "001-文件清理/"+"removeNameSpace.mel" + $end;
+$clearUndo = "source \"" + $address + "001-文件清理/"+"Clearundo.mel" + $end;
+$renameTool="python \"execfile('" + $address + "001-文件清理/"+"rename.py');" + $end; 
+
+
+//////////////////////////////////设置创建//////////////////////////////////////
+$controlMaker = "source \"" + $address + "002-设置创建/"+"controlMaker.mel"+ $end;
+$createObj = "source \"" + $address + "002-设置创建/"+"Createobj.mel"+ $end;
+$addExpression="source \"" + $address + "002-设置创建/"+"addExpression.mel" + $end;
+$frameCache ="source \"" + $address + "002-设置创建/"+"frameCache.mel" + $end;
+$autoRig = "source \"" + $address + "002-设置创建/"+""+ $end;
+$secondControl = "source \"" + $address + "002-设置创建/"+"lz_subCtl_UI.mel"+ $end;
+$polyAddHair = "source \"" + $address + "002-设置创建/"+"YY_HUV.mel"+ $end;
+$addLocator = "source \"" + $address + "002-设置创建/"+"Add_locator.mel"+ $end;
+$addMediumJoint = "source \"" + $address + "002-设置创建/"+"add_equality_joint.mel"+ $end;
+$C_jointOnCurve = "source \"" + $address + "002-设置创建/"+"C_jointOnCurve.mel"+ $end;
+$C_ctrlOnCurve = "source \"" + $address + "002-设置创建/"+"C_ctrlOnCurve.mel"+ $end;
+//$hairSYS = "source \"" + $address + "002-设置创建/"+"yzl_hairSyS01.mel"+ $end;
+$curvesOnPoly ="python \"execfile('" + $address + "002-设置创建/"+"getCurveFromObj.py');" + $end; 
+$createFollicelOnNurbs ="source \"" + $address + "002-设置创建/"+"createFolliceOnNurbs.mel"+ $end;
+$createPointOnPoly ="python \"execfile('" + $address + "002-设置创建/"+"createPointOnPoly.py');" + $end; 
+$softSelCreateCtrl ="python \"execfile('" + $address + "002-设置创建/"+"softCreateCtrl.py');" + $end; 
+$clusterTool ="python \"execfile('" + $address + "002-设置创建/"+"clusterTool.py');" + $end; 
+$AddSmooth ="python \"execfile('" + $address + "002-设置创建/"+"smooth_connectAttr.py');" + $end; 
+$C_polyCenterCurves ="python \"execfile('" + $address + "002-设置创建/"+"polyCenterCurves.py');" + $end; 
+$polyAttach ="python \"execfile('" + $address + "002-设置创建/"+"polyAttach.py');" + $end; 
+$dressRig_adv ="source \"" + $address + "002-设置创建/"+"dressRig_adv.mel"+ $end;
+ 
+/////////////////////////////////创建肌肉系统///////////////////////////////////
+$C_muscle_2013 = "source \"" + $address + "014-创建肌肉系统/"+"New_OpenMayaMuscle2013.mel"+ $end;
+$C_muscle_2015 = "source \"" + $address + "014-创建肌肉系统/"+"New_OpenMayaMuscle2015.mel"+ $end;
+
+
+/////////////////////////////////创建翅膀系统///////////////////////////////////
+$wingRig ="python \"execfile('" + $address + "015-创建翅膀系统/"+"PlumeUI.py');" + $end; 
+
+
+////////////////////////////////////骨骼链对位////////////////////////////////////
+$pcx_MB = "source \"" + $address + "003-骨骼链对位/动捕MotionBuilder/"+"MocapCharacter_jnt_6.0_reference.mel" + $end;
+$pcx_muscle = "source \"" + $address + "003-骨骼链对位/关节肌肉系统/"+"jirouguge_jnt_4.0.mel" + $end;
+$pcx_tx = "source \"" + $address + "003-骨骼链对位/特效群组/"+"qunjiguge_jnt_1.0_scaleconstrain.mel" + $end;
+
+$adv_Mocap = "source \"" + $address + "003-骨骼链对位/动捕MotionBuilder/"+"MocapCharacter_jnt_adv.mel" + $end;
+$adv_qunji = "source \"" + $address + "003-骨骼链对位/特效群组/"+"qunji_jnt_adv.mel" + $end;
+
+/////////////////////////////////修改编辑//////////////////////////////////////
+$un_lock="source \"" + $address + "004-修改编辑/"+"un_lock.mel" + $end;
+$Attr_link="source \"" + $address + "004-修改编辑/"+"Attr_Link.mel" + $end;
+$jointScale ="source \"" + $address + "004-修改编辑/"+"jointScale.mel" + $end;
+//$removenamespace ="source \"" + $address + "004-修改编辑/"+"removenamespace.mel" + $end;
+$pivot_lock="source \"" + $address + "004-修改编辑/"+"pivot_lock.mel" + $end;
+$AllHairConnect ="python \"execfile('" + $address + "004-修改编辑/"+"allHairConnect.py');" + $end;
+$batch_constrain ="source \"" + $address + "004-修改编辑/"+"batch_constrain.mel" + $end; 
+$nodeLock ="source \"" + $address + "004-修改编辑/"+"LockNodeTool.mel" + $end; 
+$drivenTool ="source \"" + $address + "004-修改编辑/"+"drivenTool.mel" + $end; 
+
+
+
+
+
+
+/////////////////////////////////变形权重//////////////////////////////////////////
+$shapeBuilder="source \"" + $address + "005-变形权重/"+"cgTkShapeBuilder.mel" + $end;
+//$pointToPoint ="source \"" + $address + "005-变形权重/"+"CopyWeights.mel" + $end;
+$clusterTool_old ="source \"" + $address + "005-变形权重/"+"clusterTool_old.mel" + $end;
+$MirrorBS="source \"" + $address + "005-变形权重/"+"ntMBS.mel" + $end;
+$muscleWeightTransfer ="source \"" + $address + "005-变形权重/"+"" + $end;
+$wireWeight ="source \"" + $address + "005-变形权重/"+"" + $end;
+$copySkinWeight ="source \"" + $address + "005-变形权重/"+"CopySkinWeightJoints" + $end;
+$texChangeTool  ="python \"execfile('" + $address + "005-变形权重/"+"texChangeTool.py');" + $end; 
+
+
+
+///////////////////////////////优化工具///////////////////////////////////////
+$tsm_optimize  = "source \"" + $address + "006-优化工具/"+"tsm_optimize.mel" + $end;
+$tfm_clean  = "source \"" + $address + "006-优化工具/"+"TheFaceMachine_clean.mel" + $end;
+$tsm_refine = "source \"" + $address + "006-优化工具/"+"" + $end;
+$tsm_quadrupedRefine =  "source \"" + $address + "006-优化工具/"+"tsm_quadrupedRefine.mel" + $end;
+
+
+
+
+//////////////////////////////检查工具///////////////////////////////////////
+$poseCheck = "source \"" + $address + "007-检查工具/"+"PoseCheck.mel" + $end;
+//$checkRenameOBJ = "source \"" + $address + "007-检查工具/"+"find_RepeatName.mel" + $end;
+$numberOfOBJ = "source \"" + $address + "007-检查工具/"+"listNumberOfObj.mel" + $end;
+$riggingCheckTool = "python \"execfile('" + $address + "007-检查工具/"+"stateRiggingCheck.py');" + $end; 
+
+
+
+//////////////////////////////动画应用//////////////////////////////////////////
+$parentswitch ="source \"" +  $address +"008-动画应用/"+ "constraintSwich.mel"+ $end; 
+$yzl_tfmWhere ="source \"" +  $address +"008-动画应用/"+ "tfm_nameSpace_bake.mel"+ $end;
+$FKIK_switch ="source \"" +  $address + "008-动画应用/"+"FKIK_switch.mel"+ $end;
+//$gl ="source \"" +  $address +"008-动画应用/"+ "TSM_glset.mel"+ $end;
+$showFrame = "source \"" + $address + "008-动画应用/"+"show_frame.mel" + $end;$optimize_anim_line = "source \"" + $address + "008-动画应用/"+"YY_AN_Sel_Joint_Win.mel" + $end;
+//$yzl_cam ="source \"" +  $address + "008-动画应用/"+"yzl_Cam.mel"+ $end;
+$yzl_cam ="python \"execfile('" + $address + "008-动画应用/"+"yzl_Cam.py');" + $end; 
+$yzl_anim ="source \"" +  $address +"008-动画应用/"+ "TSMkeysoffset5.mel"+ $end;
+//$delanim ="source \"" + $address + "008-动画应用/"+"delanim.mel" + $end;
+//$FootStep ="source \"" + $address + "008-动画应用/"+"yzl_FootStep.mel" + $end;
+$FootStep ="python \"execfile('" + $address + "008-动画应用/"+"yzl_footStep.py');" + $end; 
+$copy_anim ="source \"" +  $address +"008-动画应用/"+ "copy_ani.mel"+ $end;
+$interactiveCtrl ="source \"" +  $address +"008-动画应用/"+ "YX_control.mel"+ $end; 
+
+
+///////////////////////////////动捕转换///////////////////////////////////
+$faceCatch ="source \"" + $address + "009-动捕转换/"+"faceCatch.mel" + $end;
+$listFrameRange ="source \"" + $address + "009-动捕转换/"+"listFrameRange.mel" + $end;
+$frameChange ="source \"" + $address + "009-动捕转换/"+"FrameChange.mel" + $end;
+$batchMotionCapConvert ="source \"" + $address + "009-动捕转换/"+"batchMotionCaptureConvertTool.mel" + $end;
+$MotionCapConvert ="source \"" + $address + "009-动捕转换/"+"motionCaptureConvertTool.mel" + $end;
+$mirrorJointAnim ="python \"execfile('" + $address + "009-动捕转换/"+"mirrorAnim.py');" + $end; 
+
+
+///////////////////////////////角色模型工具集////////////////////////////////////////
+
+$modTool_sj = "python \"execfile('" + $address + "013-角色模型工具集/"+"SJ_Toolbox_com.py');" + $end;
+//$maya2015Version = "python \"execfile('" + $address + "013-角色模型工具集/"+"SJ工具箱_V2.1_forMaya2015.py');" + $end;
+
+
+///////////////////////////////帮助和信息和刷新///////////////////////////////////////////
+$refresh =  "source \"" + $address + "/SETUPTools.mel" + $end;
+
+
+
+
+
+if(`menu -q -ex setupTools`)
+{
+deleteUI setupTools;
+};
+global string $gMainWindow;
+setParent $gMainWindow;
+menu -l "设置工具集" -to 1 setupTools;
+
+
+menuItem -to 1 -l "文件清理  " -sm 1 ;
+menuItem -l "zz01...   "  -c  $zz01;
+menuItem -l "重命名工具...   "  -c $renameTool;
+menuItem -l "模型清理...   "  -c  $mod_clean;
+menuItem -l "设置清理...   "  -c  $rig_clean;
+menuItem -l "去除命名空间...  " -c $remove_nameSpace;
+menuItem -l "释放历史缓存...  " -c $clearUndo;
+
+setParent -menu..;
+menuItem -d 1;
+
+menuItem -to 1 -l "设置创建   " -sm 1;
+menuItem -l "创建控制器...   "  -c  $controlMaker;
+menuItem -l "软选择创建控制器...   "  -c  $softSelCreateCtrl;
+menuItem -l "曲线创建物体...   "  -c  $createObj;
+menuItem -l "smooth控制器添加...   "  -c  $AddSmooth;
+menuItem -l "添加等距骨骼...   "  -c  $addMediumJoint;
+menuItem -l "创建骨骼跟随曲线   "  -c  $C_jointOnCurve;
+menuItem -l "创建控制骨骼跟随曲线   "  -c  $C_ctrlOnCurve;
+menuItem -l "创建裙子设置（adv）   "  -c  $dressRig_adv;
+menuItem -d 1;
+menuItem -l "簇工具...   "  -c  $clusterTool;
+menuItem -l "次级控制...   "  -c  $secondControl;
+menuItem -d 1;
+menuItem -l "铆钉工具   "  -c  $addLocator;
+menuItem -l "曲面添加毛囊...   "  -c $createFollicelOnNurbs;
+menuItem -l "Poly点添加毛囊...   "  -c  $polyAddHair; 
+menuItem -l "模型上加铆钉   "  -c $polyAttach;
+menuItem -d 1;
+menuItem -l "Polygon上提取线...   "  -c  $curvesOnPoly;
+menuItem -l "生成poly两边中心曲线  "  -c  $C_polyCenterCurves;
+menuItem -l "自动化动画...  " -c $addExpression;
+menuItem -d 1;
+menuItem -l "延迟设置...  " -c $frameCache;
+menuItem -l "添加polyOnPoint约束...   "  -c $createPointOnPoly;
+setParent -menu..;
+//menuItem -d 1;
+
+
+menuItem -to 1 -l "创建肌肉系统   " -sm 1 ;
+menuItem -l "MayaMuscle_2013 "  -c  $C_muscle_2013;
+menuItem -l "MayaMuscle_2015   "  -c  $C_muscle_2015;
+
+setParent -menu..;
+//menuItem -d 1;
+
+
+menuItem -to 1 -l "创建翅膀系统   " -sm 1 ;
+menuItem -l "创建翅膀系统 "  -c  $wingRig;
+
+setParent -menu..;
+//menuItem -d 1;
+
+
+menuItem -to 1 -l "骨骼链对位   " -sm 1 ;
+menuItem -l "动捕MotionBuilder（tsm）...   "  -c  $pcx_MB;
+menuItem -l "关节肌肉系统（tsm）...   "  -c  $pcx_muscle;
+menuItem -l "特效群组（tsm）...   "  -c  $pcx_tx;
+menuItem -d 1;
+menuItem -l "动捕MotionBuilder（adv）...   "  -c  $adv_Mocap;
+menuItem -l "特效群组（adv）...   "  -c  $adv_qunji;
+setParent -menu..;
+//menuItem -d 1;
+
+
+menuItem -to 1 -l "修改编辑   " -sm 1;
+menuItem -l "取消锁定  " -c $un_lock;
+menuItem -l "多物体属性关联...  " -c $Attr_link;
+menuItem -l "驱动工具...  " -c $drivenTool;
+menuItem -l "多个约束驱动...  " -c $batch_constrain;
+menuItem -l "中心点释放" -c $pivot_lock;
+menuItem -l "骨骼链缩放关联...  " -c $jointScale;
+menuItem -l "毛发属性关联（hair,shave,yeti）...  " -c $AllHairConnect;
+menuItem -l "锁定节点...  " -c $nodeLock;
+
+
+
+setParent -menu..;
+//menuItem -l "去除命名空间...  " -c $removenamespace;
+//menuItem -d 1;
+
+menuItem -to 1 -l "变形权重  " -sm 1;
+menuItem -l "角色变体贴图切换工具...  " -c $texChangeTool;
+menuItem -l "拷贝骨骼权重...  " -c $copySkinWeight;
+menuItem -l "blend修型工具...  " -c $shapeBuilder;
+//menuItem -l "点对点权重  " -c $pointToPoint;
+menuItem -l "簇工具...  " -c $clusterTool_old;
+menuItem -l "blend镜像...  " -c $MirrorBS;
+menuItem -l "关节肌肉权重传递  " -c $muscleWeightTransfer -en 0;
+menuItem -l "线变形权重  " -c $wireWeight -en 0;
+
+
+
+setParent -menu..;
+//menuItem -d 1;
+
+menuItem -to 1 -l "优化工具   " -sm 1;
+menuItem -l "TSM（身体）绑定优化...  " -c $tsm_optimize;
+menuItem -l "TSM（四足）绑定及优化...  " -c $tsm_quadrupedRefine;
+menuItem -l "TFM（面部）绑定优化...  " -c $tfm_clean;
+menuItem -l "TSM简化绑定...  " -c $tsm_refine -en 0;
+setParent -menu..;
+menuItem -d 1;
+
+menuItem -to 1 -l "检查工具   " -sm 1;
+menuItem -l "设置检查工具  " -c  $riggingCheckTool -en 1;
+menuItem -l "pose检查  " -c  $poseCheck -en 1;
+menuItem -l "列出所选物体数量...  " -c $numberOfOBJ;
+setParent -menu..;
+//menuItem -d 1;
+
+menuItem -to 1 -l "动画应用   " -sm 1;
+menuItem -l "总体动画选取与偏移...   " -c  $yzl_anim;
+menuItem -l "同角色按名称拷贝动画" -c  $copy_anim;
+menuItem -l "显示关键帧" -c $showFrame;
+menuItem -l "定脚步工具...   " -c $FootStep;
+
+
+
+menuItem -d 1;
+menuItem -l "父子约束切换...   " -c $parentswitch;
+menuItem -l "TSM的IKFK烘焙...   " -c $FKIK_switch;
+menuItem -l "交互式动画应用...   " -c $interactiveCtrl;
+menuItem -l "TSM归Tpose...   " -c  $gl -en 0;
+menuItem -l "TFM表情找回工具...   " -c  $yzl_tfmWhere;
+
+menuItem -d 1;
+
+menuItem -l "优化动画曲线工具" -c $optimize_anim_line;
+menuItem -l "摄像机移动...   " -c $yzl_cam;
+menuItem -l "删除动画帧... " -c  $delanim -en 0;
+
+setParent -menu..;
+menuItem -d 1;
+
+menuItem -l "动捕转换   "  -sm 1;
+menuItem -l "动捕数据转换...   " -c $MotionCapConvert; 
+menuItem -l "镜像骨骼动画   " -c $mirrorJointAnim;
+menuItem -l "批量动捕数据转换...   " -c $batchMotionCapConvert -en 0;
+menuItem -l "获取关键帧范围...   " -c $listFrameRange;
+menuItem -l "面部捕捉数据转换工具...   " -c $faceCatch;
+menuItem -l "帧率转换工具...   " -c $frameChange;
+setParent -menu..; 
+menuItem -d 1;
+
+menuItem -l "角色模型工具集   "  -sm 1;
+menuItem -l "模型工具   " -c $modTool_sj; 
+//menuItem -l "maya2015版本   " -c $maya2015Version;
+setParent -menu..; 
+menuItem -d 1;
+
+menuItem -to 1 -l "移除工具集   "  -c  "if(`menu -q -ex setupTools`)deleteUI  setupTools;" ;
+
+menuItem -l "帮助和信息   " -c helpInfo;
+setParent -menu..; 
+
+menuItem -l "刷新   " -c $refresh;
+setParent -menu..;
+
+};
+
+
+global proc helpInfo()
+{
+if(`window -ex helpInfoWindow`)
+		deleteUI helpInfoWindow;
+   window -t "关于设置工具集" helpInfoWindow;
+	columnLayout -adj 1 catch_columnLayout; 
+	text -l "\n设置工具集 v1.01\n\n更新日期：2013.03.27\n\n作者：徐阳，彭晨曦，傅凯辉，黄帅，刘升耀\n\nCopyright(C) 2013 - ∞ by rigging department";
+showWindow helpInfoWindow;
+
+}
+
+
+////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////setup//////////////////////////
+global string $scriptPath;
+global string $userSetupPath;
+$scriptPath=`internalVar -userScriptDir`;  
+$userSetupPath= $scriptPath+"userSetup.mel";
+
+global  proc SETUPTools(){
+global string $userSetupPath;
+global string $address;
+string $thePaths= $address + "/SETUPTools.mel";
+
+if(!`filetest -f $userSetupPath`)
+{	
+	$suf=`fopen $userSetupPath "w"`;
+	fprint  $suf "\n";	
+	fprint  $suf ("\n//设置工具集;\n");
+	fprint  $suf ("source \"" + $thePaths + "\";\n\n");
+	fclose $suf;
+}
+else	{
+	int $existyzlTOOLS=fileRead();
+	if($existyzlTOOLS!=1){
+		$suf=`fopen $userSetupPath "a"`;
+		fprint  $suf "\n";
+		fprint  $suf ("\n//设置工具集;\n");
+		fprint  $suf ("source \"" + $thePaths + "\";\n\n");
+		fclose $suf;
+		}
+	}
+};
+
+global  proc int fileRead(){
+global string $userSetupPath;
+$suf=`fopen $userSetupPath "r"`;
+string $sufLine=`fgetline $suf`;
+int $rusultString=0;
+while(size($sufLine)>0){
+	if(size($sufLine)!=1){
+		int $existyzlTOOLS=`gmatch $sufLine "//设置工具集;\n"`;
+		if($existyzlTOOLS==1)$rusultString=1;
+		};
+	$sufLine=`fgetline $suf`;
+}
+fclose $suf;
+return $rusultString;
+}
+
+SETUPTools();
+///////////////////////////end!!/////////////////////////////////////////////

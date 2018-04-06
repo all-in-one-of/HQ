@@ -1,0 +1,45 @@
+global proc listFrameRange()
+{
+    if (`window -q -exists listFrameRangeWindow`) deleteUI listFrameRangeWindow;
+ window
+        -title "获取关键帧范围" -wh 200 100
+              listFrameRangeWindow;
+
+    columnLayout -adj 1;
+     separator -height 10 -style "in";      
+      rowColumnLayout -nc 5 -cw 1 100 -cw 2 60 -cw 3 20 -cw 4 60 -cw 5 80;
+           text -l "获取关键帧范围:";   
+           textField -ed 1 -tx "" getStartFrame;
+           text -l "-";
+           textField -ed 1 -tx "" getEndFrame;                            
+           button -l "<<选择K帧物体" -c getKeyFrameObj;
+        setParent ..;
+     separator -height 10 -style "in";        
+  showWindow   listFrameRangeWindow;     
+} 
+
+global proc getKeyFrameObj()
+{
+  string $selCtrl[] = `ls -sl`;
+  float  $KeyFrame[];
+  float $KeyFrameRotate[] = `keyframe -q -tc ($selCtrl[0]+".rotateX")`;
+  float $KeyFrameTranslate[] = `keyframe -q -tc ($selCtrl[0]+".translateX")`;
+  if(size($KeyFrameRotate)>size($KeyFrameTranslate))
+  {
+   $KeyFrame = $KeyFrameRotate;  
+  }
+  else
+  {
+   $KeyFrame = $KeyFrameTranslate;       
+  }
+  
+  float $frameStart = `floor $KeyFrame[0]`;
+  float $frameEnd = `ceil $KeyFrame[size($KeyFrame)-1]`; 
+
+  textField -e -tx $frameStart getStartFrame;
+  textField -e -tx $frameEnd getEndFrame; 
+  
+  playbackOptions -min $frameStart -max $frameEnd;
+  
+}
+listFrameRange();

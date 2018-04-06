@@ -1,0 +1,5 @@
+TSM控制器与motionbuilder骨骼对齐
+
+1，把MocapCharacter_jnt.mel拖入maya场景中出现菜单
+2，菜单“按钮”从上往下按，选择轴向类型后，把手指轴线方向改下，尤其是大拇指轴线调下，再按“镜像骨骼”
+3，最后，移除参照角色 remove reference 。

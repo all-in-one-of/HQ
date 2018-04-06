@@ -1,0 +1,6357 @@
+animVersion 1.1;
+mayaVersion 2012 x64;
+timeUnit film;
+linearUnit cm;
+angularUnit deg;
+startTime 0;
+endTime 881;
+startUnitless -90;
+endUnitless 150;
+anim translate.translateX 0 3 0;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 0 auto auto 1 1 0;
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 0 3 1;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 0 auto auto 1 1 0;
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 0 3 2;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 0 auto auto 1 1 0;
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 0 3 3;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 0 auto auto 1 1 0;
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 0 3 4;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 0 auto auto 1 1 0;
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 0 3 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 0 auto auto 1 1 0;
+    40 0 auto auto 1 1 0;
+  }
+}
+anim scale.scaleX 0 3 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 1 auto auto 1 1 0;
+    40 1 auto auto 1 1 0;
+  }
+}
+anim scale.scaleY 0 3 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 1 auto auto 1 1 0;
+    40 1 auto auto 1 1 0;
+  }
+}
+anim scale.scaleZ 0 3 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    1 1 auto auto 1 1 0;
+    40 1 auto auto 1 1 0;
+  }
+}
+anim CharacterShape 1 0 0;
+anim Spine_FKIK 1 10 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim LeftArm_FKIK 1 10 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim LeftArm_Isolation 1 10 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim RightArm_FKIK 1 10 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    79 0 auto auto 1 1 0;
+    129 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim RightArm_Isolation 1 10 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim Head_FKIK 1 10 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim Head_Isolation 1 10 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim RightLeg_FKIK 1 10 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1 auto auto 1 1 0;
+    90 1 auto auto 1 1 0;
+    660 1 auto auto 1 1 0;
+  }
+}
+anim RightLeg_Isolation 1 10 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim LeftLeg_FKIK 1 10 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1 auto auto 1 1 0;
+    90 1 auto auto 1 1 0;
+    660 1 auto auto 1 1 0;
+  }
+}
+anim LeftLeg_Isolation 1 10 10;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 1 10 11;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 1 10 12;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+    669 -0.2438711241699589 auto auto 1 1 0;
+    685 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 1 10 13;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+    669 -0.27886903661386153 auto auto 1 1 0;
+    685 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 1 10 14;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 1 10 15;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 1 10 16;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    650 0 auto auto 1 1 0;
+  }
+}
+anim Upper_BodyShape 2 0 0;
+anim TSM2ProxySwitch_Geo 2 0 0;
+anim TSM2ProxySwitch_Proxy 2 0 0;
+anim JOINTS 2 2 0;
+anim zeroWeightJoint 3 0 0;
+anim Spine_JOINTS 3 1 0;
+anim Spine_joint1 4 6 0;
+anim Spine_joint2 5 2 0;
+anim Spine_joint3 6 2 0;
+anim Spine_joint4 7 2 0;
+anim Spine_joint5 8 2 0;
+anim Spine_joint6 9 2 0;
+anim Spine_joint7 10 9 0;
+anim Spine_joint8 11 0 0;
+anim Spine_influence7_compensate 11 1 0;
+anim Spine_influence7 12 1 0;
+anim Spine_influenceShape7 13 0 0;
+anim LeftArm_scalingCompensate 11 2 0;
+anim LeftArm_JOINTS 12 1 0;
+anim LeftArm_joint1 13 3 0;
+anim rotateOrder 14 3 0;
+animData {
+  input unitless;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    1 3 spline spline 1 1 0;
+    2 3 spline spline 1 1 0;
+  }
+}
+anim LeftArm_joint3 15 2 0;
+anim LeftArm_joint4 16 3 0;
+anim LeftArm_elbowcounterscaler 17 2 0;
+anim LeftArm_joint5 18 4 0;
+anim LeftArm_joint6 19 2 0;
+anim LeftArm_lowarmcounterscaler 20 1 0;
+anim LeftArm_joint7 21 3 0;
+anim LeftArm_joint8 22 18 0;
+anim LeftArm_wrist_orientConstraint2 23 0 0;
+anim LeftArm_wrist_pointConstraint1 23 0 0;
+anim LeftArm_influence11_intermediate_constrain_halfNode 23 2 0;
+anim LeftArm_influence11_intermediate_constrain_halfNode_orientConstraint1 24 0 0;
+anim LeftArm_influence11_intermediate_constrain_compensate 24 1 0;
+anim translate.translateX 25 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+    80 0.050000000000000003 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 25 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 0 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+    80 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 25 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 0 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+    80 0 linear linear 1 1 0;
+  }
+}
+anim scale.scaleX 25 1 3;
+animData {
+  input unitless;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 0.94999999999999996 linear linear 1 1 0;
+    0 1 linear linear 1 1 0;
+    80 1.05 linear linear 1 1 0;
+  }
+}
+anim LeftArm_influence11_intermediate_constrainShape 26 0 0;
+anim LeftFinger1_JOINTS 23 1 0;
+anim LeftFinger1_joint1 24 3 0;
+anim LeftFinger1_joint2 25 5 0;
+anim LeftFinger1_joint3 26 4 0;
+anim LeftFinger1_joint4 27 4 0;
+anim LeftFinger1_joint5 28 0 0;
+anim LeftFinger1_finger_influence10_compensate 28 1 0;
+anim LeftFinger1_finger_influence10 29 1 0;
+anim LeftFinger11_finger_influence10Shape 30 0 0;
+anim LeftFinger1_finger_influence11_compensate 28 1 0;
+anim LeftFinger1_finger_influence11 29 1 0;
+anim LeftFinger11_finger_influence11Shape 30 0 0;
+anim LeftFinger1_finger_influence9_intermediate_halfNode 28 1 0;
+anim LeftFinger1_finger_influence9_intermediate_compensate 29 1 0;
+anim LeftFinger1_finger_influence9_intermediate 30 1 0;
+anim LeftFinger11_finger_influence9_intermediateShape 31 0 0;
+anim LeftFinger1_finger_influence7_compensate 27 1 0;
+anim LeftFinger1_finger_influence7 28 1 0;
+anim LeftFinger11_finger_influence7Shape 29 0 0;
+anim LeftFinger1_finger_influence8_compensate 27 1 0;
+anim LeftFinger1_finger_influence8 28 1 0;
+anim LeftFinger11_finger_influence8Shape 29 0 0;
+anim LeftFinger1_finger_influence6_intermediate_halfNode 27 1 0;
+anim LeftFinger1_finger_influence6_intermediate_compensate 28 1 0;
+anim LeftFinger1_finger_influence6_intermediate 29 1 0;
+anim LeftFinger11_finger_influence6_intermediateShape 30 0 0;
+anim LeftFinger1_RigPivot 26 0 0;
+anim LeftFinger1_finger_influence5_compensate 26 1 0;
+anim LeftFinger1_finger_influence5 27 1 0;
+anim LeftFinger11_finger_influence5Shape 28 0 0;
+anim LeftFinger1_finger_influence4_compensate 26 1 0;
+anim LeftFinger1_finger_influence4 27 1 0;
+anim LeftFinger11_finger_influence4Shape 28 0 0;
+anim LeftFinger1_finger_influence3_intermediate_halfNode 26 1 0;
+anim LeftFinger1_finger_influence3_intermediate_compensate 27 1 0;
+anim LeftFinger1_finger_influence3_intermediate 28 1 0;
+anim LeftFinger11_finger_influence3_intermediateShape 29 0 0;
+anim LeftFinger1_finger_influence2_compensate 25 1 0;
+anim LeftFinger1_finger_influence2 26 1 0;
+anim LeftFinger11_finger_influence2Shape 27 0 0;
+anim LeftFinger1_finger_influence1_compensate 25 1 0;
+anim LeftFinger1_finger_influence1 26 1 0;
+anim LeftFinger11_finger_influence1Shape 27 0 0;
+anim LeftFinger1_pivotCompensate 23 3 0;
+anim LeftFinger1_RIG 24 3 0;
+anim LeftFinger1_finger_rig 25 2 0;
+anim LeftFinger1_rig_metacarpel 26 2 0;
+anim LeftFinger1_rig_knuckle 27 3 0;
+anim rotate.rotateX 28 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 28 2 1;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 28 2 2;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 28 2 3;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+  }
+}
+anim LeftFinger1_rig_fingerjoint3 30 0 0;
+anim effector21 30 0 0;
+anim effector11 29 0 0;
+anim LeftFinger1_rig_knuckle_pointConstraint1 28 0 0;
+anim LeftFinger1_rig_knuckle_orientConstraint1 28 0 0;
+anim LeftFinger1_metacarpel_aimConstraint1 27 0 0;
+anim LeftFinger1_fingercontrolnull 26 2 0;
+anim LeftFinger1_aimer 27 0 0;
+anim LeftFinger1_finger_transform 27 1 0;
+anim LeftFinger1_finger_control 28 1 0;
+anim LeftFinger11_finger_controlShape 29 0 0;
+anim LeftFinger1_IKnull 25 1 0;
+anim LeftFinger1_finger_IK 26 4 0;
+anim LeftFinger11_finger_IKShape 27 0 0;
+anim LeftFinger1_ikHandle1 27 1 0;
+anim LeftFinger1_ikHandle1_poleVectorConstraint1 28 0 0;
+anim LeftFinger1_ikHandle2 27 1 0;
+anim LeftFinger1_ikHandle2_poleVectorConstraint1 28 0 0;
+anim LeftFinger1_lastjointaimer 27 0 0;
+anim LeftFinger1_RIG_scaleConstraint1 25 0 0;
+anim LeftFinger1_pivotCompensate_pointConstraint1 24 0 0;
+anim LeftFinger1_pivotCompensate_orientConstraint1 24 0 0;
+anim LeftFinger1_constraintCompensate 23 0 0;
+anim LeftFinger2_JOINTS 23 1 0;
+anim LeftFinger2_joint1 24 3 0;
+anim LeftFinger2_joint2 25 5 0;
+anim LeftFinger2_joint3 26 4 0;
+anim LeftFinger2_joint4 27 4 0;
+anim LeftFinger2_joint5 28 0 0;
+anim LeftFinger2_finger_influence10_compensate 28 1 0;
+anim LeftFinger2_finger_influence10 29 1 0;
+anim LeftFinger22_finger_influence10Shape 30 0 0;
+anim LeftFinger2_finger_influence11_compensate 28 1 0;
+anim LeftFinger2_finger_influence11 29 1 0;
+anim LeftFinger22_finger_influence11Shape 30 0 0;
+anim LeftFinger2_finger_influence9_intermediate_halfNode 28 1 0;
+anim LeftFinger2_finger_influence9_intermediate_compensate 29 1 0;
+anim LeftFinger2_finger_influence9_intermediate 30 1 0;
+anim LeftFinger22_finger_influence9_intermediateShape 31 0 0;
+anim LeftFinger2_finger_influence7_compensate 27 1 0;
+anim LeftFinger2_finger_influence7 28 1 0;
+anim LeftFinger22_finger_influence7Shape 29 0 0;
+anim LeftFinger2_finger_influence8_compensate 27 1 0;
+anim LeftFinger2_finger_influence8 28 1 0;
+anim LeftFinger22_finger_influence8Shape 29 0 0;
+anim LeftFinger2_finger_influence6_intermediate_halfNode 27 1 0;
+anim LeftFinger2_finger_influence6_intermediate_compensate 28 1 0;
+anim LeftFinger2_finger_influence6_intermediate 29 1 0;
+anim LeftFinger22_finger_influence6_intermediateShape 30 0 0;
+anim LeftFinger2_RigPivot 26 0 0;
+anim LeftFinger2_finger_influence5_compensate 26 1 0;
+anim LeftFinger2_finger_influence5 27 1 0;
+anim LeftFinger22_finger_influence5Shape 28 0 0;
+anim LeftFinger2_finger_influence4_compensate 26 1 0;
+anim LeftFinger2_finger_influence4 27 1 0;
+anim LeftFinger22_finger_influence4Shape 28 0 0;
+anim LeftFinger2_finger_influence3_intermediate_halfNode 26 1 0;
+anim LeftFinger2_finger_influence3_intermediate_compensate 27 1 0;
+anim LeftFinger2_finger_influence3_intermediate 28 1 0;
+anim LeftFinger22_finger_influence3_intermediateShape 29 0 0;
+anim LeftFinger2_finger_influence2_compensate 25 1 0;
+anim LeftFinger2_finger_influence2 26 1 0;
+anim LeftFinger22_finger_influence2Shape 27 0 0;
+anim LeftFinger2_finger_influence1_compensate 25 1 0;
+anim LeftFinger2_finger_influence1 26 1 0;
+anim LeftFinger22_finger_influence1Shape 27 0 0;
+anim LeftFinger2_pivotCompensate 23 3 0;
+anim LeftFinger2_RIG 24 3 0;
+anim LeftFinger2_finger_rig 25 2 0;
+anim LeftFinger2_rig_metacarpel 26 2 0;
+anim LeftFinger2_rig_knuckle 27 3 0;
+anim LeftFinger2_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    50 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    50 0 spline spline 1 1 0;
+  }
+}
+anim LeftFinger2_rig_fingerjoint3 30 0 0;
+anim effector22 30 0 0;
+anim effector12 29 0 0;
+anim LeftFinger2_rig_knuckle_pointConstraint1 28 0 0;
+anim LeftFinger2_rig_knuckle_orientConstraint1 28 0 0;
+anim LeftFinger2_metacarpel_aimConstraint1 27 0 0;
+anim LeftFinger2_fingercontrolnull 26 2 0;
+anim LeftFinger2_aimer 27 0 0;
+anim LeftFinger2_finger_transform 27 1 0;
+anim MiddleJoint 28 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 -50.100000000000001 auto auto 1 1 0;
+    452 -50.100000000000001 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim LastJoint 28 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 -50.100000000000001 auto auto 1 1 0;
+    452 -50.100000000000001 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim FingerIK 28 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim SideToSide 28 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim FingerStretch 28 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 28 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 28 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 28 1 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 -43.009055738951126 auto auto 1 1 0;
+    452 -43.009055738951126 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 28 1 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 28 1 9;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 28 1 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    437 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim LeftFinger22_finger_controlShape 29 0 0;
+anim LeftFinger2_IKnull 25 1 0;
+anim LeftFinger2_finger_IK 26 4 0;
+anim LeftFinger22_finger_IKShape 27 0 0;
+anim LeftFinger2_ikHandle1 27 1 0;
+anim LeftFinger2_ikHandle1_poleVectorConstraint1 28 0 0;
+anim LeftFinger2_ikHandle2 27 1 0;
+anim LeftFinger2_ikHandle2_poleVectorConstraint1 28 0 0;
+anim LeftFinger2_lastjointaimer 27 0 0;
+anim LeftFinger2_RIG_scaleConstraint1 25 0 0;
+anim LeftFinger2_pivotCompensate_pointConstraint1 24 0 0;
+anim LeftFinger2_pivotCompensate_orientConstraint1 24 0 0;
+anim LeftFinger2_constraintCompensate 23 0 0;
+anim LeftFinger3_JOINTS 23 1 0;
+anim LeftFinger3_joint1 24 3 0;
+anim LeftFinger3_joint2 25 5 0;
+anim LeftFinger3_joint3 26 4 0;
+anim LeftFinger3_joint4 27 4 0;
+anim LeftFinger3_joint5 28 0 0;
+anim LeftFinger3_finger_influence10_compensate 28 1 0;
+anim LeftFinger3_finger_influence10 29 1 0;
+anim LeftFinger33_finger_influence10Shape 30 0 0;
+anim LeftFinger3_finger_influence11_compensate 28 1 0;
+anim LeftFinger3_finger_influence11 29 1 0;
+anim LeftFinger33_finger_influence11Shape 30 0 0;
+anim LeftFinger3_finger_influence9_intermediate_halfNode 28 1 0;
+anim LeftFinger3_finger_influence9_intermediate_compensate 29 1 0;
+anim LeftFinger3_finger_influence9_intermediate 30 1 0;
+anim LeftFinger33_finger_influence9_intermediateShape 31 0 0;
+anim LeftFinger3_finger_influence7_compensate 27 1 0;
+anim LeftFinger3_finger_influence7 28 1 0;
+anim LeftFinger33_finger_influence7Shape 29 0 0;
+anim LeftFinger3_finger_influence8_compensate 27 1 0;
+anim LeftFinger3_finger_influence8 28 1 0;
+anim LeftFinger33_finger_influence8Shape 29 0 0;
+anim LeftFinger3_finger_influence6_intermediate_halfNode 27 1 0;
+anim LeftFinger3_finger_influence6_intermediate_compensate 28 1 0;
+anim LeftFinger3_finger_influence6_intermediate 29 1 0;
+anim LeftFinger33_finger_influence6_intermediateShape 30 0 0;
+anim LeftFinger3_RigPivot 26 0 0;
+anim LeftFinger3_finger_influence5_compensate 26 1 0;
+anim LeftFinger3_finger_influence5 27 1 0;
+anim LeftFinger33_finger_influence5Shape 28 0 0;
+anim LeftFinger3_finger_influence4_compensate 26 1 0;
+anim LeftFinger3_finger_influence4 27 1 0;
+anim LeftFinger33_finger_influence4Shape 28 0 0;
+anim LeftFinger3_finger_influence3_intermediate_halfNode 26 1 0;
+anim LeftFinger3_finger_influence3_intermediate_compensate 27 1 0;
+anim LeftFinger3_finger_influence3_intermediate 28 1 0;
+anim LeftFinger33_finger_influence3_intermediateShape 29 0 0;
+anim LeftFinger3_finger_influence2_compensate 25 1 0;
+anim LeftFinger3_finger_influence2 26 1 0;
+anim LeftFinger33_finger_influence2Shape 27 0 0;
+anim LeftFinger3_finger_influence1_compensate 25 1 0;
+anim LeftFinger3_finger_influence1 26 1 0;
+anim LeftFinger33_finger_influence1Shape 27 0 0;
+anim LeftFinger3_pivotCompensate 23 3 0;
+anim LeftFinger3_RIG 24 3 0;
+anim LeftFinger3_finger_rig 25 2 0;
+anim LeftFinger3_rig_metacarpel 26 2 0;
+anim LeftFinger3_rig_knuckle 27 3 0;
+anim LeftFinger3_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    50 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    50 0 spline spline 1 1 0;
+  }
+}
+anim LeftFinger3_rig_fingerjoint3 30 0 0;
+anim effector23 30 0 0;
+anim effector13 29 0 0;
+anim LeftFinger3_rig_knuckle_pointConstraint1 28 0 0;
+anim LeftFinger3_rig_knuckle_orientConstraint1 28 0 0;
+anim LeftFinger3_metacarpel_aimConstraint1 27 0 0;
+anim LeftFinger3_fingercontrolnull 26 2 0;
+anim LeftFinger3_aimer 27 0 0;
+anim LeftFinger3_finger_transform 27 1 0;
+anim MiddleJoint 28 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    447 -38.800000000000004 auto auto 1 1 0;
+    452 -38.800000000000004 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim LastJoint 28 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    447 -38.800000000000004 auto auto 1 1 0;
+    452 -38.800000000000004 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim FingerIK 28 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim SideToSide 28 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim FingerStretch 28 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 28 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 28 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 28 1 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    447 -46.83429025861173 auto auto 1 1 0;
+    452 -46.83429025861173 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 28 1 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 28 1 9;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 28 1 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    442 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim LeftFinger33_finger_controlShape 29 0 0;
+anim LeftFinger3_IKnull 25 1 0;
+anim LeftFinger3_finger_IK 26 4 0;
+anim LeftFinger33_finger_IKShape 27 0 0;
+anim LeftFinger3_ikHandle1 27 1 0;
+anim LeftFinger3_ikHandle1_poleVectorConstraint1 28 0 0;
+anim LeftFinger3_ikHandle2 27 1 0;
+anim LeftFinger3_ikHandle2_poleVectorConstraint1 28 0 0;
+anim LeftFinger3_lastjointaimer 27 0 0;
+anim LeftFinger3_RIG_scaleConstraint1 25 0 0;
+anim LeftFinger3_pivotCompensate_pointConstraint1 24 0 0;
+anim LeftFinger3_pivotCompensate_orientConstraint1 24 0 0;
+anim LeftFinger3_constraintCompensate 23 0 0;
+anim LeftFinger4_JOINTS 23 1 0;
+anim LeftFinger4_joint1 24 3 0;
+anim LeftFinger4_joint2 25 5 0;
+anim LeftFinger4_joint3 26 4 0;
+anim LeftFinger4_joint4 27 4 0;
+anim LeftFinger4_joint5 28 0 0;
+anim LeftFinger4_finger_influence10_compensate 28 1 0;
+anim LeftFinger4_finger_influence10 29 1 0;
+anim LeftFinger44_finger_influence10Shape 30 0 0;
+anim LeftFinger4_finger_influence11_compensate 28 1 0;
+anim LeftFinger4_finger_influence11 29 1 0;
+anim LeftFinger44_finger_influence11Shape 30 0 0;
+anim LeftFinger4_finger_influence9_intermediate_halfNode 28 1 0;
+anim LeftFinger4_finger_influence9_intermediate_compensate 29 1 0;
+anim LeftFinger4_finger_influence9_intermediate 30 1 0;
+anim LeftFinger44_finger_influence9_intermediateShape 31 0 0;
+anim LeftFinger4_finger_influence7_compensate 27 1 0;
+anim LeftFinger4_finger_influence7 28 1 0;
+anim LeftFinger44_finger_influence7Shape 29 0 0;
+anim LeftFinger4_finger_influence8_compensate 27 1 0;
+anim LeftFinger4_finger_influence8 28 1 0;
+anim LeftFinger44_finger_influence8Shape 29 0 0;
+anim LeftFinger4_finger_influence6_intermediate_halfNode 27 1 0;
+anim LeftFinger4_finger_influence6_intermediate_compensate 28 1 0;
+anim LeftFinger4_finger_influence6_intermediate 29 1 0;
+anim LeftFinger44_finger_influence6_intermediateShape 30 0 0;
+anim LeftFinger4_RigPivot 26 0 0;
+anim LeftFinger4_finger_influence5_compensate 26 1 0;
+anim LeftFinger4_finger_influence5 27 1 0;
+anim LeftFinger44_finger_influence5Shape 28 0 0;
+anim LeftFinger4_finger_influence4_compensate 26 1 0;
+anim LeftFinger4_finger_influence4 27 1 0;
+anim LeftFinger44_finger_influence4Shape 28 0 0;
+anim LeftFinger4_finger_influence3_intermediate_halfNode 26 1 0;
+anim LeftFinger4_finger_influence3_intermediate_compensate 27 1 0;
+anim LeftFinger4_finger_influence3_intermediate 28 1 0;
+anim LeftFinger44_finger_influence3_intermediateShape 29 0 0;
+anim LeftFinger4_finger_influence2_compensate 25 1 0;
+anim LeftFinger4_finger_influence2 26 1 0;
+anim LeftFinger44_finger_influence2Shape 27 0 0;
+anim LeftFinger4_finger_influence1_compensate 25 1 0;
+anim LeftFinger4_finger_influence1 26 1 0;
+anim LeftFinger44_finger_influence1Shape 27 0 0;
+anim LeftFinger4_pivotCompensate 23 3 0;
+anim LeftFinger4_RIG 24 3 0;
+anim LeftFinger4_finger_rig 25 2 0;
+anim LeftFinger4_rig_metacarpel 26 2 0;
+anim LeftFinger4_rig_knuckle 27 3 0;
+anim LeftFinger4_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    50 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    50 0 spline spline 1 1 0;
+  }
+}
+anim LeftFinger4_rig_fingerjoint3 30 0 0;
+anim effector24 30 0 0;
+anim effector14 29 0 0;
+anim LeftFinger4_rig_knuckle_pointConstraint1 28 0 0;
+anim LeftFinger4_rig_knuckle_orientConstraint1 28 0 0;
+anim LeftFinger4_metacarpel_aimConstraint1 27 0 0;
+anim LeftFinger4_fingercontrolnull 26 2 0;
+anim LeftFinger4_aimer 27 0 0;
+anim LeftFinger4_finger_transform 27 1 0;
+anim MiddleJoint 28 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 -47.799999999999997 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim LastJoint 28 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 -47.799999999999997 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim FingerIK 28 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim SideToSide 28 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim FingerStretch 28 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 28 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 28 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 28 1 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 -44.531707106506808 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 28 1 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 28 1 9;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 28 1 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    447 0 auto auto 1 1 0;
+    452 0 auto auto 1 1 0;
+    461 0 auto auto 1 1 0;
+  }
+}
+anim LeftFinger44_finger_controlShape 29 0 0;
+anim LeftFinger4_IKnull 25 1 0;
+anim LeftFinger4_finger_IK 26 4 0;
+anim LeftFinger44_finger_IKShape 27 0 0;
+anim LeftFinger4_ikHandle1 27 1 0;
+anim LeftFinger4_ikHandle1_poleVectorConstraint1 28 0 0;
+anim LeftFinger4_ikHandle2 27 1 0;
+anim LeftFinger4_ikHandle2_poleVectorConstraint1 28 0 0;
+anim LeftFinger4_lastjointaimer 27 0 0;
+anim LeftFinger4_RIG_scaleConstraint1 25 0 0;
+anim LeftFinger4_pivotCompensate_pointConstraint1 24 0 0;
+anim LeftFinger4_pivotCompensate_orientConstraint1 24 0 0;
+anim LeftFinger4_constraintCompensate 23 0 0;
+anim LeftThumb_JOINTS 23 1 0;
+anim LeftThumb_joint1 24 4 0;
+anim LeftThumb_joint2 25 4 0;
+anim LeftThumb_joint3 26 4 0;
+anim LeftThumb_joint4 27 0 0;
+anim LeftThumb_finger_influence7_compensate 27 1 0;
+anim LeftThumb_finger_influence7 28 1 0;
+anim LeftThumb_finger_influence7Shape 29 0 0;
+anim LeftThumb_finger_influence8_compensate 27 1 0;
+anim LeftThumb_finger_influence8 28 1 0;
+anim LeftThumb_finger_influence8Shape 29 0 0;
+anim LeftThumb_finger_influence6_intermediate_halfNode 27 1 0;
+anim LeftThumb_finger_influence6_intermediate_compensate 28 1 0;
+anim LeftThumb_finger_influence6_intermediate 29 1 0;
+anim LeftThumb_finger_influence6_intermediateShape 30 0 0;
+anim LeftThumb_finger_influence4_compensate 26 1 0;
+anim LeftThumb_finger_influence4 27 1 0;
+anim LeftThumb_finger_influence4Shape 28 0 0;
+anim LeftThumb_finger_influence5_compensate 26 1 0;
+anim LeftThumb_finger_influence5 27 1 0;
+anim LeftThumb_finger_influence5Shape 28 0 0;
+anim LeftThumb_finger_influence3_intermediate_halfNode 26 1 0;
+anim LeftThumb_finger_influence3_intermediate_compensate 27 1 0;
+anim LeftThumb_finger_influence3_intermediate 28 1 0;
+anim LeftThumb_finger_influence3_intermediateShape 29 0 0;
+anim LeftThumb_finger_influence2_compensate 25 1 0;
+anim LeftThumb_finger_influence2 26 1 0;
+anim LeftThumb_finger_influence2Shape 27 0 0;
+anim LeftThumb_finger_influence1_compensate 25 1 0;
+anim LeftThumb_finger_influence1 26 1 0;
+anim LeftThumb_finger_influence1Shape 27 0 0;
+anim LeftThumb_joint1_pointConstraint1 25 0 0;
+anim LeftThumb_pivotCompensate 23 3 0;
+anim LeftThumb_RIG 24 2 0;
+anim LeftThumb_finger_rig 25 3 0;
+anim LeftThumb_fingercontrolnull 26 1 0;
+anim LeftThumb_finger_transform 27 1 0;
+anim LeftThumb_finger_control 28 1 0;
+anim LeftThumb_finger_controlShape 29 0 0;
+anim LeftThumb_joints 26 1 0;
+anim LeftThumb_rig_knuckle 27 3 0;
+anim LeftThumb_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+  }
+}
+anim LeftThumb_rig_fingerjoint3 30 0 0;
+anim effector2 30 0 0;
+anim effector1 29 0 0;
+anim LeftThumb_rig_knuckle_pointConstraint1 28 0 0;
+anim LeftThumb_rig_knuckle_orientConstraint1 28 0 0;
+anim LeftThumb_IKnull 26 1 0;
+anim LeftThumb_finger_IK 27 3 0;
+anim LeftThumb_finger_IKShape 28 0 0;
+anim LeftThumb_ikHandle1 28 0 0;
+anim LeftThumb_ikHandle2 28 0 0;
+anim LeftThumb_RIG_scaleConstraint1 25 0 0;
+anim LeftThumb_pivotCompensate_pointConstraint1 24 0 0;
+anim LeftThumb_pivotCompensate_orientConstraint1 24 0 0;
+anim LeftThumb_constraintCompensate 23 0 0;
+anim LeftArm_lowerarm2_aimConstraint1 22 0 0;
+anim LeftArm_influence10_compensate 22 1 0;
+anim LeftArm_influence10 23 1 0;
+anim LeftArm_influence10Shape 24 0 0;
+anim LeftArm_influence9_compensate 20 1 0;
+anim LeftArm_influence9 21 1 0;
+anim LeftArm_influence9Shape 22 0 0;
+anim LeftArm_elbow_orientConstraint1 19 0 0;
+anim LeftArm_influence8_compensate 19 1 0;
+anim LeftArm_influence8 20 1 0;
+anim LeftArm_influence8Shape 21 0 0;
+anim LeftArm_influence7_intermediate_constrain_halfNode 19 2 0;
+anim LeftArm_influence7_intermediate_constrain_halfNode_orientConstraint1 20 0 0;
+anim LeftArm_influence7_intermediate_constrain_compensate 20 1 0;
+anim LeftArm_influence7_intermediate_constrain 21 1 0;
+anim LeftArm_influence7_intermediate_constrainShape 22 0 0;
+anim LeftArm_elbowcounterscaler_pointConstraint1 18 0 0;
+anim LeftArm_upperarm2_aimConstraint1 17 0 0;
+anim LeftArm_influence6_compensate 17 1 0;
+anim LeftArm_influence6 18 1 0;
+anim LeftArm_influence6Shape 19 0 0;
+anim LeftArm_influence5_compensate 16 1 0;
+anim LeftArm_influence5 17 1 0;
+anim LeftArm_influence5Shape 18 0 0;
+anim LeftArm_influence4_compensate 15 1 0;
+anim translate.translateX 16 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 16 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 0 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 16 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 0 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim scale.scaleX 16 1 3;
+animData {
+  input unitless;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 0.69999999999999996 spline spline 1 1 0;
+    0 1 spline spline 1 1 0;
+  }
+}
+anim LeftArm_influence4Shape 17 0 0;
+anim LeftArm_influence3_intermediate_halfNode 15 1 0;
+anim LeftArm_influence3_intermediate_compensate 16 1 0;
+anim LeftArm_influence3_intermediate 17 1 0;
+anim LeftArm_influence3_intermediateShape 18 0 0;
+anim LeftArm_influence1_compensate 14 1 0;
+anim LeftArm_influence1 15 1 0;
+anim LeftArm_influence1Shape 16 0 0;
+anim LeftArm_influence2_compensate 14 1 0;
+anim LeftArm_influence2 15 1 0;
+anim LeftArm_influence2Shape 16 0 0;
+anim LeftArm_pivotCompensate 12 3 0;
+anim LeftArm_RIG 13 1 0;
+anim LeftArm_fk 14 4 0;
+anim LeftArm_rig_clavical 15 2 0;
+anim LeftArm_rig_shoulder 16 2 0;
+anim LeftArm_rig_elbow 17 2 0;
+anim LeftArm_rig_wrist 18 2 0;
+anim LeftArm_rig_wrist_orientConstraint1 19 0 0;
+anim LeftHand_CC_g 19 1 0;
+anim finger1 20 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    462 0 auto auto 1 1 0;
+    472 -90 auto auto 1 1 0;
+    482 0 auto auto 1 1 0;
+  }
+}
+anim finger2 20 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    462 0 auto auto 1 1 0;
+    472 -90 auto auto 1 1 0;
+    482 0 auto auto 1 1 0;
+  }
+}
+anim finger3 20 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    462 0 auto auto 1 1 0;
+    472 -90 auto auto 1 1 0;
+    482 0 auto auto 1 1 0;
+  }
+}
+anim finger4 20 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    462 0 auto auto 1 1 0;
+    472 -90 auto auto 1 1 0;
+    482 0 auto auto 1 1 0;
+  }
+}
+anim thumb 20 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    462 0 auto auto 1 1 0;
+    472 -90 auto auto 1 1 0;
+    482 0 auto auto 1 1 0;
+  }
+}
+anim shut 20 1 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    462 0 auto auto 1 1 0;
+    482 0 auto auto 1 1 0;
+    487 -10 auto auto 1 1 0;
+    492 0 auto auto 1 1 0;
+  }
+}
+anim LeftHand_CCShape 21 0 0;
+anim LeftArm_effector1 18 0 0;
+anim LeftArm_RigPivot 17 0 0;
+anim LeftArm_immitateshoulder 16 1 0;
+anim LeftArm_orinet 17 1 0;
+anim LeftArm_orinet_orientConstraint1 18 0 0;
+anim LeftArm_shouldernull 15 1 0;
+anim rotate.rotateY 16 4 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    190 0 auto auto 1 1 0;
+    200 31.936754834025027 auto auto 1 1 0;
+    217 -23.522387872735361 auto auto 1 1 0;
+    227 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateZ 16 4 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    227 0 spline spline 1 1 0;
+    237 26.028121819058303 auto auto 1 1 0;
+    245 0 spline spline 1 1 0;
+  }
+}
+anim LeftArm_ShoulderShape 17 0 0;
+anim LeftArm_upperarmcontrolnull 17 8 0;
+anim rotateAxis.rotateAxisX 18 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 18 3 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 18 3 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim Twist_Placement 18 3 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 spline step 1 1 0;
+    90 1 spline step 1 1 0;
+    249 1 spline step 1 1 0;
+  }
+}
+anim NullifyTwist 18 3 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 1 auto auto 1 1 0;
+    249 1 auto auto 1 1 0;
+  }
+}
+anim AddToTwist 18 3 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 18 3 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 18 3 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+    279 0 auto auto 1 1 0;
+    289 -62.839179952842471 auto auto 1 1 0;
+    299 0 auto auto 1 1 0;
+    309 31.765029171864253 auto auto 1 1 0;
+    319 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 18 3 8;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+    260 -75 auto auto 1 1 0;
+    274 -75 auto auto 1 1 0;
+    279 0 auto auto 1 1 0;
+    289 0 auto auto 1 1 0;
+    309 0 auto auto 1 1 0;
+    319 0 auto auto 1 1 0;
+    329 36.833855825203187 auto auto 1 1 0;
+    339 0 auto auto 1 1 0;
+  }
+}
+anim LeftArm_Upper_ArmShape 19 0 0;
+anim LeftArm_lowerarmcontrolnull 19 2 0;
+anim rotate.rotateY 20 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    349 0 auto auto 1 1 0;
+    360 -90 auto auto 1 1 0;
+    373 -90 auto auto 1 1 0;
+    379 0 auto auto 1 1 0;
+  }
+}
+anim LeftArm_Lower_ArmShape 21 0 0;
+anim LeftArm_handcontrolnull 21 2 0;
+anim translate.translateX 22 3 0;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    51 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 22 3 1;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    51 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 22 3 2;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    51 0 auto auto 1 1 0;
+  }
+}
+anim LeftArm_HandTranslateShape 23 0 0;
+anim rotateAxis.rotateAxisX 23 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 23 3 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 23 3 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+  }
+}
+anim ArmStretch 23 3 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+  }
+}
+anim ElbowSlide 23 3 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+  }
+}
+anim TwistPlacement 23 3 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 spline step 1 1 0;
+    90 0 spline step 1 1 0;
+    390 0 spline step 1 1 0;
+  }
+}
+anim IKasFK 23 3 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 spline step 1 1 0;
+    90 0 spline step 1 1 0;
+    390 0 spline step 1 1 0;
+  }
+}
+anim NullifyTwist 23 3 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+  }
+}
+anim AddToTwist 23 3 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 23 3 9;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 23 3 10;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    402 0 auto auto 1 1 0;
+    412 -37.776368662500126 auto auto 1 1 0;
+    417 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 23 3 11;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    390 0 auto auto 1 1 0;
+    397 29.605874414395664 auto auto 1 1 0;
+    402 0 auto auto 1 1 0;
+    417 0 auto auto 1 1 0;
+    427 -42.78855383514427 auto auto 1 1 0;
+    432 0 auto auto 1 1 0;
+  }
+}
+anim LeftArm_HandShape 24 0 0;
+anim LeftArm_HandShapeOrig 24 0 0;
+anim LeftArm_FKhandnull 24 0 0;
+anim LeftArm_Hand_SWITCH 23 1 0;
+anim LeftArm_Hand_SWITCH_orientConstraint1 24 0 0;
+anim LeftArm_HandTranslate_SWITCH 22 0 0;
+anim LeftArm_Lower_ArmShapeOrig 21 0 0;
+anim LeftArm_Lower_Arm_SWITCH 20 1 0;
+anim LeftArm_Lower_Arm_SWITCH_orientConstraint1 21 0 0;
+anim LeftArm_Upper_ArmShapeOrig 19 0 0;
+anim LeftArm_Arm_IK_Handle 18 2 0;
+anim LeftArm_Arm_IK_Handle_poleVectorConstraint1 19 0 0;
+anim LeftArm_Arm_IK_Handle_pointConstraint1 19 0 0;
+anim LeftArm_Arm_Pole_Vector 18 2 0;
+anim LeftArm_Arm_Pole_VectorShape 19 0 0;
+anim LeftArm_polevector 19 0 0;
+anim LeftArm_distancemeasure 18 1 0;
+anim LeftArm_null2_pointConstraint1 19 0 0;
+anim LeftArm_irrelivantnull 18 0 0;
+anim LeftArm_upperarmcontrolnull_orientConstraint1 18 0 0;
+anim LeftArm_Upper_Arm_SWITCH 18 1 0;
+anim LeftArm_Upper_Arm_SWITCH_orientConstraint1 19 0 0;
+anim LeftArm_Arm_Pole_Vector_SWITCH 18 1 0;
+anim LeftArm_Arm_Pole_Vector_SWITCH_orientConstraint1 19 0 0;
+anim LeftArm_ShoulderShapeOrig 17 0 0;
+anim LeftArm_unisolated 17 0 0;
+anim LeftArm_fkikswitchnull 15 1 0;
+anim LeftArm_fkikswitchnullShape 16 0 0;
+anim LeftArm_clusters 15 5 0;
+anim LeftArm_shouldercluster 16 1 0;
+anim LeftArm_shoulderclusterShape 17 0 0;
+anim LeftArm_elbowcluster 16 1 0;
+anim LeftArm_elbowclusterShape 17 0 0;
+anim LeftArm_handcluster 16 1 0;
+anim LeftArm_handclusterShape 17 0 0;
+anim LeftArm_shouldercluster1 16 1 0;
+anim LeftArm_shouldercluster1Shape 17 0 0;
+anim LeftArm_ikcluster 16 1 0;
+anim LeftArm_ikclusterShape 17 0 0;
+anim LeftArm_pivotCompensate_pointConstraint1 13 0 0;
+anim LeftArm_pivotCompensate_orientConstraint1 13 0 0;
+anim LeftArm_constraintCompensate 11 0 0;
+anim RightArm_scalingCompensate 11 2 0;
+anim RightArm_JOINTS 12 1 0;
+anim RightArm_joint1 13 3 0;
+anim rotateOrder 14 3 0;
+animData {
+  input unitless;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    1 3 spline spline 1 1 0;
+    2 3 spline spline 1 1 0;
+  }
+}
+anim RightArm_joint3 15 2 0;
+anim RightArm_joint4 16 3 0;
+anim RightArm_elbowcounterscale 17 2 0;
+anim RightArm_joint5 18 4 0;
+anim RightArm_joint6 19 2 0;
+anim RightArm_lowerarmcounterscale 20 1 0;
+anim RightArm_joint7 21 3 0;
+anim RightArm_joint8 22 18 0;
+anim RightArm_wrist_orientConstraint2 23 0 0;
+anim RightArm_wrist_pointConstraint1 23 0 0;
+anim RightArm_influence11_intermediate_constrain_halfNode 23 2 0;
+anim RightArm_influence11_intermediate_constrain_halfNode_orientConstraint1 24 0 0;
+anim RightArm_influence11_intermediate_constrain_compensate 24 1 0;
+anim translate.translateX 25 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+    80 0.050000000000000003 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 25 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 0 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+    80 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 25 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 0 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+    80 0 linear linear 1 1 0;
+  }
+}
+anim scale.scaleX 25 1 3;
+animData {
+  input unitless;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 0.94999999999999996 linear linear 1 1 0;
+    0 1 linear linear 1 1 0;
+    80 1.05 linear linear 1 1 0;
+  }
+}
+anim RightArm_influence11_intermediate_constrainShape 26 0 0;
+anim RightFinger1_JOINTS 23 1 0;
+anim RightFinger1_joint1 24 3 0;
+anim RightFinger1_joint2 25 5 0;
+anim RightFinger1_joint3 26 4 0;
+anim RightFinger1_joint4 27 4 0;
+anim RightFinger1_joint5 28 0 0;
+anim RightFinger1_finger_influence10_compensate 28 1 0;
+anim RightFinger1_finger_influence10 29 1 0;
+anim RightFinger11_finger_influence10Shape 30 0 0;
+anim RightFinger1_finger_influence11_compensate 28 1 0;
+anim RightFinger1_finger_influence11 29 1 0;
+anim RightFinger11_finger_influence11Shape 30 0 0;
+anim RightFinger1_finger_influence9_intermediate_halfNode 28 1 0;
+anim RightFinger1_finger_influence9_intermediate_compensate 29 1 0;
+anim RightFinger1_finger_influence9_intermediate 30 1 0;
+anim RightFinger11_finger_influence9_intermediateShape 31 0 0;
+anim RightFinger1_finger_influence7_compensate 27 1 0;
+anim RightFinger1_finger_influence7 28 1 0;
+anim RightFinger11_finger_influence7Shape 29 0 0;
+anim RightFinger1_finger_influence8_compensate 27 1 0;
+anim RightFinger1_finger_influence8 28 1 0;
+anim RightFinger11_finger_influence8Shape 29 0 0;
+anim RightFinger1_finger_influence6_intermediate_halfNode 27 1 0;
+anim RightFinger1_finger_influence6_intermediate_compensate 28 1 0;
+anim RightFinger1_finger_influence6_intermediate 29 1 0;
+anim RightFinger11_finger_influence6_intermediateShape 30 0 0;
+anim RightFinger1_RigPivot 26 0 0;
+anim RightFinger1_finger_influence5_compensate 26 1 0;
+anim RightFinger1_finger_influence5 27 1 0;
+anim RightFinger11_finger_influence5Shape 28 0 0;
+anim RightFinger1_finger_influence4_compensate 26 1 0;
+anim RightFinger1_finger_influence4 27 1 0;
+anim RightFinger11_finger_influence4Shape 28 0 0;
+anim RightFinger1_finger_influence3_intermediate_halfNode 26 1 0;
+anim RightFinger1_finger_influence3_intermediate_compensate 27 1 0;
+anim RightFinger1_finger_influence3_intermediate 28 1 0;
+anim RightFinger11_finger_influence3_intermediateShape 29 0 0;
+anim RightFinger1_finger_influence2_compensate 25 1 0;
+anim RightFinger1_finger_influence2 26 1 0;
+anim RightFinger11_finger_influence2Shape 27 0 0;
+anim RightFinger1_finger_influence1_compensate 25 1 0;
+anim RightFinger1_finger_influence1 26 1 0;
+anim RightFinger11_finger_influence1Shape 27 0 0;
+anim RightFinger1_pivotCompensate 23 3 0;
+anim RightFinger1_RIG 24 3 0;
+anim RightFinger1_finger_rig 25 2 0;
+anim RightFinger1_rig_metacarpel 26 2 0;
+anim RightFinger1_rig_knuckle 27 3 0;
+anim RightFinger1_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 -2.8620415488700006 spline spline 1 1 0;
+    50 -2.8620415488700006 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 -0.20656198974140774 spline spline 1 1 0;
+    50 -0.20656198974140774 spline spline 1 1 0;
+  }
+}
+anim RightFinger1_rig_fingerjoint3 30 0 0;
+anim effector41 30 0 0;
+anim effector31 29 0 0;
+anim RightFinger1_rig_knuckle_pointConstraint1 28 0 0;
+anim RightFinger1_rig_knuckle_orientConstraint1 28 0 0;
+anim RightFinger1_metacarpel_aimConstraint1 27 0 0;
+anim RightFinger1_fingercontrolnull 26 2 0;
+anim RightFinger1_aimer 27 0 0;
+anim RightFinger1_finger_transform 27 1 0;
+anim MiddleJoint 28 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim LastJoint 28 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim FingerIK 28 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim SideToSide 28 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim FingerStretch 28 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 28 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 28 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 10 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 28 1 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 28 1 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 28 1 9;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 28 1 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim RightFinger11_finger_controlShape 29 0 0;
+anim RightFinger1_IKnull 25 1 0;
+anim RightFinger1_finger_IK 26 4 0;
+anim RightFinger11_finger_IKShape 27 0 0;
+anim RightFinger1_ikHandle1 27 1 0;
+anim RightFinger1_ikHandle1_poleVectorConstraint1 28 0 0;
+anim RightFinger1_ikHandle2 27 1 0;
+anim RightFinger1_ikHandle2_poleVectorConstraint1 28 0 0;
+anim RightFinger1_lastfingerjointaimer 27 0 0;
+anim RightFinger1_RIG_scaleConstraint1 25 0 0;
+anim RightFinger1_pivotCompensate_pointConstraint1 24 0 0;
+anim RightFinger1_pivotCompensate_orientConstraint1 24 0 0;
+anim RightFinger1_constraintCompensate 23 0 0;
+anim RightFinger2_JOINTS 23 1 0;
+anim RightFinger2_joint1 24 3 0;
+anim RightFinger2_joint2 25 5 0;
+anim RightFinger2_joint3 26 4 0;
+anim RightFinger2_joint4 27 4 0;
+anim RightFinger2_joint5 28 0 0;
+anim RightFinger2_finger_influence10_compensate 28 1 0;
+anim RightFinger2_finger_influence10 29 1 0;
+anim RightFinger22_finger_influence10Shape 30 0 0;
+anim RightFinger2_finger_influence11_compensate 28 1 0;
+anim RightFinger2_finger_influence11 29 1 0;
+anim RightFinger22_finger_influence11Shape 30 0 0;
+anim RightFinger2_finger_influence9_intermediate_halfNode 28 1 0;
+anim RightFinger2_finger_influence9_intermediate_compensate 29 1 0;
+anim RightFinger2_finger_influence9_intermediate 30 1 0;
+anim RightFinger22_finger_influence9_intermediateShape 31 0 0;
+anim RightFinger2_finger_influence7_compensate 27 1 0;
+anim RightFinger2_finger_influence7 28 1 0;
+anim RightFinger22_finger_influence7Shape 29 0 0;
+anim RightFinger2_finger_influence8_compensate 27 1 0;
+anim RightFinger2_finger_influence8 28 1 0;
+anim RightFinger22_finger_influence8Shape 29 0 0;
+anim RightFinger2_finger_influence6_intermediate_halfNode 27 1 0;
+anim RightFinger2_finger_influence6_intermediate_compensate 28 1 0;
+anim RightFinger2_finger_influence6_intermediate 29 1 0;
+anim RightFinger22_finger_influence6_intermediateShape 30 0 0;
+anim RightFinger2_RigPivot 26 0 0;
+anim RightFinger2_finger_influence5_compensate 26 1 0;
+anim RightFinger2_finger_influence5 27 1 0;
+anim RightFinger22_finger_influence5Shape 28 0 0;
+anim RightFinger2_finger_influence4_compensate 26 1 0;
+anim RightFinger2_finger_influence4 27 1 0;
+anim RightFinger22_finger_influence4Shape 28 0 0;
+anim RightFinger2_finger_influence3_intermediate_halfNode 26 1 0;
+anim RightFinger2_finger_influence3_intermediate_compensate 27 1 0;
+anim RightFinger2_finger_influence3_intermediate 28 1 0;
+anim RightFinger22_finger_influence3_intermediateShape 29 0 0;
+anim RightFinger2_finger_influence2_compensate 25 1 0;
+anim RightFinger2_finger_influence2 26 1 0;
+anim RightFinger22_finger_influence2Shape 27 0 0;
+anim RightFinger2_finger_influence1_compensate 25 1 0;
+anim RightFinger2_finger_influence1 26 1 0;
+anim RightFinger22_finger_influence1Shape 27 0 0;
+anim RightFinger2_pivotCompensate 23 3 0;
+anim RightFinger2_RIG 24 3 0;
+anim RightFinger2_finger_rig 25 2 0;
+anim RightFinger2_rig_metacarpel 26 2 0;
+anim RightFinger2_rig_knuckle 27 3 0;
+anim RightFinger2_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 -2.8620415488700006 spline spline 1 1 0;
+    50 -2.8620415488700006 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 -0.20656198974140774 spline spline 1 1 0;
+    50 -0.20656198974140774 spline spline 1 1 0;
+  }
+}
+anim RightFinger2_rig_fingerjoint3 30 0 0;
+anim effector42 30 0 0;
+anim effector32 29 0 0;
+anim RightFinger2_rig_knuckle_pointConstraint1 28 0 0;
+anim RightFinger2_rig_knuckle_orientConstraint1 28 0 0;
+anim RightFinger2_metacarpel_aimConstraint1 27 0 0;
+anim RightFinger2_fingercontrolnull 26 2 0;
+anim RightFinger2_aimer 27 0 0;
+anim RightFinger2_finger_transform 27 1 0;
+anim MiddleJoint 28 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim LastJoint 28 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim FingerIK 28 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim SideToSide 28 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim FingerStretch 28 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 28 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 28 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 28 1 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 28 1 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 28 1 9;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 28 1 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim RightFinger22_finger_controlShape 29 0 0;
+anim RightFinger2_IKnull 25 1 0;
+anim RightFinger2_finger_IK 26 4 0;
+anim RightFinger22_finger_IKShape 27 0 0;
+anim RightFinger2_ikHandle1 27 1 0;
+anim RightFinger2_ikHandle1_poleVectorConstraint1 28 0 0;
+anim RightFinger2_ikHandle2 27 1 0;
+anim RightFinger2_ikHandle2_poleVectorConstraint1 28 0 0;
+anim RightFinger2_lastfingerjointaimer 27 0 0;
+anim RightFinger2_RIG_scaleConstraint1 25 0 0;
+anim RightFinger2_pivotCompensate_pointConstraint1 24 0 0;
+anim RightFinger2_pivotCompensate_orientConstraint1 24 0 0;
+anim RightFinger2_constraintCompensate 23 0 0;
+anim RightFinger3_JOINTS 23 1 0;
+anim RightFinger3_joint1 24 3 0;
+anim RightFinger3_joint2 25 5 0;
+anim RightFinger3_joint3 26 4 0;
+anim RightFinger3_joint4 27 4 0;
+anim RightFinger3_joint5 28 0 0;
+anim RightFinger3_finger_influence10_compensate 28 1 0;
+anim RightFinger3_finger_influence10 29 1 0;
+anim RightFinger33_finger_influence10Shape 30 0 0;
+anim RightFinger3_finger_influence11_compensate 28 1 0;
+anim RightFinger3_finger_influence11 29 1 0;
+anim RightFinger33_finger_influence11Shape 30 0 0;
+anim RightFinger3_finger_influence9_intermediate_halfNode 28 1 0;
+anim RightFinger3_finger_influence9_intermediate_compensate 29 1 0;
+anim RightFinger3_finger_influence9_intermediate 30 1 0;
+anim RightFinger33_finger_influence9_intermediateShape 31 0 0;
+anim RightFinger3_finger_influence7_compensate 27 1 0;
+anim RightFinger3_finger_influence7 28 1 0;
+anim RightFinger33_finger_influence7Shape 29 0 0;
+anim RightFinger3_finger_influence8_compensate 27 1 0;
+anim RightFinger3_finger_influence8 28 1 0;
+anim RightFinger33_finger_influence8Shape 29 0 0;
+anim RightFinger3_finger_influence6_intermediate_halfNode 27 1 0;
+anim RightFinger3_finger_influence6_intermediate_compensate 28 1 0;
+anim RightFinger3_finger_influence6_intermediate 29 1 0;
+anim RightFinger33_finger_influence6_intermediateShape 30 0 0;
+anim RightFinger3_RigPivot 26 0 0;
+anim RightFinger3_finger_influence5_compensate 26 1 0;
+anim RightFinger3_finger_influence5 27 1 0;
+anim RightFinger33_finger_influence5Shape 28 0 0;
+anim RightFinger3_finger_influence4_compensate 26 1 0;
+anim RightFinger3_finger_influence4 27 1 0;
+anim RightFinger33_finger_influence4Shape 28 0 0;
+anim RightFinger3_finger_influence3_intermediate_halfNode 26 1 0;
+anim RightFinger3_finger_influence3_intermediate_compensate 27 1 0;
+anim RightFinger3_finger_influence3_intermediate 28 1 0;
+anim RightFinger33_finger_influence3_intermediateShape 29 0 0;
+anim RightFinger3_finger_influence2_compensate 25 1 0;
+anim RightFinger3_finger_influence2 26 1 0;
+anim RightFinger33_finger_influence2Shape 27 0 0;
+anim RightFinger3_finger_influence1_compensate 25 1 0;
+anim RightFinger3_finger_influence1 26 1 0;
+anim RightFinger33_finger_influence1Shape 27 0 0;
+anim RightFinger3_pivotCompensate 23 3 0;
+anim RightFinger3_RIG 24 3 0;
+anim RightFinger3_finger_rig 25 2 0;
+anim RightFinger3_rig_metacarpel 26 2 0;
+anim RightFinger3_rig_knuckle 27 3 0;
+anim RightFinger3_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 -2.8620415488700006 spline spline 1 1 0;
+    50 -2.8620415488700006 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 -0.20656198974140774 spline spline 1 1 0;
+    50 -0.20656198974140774 spline spline 1 1 0;
+  }
+}
+anim RightFinger3_rig_fingerjoint3 30 0 0;
+anim effector43 30 0 0;
+anim effector33 29 0 0;
+anim RightFinger3_rig_knuckle_pointConstraint1 28 0 0;
+anim RightFinger3_rig_knuckle_orientConstraint1 28 0 0;
+anim RightFinger3_metacarpel_aimConstraint1 27 0 0;
+anim RightFinger3_fingercontrolnull 26 2 0;
+anim RightFinger3_aimer 27 0 0;
+anim RightFinger3_finger_transform 27 1 0;
+anim MiddleJoint 28 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim LastJoint 28 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim FingerIK 28 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim SideToSide 28 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim FingerStretch 28 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 28 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 28 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 -10 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 28 1 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 28 1 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 28 1 9;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 28 1 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim RightFinger33_finger_controlShape 29 0 0;
+anim RightFinger3_IKnull 25 1 0;
+anim RightFinger3_finger_IK 26 4 0;
+anim RightFinger33_finger_IKShape 27 0 0;
+anim RightFinger3_ikHandle1 27 1 0;
+anim RightFinger3_ikHandle1_poleVectorConstraint1 28 0 0;
+anim RightFinger3_ikHandle2 27 1 0;
+anim RightFinger3_ikHandle2_poleVectorConstraint1 28 0 0;
+anim RightFinger3_lastfingerjointaimer 27 0 0;
+anim RightFinger3_RIG_scaleConstraint1 25 0 0;
+anim RightFinger3_pivotCompensate_pointConstraint1 24 0 0;
+anim RightFinger3_pivotCompensate_orientConstraint1 24 0 0;
+anim RightFinger3_constraintCompensate 23 0 0;
+anim RightFinger4_JOINTS 23 1 0;
+anim RightFinger4_joint1 24 3 0;
+anim RightFinger4_joint2 25 5 0;
+anim RightFinger4_joint3 26 4 0;
+anim RightFinger4_joint4 27 4 0;
+anim RightFinger4_joint5 28 0 0;
+anim RightFinger4_finger_influence10_compensate 28 1 0;
+anim RightFinger4_finger_influence10 29 1 0;
+anim RightFinger44_finger_influence10Shape 30 0 0;
+anim RightFinger4_finger_influence11_compensate 28 1 0;
+anim RightFinger4_finger_influence11 29 1 0;
+anim RightFinger44_finger_influence11Shape 30 0 0;
+anim RightFinger4_finger_influence9_intermediate_halfNode 28 1 0;
+anim RightFinger4_finger_influence9_intermediate_compensate 29 1 0;
+anim RightFinger4_finger_influence9_intermediate 30 1 0;
+anim RightFinger44_finger_influence9_intermediateShape 31 0 0;
+anim RightFinger4_finger_influence7_compensate 27 1 0;
+anim RightFinger4_finger_influence7 28 1 0;
+anim RightFinger44_finger_influence7Shape 29 0 0;
+anim RightFinger4_finger_influence8_compensate 27 1 0;
+anim RightFinger4_finger_influence8 28 1 0;
+anim RightFinger44_finger_influence8Shape 29 0 0;
+anim RightFinger4_finger_influence6_intermediate_halfNode 27 1 0;
+anim RightFinger4_finger_influence6_intermediate_compensate 28 1 0;
+anim RightFinger4_finger_influence6_intermediate 29 1 0;
+anim RightFinger44_finger_influence6_intermediateShape 30 0 0;
+anim RightFinger4_RigPivot 26 0 0;
+anim RightFinger4_finger_influence5_compensate 26 1 0;
+anim RightFinger4_finger_influence5 27 1 0;
+anim RightFinger44_finger_influence5Shape 28 0 0;
+anim RightFinger4_finger_influence4_compensate 26 1 0;
+anim RightFinger4_finger_influence4 27 1 0;
+anim RightFinger44_finger_influence4Shape 28 0 0;
+anim RightFinger4_finger_influence3_intermediate_halfNode 26 1 0;
+anim RightFinger4_finger_influence3_intermediate_compensate 27 1 0;
+anim RightFinger4_finger_influence3_intermediate 28 1 0;
+anim RightFinger44_finger_influence3_intermediateShape 29 0 0;
+anim RightFinger4_finger_influence2_compensate 25 1 0;
+anim RightFinger4_finger_influence2 26 1 0;
+anim RightFinger44_finger_influence2Shape 27 0 0;
+anim RightFinger4_finger_influence1_compensate 25 1 0;
+anim RightFinger4_finger_influence1 26 1 0;
+anim RightFinger44_finger_influence1Shape 27 0 0;
+anim RightFinger4_pivotCompensate 23 3 0;
+anim RightFinger4_RIG 24 3 0;
+anim RightFinger4_finger_rig 25 2 0;
+anim RightFinger4_rig_metacarpel 26 2 0;
+anim RightFinger4_rig_knuckle 27 3 0;
+anim RightFinger4_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 -2.8620415488700006 spline spline 1 1 0;
+    50 -2.8620415488700006 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 -0.20656198974140774 spline spline 1 1 0;
+    50 -0.20656198974140774 spline spline 1 1 0;
+  }
+}
+anim RightFinger4_rig_fingerjoint3 30 0 0;
+anim effector44 30 0 0;
+anim effector34 29 0 0;
+anim RightFinger4_rig_knuckle_pointConstraint1 28 0 0;
+anim RightFinger4_rig_knuckle_orientConstraint1 28 0 0;
+anim RightFinger4_metacarpel_aimConstraint1 27 0 0;
+anim RightFinger4_fingercontrolnull 26 2 0;
+anim RightFinger4_aimer 27 0 0;
+anim RightFinger4_finger_transform 27 1 0;
+anim RightFinger4_finger_control 28 1 0;
+anim RightFinger44_finger_controlShape 29 0 0;
+anim RightFinger4_IKnull 25 1 0;
+anim RightFinger4_finger_IK 26 4 0;
+anim RightFinger44_finger_IKShape 27 0 0;
+anim RightFinger4_ikHandle1 27 1 0;
+anim RightFinger4_ikHandle1_poleVectorConstraint1 28 0 0;
+anim RightFinger4_ikHandle2 27 1 0;
+anim RightFinger4_ikHandle2_poleVectorConstraint1 28 0 0;
+anim RightFinger4_lastfingerjointaimer 27 0 0;
+anim RightFinger4_RIG_scaleConstraint1 25 0 0;
+anim RightFinger4_pivotCompensate_pointConstraint1 24 0 0;
+anim RightFinger4_pivotCompensate_orientConstraint1 24 0 0;
+anim RightFinger4_constraintCompensate 23 0 0;
+anim RightThumb_JOINTS 23 1 0;
+anim RightThumb_joint1 24 4 0;
+anim RightThumb_joint2 25 4 0;
+anim RightThumb_joint3 26 4 0;
+anim RightThumb_joint4 27 0 0;
+anim RightThumb_finger_influence7_compensate 27 1 0;
+anim RightThumb_finger_influence7 28 1 0;
+anim RightThumb_finger_influence7Shape 29 0 0;
+anim RightThumb_finger_influence8_compensate 27 1 0;
+anim RightThumb_finger_influence8 28 1 0;
+anim RightThumb_finger_influence8Shape 29 0 0;
+anim RightThumb_finger_influence6_intermediate_halfNode 27 1 0;
+anim RightThumb_finger_influence6_intermediate_compensate 28 1 0;
+anim RightThumb_finger_influence6_intermediate 29 1 0;
+anim RightThumb_finger_influence6_intermediateShape 30 0 0;
+anim RightThumb_finger_influence4_compensate 26 1 0;
+anim RightThumb_finger_influence4 27 1 0;
+anim RightThumb_finger_influence4Shape 28 0 0;
+anim RightThumb_finger_influence5_compensate 26 1 0;
+anim RightThumb_finger_influence5 27 1 0;
+anim RightThumb_finger_influence5Shape 28 0 0;
+anim RightThumb_finger_influence3_intermediate_halfNode 26 1 0;
+anim RightThumb_finger_influence3_intermediate_compensate 27 1 0;
+anim RightThumb_finger_influence3_intermediate 28 1 0;
+anim RightThumb_finger_influence3_intermediateShape 29 0 0;
+anim RightThumb_finger_influence2_compensate 25 1 0;
+anim RightThumb_finger_influence2 26 1 0;
+anim RightThumb_finger_influence2Shape 27 0 0;
+anim RightThumb_finger_influence1_compensate 25 1 0;
+anim RightThumb_finger_influence1 26 1 0;
+anim RightThumb_finger_influence1Shape 27 0 0;
+anim RightThumb_joint1_pointConstraint1 25 0 0;
+anim RightThumb_pivotCompensate 23 3 0;
+anim RightThumb_RIG 24 2 0;
+anim RightThumb_finger_rig 25 3 0;
+anim RightThumb_fingercontrolnull 26 1 0;
+anim RightThumb_finger_transform 27 1 0;
+anim MiddleJoint 28 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim LastJoint 28 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim FingerIK 28 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim Side_to_side 28 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim FingerStretch 28 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 28 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 28 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 28 1 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 28 1 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 28 1 9;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 28 1 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    90 0 auto auto 1 1 0;
+  }
+}
+anim RightThumb_finger_controlShape 29 0 0;
+anim RightThumb_joints 26 1 0;
+anim RightThumb_rig_knuckle 27 3 0;
+anim RightThumb_rig_fingerjoint1 28 2 0;
+anim rotate.rotateX 29 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    50 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 29 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 spline spline 1 1 0;
+    50 0 spline spline 1 1 0;
+  }
+}
+anim RightThumb_rig_fingerjoint3 30 0 0;
+anim effector4 30 0 0;
+anim effector3 29 0 0;
+anim RightThumb_rig_knuckle_pointConstraint1 28 0 0;
+anim RightThumb_rig_knuckle_orientConstraint1 28 0 0;
+anim RightThumb_IKnull 26 1 0;
+anim RightThumb_finger_IK 27 3 0;
+anim RightThumb_finger_IKShape 28 0 0;
+anim RightThumb_ikHandle1 28 0 0;
+anim RightThumb_ikHandle2 28 0 0;
+anim RightThumb_RIG_scaleConstraint1 25 0 0;
+anim RightThumb_pivotCompensate_pointConstraint1 24 0 0;
+anim RightThumb_pivotCompensate_orientConstraint1 24 0 0;
+anim RightThumb_constraintCompensate 23 0 0;
+anim RightArm_lowerarm2_aimConstraint1 22 0 0;
+anim RightArm_influence10_compensate 22 1 0;
+anim RightArm_influence10 23 1 0;
+anim RightArm_influence10Shape 24 0 0;
+anim RightArm_influence9_compensate 20 1 0;
+anim RightArm_influence9 21 1 0;
+anim RightArm_influence9Shape 22 0 0;
+anim RightArm_elbow_orientConstraint1 19 0 0;
+anim RightArm_influence8_compensate 19 1 0;
+anim RightArm_influence8 20 1 0;
+anim RightArm_influence8Shape 21 0 0;
+anim RightArm_influence7_intermediate_constrain_halfNode 19 2 0;
+anim RightArm_influence7_intermediate_constrain_halfNode_orientConstraint1 20 0 0;
+anim RightArm_influence7_intermediate_constrain_compensate 20 1 0;
+anim RightArm_influence7_intermediate_constrain 21 1 0;
+anim RightArm_influence7_intermediate_constrainShape 22 0 0;
+anim RightArm_elbowcounterscale_pointConstraint1 18 0 0;
+anim RightArm_upperarm2_aimConstraint1 17 0 0;
+anim RightArm_influence6_compensate 17 1 0;
+anim RightArm_influence6 18 1 0;
+anim RightArm_influence6Shape 19 0 0;
+anim RightArm_influence5_compensate 16 1 0;
+anim RightArm_influence5 17 1 0;
+anim RightArm_influence5Shape 18 0 0;
+anim RightArm_influence4_compensate 15 1 0;
+anim translate.translateX 16 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 16 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 0 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 16 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 0 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim scale.scaleX 16 1 3;
+animData {
+  input unitless;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -80 0.69999999999999996 spline spline 1 1 0;
+    0 1 spline spline 1 1 0;
+  }
+}
+anim RightArm_influence4Shape 17 0 0;
+anim RightArm_influence3_intermediate_halfNode 15 1 0;
+anim RightArm_influence3_intermediate_compensate 16 1 0;
+anim RightArm_influence3_intermediate 17 1 0;
+anim RightArm_influence3_intermediateShape 18 0 0;
+anim RightArm_influence1_compensate 14 1 0;
+anim RightArm_influence1 15 1 0;
+anim RightArm_influence1Shape 16 0 0;
+anim RightArm_influence2_compensate 14 1 0;
+anim RightArm_influence2 15 1 0;
+anim RightArm_influence2Shape 16 0 0;
+anim RightArm_pivotCompensate 12 3 0;
+anim RightArm_RIG 13 1 0;
+anim RightArm_fk 14 5 0;
+anim RightArm_rig_clavical 15 2 0;
+anim RightArm_rig_shoulder 16 2 0;
+anim RightArm_rig_elbow 17 2 0;
+anim RightArm_rig_wrist 18 2 0;
+anim RightArm_rig_wrist_orientConstraint1 19 0 0;
+anim RightHand_CC_g 19 1 0;
+anim finger1 20 1 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim finger2 20 1 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim finger3 20 1 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim finger4 20 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim thumb 20 1 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim shut 20 1 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim RightHand_CCShape 21 0 0;
+anim RightArm_effector1 18 0 0;
+anim RightArm_RigPivot 17 0 0;
+anim RightArm_immitateshoulder 16 1 0;
+anim RightArm_orinet 17 1 0;
+anim RightArm_orinet_orientConstraint1 18 0 0;
+anim RightArm_shouldernull 15 1 0;
+anim RightArm_extra 16 1 0;
+anim rotate.rotateY 17 4 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    190 0 auto auto 1 1 0;
+    200 31.936754834025027 auto auto 1 1 0;
+    217 -23.522387872735361 auto auto 1 1 0;
+    227 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateZ 17 4 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    227 0 spline spline 1 1 0;
+    237 26.028121819058303 auto auto 1 1 0;
+    245 0 spline spline 1 1 0;
+  }
+}
+anim RightArm_ShoulderShape 18 0 0;
+anim RightArm_upperarmcontrolnull 18 7 0;
+anim rotateAxis.rotateAxisX 19 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 19 3 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 19 3 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim TwistPlacement 19 3 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 spline step 1 1 0;
+    90 0 spline step 1 1 0;
+    249 0 spline step 1 1 0;
+  }
+}
+anim NullifyTwist 19 3 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 1 auto auto 1 1 0;
+    249 1 auto auto 1 1 0;
+  }
+}
+anim AddToTwist 19 3 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 19 3 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 19 3 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+    279 0 auto auto 1 1 0;
+    289 -62.839179952842471 auto auto 1 1 0;
+    299 0 auto auto 1 1 0;
+    309 31.765029171864253 auto auto 1 1 0;
+    319 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 19 3 8;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    249 0 auto auto 1 1 0;
+    260 -75 auto auto 1 1 0;
+    274 -75 auto auto 1 1 0;
+    279 0 auto auto 1 1 0;
+    289 0 auto auto 1 1 0;
+    309 0 auto auto 1 1 0;
+    319 0 auto auto 1 1 0;
+    329 36.833855825203187 auto auto 1 1 0;
+    339 0 auto auto 1 1 0;
+  }
+}
+anim RightArm_Upper_ArmShape 20 0 0;
+anim RightArm_lowerarmcontrolnull 20 2 0;
+anim rotate.rotateY 21 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    349 0 auto auto 1 1 0;
+    360 -90 auto auto 1 1 0;
+    373 -90 auto auto 1 1 0;
+    379 0 auto auto 1 1 0;
+  }
+}
+anim RightArm_Lower_ArmShape 22 0 0;
+anim RightArm_handcontrolnull 22 2 0;
+anim translate.translateX 23 3 0;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    51 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 23 3 1;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    51 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 23 3 2;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    51 0 auto auto 1 1 0;
+  }
+}
+anim RightArm_HandTranslateShape 24 0 0;
+anim rotateAxis.rotateAxisX 24 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 24 3 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 24 3 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim ArmStretch 24 3 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim ElbowSlide 24 3 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim TwistPlacement 24 3 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 spline step 1 1 0;
+    90 0 spline step 1 1 0;
+  }
+}
+anim IKasFK 24 3 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 spline step 1 1 0;
+    90 0 spline step 1 1 0;
+  }
+}
+anim NullifyTwist 24 3 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim AddToTwist 24 3 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 24 3 9;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 24 3 10;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 24 3 11;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim RightArm_HandShape 25 0 0;
+anim RightArm_HandShapeOrig 25 0 0;
+anim RightArm_FKhandorient 25 0 0;
+anim RightArm_Hand_SWITCH 24 1 0;
+anim RightArm_Hand_SWITCH_orientConstraint1 25 0 0;
+anim RightArm_HandTranslate_SWITCH 23 0 0;
+anim RightArm_Lower_ArmShapeOrig 22 0 0;
+anim RightArm_Lower_Arm_SWITCH 21 1 0;
+anim RightArm_Lower_Arm_SWITCH_orientConstraint1 22 0 0;
+anim RightArm_Upper_ArmShapeOrig 20 0 0;
+anim RightArm_Arm_IK_Handle 19 2 0;
+anim RightArm_Arm_IK_Handle_poleVectorConstraint1 20 0 0;
+anim RightArm_Arm_IK_Handle_pointConstraint1 20 0 0;
+anim RightArm_Arm_Pole_Vector 19 2 0;
+anim RightArm_Arm_Pole_VectorShape 20 0 0;
+anim RightArm_polevector 20 0 0;
+anim RightArm_distancemeasure 19 1 0;
+anim RightArm_null2_pointConstraint1 20 0 0;
+anim RightArm_upperarmcontrolnull_orientConstraint1 19 0 0;
+anim RightArm_Upper_Arm_SWITCH 19 1 0;
+anim RightArm_Upper_Arm_SWITCH_orientConstraint1 20 0 0;
+anim RightArm_Arm_Pole_Vector_SWITCH 19 1 0;
+anim RightArm_Arm_Pole_Vector_SWITCH_orientConstraint1 20 0 0;
+anim RightArm_ShoulderShapeOrig 18 0 0;
+anim RightArm_unisolated 18 0 0;
+anim RightArm_fkikswitchnull 15 1 0;
+anim RightArm_fkikswitchnullShape 16 0 0;
+anim RightArm_clusters 15 5 0;
+anim RightArm_shouldercluster 16 1 0;
+anim RightArm_shoulderclusterShape 17 0 0;
+anim RightArm_elbowcluster 16 1 0;
+anim RightArm_elbowclusterShape 17 0 0;
+anim RightArm_handcluster 16 1 0;
+anim RightArm_handclusterShape 17 0 0;
+anim RightArm_shouldercluster1 16 1 0;
+anim RightArm_shouldercluster1Shape 17 0 0;
+anim RightArm_ikcluster 16 1 0;
+anim RightArm_ikclusterShape 17 0 0;
+anim RightArm_lastnullstanding 15 0 0;
+anim RightArm_pivotCompensate_pointConstraint1 13 0 0;
+anim RightArm_pivotCompensate_orientConstraint1 13 0 0;
+anim RightArm_constraintCompensate 11 0 0;
+anim Head_scalingCompensate 11 2 0;
+anim Head_JOINTS 12 1 0;
+anim Head_joint1 13 2 0;
+anim Head_joint2 14 2 0;
+anim Head_joint3 15 5 0;
+anim Head_joint3_orientConstraint1 16 0 0;
+anim Head_joint4 16 0 0;
+anim Head_influence3_compensate 16 1 0;
+anim Head_influence3 17 1 0;
+anim Head_influenceShape3 18 0 0;
+anim Head_influence4_compensate 16 1 0;
+anim Head_influence4 17 1 0;
+anim Head_influenceShape4 18 0 0;
+anim Head_influence5_compensate 16 1 0;
+anim Head_influence5 17 1 0;
+anim Head_influenceShape5 18 0 0;
+anim Head_influence2_compensate 15 1 0;
+anim Head_influence2 16 1 0;
+anim Head_influenceShape2 17 0 0;
+anim Head_influence1_compensate 14 1 0;
+anim Head_influence1 15 1 0;
+anim Head_influenceShape1 16 0 0;
+anim Head_pivotCompensate 12 3 0;
+anim Head_RIG 13 4 0;
+anim Head_fk 14 7 0;
+anim Head_orientattach 15 0 0;
+anim Head_ikHandle1 15 1 0;
+anim Head_ikHandle1_parentConstraint1 16 0 0;
+anim Head_rigjoint1 15 3 0;
+anim Head_rigjoint3 16 5 0;
+anim Head_rigjoint4 17 0 0;
+anim Head_rigjoint3_orientConstraint1 17 0 0;
+anim Head_topheadnull 17 0 0;
+anim Head_middleheadnull 17 0 0;
+anim Head_bottomheadnull 17 0 0;
+anim Head_effector1 16 0 0;
+anim Head_RigPivot 16 0 0;
+anim Head_emulatejoint1 15 2 0;
+anim Head_middleneckrotate 16 1 0;
+anim Head_middleneckrotate_orientConstraint1 17 0 0;
+anim Head_emulatejoint1_orientConstraint1 16 0 0;
+anim Head_anothertotationisolate 15 0 0;
+anim Head_anotherstupidnull 15 0 0;
+anim Head_setupthing 15 2 0;
+anim Head_rotationisolated 16 1 0;
+anim rotate.rotateX 17 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    130 0 auto auto 1 1 0;
+    161 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 17 3 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    111 0 auto auto 1 1 0;
+    121 29.367000000000001 auto auto 1 1 0;
+    130 0 auto auto 1 1 0;
+    141 -25.172000000000001 auto auto 1 1 0;
+    161 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 17 3 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    121 0 auto auto 1 1 0;
+    130 -27.018999999999998 auto auto 1 1 0;
+    151 23.154 auto auto 1 1 0;
+    161 0 auto auto 1 1 0;
+  }
+}
+anim Head_NeckShape 18 0 0;
+anim Head_NeckShapeOrig 18 0 0;
+anim Head_fknull 18 1 0;
+anim rotate.rotateZ 19 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateX 19 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateY 19 2 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateX 19 2 3;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 19 2 4;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 19 2 5;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+  }
+}
+anim visibility 19 2 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 spline step 1 1 0;
+  }
+}
+anim scale.scaleX 19 2 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0.99999999999999933 linear linear 1 1 0;
+  }
+}
+anim scale.scaleY 19 2 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0.99999999999999933 linear linear 1 1 0;
+  }
+}
+anim scale.scaleZ 19 2 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+  }
+}
+anim Head_isolatecalculate_orientConstraint1 20 0 0;
+anim rotateAxis.rotateAxisX 20 4 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 20 4 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 20 4 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim scale.scaleX 20 4 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1.0000000000000002 auto auto 1 1 0;
+    84 1.0000000000000002 auto auto 1 1 0;
+    101 1.0000000000000002 auto auto 1 1 0;
+  }
+}
+anim scale.scaleY 20 4 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1.0000000000000002 auto auto 1 1 0;
+    84 1.0000000000000002 auto auto 1 1 0;
+    101 1.0000000000000002 auto auto 1 1 0;
+  }
+}
+anim scale.scaleZ 20 4 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1 auto auto 1 1 0;
+    84 1 auto auto 1 1 0;
+    101 1 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 20 4 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    70 0 auto auto 1 1 0;
+    101 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 20 4 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    35 0 auto auto 1 1 0;
+    40 0 auto auto 1 1 0;
+    70 0 auto auto 1 1 0;
+    80 -13.282999999999999 auto auto 1 1 0;
+    90 15.607000000000001 auto auto 1 1 0;
+    101 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 20 4 8;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    35 0 auto auto 1 1 0;
+    40 0 auto auto 1 1 0;
+    45 -14.999999999999998 auto auto 1 1 0;
+    55 13 auto auto 1 1 0;
+    65 0 auto auto 1 1 0;
+  }
+}
+anim Head_FKShape 21 0 0;
+anim Head_FKShapeOrig 21 0 0;
+anim Head_rotated 21 1 0;
+anim Head_rotatedShapeOrig 22 0 0;
+anim Head_FKShapeOrig1 21 0 0;
+anim Head_stretchy 16 1 0;
+anim Head_stretchy_pointConstraint1 17 0 0;
+anim Head_fkikswitchnull 14 0 0;
+anim Head_FKcluster 14 1 0;
+anim Head_FKclusterShape 15 0 0;
+anim Head_IKcluster 14 1 0;
+anim Head_IKclusterShape 15 0 0;
+anim Head_pivotCompensate_pointConstraint1 13 0 0;
+anim Head_pivotCompensate_orientConstraint1 13 0 0;
+anim Head_constraintCompensate 11 0 0;
+anim Spine_joint7_parentConstraint1 11 0 0;
+anim Spine_influence6_compensate 10 1 0;
+anim Spine_influence6 11 1 0;
+anim Spine_influenceShape6 12 0 0;
+anim Spine_influence5_compensate 9 1 0;
+anim Spine_influence5 10 1 0;
+anim Spine_influenceShape5 11 0 0;
+anim Spine_influence4_compensate 8 1 0;
+anim Spine_influence4 9 1 0;
+anim Spine_influenceShape4 10 0 0;
+anim Spine_influence3_compensate 7 1 0;
+anim Spine_influence3 8 1 0;
+anim Spine_influenceShape3 9 0 0;
+anim Spine_influence2_compensate 6 1 0;
+anim Spine_influence2 7 1 0;
+anim Spine_influenceShape2 8 0 0;
+anim Spine_influence1_compensate 5 1 0;
+anim Spine_influence1 6 1 0;
+anim Spine_influenceShape1 7 0 0;
+anim RightLeg_scalingCompensate 5 2 0;
+anim RightLeg_JOINTS 6 1 0;
+anim RightLeg_joint1 7 3 0;
+anim RightLeg_joint2 8 2 0;
+anim RightLeg_joint3 9 3 0;
+anim RightLeg_kneescalecompensate 10 2 0;
+anim RightLeg_joint4 11 4 0;
+anim RightLeg_joint5 12 2 0;
+anim RightLeg_lowerarmscalecompensate 13 1 0;
+anim RightLeg_joint6 14 3 0;
+anim RightLeg_joint2_2_aimConstraint1 15 0 0;
+anim RightLeg_footscalecompensate 15 2 0;
+anim RightLeg_joint7 16 5 0;
+anim RightLeg_joint3_orientConstraint1 17 0 0;
+anim RightLeg_joint4scalecomp 17 1 0;
+anim RightLeg_joint8 18 3 0;
+anim RightLeg_joint9 19 0 0;
+anim RightLeg_influence13_compensate 19 1 0;
+anim RightLeg_influence13 20 1 0;
+anim RightLeg_influence13Shape 21 0 0;
+anim RightLeg_influence12_intermediate_halfNode 19 1 0;
+anim RightLeg_influence12_intermediate_compensate 20 1 0;
+anim RightLeg_influence12_intermediate 21 1 0;
+anim RightLeg_influence12_intermediateShape 22 0 0;
+anim RightLeg_influence10_compensate 17 1 0;
+anim RightLeg_influence10 18 1 0;
+anim RightLeg_influence10Shape 19 0 0;
+anim RightLeg_influence11_compensate 17 1 0;
+anim RightLeg_influence11 18 1 0;
+anim RightLeg_influence11Shape 19 0 0;
+anim RightLeg_influence9_intermediate_halfNode 17 1 0;
+anim RightLeg_influence9_intermediate_compensate 18 1 0;
+anim RightLeg_influence9_intermediate 19 1 0;
+anim RightLeg_influence9_intermediateShape 20 0 0;
+anim RightLeg_footscalecompensate_pointConstraint1 16 0 0;
+anim RightLeg_influence8_compensate 15 1 0;
+anim RightLeg_influence8 16 1 0;
+anim RightLeg_influence8Shape 17 0 0;
+anim RightLeg_influence7_compensate 13 1 0;
+anim RightLeg_influence7 14 1 0;
+anim RightLeg_influence7Shape 15 0 0;
+anim RightLeg_joint2_orientConstraint1 12 0 0;
+anim RightLeg_influence6_compensate 12 1 0;
+anim translate.translateX 13 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0.050000000000000003 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 13 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 13 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0 linear linear 1 1 0;
+  }
+}
+anim RightLeg_influence6Shape 14 0 0;
+anim RightLeg_influence5_intermediate_constrain_halfNode 12 2 0;
+anim RightLeg_influence5_intermediate_constrain_halfNode_orientConstraint1 13 0 0;
+anim RightLeg_influence5_intermediate_constrain_compensate 13 1 0;
+anim RightLeg_influence5_intermediate_constrain 14 1 0;
+anim RightLeg_influence5_intermediate_constrainShape 15 0 0;
+anim RightLeg_kneescalecompensate_pointConstraint1 11 0 0;
+anim RightLeg_joint1_3_aimConstraint1 10 0 0;
+anim RightLeg_influence4_compensate 10 1 0;
+anim translate.translateX 11 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0.050000000000000003 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 11 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 11 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0 linear linear 1 1 0;
+  }
+}
+anim RightLeg_influence4Shape 12 0 0;
+anim RightLeg_influence3_compensate 9 1 0;
+anim RightLeg_influence3 10 1 0;
+anim RightLeg_influence3Shape 11 0 0;
+anim RightLeg_influence2_compensate 8 1 0;
+anim RightLeg_influence2 9 1 0;
+anim RightLeg_influence2Shape 10 0 0;
+anim RightLeg_influence1_intermediate_halfNode 8 1 0;
+anim RightLeg_influence1_intermediate_compensate 9 1 0;
+anim translate.translateX 10 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 10 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 10 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim RightLeg_influence1_intermediateShape 11 0 0;
+anim RightLeg_pivotCompensate 6 3 0;
+anim RightLeg_RIG 7 2 0;
+anim RightLeg_fk 8 6 0;
+anim RightLeg_rig_joint1 9 2 0;
+anim RightLeg_rig_joint2 10 2 0;
+anim RightLeg_rig_joint3 11 3 0;
+anim RightLeg_rig_joint4 12 2 0;
+anim RightLeg_rig_joint5 13 0 0;
+anim RightLeg_effector3 13 0 0;
+anim RightLeg_effector2 12 0 0;
+anim RightLeg_rig_heelswitchplacer 12 0 0;
+anim RightLeg_effector1 11 0 0;
+anim RightLeg_RigPivot 10 0 0;
+anim RightLeg_polevectorfirstposition 9 1 0;
+anim RightLeg_polevectoraimer 10 3 0;
+anim RightLeg_polevectorextraaim 11 1 0;
+anim RightLeg_polevectorgroup 12 2 0;
+anim TwistPlacement 13 2 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 spline step 1 1 0;
+  }
+}
+anim Reposition.RepositionX 13 2 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim Reposition.RepositionY 13 2 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim Reposition.RepositionZ 13 2 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim RemoveTwist 13 2 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim AddToTwist 13 2 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 13 2 6;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 13 2 7;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 13 2 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 13 2 9;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 13 2 10;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 13 2 11;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim RightLeg_Leg_Pole_VectorShape 14 0 0;
+anim RightLeg_polecectornull 14 1 0;
+anim translate.translateX 15 1 0;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 15 1 1;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 15 1 2;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim visibility 15 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 spline step 1 1 0;
+    50 1 spline step 1 1 0;
+  }
+}
+anim rotate.rotateX 15 1 4;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateY 15 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateZ 15 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim scale.scaleX 15 1 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim scale.scaleY 15 1 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1.0000000000000002 linear linear 1 1 0;
+    50 1.0000000000000002 linear linear 1 1 0;
+  }
+}
+anim scale.scaleZ 15 1 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim RightLeg_polevector_pointConstraint1 16 0 0;
+anim RightLeg_Leg_Pole_Vector_SWITCH 13 1 0;
+anim RightLeg_Leg_Pole_Vector_SWITCH_orientConstraint1 14 0 0;
+anim RightLeg_distance 11 1 0;
+anim RightLeg_distance_pointConstraint1 12 0 0;
+anim RightLeg_polevectoraimer_aimConstraint1 11 0 0;
+anim RightLeg_legIKhandles 9 3 0;
+anim RightLeg_legIKhandle 10 4 0;
+anim RightLeg_legIKhandle_poleVectorConstraint1 11 0 0;
+anim RightLeg_polevectorfoot 11 0 0;
+anim RightLeg_legIKhandle_parentConstraint1 11 0 0;
+anim RightLeg_polevectorturn 11 1 0;
+anim RightLeg_polevectorvector 12 0 0;
+anim RightLeg_ballIKhandle 10 3 0;
+anim RightLeg_ballIKhandle_parentConstraint1 11 0 0;
+anim RightLeg_ballIKhandle_poleVectorConstraint1 11 0 0;
+anim RightLeg_toepolevector 11 0 0;
+anim RightLeg_toeIKhandle 10 2 0;
+anim RightLeg_toeIKhandle_poleVectorConstraint1 11 0 0;
+anim RightLeg_toeIKhandle_pointConstraint1 11 0 0;
+anim RightLeg_upperlegnull 9 1 0;
+anim translate.translateY 10 3 0;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 10 3 1;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateX 10 3 2;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateX 10 3 3;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateY 10 3 4;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateZ 10 3 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim visibility 10 3 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 spline step 1 1 0;
+    50 1 spline step 1 1 0;
+  }
+}
+anim scale.scaleX 10 3 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim scale.scaleY 10 3 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim scale.scaleZ 10 3 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim RightLeg_Upper_Leg 11 3 0;
+anim RightLeg_Upper_LegShape 12 0 0;
+anim RightLeg_lowerlegnull 12 2 0;
+anim RightLeg_Lower_Leg 13 3 0;
+anim RightLeg_Lower_LegShape 14 0 0;
+anim RightLeg_footnull 14 2 0;
+anim RightLeg_FootTranslate 15 3 0;
+anim RightLeg_FootTranslateShape 16 0 0;
+anim RightLeg_Foot 16 4 0;
+anim RightLeg_FootShape 17 0 0;
+anim RightLeg_toenull 17 2 0;
+anim RightLeg_Toe 18 3 0;
+anim RightLeg_ToeShape 19 0 0;
+anim RightLeg_toeattach 19 0 0;
+anim RightLeg_ToeShapeOrig 19 0 0;
+anim RightLeg_Toe_SWITCH 18 1 0;
+anim null1_orientConstraint1 19 0 0;
+anim RightLeg_IKhandleattacherFK 17 0 0;
+anim RightLeg_FootShapeOrig 17 0 0;
+anim RightLeg_Foot_SWITCH 16 1 0;
+anim RightLeg_Foot_SWITCH_orientConstraint1 17 0 0;
+anim RightLeg_FootMover_SWITCH 15 0 0;
+anim RightLeg_Lower_LegShapeOrig 14 0 0;
+anim RightLeg_Lower_Leg_SWITCH 13 1 0;
+anim RightLeg_Lower_Leg_SWITCH_orientConstraint1 14 0 0;
+anim RightLeg_Upper_LegShapeOrig 12 0 0;
+anim RightLeg_isolater_orientConstraint1 11 0 0;
+anim RightLeg_Upper_Leg_SWITCH 11 1 0;
+anim RightLeg_Upper_Leg_SWITCH_orientConstraint1 12 0 0;
+anim RightLeg_orientlegnull 9 1 0;
+anim RightLeg_orientleg 10 1 0;
+anim RightLeg_orientleg_orientConstraint1 11 0 0;
+anim RightLeg_clusters 9 4 0;
+anim RightLeg_cluster1Handle 10 1 0;
+anim RightLeg_cluster1HandleShape 11 0 0;
+anim RightLeg_cluster2Handle 10 1 0;
+anim RightLeg_cluster2HandleShape 11 0 0;
+anim RightLeg_cluster3Handle 10 1 0;
+anim RightLeg_cluster3HandleShape 11 0 0;
+anim RightLeg_cluster4Handle 10 1 0;
+anim RightLeg_cluster4HandleShape 11 0 0;
+anim RightLeg_fkikswitchnull 8 0 0;
+anim RightLeg_pivotCompensate_pointConstraint1 7 0 0;
+anim RightLeg_pivotCompensate_orientConstraint1 7 0 0;
+anim RightLeg_constraintCompensate 5 0 0;
+anim LeftLeg_scalingCompensate 5 2 0;
+anim LeftLeg_JOINTS 6 1 0;
+anim LeftLeg_joint1 7 3 0;
+anim LeftLeg_joint2 8 2 0;
+anim LeftLeg_joint3 9 3 0;
+anim LeftLeg_kneescalecompensate 10 2 0;
+anim LeftLeg_joint4 11 4 0;
+anim LeftLeg_joint5 12 2 0;
+anim LeftLeg_lowerarmscalecompensate 13 1 0;
+anim LeftLeg_joint6 14 3 0;
+anim LeftLeg_joint2_2_aimConstraint1 15 0 0;
+anim LeftLeg_footscalecompensate 15 2 0;
+anim LeftLeg_joint7 16 5 0;
+anim LeftLeg_joint3_orientConstraint1 17 0 0;
+anim LeftLeg_joint4scalecomp 17 1 0;
+anim LeftLeg_joint8 18 3 0;
+anim LeftLeg_joint9 19 0 0;
+anim LeftLeg_influence13_compensate 19 1 0;
+anim LeftLeg_influence13 20 1 0;
+anim LeftLeg_influence13Shape 21 0 0;
+anim LeftLeg_influence12_intermediate_halfNode 19 1 0;
+anim LeftLeg_influence12_intermediate_compensate 20 1 0;
+anim LeftLeg_influence12_intermediate 21 1 0;
+anim LeftLeg_influence12_intermediateShape 22 0 0;
+anim LeftLeg_influence10_compensate 17 1 0;
+anim LeftLeg_influence10 18 1 0;
+anim LeftLeg_influence10Shape 19 0 0;
+anim LeftLeg_influence11_compensate 17 1 0;
+anim LeftLeg_influence11 18 1 0;
+anim LeftLeg_influence11Shape 19 0 0;
+anim LeftLeg_influence9_intermediate_halfNode 17 1 0;
+anim LeftLeg_influence9_intermediate_compensate 18 1 0;
+anim LeftLeg_influence9_intermediate 19 1 0;
+anim LeftLeg_influence9_intermediateShape 20 0 0;
+anim LeftLeg_footscalecompensate_pointConstraint1 16 0 0;
+anim LeftLeg_influence8_compensate 15 1 0;
+anim LeftLeg_influence8 16 1 0;
+anim LeftLeg_influence8Shape 17 0 0;
+anim LeftLeg_influence7_compensate 13 1 0;
+anim LeftLeg_influence7 14 1 0;
+anim LeftLeg_influence7Shape 15 0 0;
+anim LeftLeg_joint2_orientConstraint1 12 0 0;
+anim LeftLeg_influence6_compensate 12 1 0;
+anim translate.translateX 13 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0.050000000000000003 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 13 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 13 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0 linear linear 1 1 0;
+  }
+}
+anim LeftLeg_influence6Shape 14 0 0;
+anim LeftLeg_influence5_intermediate_constrain_halfNode 12 2 0;
+anim LeftLeg_influence5_intermediate_constrain_halfNode_orientConstraint1 13 0 0;
+anim LeftLeg_influence5_intermediate_constrain_compensate 13 1 0;
+anim LeftLeg_influence5_intermediate_constrain 14 1 0;
+anim LeftLeg_influence5_intermediate_constrainShape 15 0 0;
+anim LeftLeg_kneescalecompensate_pointConstraint1 11 0 0;
+anim LeftLeg_joint1_3_aimConstraint1 10 0 0;
+anim LeftLeg_influence4_compensate 10 1 0;
+anim translate.translateX 11 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0.050000000000000003 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 11 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 11 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    150 0 linear linear 1 1 0;
+  }
+}
+anim LeftLeg_influence4Shape 12 0 0;
+anim LeftLeg_influence3_compensate 9 1 0;
+anim LeftLeg_influence3 10 1 0;
+anim LeftLeg_influence3Shape 11 0 0;
+anim LeftLeg_influence2_compensate 8 1 0;
+anim LeftLeg_influence2 9 1 0;
+anim LeftLeg_influence2Shape 10 0 0;
+anim LeftLeg_influence1_intermediate_halfNode 8 1 0;
+anim LeftLeg_influence1_intermediate_compensate 9 1 0;
+anim translate.translateX 10 1 0;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 10 1 1;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 -0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 10 1 2;
+animData {
+  input unitless;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    -90 0.050000000000000003 linear linear 1 1 0;
+    0 0 linear linear 1 1 0;
+  }
+}
+anim LeftLeg_influence1_intermediateShape 11 0 0;
+anim LeftLeg_pivotCompensate 6 3 0;
+anim LeftLeg_RIG 7 2 0;
+anim LeftLeg_fk 8 6 0;
+anim LeftLeg_rig_joint1 9 2 0;
+anim LeftLeg_rig_joint2 10 2 0;
+anim LeftLeg_rig_joint3 11 3 0;
+anim LeftLeg_rig_joint4 12 2 0;
+anim LeftLeg_rig_joint5 13 0 0;
+anim LeftLeg_effector3 13 0 0;
+anim LeftLeg_effector2 12 0 0;
+anim LeftLeg_rig_heelswitchplacer 12 0 0;
+anim LeftLeg_effector1 11 0 0;
+anim LeftLeg_RigPivot 10 0 0;
+anim LeftLeg_polevectorfirstposition 9 1 0;
+anim LeftLeg_polevectoraimer 10 3 0;
+anim LeftLeg_polevectorextraaim 11 1 0;
+anim LeftLeg_polevectorgroup 12 2 0;
+anim TwistPlacement 13 2 0;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 spline step 1 1 0;
+  }
+}
+anim Reposition.RepositionX 13 2 1;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim Reposition.RepositionY 13 2 2;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim Reposition.RepositionZ 13 2 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim RemoveTwist 13 2 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim AddToTwist 13 2 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 13 2 6;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 13 2 7;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 13 2 8;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 13 2 9;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 13 2 10;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 13 2 11;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim LeftLeg_Leg_Pole_VectorShape 14 0 0;
+anim LeftLeg_polecectornull 14 1 0;
+anim translate.translateX 15 1 0;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateY 15 1 1;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 15 1 2;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim visibility 15 1 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 spline step 1 1 0;
+    50 1 spline step 1 1 0;
+  }
+}
+anim rotate.rotateX 15 1 4;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateY 15 1 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateZ 15 1 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim scale.scaleX 15 1 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim scale.scaleY 15 1 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1.0000000000000002 linear linear 1 1 0;
+    50 1.0000000000000002 linear linear 1 1 0;
+  }
+}
+anim scale.scaleZ 15 1 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim LeftLeg_polevector_pointConstraint1 16 0 0;
+anim LeftLeg_Leg_Pole_Vector_SWITCH 13 1 0;
+anim LeftLeg_Leg_Pole_Vector_SWITCH_orientConstraint1 14 0 0;
+anim LeftLeg_distance 11 1 0;
+anim LeftLeg_distance_pointConstraint1 12 0 0;
+anim LeftLeg_polevectoraimer_aimConstraint1 11 0 0;
+anim LeftLeg_legIKhandles 9 3 0;
+anim LeftLeg_legIKhandle 10 4 0;
+anim LeftLeg_legIKhandle_poleVectorConstraint1 11 0 0;
+anim LeftLeg_polevectorfoot 11 0 0;
+anim LeftLeg_legIKhandle_parentConstraint1 11 0 0;
+anim LeftLeg_polevectorturn 11 1 0;
+anim LeftLeg_polevectorvector 12 0 0;
+anim LeftLeg_ballIKhandle 10 3 0;
+anim LeftLeg_ballIKhandle_parentConstraint1 11 0 0;
+anim LeftLeg_ballIKhandle_poleVectorConstraint1 11 0 0;
+anim LeftLeg_toepolevector 11 0 0;
+anim LeftLeg_toeIKhandle 10 2 0;
+anim LeftLeg_toeIKhandle_poleVectorConstraint1 11 0 0;
+anim LeftLeg_toeIKhandle_pointConstraint1 11 0 0;
+anim LeftLeg_upperlegnull 9 1 0;
+anim translate.translateY 10 3 0;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateZ 10 3 1;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim translate.translateX 10 3 2;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateX 10 3 3;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateY 10 3 4;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim rotate.rotateZ 10 3 5;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 0 linear linear 1 1 0;
+    50 0 linear linear 1 1 0;
+  }
+}
+anim visibility 10 3 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 spline step 1 1 0;
+    50 1 spline step 1 1 0;
+  }
+}
+anim scale.scaleX 10 3 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim scale.scaleY 10 3 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim scale.scaleZ 10 3 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    0 1 linear linear 1 1 0;
+    50 1 linear linear 1 1 0;
+  }
+}
+anim LeftLeg_Upper_Leg 11 3 0;
+anim LeftLeg_Upper_LegShape 12 0 0;
+anim LeftLeg_lowerlegnull 12 2 0;
+anim LeftLeg_Lower_Leg 13 3 0;
+anim LeftLeg_Lower_LegShape 14 0 0;
+anim LeftLeg_footnull 14 2 0;
+anim LeftLeg_FootMover 15 3 0;
+anim LeftLeg_FootMoverShape 16 0 0;
+anim LeftLeg_Foot 16 4 0;
+anim LeftLeg_FootShape 17 0 0;
+anim LeftLeg_toenull 17 2 0;
+anim LeftLeg_Toe 18 3 0;
+anim LeftLeg_ToeShape 19 0 0;
+anim LeftLeg_toeattach 19 0 0;
+anim LeftLeg_ToeShapeOrig 19 0 0;
+anim LeftLeg_Toe_SWITCH 18 1 0;
+anim LeftLeg_Toe_SWITCH_orientConstraint1 19 0 0;
+anim LeftLeg_IKhandleattacherFK 17 0 0;
+anim LeftLeg_FootShapeOrig 17 0 0;
+anim LeftLeg_Foot_SWITCH 16 1 0;
+anim LeftLeg_Foot_SWITCH_orientConstraint1 17 0 0;
+anim LeftLeg_FootMover_SWITCH 15 0 0;
+anim LeftLeg_Lower_LegShapeOrig 14 0 0;
+anim LeftLeg_Lower_Leg_SWITCH 13 1 0;
+anim LeftLeg_Lower_Leg_SWITCH_orientConstraint1 14 0 0;
+anim LeftLeg_Upper_LegShapeOrig 12 0 0;
+anim LeftLeg_isolater_orientConstraint1 11 0 0;
+anim LeftLeg_Upper_Leg_SWITCH 11 1 0;
+anim LeftLeg_Upper_Leg_SWITCH_orientConstraint1 12 0 0;
+anim LeftLeg_orientlegnull 9 1 0;
+anim LeftLeg_orientleg 10 1 0;
+anim LeftLeg_orientleg_orientConstraint1 11 0 0;
+anim LeftLeg_clusters 9 4 0;
+anim LeftLeg_cluster1Handle 10 1 0;
+anim LeftLeg_cluster1HandleShape 11 0 0;
+anim LeftLeg_cluster2Handle 10 1 0;
+anim LeftLeg_cluster2HandleShape 11 0 0;
+anim LeftLeg_cluster3Handle 10 1 0;
+anim LeftLeg_cluster3HandleShape 11 0 0;
+anim LeftLeg_cluster4Handle 10 1 0;
+anim LeftLeg_cluster4HandleShape 11 0 0;
+anim LeftLeg_fkikswitchnull 8 0 0;
+anim LeftLeg_pivotCompensate_pointConstraint1 7 0 0;
+anim LeftLeg_pivotCompensate_orientConstraint1 7 0 0;
+anim LeftLeg_constraintCompensate 5 0 0;
+anim LeftArm_rotationisolate 2 0 0;
+anim RightArm_rotationisolate 2 0 0;
+anim Head_rotationisolate 2 0 0;
+anim RightLeg_rotationisolate 2 0 0;
+anim LeftLeg_rotationisolate 2 0 0;
+anim RIG 2 1 0;
+anim Spine_RIG 3 2 0;
+anim Spine_fkikswitchnull 4 0 0;
+anim Spine_rig 4 16 0;
+anim Spine_middlescale 5 0 0;
+anim Spine_torsoscale 5 0 0;
+anim Spine_pelvisscale 5 0 0;
+anim Spine_pelvisnullFK 5 1 0;
+anim rotateAxis.rotateAxisX 6 4 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 0 auto auto 1 1 0;
+    620 0 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 6 4 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 0 auto auto 1 1 0;
+    620 0 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 6 4 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 0 auto auto 1 1 0;
+    620 0 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 6 4 3;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 0 auto auto 1 1 0;
+    620 0 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 6 4 4;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 0 auto auto 1 1 0;
+    620 0 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 6 4 5;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 0 auto auto 1 1 0;
+    620 0 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 6 4 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 0 auto auto 1 1 0;
+    620 0 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 6 4 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 0 auto auto 1 1 0;
+    620 0 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 6 4 8;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    580 0 auto auto 1 1 0;
+    600 -18 auto auto 1 1 0;
+    620 18 auto auto 1 1 0;
+    640 0 auto auto 1 1 0;
+  }
+}
+anim Spine_Pelvis_FKShape 7 0 0;
+anim Spine_middlenullFK 7 2 0;
+anim rotateAxis.rotateAxisX 8 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 8 3 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 8 3 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 8 3 3;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 8 3 4;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 8 3 5;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 8 3 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 -14.558 auto auto 1 1 0;
+    544 22.442 auto auto 1 1 0;
+    569 -14.999999999999998 auto auto 1 1 0;
+    578 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 8 3 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 8 3 8;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    529 -14.558 auto auto 1 1 0;
+    557 15.042000000000002 auto auto 1 1 0;
+    569 0 auto auto 1 1 0;
+  }
+}
+anim Spine_Middle_FKShape 9 0 0;
+anim Spine_torsonullIFK 9 1 0;
+anim rotateAxis.rotateAxisX 10 3 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 10 3 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 10 3 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 10 3 3;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 10 3 4;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 10 3 5;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 10 3 6;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 -12.413 auto auto 1 1 0;
+    544 17.507000000000005 auto auto 1 1 0;
+    569 -14.999999999999998 auto auto 1 1 0;
+    578 0 spline spline 1 1 0;
+  }
+}
+anim rotate.rotateY 10 3 7;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 10 3 8;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    90 0 auto auto 1 1 0;
+    504 0 auto auto 1 1 0;
+    514 0 auto auto 1 1 0;
+    529 -12.413 auto auto 1 1 0;
+    557 11.523 auto auto 1 1 0;
+    569 0 spline spline 1 1 0;
+  }
+}
+anim Spine_Torso_FKShape 11 0 0;
+anim Spine_Torso_FKShapeOrig 11 0 0;
+anim Spine_torsoFKC 11 0 0;
+anim Spine_Middle_FKShapeOrig 9 0 0;
+anim Spine_middlenullFK_parentConstraint1 8 0 0;
+anim Spine_Pelvis_FKShapeOrig 7 0 0;
+anim Spine_pelvisfkC 7 0 0;
+anim Spine_pelvis_stuff 5 2 0;
+anim Spine_pelviscluster 6 1 0;
+anim Spine_pelvisclusterShape 7 0 0;
+anim Spine_pelvis_stuff_parentConstraint2 6 0 0;
+anim Spine_middle_stuff 5 2 0;
+anim Spine_middlecluster 6 1 0;
+anim Spine_middleclusterShape 7 0 0;
+anim Spine_middle_stuff_parentConstraint1 6 0 0;
+anim Spine_torso_stuff 5 2 0;
+anim Spine_torsocluster 6 1 0;
+anim Spine_torsoclusterShape 7 0 0;
+anim Spine_torso_stuff_parentConstraint2 6 0 0;
+anim Spine_torsonullIK 5 1 0;
+anim Spine_Torso_IK 6 3 0;
+anim Spine_Torso_IKShape 7 0 0;
+anim Spine_Torso_IKShapeOrig 7 0 0;
+anim Spine_torsoikC 7 0 0;
+anim Spine_middlenullIK 5 3 0;
+anim Spine_middlenull_pointConstraint1 6 0 0;
+anim Spine_middlenull_aimConstraint1 6 0 0;
+anim Spine_middleIKoffset 6 1 0;
+anim Spine_Middle_IK 7 2 0;
+anim Spine_Middle_IKShape 8 0 0;
+anim Spine_Middle_IKShapeOrig 8 0 0;
+anim Spine_pelvisnullIK 5 1 0;
+anim Spine_Pelvis_IK 6 3 0;
+anim Spine_Pelvis_IKShape 7 0 0;
+anim Spine_Pelvis_IKShapeOrig 7 0 0;
+anim Spine_pelvisikC 7 0 0;
+anim Spine_splineIKhandle 5 0 0;
+anim Spine_curve 5 2 0;
+anim Spine_curveShape 6 0 0;
+anim Spine_curveShapeOrig 6 0 0;
+anim Spine_rig_joint1 5 1 0;
+anim Spine_rig_joint2 6 1 0;
+anim Spine_rig_joint3 7 1 0;
+anim Spine_rig_joint4 8 1 0;
+anim Spine_rig_joint5 9 1 0;
+anim Spine_rig_joint6 10 1 0;
+anim Spine_rig_joint7 11 2 0;
+anim Spine_rig_joint8 12 0 0;
+anim Spine_effector1 12 0 0;
+anim Spine_scale_factor 5 3 0;
+anim Spine_locator1 6 1 0;
+anim Spine_locatorShape1 7 0 0;
+anim Spine_locator2 6 1 0;
+anim Spine_locatorShape2 7 0 0;
+anim Spine_distanceDimension1 6 1 0;
+anim Spine_distanceDimensionShape1 7 0 0;
+anim Spine_stupidnull 5 0 0;
+anim Spine_clusters 5 6 0;
+anim Spine_TorsoIKCluster 6 1 0;
+anim Spine_TorsoIKClusterShape 7 0 0;
+anim Spine_MiddleSpineIKCluster 6 1 0;
+anim Spine_MiddleSpineIKClusterShape 7 0 0;
+anim Spine_PelvisIKCluster 6 1 0;
+anim Spine_PelvisIKClusterShape 7 0 0;
+anim Spine_TorsoFKCluster 6 1 0;
+anim Spine_TorsoFKClusterShape 7 0 0;
+anim Spine_MiddleSpineFKCluster 6 1 0;
+anim Spine_MiddleSpineFKClusterShape 7 0 0;
+anim Spine_PelvisFKCluster 6 1 0;
+anim Spine_PelvisFKClusterShape 7 0 0;
+anim IK 1 5 0;
+anim LeftArm_IK 2 1 0;
+anim LeftArm_amiknull 3 2 0;
+anim LeftArm_Arm_IK 4 3 0;
+anim LeftArm_Arm_IKShape 5 0 0;
+anim LeftArm_Arm_IKShapeOrig 5 0 0;
+anim LeftArm_IKhandnull 5 0 0;
+anim LeftArm_Arm_IK_SWITCH 4 1 0;
+anim LeftArm_Arm_IK_SWITCH_parentConstraint1 5 0 0;
+anim RightArm_IK 2 1 0;
+anim RightArm_amiknull 3 2 0;
+anim RightArm_Arm_IK 4 3 0;
+anim RightArm_Arm_IKShape 5 0 0;
+anim RightArm_Arm_IKShapeOrig 5 0 0;
+anim RightArm_IKhandorient 5 0 0;
+anim RightArm_Arm_IK_SWITCH 4 1 0;
+anim RightArm_Arm_IK_SWITCH_parentConstraint1 5 0 0;
+anim Head_IK 2 1 0;
+anim Head_iknull 3 1 0;
+anim Head_Head_IK 4 2 0;
+anim Head_Head_IKShape 5 0 0;
+anim Head_Head_IKShapeOrig 5 0 0;
+anim RightLeg_IK 2 2 0;
+anim RightLeg_standardpolevectornull 3 1 0;
+anim RightLeg_Standard_Pole_Vector 4 1 0;
+anim RightLeg_Standard_Pole_VectorShape 5 0 0;
+anim RightLeg_iknull 3 1 0;
+anim RightLeg_directioncompensate 4 2 0;
+anim rotateAxis.rotateAxisX 5 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 5 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 5 2 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim RaiseHeel 5 2 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim RaiseToe 5 2 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim SwivelFoot 5 2 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim LegStretch 5 2 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim AutoStretch 5 2 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim KneeSlide 5 2 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim StandardPoleVector 5 2 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 5 2 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 5 2 11;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 5 2 12;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 5 2 13;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 5 2 14;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 5 2 15;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim toetip 5 2 16;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleX 5 2 17;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleY 5 2 18;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleZ 5 2 19;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim knee_follow 5 2 20;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1 spline step 1 1 0;
+  }
+}
+anim RightLeg_IK_LegShape 6 0 0;
+anim ankle_r_rot 6 1 0;
+anim RightLeg_recompensate 7 1 0;
+anim RightLeg_toepivotnull 8 2 0;
+anim RightLeg_Toe_Pivot 9 3 0;
+anim RightLeg_Toe_PivotShape 10 0 0;
+anim RightLeg_aimleg 10 0 0;
+anim RightLeg_footswiveler 10 1 0;
+anim RightLeg_controls_orient 11 2 0;
+anim RightLeg_heelraiser 12 2 0;
+anim RightLeg_Heel_Pivot 13 2 0;
+anim RightLeg_Heel_PivotShape 14 0 0;
+anim RightLeg_IKhandleattacherIK 14 0 0;
+anim RightLeg_Heel_Pivot_SWITCH 13 0 0;
+anim RightLeg_toeraiser 12 1 0;
+anim RightLeg_endpointtoe 13 0 0;
+anim RightLeg_Toe_Pivot_SWITCH 9 0 0;
+anim RightLeg_IK_Leg_SWITCH 5 1 0;
+anim RightLeg_IK_Leg_SWITCH_parentConstraint1 6 0 0;
+anim LeftLeg_IK 2 2 0;
+anim LeftLeg_standardpolevectornull 3 1 0;
+anim LeftLeg_Standard_Pole_Vector 4 1 0;
+anim LeftLeg_Standard_Pole_VectorShape 5 0 0;
+anim LeftLeg_iknull 3 1 0;
+anim LeftLeg_directioncompensate 4 2 0;
+anim rotateAxis.rotateAxisX 5 2 0;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisY 5 2 1;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotateAxis.rotateAxisZ 5 2 2;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim RaiseHeel 5 2 3;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    759 0 flat flat 1 1 0;
+    769 0 auto auto 1 1 0;
+    790 0 flat flat 1 1 0;
+    800 0 auto auto 1 1 0;
+    810 46.400000000000006 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim RaiseToe 5 2 4;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+    861 46.100000000000001 auto auto 1 1 0;
+    872 -34.500000000000007 auto auto 1 1 0;
+    881 0 auto auto 1 1 0;
+  }
+}
+anim SwivelFoot 5 2 5;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim LegStretch 5 2 6;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim AutoStretch 5 2 7;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim KneeSlide 5 2 8;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim StandardPoleVector 5 2 9;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateX 5 2 10;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateY 5 2 11;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    719 7.2240296023524229 auto auto 1 1 0;
+    739 7.2240296023524229 auto auto 1 1 0;
+    759 0 flat flat 0 1 0;
+    790 0 flat flat 0 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim translate.translateZ 5 2 12;
+animData {
+  input time;
+  output linear;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    719 8.286161675422143 auto auto 1 1 0;
+    739 8.286161675422143 auto auto 1 1 0;
+    759 0 flat flat 0 1 0;
+    790 0 flat flat 0 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateX 5 2 13;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    759 0 flat flat 1 1 0;
+    790 0 flat flat 1 1 0;
+    800 -27.7340029946802 auto auto 1 1 0;
+    821 -27.511619722158631 auto auto 1 1 0;
+    830 0 auto auto 1 1 0;
+    839 29.750831597110508 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateY 5 2 14;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim rotate.rotateZ 5 2 15;
+animData {
+  input time;
+  output angular;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+    700 0 auto auto 1 1 0;
+    739 0 auto auto 1 1 0;
+    821 0 auto auto 1 1 0;
+    850 0 auto auto 1 1 0;
+  }
+}
+anim toetip 5 2 16;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleX 5 2 17;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleY 5 2 18;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim ankleZ 5 2 19;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 0 auto auto 1 1 0;
+  }
+}
+anim knee_follow 5 2 20;
+animData {
+  input time;
+  output unitless;
+  weighted 0;
+  preInfinity constant;
+  postInfinity constant;
+  keys {
+    40 1 spline step 1 1 0;
+  }
+}
+anim LeftLeg_IK_LegShape 6 0 0;
+anim ankle_l_rot 6 1 0;
+anim LeftLeg_recompensate 7 1 0;
+anim LeftLeg_toepivotnull 8 2 0;
+anim LeftLeg_Toe_Pivot 9 3 0;
+anim LeftLeg_Toe_PivotShape 10 0 0;
+anim LeftLeg_aimleg 10 0 0;
+anim LeftLeg_footswiveler 10 1 0;
+anim LeftLeg_controls_orient 11 2 0;
+anim LeftLeg_heelraiser 12 2 0;
+anim LeftLeg_Heel_Pivot 13 2 0;
+anim LeftLeg_Heel_PivotShape 14 0 0;
+anim LeftLeg_IKhandleattacherIK 14 0 0;
+anim LeftLeg_Heel_Pivot_SWITCH 13 0 0;
+anim LeftLeg_toeraiser 12 1 0;
+anim LeftLeg_endpointtoe 13 0 0;
+anim LeftLeg_Toe_Pivot_SWITCH 9 0 0;
+anim LeftLeg_IK_Leg_SWITCH 5 1 0;
+anim LeftLeg_IK_Leg_SWITCH_parentConstraint1 6 0 0;

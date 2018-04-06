@@ -1,0 +1,228 @@
+//////////////////////////////////////////////////////////////
+//动作捕捉转换插件 —— 把捕捉动画转换成TSM设置插件的控制器动画。
+//插件编写人：徐阳
+//2009-8-6 一版 ；2010-4-27 二版
+//////////////////////////////////////////////////////////////
+//用户窗口
+python("import pathforjuese");
+//python("reload(pathforjuese)");
+string $absolutPath=`python("pathforjuese.path_dir()")`;
+global string $path;
+$path = $absolutPath+"009-动捕转换/"; 
+
+
+
+global proc transformCatch()
+{
+  if(`window -ex transformCatch`)
+    deleteUI transformCatch;//删除打开旧版窗口
+  
+ window -t "动捕数据转换" -wh 800 900 transformCatch;
+
+   columnLayout -adj 1;//版式排列
+  
+     menuBarLayout;//菜单栏
+	   menu -l "使用说明";
+		   menuItem -l"使用流程...";
+    setParent..;
+
+   columnLayout -adj 1;//
+
+     frameLayout -l "目标文件" -labelAlign "top" -cll true -borderStyle "etchedOut";
+
+	   formLayout findfile;
+
+		 textFieldGrp -columnWidth 1 100 -adjustableColumn 2 -l "动作捕捉文件:" -editable false -text"" rigFile;
+         button -l "文件路径..."                -c rig_brow check1;
+
+         textFieldGrp -columnWidth 1 100 -adjustableColumn 2 -l "角色绑定文件:" -editable false -text"" catchFile;
+         button -l "文件路径..."                -c catch_brow check2;
+         button -l "导 入 文 件" -w 150     -c "imp_mb" check3;
+
+         formLayout -edit
+
+	       -af rigFile "top" 5
+	       -af rigFile "left" 5
+           -ap rigFile "right" 0 75
+    
+	       -af check1 "top" 5
+	       -ac check1 "left" 5  rigFile
+
+	       -af catchFile "top" 30
+	       -af catchFile "left" 5
+	       -ap catchFile "right" 0 75
+
+	       -af check2 "top" 30
+	       -ac check2 "left" 5 catchFile
+
+	       -af check3 "top" 60
+	       -af check3 "left" 110
+	            
+         
+         findfile;
+         setParent ..;
+     setParent ..;
+
+     frameLayout -l "执行操作" -labelAlign "top" -cll true -borderStyle "etchedOut";//textField -edit -fileName $directory dstDirectoryField;
+       columnLayout -adj 1; 
+         button -l "选择捕捉根骨骼，获取关键帧范围" -c frameRange;        
+         button -l "清理角色" -c CleanupCatchCha;
+         button -l "角色匹配" -c MatchJointPosition;
+         button -l "把捕捉数据传化为绑定动画" -c BakeAnim;
+         //button -l " " -c ConRigCha;
+         text " ";
+         text "手动删除原捕捉角色";
+         text "可对动作进行调整";
+         text " ";
+         button -l "生成动画文件" -c AnimationCha;
+         text " ";
+         text "可调整控制器的动画曲线";
+         text " ";
+       setParent ..;
+     setParent ..;	
+     	  
+ window -edit -widthHeight 600 360 transformCatch;
+ showWindow transformCatch;
+}
+
+
+//执行脚本
+//取文件的路径的缓存
+global proc rig_brow()
+{
+  //fileBrowserDialog -mode 0  -fileCommand ("rig_browProc " + $control) -fileType "mayaBinary" -actionName "Browse" -operationMode "Import";
+  string $multipleFilters = "Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb);;All Files (*.*)";
+  string $return[] = `fileDialog2 -fileMode 1 -caption "导入捕捉文件" -fileFilter $multipleFilters -selectFileFilter "Maya Binary" -okc "Browse" -cc "Cancel"`;
+  string $path = $return[0];
+
+	if ( size ( $path ) != 0)
+	{
+		textFieldGrp -e -tx $path rigFile;
+	}
+}
+
+
+global proc catch_brow()
+{
+ //fileBrowserDialog -mode 0  -fileCommand ("catch_browProc " + $control) -fileType "mayaBinary" -actionName "Browse" -operationMode "Import";
+  string $multipleFilters = "Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb);;All Files (*.*)";
+  string $return[] = `fileDialog2 -fileMode 1 -caption "导入绑定文件" -fileFilter $multipleFilters -selectFileFilter "Maya Binary" -okc "Browse" -cc "Cancel"`;
+  string $path = $return[0];
+
+	if ( size ( $path ) != 0)
+	{
+		textFieldGrp -e -tx $path catchFile;
+	}
+} 
+
+
+//获取关键帧范围
+global proc frameRange()
+{
+  string $selCtrl[] = `ls -sl`;
+  float  $KeyFrame[];
+  float $KeyFrameRotate[] = `keyframe -q -tc ($selCtrl[0]+".rotateX")`;
+  float $KeyFrameTranslate[] = `keyframe -q -tc ($selCtrl[0]+".translateX")`;
+  if(size($KeyFrameRotate)>size($KeyFrameTranslate))
+  {
+   $KeyFrame = $KeyFrameRotate;  
+  }
+  else
+  {
+   $KeyFrame = $KeyFrameTranslate;       
+  }
+  
+  float $frameStart = `floor $KeyFrame[0]`;
+  float $frameEnd = `ceil $KeyFrame[size($KeyFrame)-1]`; 
+  
+  playbackOptions -min $frameStart -max $frameEnd;    
+}
+
+
+
+
+
+//导入捕捉、绑定两个文件
+global proc imp_mb()
+{
+  string $impname = `textFieldGrp -q -text rigFile`;
+  string $catname = `textFieldGrp -q -text catchFile`;
+  //string $dstDirectory = `textField -query -fileName dstDirectoryField`;
+  //file -import -type "mayaBinary" -rpr "dummy_ctrl" -options "v=0;p=17" -pr $impname;
+  file -f -options "v=0"  -ignoreVersion  -typ "mayaBinary" -o $impname;
+  file -import -type "mayaBinary" -rpr "dummy_ctrl" -options "v=0;p=17" -pr $catname;
+  //计算出捕捉动画结束帧
+  float $EndFrame = 0.000;
+  float $KeyFrame[] = `keyframe -q -tc Hips`;
+  float $EndTime = $KeyFrame[size($KeyFrame)-1];
+  $EndFrame = `max $EndFrame $EndTime`;
+  int $SetEndFrame = $EndFrame;
+  playbackOptions -max ($SetEndFrame+1);
+  
+  playbackOptions -min -50;//设置初始帧//要设置回0 -ast
+  currentTime -50;
+}
+
+global proc CleanupCatchCha()
+{
+    global string $path;
+    string $CleanupCatchCha_path="source \""+$path+"MotionCaptureConvert/1-InitializeWithCha.mel\"";
+    eval($CleanupCatchCha_path);
+    print "clean ok！！";
+}
+
+
+global proc MatchJointPosition()
+{
+    global string $path;
+    string $MatchJointPosition_path="source \""+$path+"MotionCaptureConvert/2-4-MatchJointPosition.mel\"";
+    eval($MatchJointPosition_path);
+  
+  //setAttr Character.visibility 0;
+ /* 
+  setAttr dummy_LeftArm_Upper_Arm.visibility 0;
+  setAttr dummy_RightArm_Upper_Arm.visibility 0;
+  setAttr dummy_LeftLeg_Upper_Leg.visibility 0;
+  setAttr dummy_RightLeg_Upper_Leg.visibility 0;
+ */ 	
+
+
+  print "match ok！！";
+}
+
+global proc BakeAnim()
+{
+    global string $path;
+    string $BakeAnim_path="source \""+$path+"MotionCaptureConvert/5-6-BakeAnim.mel\"";
+    eval($BakeAnim_path);
+    
+    
+  //playbackOptions -animationStartTime 0;
+  currentTime -50;
+
+
+  print "bake ok！！";
+}
+/*
+global proc ConRigCha()
+{
+
+  print "constrain ok！！";
+}
+*/
+
+global proc AnimationCha()
+{
+     global string $path;
+    string $AnimationCha_path="source \""+$path+"MotionCaptureConvert/7-FinalAnim.mel\"";
+    eval($AnimationCha_path);
+    
+
+  print "animation ok！！";
+}
+
+
+transformCatch;
+
+
+

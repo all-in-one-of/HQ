@@ -1,0 +1,100 @@
+//////////////////////////////////////////////////////////////
+//动作捕捉转换插件 —— 把捕捉动画转换成TSM设置插件的控制器动画。
+//插件编写人：徐阳
+//2009-8-6 一版 ；2010-4-27 二版
+//////////////////////////////////////////////////////////////
+//清除属性，清除对位节点
+global proc InitializeWithCha()
+{
+  //捕捉角色
+
+channelBoxCommand -break;
+
+select -r Hips;
+select -add Spine;
+select -add Spine1;
+select -add Spine2;
+select -add Spine3;
+select -add Neck;
+select -add Neck1;
+select -add Head;
+
+select -add LeftUpLeg;
+select -add LeftUpLegRoll;
+select -add LeftLeg;
+select -add LeftLegRoll;
+select -add LeftFoot;
+select -add LeftToeBase;
+select -add RightUpLeg;
+select -add RightUpLegRoll;
+select -add RightLeg;
+select -add RightLegRoll;
+select -add RightFoot;
+select -add RightToeBase;
+select -add LeftToes_End;
+select -add RightToes_End;
+
+select -add LeftShoulder;
+select -add LeftArm;
+select -add LeftArmRoll;
+select -add LeftForeArm;
+select -add LeftForeArmRoll;
+select -add LeftHand;
+select -add Leftjoint;
+select -add RightShoulder;
+select -add RightArm;
+select -add RightArmRoll;
+select -add RightForeArm;
+select -add RightForeArmRoll;
+select -add RightHand;
+select -add Rightjoint;
+
+//打断位移动动画链接
+string $catchjoint[] = `ls -sl`;
+for ($i= 1; $i< size($catchjoint); $i++ ) 
+{
+  CBdeleteConnection ($catchjoint[$i] + ".tx");
+  CBdeleteConnection ($catchjoint[$i] + ".ty");
+  CBdeleteConnection ($catchjoint[$i] + ".tz");
+}
+
+//旋转值归零
+string $catchjoint[] = `ls -sl`;
+for ($i= 0; $i< size($catchjoint); $i++ ) 
+{
+  setAttr ($catchjoint[$i] + ".rx") 0;
+  setAttr ($catchjoint[$i] + ".ry") 0;
+  setAttr ($catchjoint[$i] + ".rz") 0; 
+}
+
+//在骨骼初始pose上设置关键帧
+string $catchjoint[] = `ls -sl`;
+for ($i= 0; $i< size($catchjoint); $i++ ) 
+{
+  setKeyframe($catchjoint[$i] + ".rx");
+  setKeyframe ($catchjoint[$i] + ".ry");
+  setKeyframe ($catchjoint[$i] + ".rz"); 
+}
+select -cl;
+
+//中心点的补充
+setAttr Hips.tx 0;
+//setAttr Hips.ty 0.8953576 ;
+//setAttr Hips.tz 0;
+
+setKeyframe Hips.tx;
+setKeyframe Hips.ty;
+setKeyframe Hips.tz;
+
+//绑定角色
+setAttr Upper_Body.Spine_FKIK 0;
+setAttr Upper_Body.LeftArm_FKIK 1;
+setAttr Upper_Body.RightArm_FKIK 1;
+setAttr Upper_Body.Head_FKIK 0;
+
+}
+
+InitializeWithCha;
+
+/////////////////////////////////
+print "clean ok！！";

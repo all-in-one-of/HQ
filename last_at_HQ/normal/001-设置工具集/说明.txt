@@ -1,0 +1,2 @@
+1.打开Maya，将SETUPTools.mel拖入，关闭maya。
+2.再次打开maya，就看到了新的菜单栏“设置工具集”。

@@ -1,0 +1,362 @@
+//--------------------------------------------------------------
+//	Script:     lz_subCtl_UI.mel
+//	Descr:		给角色添加次级控制器
+//--------------------------------------------------------------
+
+python("import pathforuser");
+string $absolutPath=`python("pathforuser.path_dir()")`;
+global string $path;
+$path = $absolutPath+"002-设置创建/";
+
+
+
+global string $mainText;//主控poly
+global string $subText;//次控poly
+global string $initSub;
+
+
+python ("execfile('"+$path+"lz_subCtl_doIt.py"+"')");  
+
+///lz_subCtl_UI
+////////////////////////////
+///////////////////////////////////////
+
+ToggleToolSettings;
+ToggleToolSettings;
+
+
+global proc lz_subCtl_UI()
+{	
+	if (`window -exists lz_subCtl_UI`) 
+	deleteUI -window lz_subCtl_UI;
+	window  -menuBar 0 -title "次控生成系统 " -s 1 lz_subCtl_UI;
+
+	tabLayout -innerMarginWidth 5 -innerMarginHeight 5 subCtlTab;
+	columnLayout -adjustableColumn true subCtlCL;
+	
+	frameLayout -cll 1 -label " 基本处理" -bs  "etchedOut" subCtl_polyFrame;
+	formLayout  -nd 100 subCtl_polyForm;
+	
+	button -h 30 -l "Toggle View" -ann "选择物体，自动显示隐藏主控次控poly" -c lz_subCtl_show outputShowButton;	
+	button -h 30  -l "添加次级poly" -ann "给物体添加一个次控poly，上面刷次控的权重" -c lz_subCtl_init initPolyButton ;
+	popupMenu -parent initPolyButton;	
+	setParent subCtlCL;	
+
+	
+	frameLayout -cll 1 -label " 控制器添加" -bs  "etchedOut" subCtl_execFrame;
+	formLayout  -nd 100 subCtl_execForm;
+	
+	text -label "控制器前缀:" subCtlText;
+	textField -h 25 -tx "l_XXX_" subCtlField;
+	text -label "形态:" subCtlStyleText;
+	floatField  -h 25 -pre 2 -minValue 0.0 -v 1.20 subCtlStyleField;
+	optionMenuGrp subCtlStyle;
+	menuItem -label "骨节形状"		subCtlStyle0;
+	menuItem -label "方框形状"		subCtlStyle1;
+	menuItem -label "圆圈形状"		subCtlStyle2;
+	menuItem -label "拉环形状"		subCtlStyle3;
+	checkBox -label "X轴镜像:"  -cc lz_subCtl_mirrorCB -v 0 subCtl_mirrorCB;
+	textField -tx "l_" subCtl_mirrorField01;
+	textField -tx "r_" subCtl_mirrorField02;
+
+	button -h 32 -l "执行添加"  -c "lz_subCtl_exec(0);repeatLast -ac \"lz_subCtl_exec(0)\" -acl \"lz_subCtl_exec(0)\"; " subCtlButton;
+	//button -h 32 -l "次级位置修复"  -c "python(\"lz_subCtl_recover()\")" -ann "仅选择次级控制器修复 是针对当前模型的。如果最后加选其他模型 会次级会更随到新模型上" subRecoverButton;
+
+
+	formLayout -e 
+		-attachForm initPolyButton "top" 5
+		-attachForm	initPolyButton "left" 5
+		-attachForm outputShowButton "top" 5
+		-attachPosition initPolyButton "left" 5 0
+		-attachPosition initPolyButton "right" 5 40
+		
+		-attachPosition outputShowButton "left" 5 40
+		-attachPosition outputShowButton "right" 5 100
+		
+	subCtl_polyForm;
+	
+	formLayout -e 
+		-attachForm subCtlText		"left" 5
+		-attachForm subCtlButton	"left" 5 
+		-attachForm subCtlButton	"bottom" 10 
+		-attachForm subCtlText 		"top" 8 
+		-attachForm subCtlStyleText "top" 8  
+		-attachForm subCtlStyleField "top" 5 
+		-attachForm subCtlStyle	"top" 5	
+		-attachForm subCtlField "top" 5 
+		-attachForm subCtl_mirrorCB	"left"	5
+		
+		-attachControl subCtl_mirrorField01	"top" 8 subCtlField
+		-attachControl subCtl_mirrorField02	"top" 8 subCtlField
+		-attachControl subCtl_mirrorCB			"top" 8 subCtlField
+		
+		-attachControl subCtlButton		"top" 10 subCtl_mirrorField01
+		//-attachControl subRecoverButton "top" 10 subCtl_mirrorField01
+		-attachPosition subCtlText "right" 5 23
+		-attachPosition subCtlField "left" 5 23
+		-attachPosition subCtlField "right" 1 49
+		
+		-attachPosition subCtlStyleText "left" 1 49
+		-attachPosition subCtlStyleText "right" 1 58
+		-attachPosition subCtlStyleField "left" 1 58
+		-attachPosition subCtlStyleField "right" 1 74
+		-attachPosition subCtlStyle "left" 1 74
+		-attachPosition subCtlStyle "right" 1 100
+				
+		-attachPosition subCtlButton "right" 10 100
+		//-attachPosition subRecoverButton  "left" 5 70
+		//-attachPosition subRecoverButton  "right" 5 98
+		-attachPosition subCtl_mirrorCB "left"		5 0
+		-attachPosition subCtl_mirrorCB "right"	5 23
+		-attachPosition subCtl_mirrorField01 "left"	5 23
+		-attachPosition subCtl_mirrorField01 "right"	5 63
+		-attachPosition subCtl_mirrorField02 "left"	5 63
+		-attachPosition subCtl_mirrorField02 "right"	5 98
+	subCtl_execForm;
+	
+	
+showWindow lz_subCtl_UI;	
+}
+
+global proc int lz_subCtl_init()
+{
+	global string $mainText;
+	global string $subText;
+	global string $initSub;
+	string $selection[] = `ls -sl`;
+	string $conn1[],$conn2[];
+	string $object[],$blend[],$dup[];
+	string $cluster[];
+	
+	if(size($selection) ==0)
+	{
+		error "请选择poly模型";
+		return 0;
+	}else{
+
+		string $s;
+		for($s in $selection){
+
+			string $mesh[]=`listRelatives -s $s`;
+
+			if(size($mesh)==0){
+
+				error "请选择poly模型";
+				return 0;
+			}else{
+
+				string $type=`objectType $mesh[0]`;
+
+				if($type!="mesh"){
+
+					error "请选择poly模型";
+					return 0;
+				}
+
+
+			}
+			
+
+		}
+	}
+	$selection = python("lz_subCtl_rename()");
+	string $raw_sl[] = $selection;
+	if(`attributeQuery -exists -node $selection[0] "subPoly"`)
+		$conn1 = `listConnections ($selection[0]+".subPoly")`;
+	if(`attributeQuery -exists -node $selection[0] "mainPoly"`)
+		$conn2 = `listConnections ($selection[0]+".mainPoly")`;
+	if(size($conn1)!=0 || size($conn2)!=0)
+	{
+		warning "次控poly已添加";
+		return 0;		
+	}
+	$mainText = $selection[0];
+	python("lz_hideAttr('"+$mainText+"',['v'],1)");
+	//先处理blendShape问题
+	
+	string $blend_name = $mainText+"_blendSub";
+	
+	python("lz_rigTool_delBld(res = ['"+$blend_name+"'],attr='"+$mainText+"_sub')");
+	select $mainText;
+	string $blendReturn[] = python("lz_addBlend('"+$mainText+"',obj_dup ='"+$initSub+"',surffix = '_sub',blend_name = '"+$blend_name+"')");
+	
+	$blend[0] = $blendReturn[1];
+	$subText = $blendReturn[0];
+	
+	python("lz_addAttr('"+$subText+"',ln='mainPoly',at='message',sources=['"+$mainText+".message'],h=1)");
+	python("lz_addAttr('"+$mainText+"',ln='subPoly',at='message',sources=['"+$subText+".message'],h=1)");
+
+	select -cl;
+	$cluster[0] = python("lz_findCluster('"+$subText+"',type='skinCluster')");
+	
+	if($cluster[0]=="")
+	{
+		$baseJoint  = `joint -n ($subText +"_baseJoint")`;
+		setAttr ($baseJoint+".inheritsTransform") 0;
+		$cluster = `skinCluster -mi 5 -dr 4 $baseJoint $subText`;
+		select $subText;
+		setAttr ($cluster[0]+".useComponents") 1;
+		setAttr ($baseJoint+".v") 0;
+	}
+	//转化为muscle权重系统
+	//$radioSl = `radioButtonGrp -q -sl mainSkinOptions`;
+	//if($radioSl == 2)
+	//	lz_muscleConverSkin( {$subText});
+		
+	setAttr ($mainText+".v") 1;
+	setAttr ($subText+".v") 0;
+	select($raw_sl);
+	if (size($raw_sl)>1)
+		doMenuComponentSelection($raw_sl[0], "vertex");
+	print "次控poly添加完成\n";
+	return 1;
+}
+
+global proc int lz_subCtl_show()
+{
+	global string $mainText;
+	global string $subText;
+	string $selection[] = `ls -sl`;
+	string $conn[];
+	string $object[];
+	tokenize($selection[0],".",$object);
+	$selection[0] = $object[0];
+	if(!size($selection) && $mainText == "")
+		return 0;
+	if(!size($selection) && $mainText != "")
+		$selection[0] = $mainText;
+	int $a =  `attributeQuery -exists -node $selection[0] "subPoly"`;
+	int $b = `attributeQuery -exists -node $selection[0] "mainPoly"`;
+	if (!$a && !$b)
+    {
+		warning("该物体上没有添加次控！");
+		return 0;
+    }
+	else if ($a && $b)
+	{
+		$subText = $selection[0];
+		$conn = `listConnections ($subText+".mainPoly")`;
+		$mainText = $conn[0];				
+	}
+	else if($a)
+	{
+		$mainText = $selection[0];
+		$conn = `listConnections ($mainText+".subPoly")`;
+		$subText = $conn[0];
+	}
+	else if( $b)
+	{
+		$subText = $selection[0];
+		$conn = `listConnections ($subText+".mainPoly")`;
+		$mainText = $conn[0];		
+	}
+	$vis1 = getAttr($mainText+".v");
+	$vis2 = getAttr($subText+".v");
+	if( $vis1 == $vis2 )
+	{
+		setAttr ($mainText+".v") 1;
+		setAttr ($subText+".v") 0;
+		select $mainText;
+	}
+	if( $vis1 == 0 && $vis2 == 1 )
+	{
+		setAttr ($mainText+".v") 1;
+		setAttr ($subText+".v") 0;
+		select $mainText;
+	}
+	if( $vis1 == 1 && $vis2 == 0 )
+	{
+		setAttr ($mainText+".v") 0;
+		setAttr ($subText+".v") 1;
+		select $subText;
+	}		
+	return 1;
+}
+
+global proc int lz_subCtl_exec(int $type)
+{
+
+	$ctlText = `textField -q -tx subCtlField`;
+	string $sled[];
+	if($ctlText =="")
+	{
+		warning "控制器前缀名为空";
+		return 0 ;
+	}
+	else
+	{
+		$ctlText = string($ctlText);
+		$ctlSubText = `substring $ctlText 1 1`;
+		if(`gmatch $ctlSubText "[!a-z]"` && `gmatch $ctlSubText "[!A-Z]"`)
+		{
+			warning "控制器前缀名的第一个字符必须为字母！！";
+			return 0 ;
+		}
+		else if(`objExists ($ctlText+"*")`)
+		{
+			$sled = `ls ($ctlText+"*")`;
+			$flag = 0;
+			for( $s in $sled)
+			{
+				if (`objectType $s`== "transform")
+				{
+					$flag =1;
+					break;
+				}
+			}
+			
+		}
+	}
+	
+
+	$res = python("lz_subCtl_doIt(clu="+$type+")");
+	python("global lz_subCtls;lz_subCtls=[]");
+	if(!$res)
+	{
+		warning "请选择点，线，面";
+		return 0;
+	}
+	else if ($res ==1 ){
+		warning("该物体上没有添加次控！");
+		return 0;
+    }	
+	else if ($res ==2 )
+	{
+		$str = `textField -q -tx subCtl_mirrorField01`;
+		warning ("无法对称，控制器前缀没有包含:"+$str);
+		return 0;
+	}
+	else if ($res ==3 )
+	{
+		warning "请选择点，线，面";
+		return 0;
+	}
+	else if ($res ==4 )
+	{
+		warning "次控并不存在。";
+		return 0;
+	}
+	else if ($res ==5 )
+	{
+		warning "请选择物体";
+		return 0;
+	}
+	return 1;
+}
+
+global proc lz_subCtl_mirrorCB()
+{
+	$v = `checkBox -q -v subCtl_mirrorCB`;
+	if(!$v)
+	{
+		textField -e -enable 0 subCtl_mirrorField01;
+		textField -e -enable 0 subCtl_mirrorField02;
+	}
+	else
+	{
+		textField -e -enable 1 subCtl_mirrorField01;
+		textField -e -enable 1 subCtl_mirrorField02;
+	}
+}
+
+lz_subCtl_UI;

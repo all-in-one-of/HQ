@@ -1,0 +1,2197 @@
+global proc aaa()
+{addAttr -ln "toetip"  -at double  RightLeg_IK_Leg;
+setAttr -e-keyable true RightLeg_IK_Leg.toetip;
+addAttr -ln "toetip"  -at double  LeftLeg_IK_Leg;
+setAttr -e-keyable true LeftLeg_IK_Leg.toetip;
+addAttr -ln "ankleX"  -at double  RightLeg_IK_Leg;
+setAttr -e-keyable true RightLeg_IK_Leg.ankleX;
+addAttr -ln "ankleX"  -at double  LeftLeg_IK_Leg;
+setAttr -e-keyable true LeftLeg_IK_Leg.ankleX;
+addAttr -ln "ankleY"  -at double  RightLeg_IK_Leg;
+setAttr -e-keyable true RightLeg_IK_Leg.ankleY;
+addAttr -ln "ankleY"  -at double  LeftLeg_IK_Leg;
+setAttr -e-keyable true LeftLeg_IK_Leg.ankleY;
+addAttr -ln "ankleZ"  -at double  RightLeg_IK_Leg;
+setAttr -e-keyable true RightLeg_IK_Leg.ankleZ;
+addAttr -ln "ankleZ"  -at double  LeftLeg_IK_Leg;
+setAttr -e-keyable true LeftLeg_IK_Leg.ankleZ;
+//膝盖属性
+addAttr -ln "knee_follow"  -at "enum" -en "no:yes:"  RightLeg_IK_Leg;
+setAttr -e-keyable true RightLeg_IK_Leg.knee_follow;
+addAttr -ln "knee_follow"  -at "enum" -en "no:yes:"  LeftLeg_IK_Leg;
+setAttr -e-keyable true LeftLeg_IK_Leg.knee_follow;
+setAttr "LeftLeg_IK_Leg.knee_follow" 1;
+setAttr "RightLeg_IK_Leg.knee_follow" 1;
+
+//添加脚踝控制关联组
+group -n ankle_l_rot LeftLeg_recompensate;
+float $ankleRot_L[]=`xform -ws -q -t LeftLeg_joint7`;
+move $ankleRot_L[0] $ankleRot_L[1]  $ankleRot_L[2]  ankle_l_rot.scalePivot ankle_l_rot.rotatePivot ;
+
+group -n ankle_r_rot RightLeg_recompensate;
+float $ankleRot_R[]=`xform -ws -q -t RightLeg_joint7`;
+move $ankleRot_R[0] $ankleRot_R[1]  $ankleRot_R[2]  ankle_r_rot.scalePivot ankle_r_rot.rotatePivot ;
+
+select -cl  ;
+
+connectAttr -f LeftLeg_IK_Leg.ankleX ankle_l_rot.rotateX;
+connectAttr -f LeftLeg_IK_Leg.ankleY ankle_l_rot.rotateY;
+connectAttr -f LeftLeg_IK_Leg.ankleZ ankle_l_rot.rotateZ;
+
+connectAttr -f RightLeg_IK_Leg.ankleX ankle_r_rot.rotateX;
+connectAttr -f RightLeg_IK_Leg.ankleY ankle_r_rot.rotateY;
+connectAttr -f RightLeg_IK_Leg.ankleZ ankle_r_rot.rotateZ;
+
+//关联脚尖踮起的属性
+connectAttr -f LeftLeg_IK_Leg.toetip LeftLeg_toepivotnull.rotateZ;
+connectAttr -f RightLeg_IK_Leg.toetip RightLeg_toepivotnull.rotateZ;
+
+//关联膝盖跟随的属性
+connectAttr -f LeftLeg_IK_Leg.knee_follow LeftLeg_polevectoraimer_aimConstraint1.legIKhandleW0;
+connectAttr -f RightLeg_IK_Leg.knee_follow RightLeg_polevectoraimer_aimConstraint1.legIKhandleW0;
+
+//纠正位移偏差//
+group -em -n Character_G;
+parent Character_G Character;
+float $characterGScale = `getAttr LeftLeg_IK.scaleX`;
+setAttr Character_G.scaleX $characterGScale;
+setAttr Character_G.scaleY $characterGScale;
+setAttr Character_G.scaleZ $characterGScale;
+
+parent Upper_Body Character_G;
+parent IK Character_G;
+
+parent -w TSM2ProxySwitch_Geo;
+parent -w TSM2ProxySwitch_Proxy;
+parent -w JOINTS;
+parent -w LeftArm_rotationisolate;
+parent -w RightArm_rotationisolate;
+parent -w Head_rotationisolate;
+parent -w RightLeg_rotationisolate;
+parent -w LeftLeg_rotationisolate;
+parent -w RIG; 
+
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 Upper_Body;
+
+parent TSM2ProxySwitch_Geo Upper_Body;
+parent TSM2ProxySwitch_Proxy Upper_Body;
+parent JOINTS Upper_Body Upper_Body;
+parent LeftArm_rotationisolate Upper_Body;
+parent RightArm_rotationisolate Upper_Body;
+parent Head_rotationisolate Upper_Body;
+parent RightLeg_rotationisolate Upper_Body;
+parent LeftLeg_rotationisolate Upper_Body;
+parent RIG Upper_Body; 
+
+parent -w LeftArm_IK;
+parent -w RightArm_IK;
+parent -w Head_IK;
+parent -w RightLeg_IK;
+parent -w LeftLeg_IK;
+
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 IK;
+
+parent LeftArm_IK IK;
+parent RightArm_IK IK;
+parent Head_IK IK;
+parent RightLeg_IK IK;
+parent LeftLeg_IK IK;
+
+//为臀单独控制添加约束
+parentConstraint -mo -weight 1 Upper_Body Spine_middlenullFK;
+
+
+//添加组级
+curve -n move_G -d 1 -p -1 0 -1 -p -1 0 1 -p 1 0 1 -p 1 0 -1 -p -1 0 -1 -k 0 -k 1 -k 2 -k 3 -k 4 ;
+parent Character move_G;
+
+group -n _rig move_G;
+move 0 0 0 _rig.scalePivot _rig.rotatePivot ;
+
+rename "Character" "Character_old";
+
+circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1 -n Character; 
+parent Character Character_G;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 Character;
+DeleteHistory Character;
+parent Upper_Body Character;
+parent IK Character;
+
+hide Character_oldShape;
+
+select -cl  ;
+
+//脚
+//脚
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.ToePivot";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.ToePivot";
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.HeelStretch";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.HeelStretch";
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.HeelPivot";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.HeelPivot";
+
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.CalfBendX";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.CalfBendX";
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.CalfBendY";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.CalfBendY";
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.LegThicknessX";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.LegThicknessX";
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.LegThicknessY";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.LegThicknessY";
+
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.SwivelHeel";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.SwivelHeel";
+setAttr -keyable false -channelBox false "LeftLeg_IK_Leg.SwivelToe";
+setAttr -keyable false -channelBox false "RightLeg_IK_Leg.SwivelToe";
+
+setAttr -lock true -keyable false "LeftLeg_IK_Leg.sx";
+setAttr -lock true -keyable false "RightLeg_IK_Leg.sx";
+setAttr -lock true -keyable false "LeftLeg_IK_Leg.sy";
+setAttr -lock true -keyable false "RightLeg_IK_Leg.sy";
+setAttr -lock true -keyable false "LeftLeg_IK_Leg.sz";
+setAttr -lock true -keyable false "RightLeg_IK_Leg.sz";
+
+setAttr -keyable false -channelBox false "LeftLeg_Leg_Pole_Vector.ThighBendX";
+setAttr -keyable false -channelBox false "RightLeg_Leg_Pole_Vector.ThighBendX";
+setAttr -keyable false -channelBox false "LeftLeg_Leg_Pole_Vector.ThingBendY";
+setAttr -keyable false -channelBox false "RightLeg_Leg_Pole_Vector.ThingBendY";
+
+//躯干
+setAttr -lock true -keyable false "Spine_Torso_IK.sx";
+setAttr -lock true -keyable false "Upper_Body.sx";
+setAttr -lock true -keyable false "Spine_Pelvis_IK.sx";
+setAttr -lock true -keyable false "Spine_Middle_IK.sx";
+setAttr -lock true -keyable false "Spine_Torso_IK.sy";
+setAttr -lock true -keyable false "Upper_Body.sy";
+setAttr -lock true -keyable false "Spine_Pelvis_IK.sy";
+setAttr -lock true -keyable false "Spine_Middle_IK.sy";
+setAttr -lock true -keyable false "Spine_Torso_IK.sz";
+setAttr -lock true -keyable false "Upper_Body.sz";
+setAttr -lock true -keyable false "Spine_Pelvis_IK.sz";
+setAttr -lock true -keyable false "Spine_Middle_IK.sz";
+
+setAttr "Upper_Body.Spine_FKIK" 0;
+setAttr "Upper_Body.LeftArm_Isolation" 1;
+setAttr "Upper_Body.RightArm_Isolation" 1;
+setAttr "Upper_Body.Head_Isolation" 0;
+setAttr "Upper_Body.RightLeg_Isolation" 0;
+setAttr "Upper_Body.LeftLeg_Isolation" 0;
+
+setAttr -lock true -keyable false "Spine_Torso_FK.sx";
+setAttr -lock true -keyable false "Spine_Pelvis_FK.sx";
+setAttr -lock true -keyable false "Spine_Middle_FK.sx";
+setAttr -lock true -keyable false "Spine_Torso_FK.sy";
+setAttr -lock true -keyable false "Spine_Pelvis_FK.sy";
+setAttr -lock true -keyable false "Spine_Middle_FK.sy";
+setAttr -lock true -keyable false "Spine_Torso_FK.sz";
+setAttr -lock true -keyable false "Spine_Pelvis_FK.sz";
+setAttr -lock true -keyable false "Spine_Middle_FK.sz";
+
+//头
+setAttr -lock true -keyable false "Head_Neck.tx";
+setAttr -lock true -keyable false "Head_Neck.ty";
+setAttr -lock true -keyable false "Head_Neck.tz";
+
+//手
+setAttr -lock true -keyable false "RightArm_Hand.sx";
+setAttr -lock true -keyable false "LeftArm_Hand.sx";
+setAttr -lock true -keyable false "RightArm_Hand.sy";
+setAttr -lock true -keyable false "LeftArm_Hand.sy";
+setAttr -lock true -keyable false "RightArm_Hand.sz";
+setAttr -lock true -keyable false "LeftArm_Hand.sz";
+
+setAttr -keyable false -channelBox false "RightArm_Hand.ForearmBendX";
+setAttr -keyable false -channelBox false "LeftArm_Hand.ForearmBendX";
+setAttr -keyable false -channelBox false "RightArm_Hand.ForearmBendY";
+setAttr -keyable false -channelBox false "LeftArm_Hand.ForearmBendY";
+setAttr -keyable false -channelBox false "RightArm_Hand.ArmThicknessX";
+setAttr -keyable false -channelBox false "LeftArm_Hand.ArmThicknessX";
+setAttr -keyable false -channelBox false "RightArm_Hand.ArmThicknessY";
+setAttr -keyable false -channelBox false "LeftArm_Hand.ArmThicknessY";
+
+setAttr -keyable false -channelBox false "RightArm_Upper_Arm.ArmBendX";
+setAttr -keyable false -channelBox false "LeftArm_Upper_Arm.ArmBendX";
+setAttr -keyable false -channelBox false "RightArm_Upper_Arm.ArmBendY";
+setAttr -keyable false -channelBox false "LeftArm_Upper_Arm.ArmBendY";
+
+setAttr -lock true -keyable false "RightFinger4_finger_control.sx";
+setAttr -lock true -keyable false "LeftThumb_finger_control.sx";
+setAttr -lock true -keyable false "LeftFinger1_finger_control.sx";
+setAttr -lock true -keyable false "LeftFinger2_finger_control.sx";
+setAttr -lock true -keyable false "LeftFinger3_finger_control.sx";
+setAttr -lock true -keyable false "LeftFinger4_finger_control.sx";
+setAttr -lock true -keyable false "RightThumb_finger_control.sx";
+setAttr -lock true -keyable false "RightFinger1_finger_control.sx";
+setAttr -lock true -keyable false "RightFinger2_finger_control.sx";
+setAttr -lock true -keyable false "RightFinger3_finger_control.sx";
+setAttr -lock true -keyable false "RightFinger4_finger_control.sy";
+setAttr -lock true -keyable false "LeftThumb_finger_control.sy";
+setAttr -lock true -keyable false "LeftFinger1_finger_control.sy";
+setAttr -lock true -keyable false "LeftFinger2_finger_control.sy";
+setAttr -lock true -keyable false "LeftFinger3_finger_control.sy";
+setAttr -lock true -keyable false "LeftFinger4_finger_control.sy";
+setAttr -lock true -keyable false "RightThumb_finger_control.sy";
+setAttr -lock true -keyable false "RightFinger1_finger_control.sy";
+setAttr -lock true -keyable false "RightFinger2_finger_control.sy";
+setAttr -lock true -keyable false "RightFinger3_finger_control.sy";
+setAttr -lock true -keyable false "RightFinger4_finger_control.sz";
+setAttr -lock true -keyable false "LeftThumb_finger_control.sz";
+setAttr -lock true -keyable false "LeftFinger1_finger_control.sz";
+setAttr -lock true -keyable false "LeftFinger2_finger_control.sz";
+setAttr -lock true -keyable false "LeftFinger3_finger_control.sz";
+setAttr -lock true -keyable false "LeftFinger4_finger_control.sz";
+setAttr -lock true -keyable false "RightThumb_finger_control.sz";
+setAttr -lock true -keyable false "RightFinger1_finger_control.sz";
+setAttr -lock true -keyable false "RightFinger2_finger_control.sz";
+setAttr -lock true -keyable false "RightFinger3_finger_control.sz";
+
+//主控
+setAttr -lock true -keyable false -channelBox false "Character.v";
+setAttr -lock true -keyable false -channelBox false "move_G.sx";
+setAttr -lock true -keyable false -channelBox false "move_G.sy";
+setAttr -lock true -keyable false -channelBox false "move_G.sz";
+setAttr -lock true -keyable false -channelBox false "move_G.v";
+}
+global proc bbb()
+{
+	select -r fingers_2_LeftFinger_widget_yellow fingers_1_RightFinger_widget_yellow fingers_3_RightFinger_widget_yellow arms_RightArm_Widget_blue thumbs_RightThumb_widget_yellow arms_LeftArm_Widget_blue fingers_3_LeftFinger_widget_yellow spine_Spine_widget_green fingers_1_LeftFinger_widget_yellow fingers_4_LeftFinger_widget_yellow thumbs_LeftThumb_widget_yellow legs_LeftLeg_Widget_pink legs_RightLeg_Widget_pink fingers_4_RightFinger_widget_yellow head_Head_WidgetRed fingers_2_RightFinger_widget_yellow;
+delete;
+
+select -r Spine_influence7 LeftArm_influence11_intermediate_constrain LeftFinger1_finger_influence10 LeftFinger1_finger_influence11 LeftFinger1_finger_influence9_intermediate LeftFinger1_finger_influence7 LeftFinger1_finger_influence8 LeftFinger1_finger_influence6_intermediate LeftFinger1_finger_influence5 LeftFinger1_finger_influence4 LeftFinger1_finger_influence3_intermediate LeftFinger1_finger_influence2 LeftFinger1_finger_influence1 LeftFinger2_finger_influence10 LeftFinger2_finger_influence11 LeftFinger2_finger_influence9_intermediate LeftFinger2_finger_influence7 LeftFinger2_finger_influence8 LeftFinger2_finger_influence6_intermediate LeftFinger2_finger_influence5 LeftFinger2_finger_influence4 LeftFinger2_finger_influence3_intermediate LeftFinger2_finger_influence2 LeftFinger2_finger_influence1 LeftFinger3_finger_influence10 LeftFinger3_finger_influence11 LeftFinger3_finger_influence9_intermediate LeftFinger3_finger_influence7 LeftFinger3_finger_influence8 LeftFinger3_finger_influence6_intermediate LeftFinger3_finger_influence5 LeftFinger3_finger_influence4 LeftFinger3_finger_influence3_intermediate LeftFinger3_finger_influence2 LeftFinger3_finger_influence1 LeftFinger4_finger_influence10 LeftFinger4_finger_influence11 LeftFinger4_finger_influence9_intermediate LeftFinger4_finger_influence7 LeftFinger4_finger_influence8 LeftFinger4_finger_influence6_intermediate LeftFinger4_finger_influence5 LeftFinger4_finger_influence4 LeftFinger4_finger_influence3_intermediate LeftFinger4_finger_influence2 LeftFinger4_finger_influence1 LeftThumb_finger_influence7 LeftThumb_finger_influence8 LeftThumb_finger_influence6_intermediate LeftThumb_finger_influence4 LeftThumb_finger_influence5 LeftThumb_finger_influence3_intermediate LeftThumb_finger_influence2 LeftThumb_finger_influence1 LeftArm_influence10 LeftArm_influence9 LeftArm_influence8 LeftArm_influence7_intermediate_constrain LeftArm_influence6 LeftArm_influence5 LeftArm_influence4 LeftArm_influence3_intermediate LeftArm_influence1 LeftArm_influence2 RightArm_influence11_intermediate_constrain RightFinger1_finger_influence10 RightFinger1_finger_influence11 RightFinger1_finger_influence9_intermediate RightFinger1_finger_influence7 RightFinger1_finger_influence8 RightFinger1_finger_influence6_intermediate RightFinger1_finger_influence5 RightFinger1_finger_influence4 RightFinger1_finger_influence3_intermediate RightFinger1_finger_influence2 RightFinger1_finger_influence1 RightFinger2_finger_influence10 RightFinger2_finger_influence11 RightFinger2_finger_influence9_intermediate RightFinger2_finger_influence7 RightFinger2_finger_influence8 RightFinger2_finger_influence6_intermediate RightFinger2_finger_influence5 RightFinger2_finger_influence4 RightFinger2_finger_influence3_intermediate RightFinger2_finger_influence2 RightFinger2_finger_influence1 RightFinger3_finger_influence10 RightFinger3_finger_influence11 RightFinger3_finger_influence9_intermediate RightFinger3_finger_influence7 RightFinger3_finger_influence8 RightFinger3_finger_influence6_intermediate RightFinger3_finger_influence5 RightFinger3_finger_influence4 RightFinger3_finger_influence3_intermediate RightFinger3_finger_influence2 RightFinger3_finger_influence1 RightFinger4_finger_influence10 RightFinger4_finger_influence11 RightFinger4_finger_influence9_intermediate RightFinger4_finger_influence7 RightFinger4_finger_influence8 RightFinger4_finger_influence6_intermediate RightFinger4_finger_influence5 RightFinger4_finger_influence4 RightFinger4_finger_influence3_intermediate RightFinger4_finger_influence2 RightFinger4_finger_influence1 RightThumb_finger_influence7 RightThumb_finger_influence8 RightThumb_finger_influence6_intermediate RightThumb_finger_influence4 RightThumb_finger_influence5 RightThumb_finger_influence3_intermediate RightThumb_finger_influence2 RightThumb_finger_influence1 RightArm_influence10 RightArm_influence9 RightArm_influence8 RightArm_influence7_intermediate_constrain RightArm_influence6 RightArm_influence5 RightArm_influence4 RightArm_influence3_intermediate RightArm_influence1 RightArm_influence2 Head_influence3 Head_influence4 Head_influence5 Head_influence2 Head_influence1 Spine_influence6 Spine_influence5 Spine_influence4 Spine_influence3 Spine_influence2 Spine_influence1 RightLeg_influence13 RightLeg_influence12_intermediate RightLeg_influence10 RightLeg_influence11 RightLeg_influence9_intermediate RightLeg_influence8 RightLeg_influence7 RightLeg_influence6 RightLeg_influence5_intermediate_constrain RightLeg_influence4 RightLeg_influence3 RightLeg_influence2 RightLeg_influence1_intermediate LeftLeg_influence13 LeftLeg_influence12_intermediate LeftLeg_influence10 LeftLeg_influence11 LeftLeg_influence9_intermediate LeftLeg_influence8 LeftLeg_influence7 LeftLeg_influence6 LeftLeg_influence5_intermediate_constrain LeftLeg_influence4 LeftLeg_influence3 LeftLeg_influence2 LeftLeg_influence1_intermediate ;
+
+sets -e -forceElement initialShadingGroup;
+
+select -cl  ;
+
+
+}
+
+global proc LY_changeObjColor(string $TSMctrl,int $clolor)
+{
+	int $count=0;
+	colorIndexSliderGrp -e -v $clolor chooseclolor;
+	 int $color = `colorIndexSliderGrp -q -v chooseclolor`;
+	 string $allCtrl=$TSMctrl;
+	 string $shapes[]=`listRelatives -shapes $allCtrl`;
+     
+     setAttr ($shapes[$count]+".overrideEnabled") 1;
+	 setAttr ($shapes[$count]+".overrideColor") $color;
+
+}
+global proc LY_setTSMObjColor()
+{
+	string $TSMwin;
+	string $TSMlay;
+	string $TSMcolor;
+	string $TSMctrl[20];
+	string $TSMf[];
+	int $Colors[];
+	clear $TSMctrl;
+	clear $TSMf;
+	clear $Colors;
+	int $count,$i,$aLLTSMctrl,$aLLTSMf=0;
+	$TSMwin = `window`;
+	$TSMlay = `columnLayout`;
+	$TSMcolor = `colorIndexSliderGrp -min 0 -max 20 -value 10 
+               chooseclolor`;
+    showWindow($TSMwin);
+	$TSMctrl[0]="Spine_Torso_IK";
+	$TSMctrl[1]="Spine_Middle_IK";
+	$TSMctrl[2]="Spine_Pelvis_IK";
+	$TSMctrl[3]="Upper_Body";
+	$TSMctrl[4]="Head_Neck";
+	$TSMctrl[5]="LeftArm_Shoulder";
+	$TSMctrl[6]="RightArm_Shoulder";
+	$TSMctrl[7]="Spine_Torso_FK";
+	$TSMctrl[8]="Spine_Middle_FK";
+	$TSMctrl[9]="Spine_Pelvis_FK";
+	$TSMctrl[10]="LeftThumb_finger_control";
+	$TSMctrl[11]="RightThumb_finger_control";
+	$TSMf =`ls -type transform "*Finger*_finger_control"`;
+	
+	string $TSMctrls[] = stringArrayCatenate($TSMctrl,$TSMf);
+	/*do{
+		stringArrayInsertAtIndex((12+$count),$TSMctrl,$TSMf[$count]);
+		$count++;
+	}while($count<21);*/
+	$Colors = {19,19,19,14,18,18,18,19,19,19,18,18,18,18,18,18,18,18,18,18};
+
+	for($i;$i<size($TSMctrls);$i++)
+	{
+		if( `objExists $TSMctrls[$i]` )
+		{
+			
+			LY_changeObjColor $TSMctrls[$i] ($Colors[$i]-1);
+		}
+		else{
+			string $cmd = "warning ";
+			$cmd = $cmd+"no object"+$TSMctrls[$i];
+			eval $cmd;
+			
+		}
+	}
+	deleteUI($TSMwin);
+}
+
+
+global proc TSMfingerWin()
+{
+	/*string $form;
+	string $b1;
+	string $b2;
+	if (`window -ex TSMfinger`)
+	{deleteUI TSMfinger;}
+	window -t "TSMRigoptimize" TSMfinger;
+	//$form = `formLayout`;
+	
+	columnLayout;
+	string $fram3=`frameLayout -l  "refineTSMrig" -w 300 -cll 0 -cl 1`;
+	$b5 = `button -l "set" -c "aaa"`;
+
+	columnLayout;
+	string $fram4=`frameLayout -l  "CleanTSMshader/setCtrlCorlor" -w 300 -cll 0 -cl 1`;
+	$b6 = `button -l "set" -c "bbb;LY_setTSMObjColor"`;
+	columnLayout;
+	string $fram2=`frameLayout -l  "FingerRig" -w 300 -cll 0 -cl 1`;
+	$b3 = `button -l "fingerRig" -c "TSM_finger"`;
+	$b4 = `button -l "mirrorFingerpose" -en 1 -c "mirrorFingerpose"`;
+     columnLayout;
+	string $fram5=`frameLayout -l  "setDrivenKey" -w 300 -cll 0 -cl 1`;
+	$b6 = `button -l "set" -c "tsm_setDrivenKey"`;
+
+	string $fram1=`frameLayout -l  "SimpleRig" -w 300 -cll 0 -cl 1`;
+	$b1 = `button -l "simpleRig" -c "createTSM2infulences"`;
+	$b2 = `button -l "simpleSkin" -c "TSMSimpleSkin"`;
+	
+	formLayout -edit
+    -attachForm     $b1     "top"    10
+    -attachForm     $b1     "left"   20
+    -attachControl  $b1     "bottom" 50 $b2
+    -attachPosition $b1     "right"  5 80
+
+    -attachNone     $b3     "top"
+    -attachForm     $b3     "left"   20
+    -attachForm     $b3     "bottom" 20
+    -attachForm     $b3     "right"  20
+    
+    -attachNone     $b2     "top"
+    -attachForm     $b2     "left"   20
+    -attachForm     $b2     "bottom" 50
+    -attachForm     $b2     "right"  20
+
+	$form;
+	showWindow TSMfinger;*/
+
+
+
+
+string $form;
+	string $b1;
+	string $b2;
+	if (`window -ex TSMfinger`)
+	{deleteUI TSMfinger;}
+	window -t "TSMRigoptimize" -wh 200 500 TSMfinger;
+	//$form = `formLayout`;	
+   columnLayout -adjustableColumn 1;
+        ///添加新的命名
+        
+       frameLayout -label "TSM优化" -borderStyle "etchedIn"
+                   -collapse 0 -collapsable 1
+                   -marginWidth 5 -marginHeight 5;
+            
+         string $form= `formLayout`;
+    
+         string $UI0=`button -w 160 -h 20 -label "refineTSM"  -c aaa` ;
+	     string $UI1=`button -w 160 -h 20 -label "CleanTSMshader-setCtrlCorlor"  -c "bbb;LY_setTSMObjColor"` ;
+         string $UI2=`button -w 160 -h 20 -label "setDrivenKey"  -c tsm_setDrivenKey` ;
+ 
+         formLayout -edit
+                    -attachForm $UI0 "top" 10
+                    -attachForm $UI0 "left" 10
+                    -attachForm $UI1 "top" 40
+                    -attachForm $UI1 "left" 10
+                    -attachForm $UI2 "top" 70
+                    -attachForm $UI2 "left" 10
+               $form;
+          setParent ..;
+       setParent..; 
+        
+        frameLayout -label "FingerRig" -borderStyle "etchedIn"
+                -collapse 0 -collapsable 1
+                -marginWidth 5 -marginHeight 5;
+                
+         string $form2= `formLayout`;
+    
+         string $UI3=`button -w 160 -h 20 -label "fingerRig"  -c TSM_finger` ;
+	     string $UI4=`button -w 160 -h 20 -label "mirrorFingerpose"  -c mirrorFingerpose` ;
+ 	     string $UI5=`button -w 160 -h 20 -label "deletefingerRig"  -c delOldFinger` ;
+ 	     string $UI6=`button -w 120 -h 20 -label "ModifyfingerRig"  -c tsm_fingermod` ;
+ 	     
+         formLayout -edit
+                    -attachForm $UI3 "top" 10
+                    -attachForm $UI3 "left" 10
+                    -attachForm $UI4 "top" 40
+                    -attachForm $UI4 "left" 10
+                    -attachForm $UI5 "top" 70
+                    -attachForm $UI5 "left" 10
+                    -attachForm $UI6 "top" 70
+                    -attachForm $UI6 "left" 180
+
+               $form2;
+
+
+            setParent ..;
+         setParent..;
+
+	showWindow TSMfinger;
+
+
+}
+
+global proc string createNull(string $joint,string $name)
+{
+	string $null;
+	string $parantjnt[];
+	$null = `createNode -n $name transform`;
+	$parantjnt = `listRelatives -p $joint`;
+	delete `parentConstraint $joint $null`;
+	delete `scaleConstraint $parantjnt[0] $null`;
+	parent $null $parantjnt[0];
+	parent $joint $null;
+	return $null;
+}
+
+global proc mirrorFingerpose()
+{
+	string $Attr[];
+	string $shape[];
+	string $shapeR[];
+	string $shapeAttr[];
+	string $i;
+	string $is;
+	$Attr = `listAttr -k LeftHand_CC`;
+	$shape = getShape("LeftHand_CC");
+	$shapeR = getShape("RightHand_CC");
+	$shapeAttr = `listAttr -u -ud $shape[0]`;
+	
+	for ($i in $Attr)
+	{
+		float $value = `getAttr ("LeftHand_CC."+$i)`;
+		setAttr ("RightHand_CC."+$i) $value;
+	}
+	for ($is in $shapeAttr)
+	{
+		float $values = `getAttr ($shape[0]+"."+$is)`;
+		if ($is == "A1_ry"
+			||$is == "A1_rx"
+			||$is == "B1_ry"
+			||$is == "B1_rx"
+			||$is == "C1_ry"
+			||$is == "C1_rx"
+			||$is == "D1_ry"
+			||$is == "D1_rx"
+			||$is == "E1_ry"
+			||$is == "E1_rx"
+			||$is == "A1_tz"
+			||$is == "B1_tz"
+			||$is == "C1_tz"
+			||$is == "D1_tz"
+			||$is == "E1_tz")
+		{setAttr ($shapeR[0]+"."+$is) ($values*-1);}
+		else{setAttr ($shapeR[0]+"."+$is) $values;}
+	}
+}
+global proc string [] getShape(string $transform)
+{
+	string $shape[];
+	if (`objExists $transform`){$shape = `listRelatives -s $transform`;}
+	return $shape;
+}
+
+global proc tsm_fingermod()
+{createNode -n Rightshut1Multiplyrev multiplyDivide;
+createNode -n Rightshut2Multiplyrev multiplyDivide;
+setAttr Rightshut1Multiplyrev.input2X -1;
+setAttr Rightshut2Multiplyrev.input2X -1;
+setAttr Rightshut1Multiplyrev.input2Y -1;
+setAttr Rightshut2Multiplyrev.input2Y -1;
+connectAttr -f Rightshut1Multiply.outputX Rightshut1Multiplyrev.input1X;
+connectAttr -f Rightshut1Multiplyrev.outputX Rightshut1Plus.input3D[0].input3Dx;
+connectAttr -f Rightshut1Multiply.outputY Rightshut1Multiplyrev.input1Y;
+connectAttr -f Rightshut1Multiplyrev.outputY Rightshut1Plus.input3D[0].input3Dy;
+connectAttr -f Rightshut2Multiply.outputX Rightshut2Multiplyrev.input1X;
+connectAttr -f Rightshut2Multiplyrev.outputX Rightshut2Plus.input3D[0].input3Dx;
+connectAttr -f Rightshut2Multiply.outputY Rightshut2Multiplyrev.input1Y;
+connectAttr -f Rightshut2Multiplyrev.outputY Rightshut2Plus.input3D[0].input3Dy;}
+
+global proc TSM_finger() 
+{
+
+
+float $Sca=`getAttr "Character_G.scaleX"`;
+
+vector $palm1[]=`xform  -q -ws -t LeftArm_rig_wrist`;
+vector $palm2[]=`xform  -q -ws -t LeftFinger2_rig_fingerjoint1`;
+
+float $palm=$palm1[0]-$palm2[0];
+float $palmA =$palm*0.25;
+curve -d 3 -p 0.199508 0 1.145571 -p 0.455729 0 1.400887 -p 0.968169 0 1.91152 -p 1.185688 0 1.264678 -p 0.59045 0 0.78248 -p 0.961097 0 0.65355 -p 1.680396 0 1.145921 -p 2.129244 0 1.174722 -p 2.189978 0 0.748334 -p 1.203164 0 0.427617 -p 1.265764 0 0.111487 -p 2.161754 0 0.218999 -p 2.735643 0 0.0589123 -p 2.397497 0 -0.390202 -p 1.354116 0 -0.179206 -p 1.158291 0 -0.429188 -p 1.732382 0 -0.629073 -p 1.995582 0 -0.953684 -p 1.70846 0 -1.06337 -p 1.464722 0 -0.956178 -p 0.890017 0 -0.756074 -p 0.4738 0 -0.807208 -p -0.272129 0 -0.634136 -p -0.623808 0 -0.274109 -p -0.613014 0 0.564603 -p -0.0713325 0 0.951915 -p 0.199508 0 1.145571 -k 0 -k 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 24 -k 24 ;
+rename LeftHand_CC;
+scale -r $palmA $palmA $palmA LeftHand_CC;
+setAttr "LeftHand_CCShape.overrideEnabled" 1;
+string $Thumbnull = createNull("LeftThumb_finger_control","LeftThumb_finger_transform");
+string $LeftFinger1 = createNull("LeftFinger1_finger_control","LeftFinger1_finger_transform");
+string $LeftFinger2 = createNull("LeftFinger2_finger_control","LeftFinger2_finger_transform");
+string $LeftFinger3 = createNull("LeftFinger3_finger_control","LeftFinger3_finger_transform");
+string $LeftFinger4 = createNull("LeftFinger4_finger_control","LeftFinger4_finger_transform");
+
+string $RightThumbnull = createNull("RightThumb_finger_control","RightThumb_finger_transform");
+string $RightFinger1 = createNull("RightFinger1_finger_control","RightFinger1_finger_transform");
+string $RightFinger2 = createNull("RightFinger2_finger_control","RightFinger2_finger_transform");
+string $RightFinger3 = createNull("RightFinger3_finger_control","RightFinger3_finger_transform");
+string $RightFinger4 = createNull("RightFinger4_finger_control","RightFinger4_finger_transform");
+
+string $ALLNODE[] = {"LeftThumbPlus",
+					"LeftFinger1Plus",
+					"LeftFinger2Plus",
+					"LeftFinger3Plus",
+					"LeftFinger4Plus",
+					"Leftshut1Plus",
+					"Leftshut1_Plus",
+					"Leftshut2Plus",
+					
+					"LeftThumbBMultiply",
+					"LeftFinger1BMultiply",
+					"LeftFinger2BMultiply",
+					"LeftFinger3BMultiply",
+					"LeftFinger4BMultiply",
+					
+					"LeftthumbDPlus",
+					"LeftThumbDMultiply",
+					"LeftThumbEMultiply",
+					"LeftThumbPlusA",
+					"Leftshut1Multiplx",
+					"Leftshut1Multiply",
+					"Leftshut2Multiplx",
+					"Leftshut2Multiply",
+					"Leftshut1MultiplxA11_rz",
+					"Leftshut1MultiplxA111_rz",
+					"Leftshut1MultiplxA1111_rz",
+					"Leftshut1MultiplxA11111_rz",
+					"Leftshut1MultiplxA1_rz",
+					"Leftshut1MultiplxA12_rz",
+					"Leftshut1MultiplxAB1_rz",
+					"Leftshut1MultiplxAB1_rz1",
+					"Leftshut1MultiplxAB2_rz",
+					"Leftshut1MultiplxAB2_rz1",
+					"LeftThumbPlusAB2",
+					"Leftshut1MultiplxAB3_rz",
+					"Leftshut1MultiplxAB3_rz1",
+					"LeftThumbPlusAB3",
+					"Leftshut1MultiplxAB4_rz",
+					"Leftshut1MultiplxAB4_rz1",
+					"LeftThumbPlusAB4",
+					"Leftshut1MultiplxAB5_rz",
+					"Leftshut1MultiplxAB5_rz1",
+					"LeftThumbPlusAB5",
+					
+					"RightThumbPlus",
+					"RightFinger1Plus",
+					"RightFinger2Plus",
+					"RightFinger3Plus",
+					"RightFinger4Plus",
+					"Rightshut1Plus",
+					"Rightshut1_Plus",
+					"Rightshut2Plus",
+					
+					"RightThumbBMultiply",
+					"RightFinger1BMultiply",
+					"RightFinger2BMultiply",
+					"RightFinger3BMultiply",
+					"RightFinger4BMultiply",
+					
+					"RightthumbDPlus",
+					"RightThumbDMultiply",
+					"RightThumbEMultiply",
+					"RightThumbPlusA",
+					"Rightshut1Multiplx",
+					"Rightshut1Multiply",
+					
+					"Rightshut2Multiplx",
+					"Rightshut2Multiply",
+					"Rightshut1MultiplxA111_rz",
+					"Rightshut1MultiplxA1111_rz",
+					"Rightshut1MultiplxA11111_rz",
+					"Rightshut1MultiplxA1_rz",
+					"Rightshut1MultiplxA12_rz",
+					
+					"Rightshut1MultiplxAB1_rz",
+					"Rightshut1MultiplxAB1_rz1",
+					"Rightshut1MultiplxAB2_rz",
+					"Rightshut1MultiplxAB2_rz1",
+					"RightThumbPlusAB2",
+					"Rightshut1MultiplxAB3_rz",
+					"Rightshut1MultiplxAB3_rz1",
+					"RightThumbPlusAB3",
+					"Rightshut1MultiplxAB4_rz",
+					"Rightshut1MultiplxAB4_rz1",
+					"RightThumbPlusAB4",
+					"Rightshut1MultiplxAB5_rz",
+					"Rightshut1MultiplxAB5_rz1",
+					"RightThumbPlusAB5",
+					
+					"Leftdisfinger1Multiplx",
+					"Leftdisfinger2Multiplx",
+					"Leftdisfinger3Multiplx",
+					"Leftdisfinger4Multiplx",
+					"Leftdisfinger5Multiplx",
+					"Leftdisfinger1DoubleLinear",
+					"Leftdisfinger1DoubleLinear1",
+					"Leftdisfinger1DoubleLinear2",
+					"Leftdisfinger1DoubleLinear3",
+					"Leftdisfinger1DoubleLinear4",
+					"Leftdisfinger1DoubleLinear5",
+					
+					"Leftdisfinger1Mud",
+					"Leftdisfinger2Mud",
+					"Leftdisfinger3Mud",
+					"Leftdisfinger4Mud",
+					"Leftdisfinger5Mud",
+					"Leftdisfinger6Mud",
+					
+					"Leftdisfingerxy1Mud",
+					"Leftdisfingerxy2Mud",
+					"Leftdisfingerxy3Mud",
+					"Leftdisfingerxy4Mud",
+					"Leftdisfingerxy5Mud",
+					"Leftdisfingerxy6Mud",
+					
+					"LeftRfinger1Multiplx",
+					"LeftRfinger2Multiplx",
+					"LeftRfinger3Multiplx",
+					"LeftRfinger4Multiplx",
+					"LeftRfinger5Multiplx",
+					"LeftRfinger1DoubleLinear",
+					"LeftRfinger2DoubleLinear",
+					"LeftRfinger4MultiplxD1_rx",
+					"LeftRfinger4MultiplxE1_rx",
+					
+					"Rightdisfinger1Multiplx",
+					"Rightdisfinger2Multiplx",
+					"Rightdisfinger3Multiplx",
+					"Rightdisfinger4Multiplx",
+					"Rightdisfinger1DoubleLinear",
+					"Rightdisfinger1DoubleLinear1",
+					"Rightdisfinger1DoubleLinear2",
+					"Rightdisfinger1DoubleLinear3",
+					"Rightdisfinger1DoubleLinear4",
+					
+					"Rightdisfinger1Mud",
+					"Rightdisfinger2Mud",
+					"Rightdisfinger3Mud",
+					"Rightdisfinger4Mud",
+					
+					"Rightdisfingerxy1Mud",
+					"Rightdisfingerxy2Mud",
+					"Rightdisfingerxy3Mud",
+					"Rightdisfingerxy4Mud",
+					
+					"Rightdisfinger1DoubleLinear5",
+					"Rightdisfinger5Multiplx",
+					
+					
+					"Rightdisfinger5Mud",
+					"Rightdisfinger6Mud",
+					
+					"Rightdisfingerxy5Mud",
+					"Rightdisfingerxy6Mud",
+					
+					"RightRfinger1Multiplx",
+					"RightRfinger2Multiplx",
+					"RightRfinger3Multiplx",
+					"RightRfinger4Multiplx",
+					"RightRfinger5Multiplx",
+					"RightRfinger1DoubleLinear",
+					"RightRfinger2DoubleLinear",
+					"RightRfinger4MultiplxB1_rx",
+					"RightRfinger4MultiplxD1_rx",
+					"RightRfinger4MultiplxE1_rx"
+					};
+for($i in $ALLNODE)
+{
+	if (`objExists $i`)
+	{delete $i;}
+}
+pointConstraint LeftThumb_finger_control LeftThumb_rig_knuckle;
+pointConstraint LeftThumb_rig_knuckle LeftThumb_joint1;
+
+pointConstraint RightThumb_finger_control RightThumb_rig_knuckle;
+pointConstraint RightThumb_rig_knuckle RightThumb_joint1;
+
+addAttr -ln "thumb___A___"  -nn "thumb___A___" -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e -keyable false -channelBox true |LeftHand_CC|LeftHand_CCShape.thumb___A___;
+addAttr -ln "A1_tx"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.A1_tx;
+addAttr -ln "A1_ty"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.A1_ty;
+addAttr -ln "A1_tz"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.A1_tz;
+addAttr -ln "A1_rx"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.A1_rx;
+addAttr -ln "A1_ry"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.A1_ry;
+addAttr -ln "A1_rz"  -at double  -dv 3 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.A1_rz;
+addAttr -ln "A2_rz"  -at double  -dv 6 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.A2_rz;
+addAttr -ln "A3_rz"  -at double  -dv 9 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.A3_rz;
+
+
+
+addAttr -ln "Finger___B___"  -nn "Finger___B___"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e -keyable false -channelBox true |LeftHand_CC|LeftHand_CCShape.Finger___B___;
+addAttr -ln "B1_tx"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.B1_tx;
+addAttr -ln "B1_ty"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.B1_ty;
+addAttr -ln "B1_tz"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.B1_tz;
+addAttr -ln "B1_rx"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.B1_rx;
+addAttr -ln "B1_ry"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.B1_ry;
+addAttr -ln "shut_B1_ry"  -at double  -dv 18 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.shut_B1_ry;
+addAttr -ln "B1_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.B1_rz;
+addAttr -ln "B2_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.B2_rz;
+addAttr -ln "B3_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.B3_rz;
+
+
+addAttr -ln "Finger___C___"  -nn "Finger___C___"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e -keyable false -channelBox true |LeftHand_CC|LeftHand_CCShape.Finger___C___;
+//addAttr -ln "s1_C_Tz"  -at double -dv .05 |LeftHand_CC|LeftHand_CCShape;
+//setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.s1_C_Tz;
+//addAttr -ln "S1_C_Rx"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+//setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.S1_C_Rx;
+addAttr -ln "C1_tx"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.C1_tx;
+addAttr -ln "C1_ty"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.C1_ty;
+addAttr -ln "C1_tz"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.C1_tz;
+addAttr -ln "C1_rx"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.C1_rx;
+addAttr -ln "C1_ry"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.C1_ry;
+addAttr -ln "shut_C1_ry"  -at double  -dv 6 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.shut_C1_ry;
+addAttr -ln "C1_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.C1_rz;
+addAttr -ln "C2_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.C2_rz;
+addAttr -ln "C3_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.C3_rz;
+
+addAttr -ln "Finger___D___"  -nn "Finger___D___"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e -keyable false -channelBox true |LeftHand_CC|LeftHand_CCShape.Finger___D___;
+addAttr -ln "D1_tx"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.D1_tx;
+addAttr -ln "D1_ty"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.D1_ty;
+addAttr -ln "D1_tz"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.D1_tz;
+addAttr -ln "D1_rx"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.D1_rx;
+addAttr -ln "D1_ry"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.D1_ry;
+addAttr -ln "shut_D1_ry"  -at double  -dv -6 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.shut_D1_ry;
+addAttr -ln "D1_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.D1_rz;
+addAttr -ln "D2_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.D2_rz;
+addAttr -ln "D3_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.D3_rz;
+
+
+addAttr -ln "Finger___E___"  -nn "Finger___E___"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e -keyable false -channelBox true |LeftHand_CC|LeftHand_CCShape.Finger___E___;
+addAttr -ln "E1_tx"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.E1_tx;
+addAttr -ln "E1_ty"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.E1_ty;
+addAttr -ln "E1_tz"  -at double -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.E1_tz;
+addAttr -ln "E1_rx"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.E1_rx;
+addAttr -ln "E1_ry"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.E1_ry;
+addAttr -ln "shut_E1_ry"  -at double  -dv -15 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.shut_E1_ry;
+addAttr -ln "E1_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.E1_rz;
+addAttr -ln "E2_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.E2_rz;
+addAttr -ln "E3_rz"  -at double  -dv 10 |LeftHand_CC|LeftHand_CCShape;
+setAttr -e-channelBox true |LeftHand_CC|LeftHand_CCShape.E3_rz;
+
+//addAttr -ln "finger5"  -at double  -dv 0 |LeftHand_CC|LeftHand_CCShape;
+//setAttr -e -keyable false -channelBox true |LeftHand_CC|LeftHand_CCShape.finger5;
+
+
+
+
+
+group -n LeftHand_CC_g LeftHand_CC;
+xform -os -piv 0 0 0;
+addAttr -ln "thumb"  -at double  -min -90 -max 15 -k 1 |LeftHand_CC_g|LeftHand_CC;
+addAttr -ln "finger1"  -at double  -min -90 -max 15 -k 1 |LeftHand_CC_g|LeftHand_CC;
+addAttr -ln "finger2"  -at double  -min -90 -max 15 -k 1 |LeftHand_CC_g|LeftHand_CC;
+addAttr -ln "finger3"  -at double  -min -90 -max 15 -k 1 |LeftHand_CC_g|LeftHand_CC;
+addAttr -ln "finger4"  -at double  -min -90 -max 15 -k 1 |LeftHand_CC_g|LeftHand_CC;
+
+//addAttr -ln "fingerT1"  -at double -k 1 |LeftHand_CC_g|LeftHand_CC;
+//addAttr -ln "fingerT2"  -at double -k 1 |LeftHand_CC_g|LeftHand_CC;
+//addAttr -ln "fingerT3"  -at double -k 1 |LeftHand_CC_g|LeftHand_CC;
+//addAttr -ln "fingerT4"  -at double -k 1 |LeftHand_CC_g|LeftHand_CC;
+addAttr -ln "shut"  -at double  -min -10 -max 10 -k 1 |LeftHand_CC_g|LeftHand_CC;
+//addAttr -ln "Tjoin"  -at double  -min -10 -max 10 -k 1 |LeftHand_CC_g|LeftHand_CC;
+//addAttr -ln "Rxjoin"  -at double  -min -10 -max 10 -k 1 |LeftHand_CC_g|LeftHand_CC;
+setAttr -lock true "LeftHand_CC_g|LeftHand_CC|LeftHand_CCShape.thumb___A___";
+setAttr -lock true "LeftHand_CC_g|LeftHand_CC|LeftHand_CCShape.Finger___B___";
+setAttr -lock true "LeftHand_CC_g|LeftHand_CC|LeftHand_CCShape.Finger___C___";
+setAttr -lock true "LeftHand_CC_g|LeftHand_CC|LeftHand_CCShape.Finger___D___";
+setAttr -lock true "LeftHand_CC_g|LeftHand_CC|LeftHand_CCShape.Finger___E___";
+//setAttr -lock true "LeftHand_CC_g|LeftHand_CC|LeftHand_CCShape.finger5";
+duplicate -rr -n RightHand_CC_g LeftHand_CC_g ;
+rename "RightHand_CC_g|LeftHand_CC" "RightHand_CC";
+select -cl;  
+setAttr "RightHand_CC_g.rotateZ" 180;
+setAttr "RightHand_CCShape.overrideEnabled" 1;
+pointConstraint -offset 0 0 0 -weight 1 LeftArm_rig_wrist LeftHand_CC_g;
+pointConstraint -offset 0 0 0 -weight 1 RightArm_rig_wrist RightHand_CC_g;
+delete LeftHand_CC_g_pointConstraint1 RightHand_CC_g_pointConstraint1;
+parent LeftHand_CC_g LeftArm_rig_wrist;
+parent RightHand_CC_g RightArm_rig_wrist;
+float $ScalC=$Sca*-1;
+move -r -os -wd 0 $Sca 0 LeftHand_CC;
+move -r -os -wd 0 $ScalC 0 RightHand_CC;
+
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.tx";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.tx";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.ty";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.ty";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.tz";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.tz";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.rx";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.rx";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.ry";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.ry";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.rz";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.rz";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.sx";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.sx";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.sy";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.sy";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.sz";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.sz";
+setAttr -lock true -keyable false -channelBox false "RightHand_CC.v";
+setAttr -lock true -keyable false -channelBox false "LeftHand_CC.v";
+
+
+
+
+
+createNode plusMinusAverage -n LeftThumbPlus;
+createNode plusMinusAverage -n LeftFinger1Plus;
+createNode plusMinusAverage -n LeftFinger2Plus;
+createNode plusMinusAverage -n LeftFinger3Plus;
+createNode plusMinusAverage -n LeftFinger4Plus;
+createNode plusMinusAverage -n Leftshut1Plus;
+createNode plusMinusAverage -n Leftshut1_Plus;
+createNode plusMinusAverage -n Leftshut2Plus;
+
+createNode multiplyDivide -n LeftThumbBMultiply;
+createNode multiplyDivide -n LeftFinger1BMultiply;
+createNode multiplyDivide -n LeftFinger2BMultiply;
+createNode multiplyDivide -n LeftFinger3BMultiply;
+createNode multiplyDivide -n LeftFinger4BMultiply;
+
+createNode plusMinusAverage -n LeftthumbDPlus;
+createNode multiplyDivide -n LeftThumbDMultiply;
+createNode multiplyDivide -n LeftThumbEMultiply;
+
+float $thumbALeftA[]=`xform -q -ro LeftThumb_rig_knuckle`;
+createNode plusMinusAverage -n LeftThumbPlusA;
+//setAttr "LeftThumbPlusA.input3D[1].input3Dx" $thumbALeftA[0] ;
+//setAttr "LeftThumbPlusA.input3D[1].input3Dy" $thumbALeftA[1] ;
+//setAttr "LeftThumbPlusA.input3D[1].input3Dz" $thumbALeftA[2] ;
+setAttr "LeftThumbPlusA.input3D[1].input3Dx" 0 ;
+setAttr "LeftThumbPlusA.input3D[1].input3Dy" 0 ;
+setAttr "LeftThumbPlusA.input3D[1].input3Dz" 0 ;
+
+createNode multiplyDivide -n Leftshut1Multiplx;
+createNode multiplyDivide -n Leftshut1Multiply;
+
+createNode multiplyDivide -n Leftshut2Multiplx;
+createNode multiplyDivide -n Leftshut2Multiply;
+catch (`delete LeftFinger1_knuckle_orientConstraint1 LeftFinger2_knuckle_orientConstraint1 LeftFinger3_knuckle_orientConstraint1 LeftFinger4_knuckle_orientConstraint1 LeftThumb_knuckle_orientConstraint1`);
+
+float $thumbAL[]=`xform -q -ro LeftThumb_rig_knuckle`;
+if (!`connectionInfo -isSource LeftFinger1_rig_fingerjoint1.rz`)
+	disconnectAttr LeftFinger1_finger_control.MiddleJoint LeftFinger1_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource LeftFinger1_rig_fingerjoint2.rz`)
+	disconnectAttr LeftFinger1_finger_control.LastJoint LeftFinger1_rig_fingerjoint2.rz;
+if (!`connectionInfo -isSource LeftFinger2_rig_fingerjoint1.rz`)
+	disconnectAttr LeftFinger2_finger_control.MiddleJoint LeftFinger2_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource LeftFinger2_rig_fingerjoint2.rz`)
+	disconnectAttr LeftFinger2_finger_control.LastJoint LeftFinger2_rig_fingerjoint2.rz;
+if (!`connectionInfo -isSource LeftFinger3_rig_fingerjoint1.rz`)
+	disconnectAttr LeftFinger3_finger_control.MiddleJoint LeftFinger3_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource LeftFinger3_rig_fingerjoint2.rz`)
+	disconnectAttr LeftFinger3_finger_control.LastJoint LeftFinger3_rig_fingerjoint2.rz;
+if (!`connectionInfo -isSource LeftFinger4_rig_fingerjoint1.rz`)
+	disconnectAttr LeftFinger4_finger_control.MiddleJoint LeftFinger4_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource LeftFinger4_rig_fingerjoint2.rz`)
+	disconnectAttr LeftFinger4_finger_control.LastJoint LeftFinger4_rig_fingerjoint2.rz;
+if (!`connectionInfo -isSource LeftThumb_rig_fingerjoint1.rz`)
+	disconnectAttr LeftThumb_finger_control.MiddleJoint LeftThumb_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource LeftThumb_rig_fingerjoint2.rz`)
+	disconnectAttr LeftThumb_finger_control.LastJoint LeftThumb_rig_fingerjoint2.rz;
+
+connectAttr -f LeftHand_CC.finger1 LeftFinger1BMultiply.input1X;
+connectAttr -f LeftHand_CC.finger1 LeftFinger1BMultiply.input1Y;
+connectAttr -f LeftHand_CC.finger1 LeftFinger1BMultiply.input1Z;
+
+createNode multiplyDivide -n Leftshut1MultiplxA11_rz;
+setAttr "Leftshut1MultiplxA11_rz.input2X" .1;
+setAttr "Leftshut1MultiplxA11_rz.input2Y" .1;
+setAttr "Leftshut1MultiplxA11_rz.input2Z" .1;
+connectAttr -f LeftHand_CCShape.B1_rz Leftshut1MultiplxA11_rz.input1X;
+connectAttr -f Leftshut1MultiplxA11_rz.outputX LeftFinger1BMultiply.input2X;
+
+connectAttr -f LeftHand_CCShape.B2_rz Leftshut1MultiplxA11_rz.input1Y;
+connectAttr -f Leftshut1MultiplxA11_rz.outputY LeftFinger1BMultiply.input2Y;
+
+connectAttr -f LeftHand_CCShape.B3_rz Leftshut1MultiplxA11_rz.input1Z;
+connectAttr -f Leftshut1MultiplxA11_rz.outputZ LeftFinger1BMultiply.input2Z;
+
+connectAttr -f LeftFinger1BMultiply.outputX LeftFinger1Plus.input3D[0].input3Dx;
+connectAttr -f LeftFinger1BMultiply.outputY LeftFinger1Plus.input3D[0].input3Dy;
+connectAttr -f LeftFinger1BMultiply.outputZ LeftFinger1Plus.input3D[0].input3Dz;
+//connectAttr -f LeftFinger1_finger_control.rotateZ LeftFinger1Plus.input3D[1].input3Dx;
+connectAttr -f LeftFinger1_finger_control.MiddleJoint LeftFinger1Plus.input3D[1].input3Dy;
+connectAttr -f LeftFinger1_finger_control.LastJoint LeftFinger1Plus.input3D[1].input3Dz;
+//connectAttr -f LeftFinger1_finger_control.rotateX ($LeftFinger1+".rotateX");
+connectAttr -f LeftFinger1Plus.output3Dx ($LeftFinger1+".rotateZ");
+connectAttr -f LeftFinger1Plus.output3Dy LeftFinger1_rig_fingerjoint1.rotateZ;
+connectAttr -f LeftFinger1Plus.output3Dz LeftFinger1_rig_fingerjoint2.rotateZ;
+
+connectAttr -f LeftHand_CC.finger2 LeftFinger2BMultiply.input1X;
+connectAttr -f LeftHand_CC.finger2 LeftFinger2BMultiply.input1Y;
+connectAttr -f LeftHand_CC.finger2 LeftFinger2BMultiply.input1Z;
+
+createNode multiplyDivide -n Leftshut1MultiplxA111_rz;
+setAttr "Leftshut1MultiplxA111_rz.input2X" .1;
+setAttr "Leftshut1MultiplxA111_rz.input2Y" .1;
+setAttr "Leftshut1MultiplxA111_rz.input2Z" .1;
+connectAttr -f LeftHand_CCShape.C1_rz Leftshut1MultiplxA111_rz.input1X;
+connectAttr -f Leftshut1MultiplxA111_rz.outputX LeftFinger2BMultiply.input2X;
+
+connectAttr -f LeftHand_CCShape.C2_rz Leftshut1MultiplxA111_rz.input1Y;
+connectAttr -f Leftshut1MultiplxA111_rz.outputY LeftFinger2BMultiply.input2Y;
+
+connectAttr -f LeftHand_CCShape.C3_rz Leftshut1MultiplxA111_rz.input1Z;
+connectAttr -f Leftshut1MultiplxA111_rz.outputZ LeftFinger2BMultiply.input2Z;
+
+connectAttr -f LeftFinger2BMultiply.outputX LeftFinger2Plus.input3D[0].input3Dx;
+connectAttr -f LeftFinger2BMultiply.outputY LeftFinger2Plus.input3D[0].input3Dy;
+connectAttr -f LeftFinger2BMultiply.outputZ LeftFinger2Plus.input3D[0].input3Dz;
+//connectAttr -f LeftFinger2_finger_control.rotateZ LeftFinger2Plus.input3D[1].input3Dx;
+connectAttr -f LeftFinger2_finger_control.MiddleJoint LeftFinger2Plus.input3D[1].input3Dy;
+connectAttr -f LeftFinger2_finger_control.LastJoint LeftFinger2Plus.input3D[1].input3Dz;
+//connectAttr -f LeftFinger2_finger_control.rotateX ($LeftFinger2+".rotateX");
+connectAttr -f LeftFinger2Plus.output3Dx ($LeftFinger2+".rotateZ");
+connectAttr -f LeftFinger2Plus.output3Dy LeftFinger2_rig_fingerjoint1.rotateZ;
+connectAttr -f LeftFinger2Plus.output3Dz LeftFinger2_rig_fingerjoint2.rotateZ;
+
+connectAttr -f LeftHand_CC.finger3 LeftFinger3BMultiply.input1X;
+connectAttr -f LeftHand_CC.finger3 LeftFinger3BMultiply.input1Y;
+connectAttr -f LeftHand_CC.finger3 LeftFinger3BMultiply.input1Z;
+
+createNode multiplyDivide -n Leftshut1MultiplxA1111_rz;
+setAttr "Leftshut1MultiplxA1111_rz.input2X" .1;
+setAttr "Leftshut1MultiplxA1111_rz.input2Y" .1;
+setAttr "Leftshut1MultiplxA1111_rz.input2Z" .1;
+connectAttr -f LeftHand_CCShape.D1_rz Leftshut1MultiplxA1111_rz.input1X;
+connectAttr -f Leftshut1MultiplxA1111_rz.outputX LeftFinger3BMultiply.input2X;
+
+connectAttr -f LeftHand_CCShape.D2_rz Leftshut1MultiplxA1111_rz.input1Y;
+connectAttr -f Leftshut1MultiplxA1111_rz.outputY LeftFinger3BMultiply.input2Y;
+
+connectAttr -f LeftHand_CCShape.D3_rz Leftshut1MultiplxA1111_rz.input1Z;
+connectAttr -f Leftshut1MultiplxA1111_rz.outputZ LeftFinger3BMultiply.input2Z;
+
+connectAttr -f LeftFinger3BMultiply.outputX LeftFinger3Plus.input3D[0].input3Dx;
+connectAttr -f LeftFinger3BMultiply.outputY LeftFinger3Plus.input3D[0].input3Dy;
+connectAttr -f LeftFinger3BMultiply.outputZ LeftFinger3Plus.input3D[0].input3Dz;
+//connectAttr -f LeftFinger3_finger_control.rotateZ LeftFinger3Plus.input3D[1].input3Dx;
+connectAttr -f LeftFinger3_finger_control.MiddleJoint LeftFinger3Plus.input3D[1].input3Dy;
+connectAttr -f LeftFinger3_finger_control.LastJoint LeftFinger3Plus.input3D[1].input3Dz;
+//connectAttr -f LeftFinger3_finger_control.rotateX ($LeftFinger3+".rotateX");
+connectAttr -f LeftFinger3Plus.output3Dx ($LeftFinger3+".rotateZ");
+connectAttr -f LeftFinger3Plus.output3Dy LeftFinger3_rig_fingerjoint1.rotateZ;
+connectAttr -f LeftFinger3Plus.output3Dz LeftFinger3_rig_fingerjoint2.rotateZ;
+
+connectAttr -f LeftHand_CC.finger4 LeftFinger4BMultiply.input1X;
+connectAttr -f LeftHand_CC.finger4 LeftFinger4BMultiply.input1Y;
+connectAttr -f LeftHand_CC.finger4 LeftFinger4BMultiply.input1Z;
+
+createNode multiplyDivide -n Leftshut1MultiplxA11111_rz;
+setAttr "Leftshut1MultiplxA11111_rz.input2X" .1;
+setAttr "Leftshut1MultiplxA11111_rz.input2Y" .1;
+setAttr "Leftshut1MultiplxA11111_rz.input2Z" .1;
+connectAttr -f LeftHand_CCShape.E1_rz Leftshut1MultiplxA11111_rz.input1X;
+connectAttr -f Leftshut1MultiplxA11111_rz.outputX LeftFinger4BMultiply.input2X;
+
+connectAttr -f LeftHand_CCShape.E2_rz Leftshut1MultiplxA11111_rz.input1Y;
+connectAttr -f Leftshut1MultiplxA11111_rz.outputY LeftFinger4BMultiply.input2Y;
+
+connectAttr -f LeftHand_CCShape.E3_rz Leftshut1MultiplxA11111_rz.input1Z;
+connectAttr -f Leftshut1MultiplxA11111_rz.outputZ LeftFinger4BMultiply.input2Z;
+
+connectAttr -f LeftFinger4BMultiply.outputX LeftFinger4Plus.input3D[0].input3Dx;
+connectAttr -f LeftFinger4BMultiply.outputY LeftFinger4Plus.input3D[0].input3Dy;
+connectAttr -f LeftFinger4BMultiply.outputZ LeftFinger4Plus.input3D[0].input3Dz;
+//connectAttr -f LeftFinger4_finger_control.rotateZ LeftFinger4Plus.input3D[1].input3Dx;
+connectAttr -f LeftFinger4_finger_control.MiddleJoint LeftFinger4Plus.input3D[1].input3Dy;
+connectAttr -f LeftFinger4_finger_control.LastJoint LeftFinger4Plus.input3D[1].input3Dz;
+//connectAttr -f LeftFinger4_finger_control.rotateX ($LeftFinger4+".rotateX");
+connectAttr -f LeftFinger4Plus.output3Dx ($LeftFinger4+".rotateZ");
+connectAttr -f LeftFinger4Plus.output3Dy LeftFinger4_rig_fingerjoint1.rotateZ;
+connectAttr -f LeftFinger4Plus.output3Dz LeftFinger4_rig_fingerjoint2.rotateZ;
+
+setAttr "Leftshut2Multiply.input1Z" -0.1;
+setAttr "LeftThumbEMultiply.input2X" 0.1;
+connectAttr -f LeftHand_CC.thumb LeftThumbBMultiply.input1X;
+connectAttr -f LeftHand_CC.thumb LeftThumbBMultiply.input1Y;
+connectAttr -f LeftHand_CC.thumb LeftThumbBMultiply.input1Z;
+
+createNode multiplyDivide -n Leftshut1MultiplxA1_rz;
+setAttr "Leftshut1MultiplxA1_rz.input2X" .1;
+setAttr "Leftshut1MultiplxA1_rz.input2Y" .1;
+setAttr "Leftshut1MultiplxA1_rz.input2Z" .1;
+connectAttr -f LeftHand_CCShape.A1_rz Leftshut1MultiplxA1_rz.input1X;
+connectAttr -f LeftHand_CCShape.A2_rz Leftshut1MultiplxA1_rz.input1Y;
+connectAttr -f LeftHand_CCShape.A3_rz Leftshut1MultiplxA1_rz.input1Z;
+connectAttr -f Leftshut1MultiplxA1_rz.outputX LeftThumbBMultiply.input2X;
+connectAttr -f Leftshut1MultiplxA1_rz.outputY LeftThumbBMultiply.input2Y;
+connectAttr -f Leftshut1MultiplxA1_rz.outputZ LeftThumbBMultiply.input2Z;
+
+connectAttr -f LeftThumbBMultiply.outputX LeftThumbPlus.input3D[0].input3Dx;
+connectAttr -f LeftThumbBMultiply.outputY LeftThumbPlus.input3D[0].input3Dy;
+connectAttr -f LeftThumbBMultiply.outputZ LeftThumbPlus.input3D[0].input3Dz;
+//connectAttr -f LeftThumb_finger_control.rotateZ LeftThumbPlus.input3D[1].input3Dx;
+connectAttr -f LeftThumb_finger_control.MiddleJoint LeftThumbPlus.input3D[1].input3Dy;
+connectAttr -f LeftThumb_finger_control.LastJoint LeftThumbPlus.input3D[1].input3Dz;
+//connectAttr -f LeftThumb_finger_control.rotateX LeftthumbDPlus.input3D[1].input3Dx;;
+
+createNode multiplyDivide -n Leftshut1MultiplxA12_rz;
+setAttr "Leftshut1MultiplxA12_rz.input2X" .1;
+setAttr "Leftshut1MultiplxA12_rz.input2Y" .1;
+setAttr "Leftshut1MultiplxA12_rz.input2Z" .1;
+connectAttr -f LeftHand_CCShape.A1_rx Leftshut1MultiplxA12_rz.input1X;
+connectAttr -f Leftshut1MultiplxA12_rz.outputX Leftshut1Multiplx.input1Z;
+
+connectAttr -f LeftHand_CCShape.A1_ry Leftshut1MultiplxA12_rz.input1Y;
+connectAttr -f Leftshut1MultiplxA12_rz.outputY Leftshut1Multiply.input1Z;
+
+connectAttr -f Leftshut2Multiplx.outputZ Leftshut1_Plus.input3D[0].input3Dz;
+connectAttr -f Leftshut2Multiply.outputZ Leftshut1Plus.input3D[0].input3Dz;
+connectAttr -f Leftshut1_Plus.output3Dz LeftThumbPlusA.input3D[0].input3Dy;
+connectAttr -f Leftshut1Plus.output3Dz LeftThumbPlusA.input3D[0].input3Dy;
+
+connectAttr -f LeftHand_CC.thumb Leftshut1Multiplx.input2Z;
+connectAttr -f LeftHand_CC.thumb Leftshut1Multiply.input2Z;
+
+connectAttr -f Leftshut1Multiply.outputZ Leftshut2Multiplx.input2Z;
+connectAttr -f Leftshut1Multiply.outputZ Leftshut2Multiply.input2Z;
+//connectAttr -f LeftThumb_finger_control.rotateY Leftshut1Plus.input3D[1].input3Dz;
+connectAttr -f LeftThumbPlus.output3Dx LeftThumbPlusA.input3D[0].input3Dz;
+connectAttr -f LeftThumbPlusA.output3Dx ($Thumbnull+".rotateX");
+connectAttr -f LeftThumbPlusA.output3Dy ($Thumbnull+".rotateY");
+connectAttr -f LeftThumbPlusA.output3Dz ($Thumbnull+".rotateZ");
+connectAttr -f LeftThumbPlus.output3Dy LeftThumb_rig_fingerjoint1.rotateZ;
+connectAttr -f LeftThumbPlus.output3Dz LeftThumb_rig_fingerjoint2.rotateZ;
+
+connectAttr -f LeftHand_CC.thumb LeftThumbDMultiply.input2X;
+connectAttr -f LeftHand_CCShape.A1_rx LeftThumbEMultiply.input1X;
+connectAttr -f LeftThumbEMultiply.outputX LeftThumbDMultiply.input1X;
+connectAttr -f LeftThumbDMultiply.outputX LeftthumbDPlus.input3D[0].input3Dx;
+connectAttr -f LeftthumbDPlus.output3Dx LeftThumbPlusA.input3D[0].input3Dx;
+
+connectAttr -f LeftHand_CC.shut Leftshut1Multiplx.input1X;
+connectAttr -f LeftHand_CC.shut Leftshut1Multiply.input1X;
+connectAttr -f LeftHand_CC.shut Leftshut1Multiplx.input1Y;
+connectAttr -f LeftHand_CC.shut Leftshut1Multiply.input1Y;
+connectAttr -f Leftshut1Multiply.outputX Leftshut1Plus.input3D[0].input3Dx;
+connectAttr -f Leftshut1Multiply.outputY Leftshut1Plus.input3D[0].input3Dy;
+//connectAttr -f LeftFinger1_finger_control.rotateY Leftshut1Plus.input3D[1].input3Dx;
+//connectAttr -f LeftFinger4_finger_control.rotateY Leftshut1Plus.input3D[1].input3Dy;
+connectAttr -f Leftshut1Plus.output3Dx ($LeftFinger1+".rotateY");
+connectAttr -f Leftshut1Plus.output3Dy ($LeftFinger4+".rotateY");
+
+connectAttr -f LeftHand_CC.shut Leftshut2Multiply.input1X;
+connectAttr -f LeftHand_CC.shut Leftshut2Multiply.input1Y;
+connectAttr -f Leftshut2Multiply.outputX Leftshut2Plus.input3D[0].input3Dx;
+connectAttr -f Leftshut2Multiply.outputY Leftshut2Plus.input3D[0].input3Dy;
+//connectAttr -f LeftFinger2_finger_control.rotateY Leftshut2Plus.input3D[1].input3Dx;
+//connectAttr -f LeftFinger3_finger_control.rotateY Leftshut2Plus.input3D[1].input3Dy;
+connectAttr -f Leftshut2Plus.output3Dx ($LeftFinger2+".rotateY");
+connectAttr -f Leftshut2Plus.output3Dy ($LeftFinger3+".rotateY");
+
+createNode multiplyDivide -n Leftshut1MultiplxAB1_rz;
+createNode multiplyDivide -n Leftshut1MultiplxAB1_rz1;
+createNode multiplyDivide -n Leftshut1MultiplxAB2_rz;
+createNode multiplyDivide -n Leftshut1MultiplxAB2_rz1;
+createNode plusMinusAverage -n LeftThumbPlusAB2;
+createNode multiplyDivide -n Leftshut1MultiplxAB3_rz;
+createNode multiplyDivide -n Leftshut1MultiplxAB3_rz1;
+createNode plusMinusAverage -n LeftThumbPlusAB3;
+createNode multiplyDivide -n Leftshut1MultiplxAB4_rz;
+createNode multiplyDivide -n Leftshut1MultiplxAB4_rz1;
+createNode plusMinusAverage -n LeftThumbPlusAB4;
+createNode multiplyDivide -n Leftshut1MultiplxAB5_rz;
+createNode multiplyDivide -n Leftshut1MultiplxAB5_rz1;
+createNode plusMinusAverage -n LeftThumbPlusAB5;
+
+setAttr "Leftshut1MultiplxAB1_rz.input2X" .1;
+setAttr "Leftshut1MultiplxAB1_rz1.input2X" .1;
+setAttr "Leftshut1MultiplxAB1_rz.input2Y" .1;
+setAttr "Leftshut1MultiplxAB1_rz.input2Z" .1;
+setAttr "Leftshut1MultiplxAB2_rz1.input2X" .1;
+setAttr "Leftshut1MultiplxAB3_rz1.input2X" .1;
+setAttr "Leftshut1MultiplxAB4_rz1.input2X" .1;
+setAttr "Leftshut1MultiplxAB5_rz1.input2X" .1;
+
+connectAttr -f LeftHand_CCShape.shut_B1_ry Leftshut1MultiplxAB1_rz.input1X;
+connectAttr -f Leftshut1MultiplxAB1_rz.outputX Leftshut1Multiply.input2X;
+connectAttr -f LeftHand_CC.finger1 Leftshut1MultiplxAB2_rz.input1X;
+connectAttr -f LeftHand_CCShape.B1_ry Leftshut1MultiplxAB2_rz1.input1X;
+connectAttr -f Leftshut1MultiplxAB2_rz1.outputX Leftshut1MultiplxAB2_rz.input2X;
+connectAttr -f Leftshut1MultiplxAB2_rz.outputX LeftThumbPlusAB2.input3D[0].input3Dx;
+connectAttr -f Leftshut1Plus.output3Dx LeftThumbPlusAB2.input3D[1].input3Dx;
+connectAttr -f LeftThumbPlusAB2.output3Dx LeftFinger1_finger_transform.rotateY;
+
+connectAttr -f LeftHand_CCShape.shut_C1_ry Leftshut1MultiplxAB1_rz.input1Z;
+connectAttr -f Leftshut1MultiplxAB1_rz.outputZ Leftshut2Multiply.input2X;
+connectAttr -f LeftHand_CC.finger2 Leftshut1MultiplxAB3_rz.input1X;
+connectAttr -f LeftHand_CCShape.C1_ry Leftshut1MultiplxAB3_rz1.input1X;
+connectAttr -f Leftshut1MultiplxAB3_rz1.outputX Leftshut1MultiplxAB3_rz.input2X;
+connectAttr -f Leftshut1MultiplxAB3_rz.outputX LeftThumbPlusAB3.input3D[0].input3Dx;
+connectAttr -f Leftshut2Plus.output3Dx LeftThumbPlusAB3.input3D[1].input3Dx;
+connectAttr -f LeftThumbPlusAB3.output3Dx LeftFinger2_finger_transform.rotateY;
+
+connectAttr -f LeftHand_CCShape.shut_D1_ry Leftshut1MultiplxAB1_rz1.input1X;
+connectAttr -f Leftshut1MultiplxAB1_rz1.outputX Leftshut2Multiply.input2Y;
+connectAttr -f LeftHand_CC.finger3 Leftshut1MultiplxAB4_rz.input1X;
+connectAttr -f LeftHand_CCShape.D1_ry Leftshut1MultiplxAB4_rz1.input1X;
+connectAttr -f Leftshut1MultiplxAB4_rz1.outputX Leftshut1MultiplxAB4_rz.input2X;
+connectAttr -f Leftshut1MultiplxAB4_rz.outputX LeftThumbPlusAB4.input3D[0].input3Dx;
+connectAttr -f Leftshut2Plus.output3Dy LeftThumbPlusAB4.input3D[1].input3Dx;
+connectAttr -f LeftThumbPlusAB4.output3Dx LeftFinger3_finger_transform.rotateY;
+
+connectAttr -f LeftHand_CCShape.shut_E1_ry Leftshut1MultiplxAB1_rz.input1Y;
+connectAttr -f Leftshut1MultiplxAB1_rz.outputY Leftshut1Multiply.input2Y;
+connectAttr -f LeftHand_CC.finger4 Leftshut1MultiplxAB5_rz.input1X;
+connectAttr -f LeftHand_CCShape.E1_ry Leftshut1MultiplxAB5_rz1.input1X;
+connectAttr -f Leftshut1MultiplxAB5_rz1.outputX Leftshut1MultiplxAB5_rz.input2X;
+connectAttr -f Leftshut1MultiplxAB5_rz.outputX LeftThumbPlusAB5.input3D[0].input3Dx;
+connectAttr -f Leftshut1Plus.output3Dy LeftThumbPlusAB5.input3D[1].input3Dx;
+connectAttr -f LeftThumbPlusAB5.output3Dx LeftFinger4_finger_transform.rotateY;
+
+
+
+
+createNode plusMinusAverage -n RightThumbPlus;
+createNode plusMinusAverage -n RightFinger1Plus;
+createNode plusMinusAverage -n RightFinger2Plus;
+createNode plusMinusAverage -n RightFinger3Plus;
+createNode plusMinusAverage -n RightFinger4Plus;
+createNode plusMinusAverage -n Rightshut1Plus;
+createNode plusMinusAverage -n Rightshut1_Plus;
+createNode plusMinusAverage -n Rightshut2Plus;
+
+createNode multiplyDivide -n RightThumbBMultiply;
+createNode multiplyDivide -n RightFinger1BMultiply;
+createNode multiplyDivide -n RightFinger2BMultiply;
+createNode multiplyDivide -n RightFinger3BMultiply;
+createNode multiplyDivide -n RightFinger4BMultiply;
+
+createNode plusMinusAverage -n RightthumbDPlus;
+createNode multiplyDivide -n RightThumbDMultiply;
+createNode multiplyDivide -n RightThumbEMultiply;
+
+float $thumbARightA[]=`xform -q -ro RightThumb_rig_knuckle`;
+createNode plusMinusAverage -n RightThumbPlusA;
+//setAttr "RightThumbPlusA.input3D[1].input3Dx" $thumbARightA[0] ;
+//setAttr "RightThumbPlusA.input3D[1].input3Dy" $thumbARightA[1] ;
+//setAttr "RightThumbPlusA.input3D[1].input3Dz" $thumbARightA[2] ;
+setAttr "RightThumbPlusA.input3D[1].input3Dx" 0 ;
+setAttr "RightThumbPlusA.input3D[1].input3Dy" 0 ;
+setAttr "RightThumbPlusA.input3D[1].input3Dz" 0 ;
+
+createNode multiplyDivide -n Rightshut1Multiplx;
+createNode multiplyDivide -n Rightshut1Multiply;
+createNode multiplyDivide -n Rightshut1Multiplyrev;
+
+createNode multiplyDivide -n Rightshut2Multiplx;
+createNode multiplyDivide -n Rightshut2Multiply;
+createNode multiplyDivide -n Rightshut2Multiplyrev;
+catch (`delete RightFinger1_knuckle_orientConstraint1 RightFinger2_knuckle_orientConstraint1 RightFinger3_knuckle_orientConstraint1 RightFinger4_knuckle_orientConstraint1 RightThumb_knuckle_orientConstraint1`);
+
+float $thumbAL[]=`xform -q -ro RightThumb_rig_knuckle`;
+if (!`connectionInfo -isSource RightFinger1_rig_fingerjoint1.rz`)
+	disconnectAttr RightFinger1_finger_control.MiddleJoint RightFinger1_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource RightFinger1_rig_fingerjoint2.rz`)
+	disconnectAttr RightFinger1_finger_control.LastJoint RightFinger1_rig_fingerjoint2.rz;
+if (!`connectionInfo -isSource RightFinger2_rig_fingerjoint1.rz`)
+	disconnectAttr RightFinger2_finger_control.MiddleJoint RightFinger2_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource RightFinger2_rig_fingerjoint2.rz`)
+	disconnectAttr RightFinger2_finger_control.LastJoint RightFinger2_rig_fingerjoint2.rz;
+if (!`connectionInfo -isSource RightFinger3_rig_fingerjoint1.rz`)
+	disconnectAttr RightFinger3_finger_control.MiddleJoint RightFinger3_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource RightFinger3_rig_fingerjoint2.rz`)
+	disconnectAttr RightFinger3_finger_control.LastJoint RightFinger3_rig_fingerjoint2.rz;
+if (!`connectionInfo -isSource RightFinger4_rig_fingerjoint1.rz`)
+	disconnectAttr RightFinger4_finger_control.MiddleJoint RightFinger4_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource RightFinger4_rig_fingerjoint2.rz`)
+	disconnectAttr RightFinger4_finger_control.LastJoint RightFinger4_rig_fingerjoint2.rz;
+if (!`connectionInfo -isSource RightThumb_rig_fingerjoint1.rz`)
+	disconnectAttr RightThumb_finger_control.MiddleJoint RightThumb_rig_fingerjoint1.rz;
+if (!`connectionInfo -isSource RightThumb_rig_fingerjoint2.rz`)
+	disconnectAttr RightThumb_finger_control.LastJoint RightThumb_rig_fingerjoint2.rz;
+
+connectAttr -f RightHand_CC.finger1 RightFinger1BMultiply.input1X;
+connectAttr -f RightHand_CC.finger1 RightFinger1BMultiply.input1Y;
+connectAttr -f RightHand_CC.finger1 RightFinger1BMultiply.input1Z;
+
+createNode multiplyDivide -n Rightshut1MultiplxA11_rz;
+setAttr "Rightshut1MultiplxA11_rz.input2X" .1;
+setAttr "Rightshut1MultiplxA11_rz.input2Y" .1;
+setAttr "Rightshut1MultiplxA11_rz.input2Z" .1;
+connectAttr -f RightHand_CCShape.B1_rz Rightshut1MultiplxA11_rz.input1X;
+connectAttr -f Rightshut1MultiplxA11_rz.outputX RightFinger1BMultiply.input2X;
+
+connectAttr -f RightHand_CCShape.B2_rz Rightshut1MultiplxA11_rz.input1Y;
+connectAttr -f Rightshut1MultiplxA11_rz.outputY RightFinger1BMultiply.input2Y;
+
+connectAttr -f RightHand_CCShape.B3_rz Rightshut1MultiplxA11_rz.input1Z;
+connectAttr -f Rightshut1MultiplxA11_rz.outputZ RightFinger1BMultiply.input2Z;
+
+connectAttr -f RightFinger1BMultiply.outputX RightFinger1Plus.input3D[0].input3Dx;
+connectAttr -f RightFinger1BMultiply.outputY RightFinger1Plus.input3D[0].input3Dy;
+connectAttr -f RightFinger1BMultiply.outputZ RightFinger1Plus.input3D[0].input3Dz;
+//connectAttr -f RightFinger1_finger_control.rotateZ RightFinger1Plus.input3D[1].input3Dx;
+connectAttr -f RightFinger1_finger_control.MiddleJoint RightFinger1Plus.input3D[1].input3Dy;
+connectAttr -f RightFinger1_finger_control.LastJoint RightFinger1Plus.input3D[1].input3Dz;
+//connectAttr -f RightFinger1_finger_control.rotateX ($RightFinger1+".rotateX");
+connectAttr -f RightFinger1Plus.output3Dx ($RightFinger1+".rotateZ");
+connectAttr -f RightFinger1Plus.output3Dy RightFinger1_rig_fingerjoint1.rotateZ;
+connectAttr -f RightFinger1Plus.output3Dz RightFinger1_rig_fingerjoint2.rotateZ;
+
+connectAttr -f RightHand_CC.finger2 RightFinger2BMultiply.input1X;
+connectAttr -f RightHand_CC.finger2 RightFinger2BMultiply.input1Y;
+connectAttr -f RightHand_CC.finger2 RightFinger2BMultiply.input1Z;
+
+createNode multiplyDivide -n Rightshut1MultiplxA111_rz;
+setAttr "Rightshut1MultiplxA111_rz.input2X" .1;
+setAttr "Rightshut1MultiplxA111_rz.input2Y" .1;
+setAttr "Rightshut1MultiplxA111_rz.input2Z" .1;
+connectAttr -f RightHand_CCShape.C1_rz Rightshut1MultiplxA111_rz.input1X;
+connectAttr -f Rightshut1MultiplxA111_rz.outputX RightFinger2BMultiply.input2X;
+
+connectAttr -f RightHand_CCShape.C2_rz Rightshut1MultiplxA111_rz.input1Y;
+connectAttr -f Rightshut1MultiplxA111_rz.outputY RightFinger2BMultiply.input2Y;
+
+connectAttr -f RightHand_CCShape.C3_rz Rightshut1MultiplxA111_rz.input1Z;
+connectAttr -f Rightshut1MultiplxA111_rz.outputZ RightFinger2BMultiply.input2Z;
+
+connectAttr -f RightFinger2BMultiply.outputX RightFinger2Plus.input3D[0].input3Dx;
+connectAttr -f RightFinger2BMultiply.outputY RightFinger2Plus.input3D[0].input3Dy;
+connectAttr -f RightFinger2BMultiply.outputZ RightFinger2Plus.input3D[0].input3Dz;
+//connectAttr -f RightFinger2_finger_control.rotateZ RightFinger2Plus.input3D[1].input3Dx;
+connectAttr -f RightFinger2_finger_control.MiddleJoint RightFinger2Plus.input3D[1].input3Dy;
+connectAttr -f RightFinger2_finger_control.LastJoint RightFinger2Plus.input3D[1].input3Dz;
+//connectAttr -f RightFinger2_finger_control.rotateX ($RightFinger2+".rotateX");
+connectAttr -f RightFinger2Plus.output3Dx ($RightFinger2+".rotateZ");
+connectAttr -f RightFinger2Plus.output3Dy RightFinger2_rig_fingerjoint1.rotateZ;
+connectAttr -f RightFinger2Plus.output3Dz RightFinger2_rig_fingerjoint2.rotateZ;
+
+connectAttr -f RightHand_CC.finger3 RightFinger3BMultiply.input1X;
+connectAttr -f RightHand_CC.finger3 RightFinger3BMultiply.input1Y;
+connectAttr -f RightHand_CC.finger3 RightFinger3BMultiply.input1Z;
+
+createNode multiplyDivide -n Rightshut1MultiplxA1111_rz;
+setAttr "Rightshut1MultiplxA1111_rz.input2X" .1;
+setAttr "Rightshut1MultiplxA1111_rz.input2Y" .1;
+setAttr "Rightshut1MultiplxA1111_rz.input2Z" .1;
+connectAttr -f RightHand_CCShape.D1_rz Rightshut1MultiplxA1111_rz.input1X;
+connectAttr -f Rightshut1MultiplxA1111_rz.outputX RightFinger3BMultiply.input2X;
+
+connectAttr -f RightHand_CCShape.D2_rz Rightshut1MultiplxA1111_rz.input1Y;
+connectAttr -f Rightshut1MultiplxA1111_rz.outputY RightFinger3BMultiply.input2Y;
+
+connectAttr -f RightHand_CCShape.D3_rz Rightshut1MultiplxA1111_rz.input1Z;
+connectAttr -f Rightshut1MultiplxA1111_rz.outputZ RightFinger3BMultiply.input2Z;
+
+connectAttr -f RightFinger3BMultiply.outputX RightFinger3Plus.input3D[0].input3Dx;
+connectAttr -f RightFinger3BMultiply.outputY RightFinger3Plus.input3D[0].input3Dy;
+connectAttr -f RightFinger3BMultiply.outputZ RightFinger3Plus.input3D[0].input3Dz;
+//connectAttr -f RightFinger3_finger_control.rotateZ RightFinger3Plus.input3D[1].input3Dx;
+connectAttr -f RightFinger3_finger_control.MiddleJoint RightFinger3Plus.input3D[1].input3Dy;
+connectAttr -f RightFinger3_finger_control.LastJoint RightFinger3Plus.input3D[1].input3Dz;
+//connectAttr -f RightFinger3_finger_control.rotateX ($RightFinger3+".rotateX");
+connectAttr -f RightFinger3Plus.output3Dx ($RightFinger3+".rotateZ");
+connectAttr -f RightFinger3Plus.output3Dy RightFinger3_rig_fingerjoint1.rotateZ;
+connectAttr -f RightFinger3Plus.output3Dz RightFinger3_rig_fingerjoint2.rotateZ;
+
+connectAttr -f RightHand_CC.finger4 RightFinger4BMultiply.input1X;
+connectAttr -f RightHand_CC.finger4 RightFinger4BMultiply.input1Y;
+connectAttr -f RightHand_CC.finger4 RightFinger4BMultiply.input1Z;
+
+createNode multiplyDivide -n Rightshut1MultiplxA11111_rz;
+setAttr "Rightshut1MultiplxA11111_rz.input2X" .1;
+setAttr "Rightshut1MultiplxA11111_rz.input2Y" .1;
+setAttr "Rightshut1MultiplxA11111_rz.input2Z" .1;
+connectAttr -f RightHand_CCShape.E1_rz Rightshut1MultiplxA11111_rz.input1X;
+connectAttr -f Rightshut1MultiplxA11111_rz.outputX RightFinger4BMultiply.input2X;
+
+connectAttr -f RightHand_CCShape.E2_rz Rightshut1MultiplxA11111_rz.input1Y;
+connectAttr -f Rightshut1MultiplxA11111_rz.outputY RightFinger4BMultiply.input2Y;
+
+connectAttr -f RightHand_CCShape.E3_rz Rightshut1MultiplxA11111_rz.input1Z;
+connectAttr -f Rightshut1MultiplxA11111_rz.outputZ RightFinger4BMultiply.input2Z;
+
+connectAttr -f RightFinger4BMultiply.outputX RightFinger4Plus.input3D[0].input3Dx;
+connectAttr -f RightFinger4BMultiply.outputY RightFinger4Plus.input3D[0].input3Dy;
+connectAttr -f RightFinger4BMultiply.outputZ RightFinger4Plus.input3D[0].input3Dz;
+//connectAttr -f RightFinger4_finger_control.rotateZ RightFinger4Plus.input3D[1].input3Dx;
+connectAttr -f RightFinger4_finger_control.MiddleJoint RightFinger4Plus.input3D[1].input3Dy;
+connectAttr -f RightFinger4_finger_control.LastJoint RightFinger4Plus.input3D[1].input3Dz;
+//connectAttr -f RightFinger4_finger_control.rotateX ($RightFinger4+".rotateX");
+connectAttr -f RightFinger4Plus.output3Dx ($RightFinger4+".rotateZ");
+connectAttr -f RightFinger4Plus.output3Dy RightFinger4_rig_fingerjoint1.rotateZ;
+connectAttr -f RightFinger4Plus.output3Dz RightFinger4_rig_fingerjoint2.rotateZ;
+
+setAttr "Rightshut2Multiply.input1Z" -0.1;
+setAttr "RightThumbEMultiply.input2X" 0.1;
+connectAttr -f RightHand_CC.thumb RightThumbBMultiply.input1X;
+connectAttr -f RightHand_CC.thumb RightThumbBMultiply.input1Y;
+connectAttr -f RightHand_CC.thumb RightThumbBMultiply.input1Z;
+
+createNode multiplyDivide -n Rightshut1MultiplxA1_rz;
+setAttr "Rightshut1MultiplxA1_rz.input2X" .1;
+setAttr "Rightshut1MultiplxA1_rz.input2Y" .1;
+setAttr "Rightshut1MultiplxA1_rz.input2Z" .1;
+connectAttr -f RightHand_CCShape.A1_rz Rightshut1MultiplxA1_rz.input1X;
+connectAttr -f RightHand_CCShape.A2_rz Rightshut1MultiplxA1_rz.input1Y;
+connectAttr -f RightHand_CCShape.A3_rz Rightshut1MultiplxA1_rz.input1Z;
+connectAttr -f Rightshut1MultiplxA1_rz.outputX RightThumbBMultiply.input2X;
+connectAttr -f Rightshut1MultiplxA1_rz.outputY RightThumbBMultiply.input2Y;
+connectAttr -f Rightshut1MultiplxA1_rz.outputZ RightThumbBMultiply.input2Z;
+
+connectAttr -f RightThumbBMultiply.outputX RightThumbPlus.input3D[0].input3Dx;
+connectAttr -f RightThumbBMultiply.outputY RightThumbPlus.input3D[0].input3Dy;
+connectAttr -f RightThumbBMultiply.outputZ RightThumbPlus.input3D[0].input3Dz;
+//connectAttr -f RightThumb_finger_control.rotateZ RightThumbPlus.input3D[1].input3Dx;
+connectAttr -f RightThumb_finger_control.MiddleJoint RightThumbPlus.input3D[1].input3Dy;
+connectAttr -f RightThumb_finger_control.LastJoint RightThumbPlus.input3D[1].input3Dz;
+//connectAttr -f RightThumb_finger_control.rotateX RightthumbDPlus.input3D[1].input3Dx;;
+
+createNode multiplyDivide -n Rightshut1MultiplxA12_rz;
+setAttr "Rightshut1MultiplxA12_rz.input2X" .1;
+setAttr "Rightshut1MultiplxA12_rz.input2Y" .1;
+setAttr "Rightshut1MultiplxA12_rz.input2Z" .1;
+connectAttr -f RightHand_CCShape.A1_rx Rightshut1MultiplxA12_rz.input1X;
+connectAttr -f Rightshut1MultiplxA12_rz.outputX Rightshut1Multiplx.input1Z;
+
+connectAttr -f RightHand_CCShape.A1_ry Rightshut1MultiplxA12_rz.input1Y;
+connectAttr -f Rightshut1MultiplxA12_rz.outputY Rightshut1Multiply.input1Z;
+
+connectAttr -f Rightshut2Multiplx.outputZ Rightshut1_Plus.input3D[0].input3Dz;
+connectAttr -f Rightshut2Multiply.outputZ Rightshut1Plus.input3D[0].input3Dz;
+connectAttr -f Rightshut1_Plus.output3Dz RightThumbPlusA.input3D[0].input3Dy;
+connectAttr -f Rightshut1Plus.output3Dz RightThumbPlusA.input3D[0].input3Dy;
+
+connectAttr -f RightHand_CC.thumb Rightshut1Multiplx.input2Z;
+connectAttr -f RightHand_CC.thumb Rightshut1Multiply.input2Z;
+
+connectAttr -f Rightshut1Multiply.outputZ Rightshut2Multiplx.input2Z;
+connectAttr -f Rightshut1Multiply.outputZ Rightshut2Multiply.input2Z;
+//connectAttr -f RightThumb_finger_control.rotateY Rightshut1Plus.input3D[1].input3Dz;
+connectAttr -f RightThumbPlus.output3Dx RightThumbPlusA.input3D[0].input3Dz;
+connectAttr -f RightThumbPlusA.output3Dx ($RightThumbnull+".rotateX");
+connectAttr -f RightThumbPlusA.output3Dy ($RightThumbnull+".rotateY");
+connectAttr -f RightThumbPlusA.output3Dz ($RightThumbnull+".rotateZ");
+connectAttr -f RightThumbPlus.output3Dy RightThumb_rig_fingerjoint1.rotateZ;
+connectAttr -f RightThumbPlus.output3Dz RightThumb_rig_fingerjoint2.rotateZ;
+
+connectAttr -f RightHand_CC.thumb RightThumbDMultiply.input2X;
+connectAttr -f RightHand_CCShape.A1_rx RightThumbEMultiply.input1X;
+connectAttr -f RightThumbEMultiply.outputX RightThumbDMultiply.input1X;
+connectAttr -f RightThumbDMultiply.outputX RightthumbDPlus.input3D[0].input3Dx;
+connectAttr -f RightthumbDPlus.output3Dx RightThumbPlusA.input3D[0].input3Dx;
+
+connectAttr -f RightHand_CC.shut Rightshut1Multiplx.input1X;
+connectAttr -f RightHand_CC.shut Rightshut1Multiply.input1X;
+connectAttr -f RightHand_CC.shut Rightshut1Multiplx.input1Y;
+connectAttr -f RightHand_CC.shut Rightshut1Multiply.input1Y;
+connectAttr -f Rightshut1Multiply.outputX Rightshut1Multiplyrev.input1X;
+connectAttr -f Rightshut1Multiply.outputY Rightshut1Multiplyrev.input1Y;
+connectAttr -f Rightshut1Multiplyrev.outputX Rightshut1Plus.input3D[0].input3Dx;
+connectAttr -f Rightshut1Multiplyrev.outputY Rightshut1Plus.input3D[0].input3Dy;
+setAttr Rightshut1Multiplyrev.input2X -1;
+setAttr Rightshut1Multiplyrev.input2Y -1;
+//connectAttr -f RightFinger1_finger_control.rotateY Rightshut1Plus.input3D[1].input3Dx;
+//connectAttr -f RightFinger4_finger_control.rotateY Rightshut1Plus.input3D[1].input3Dy;
+connectAttr -f Rightshut1Plus.output3Dx ($RightFinger1+".rotateY");
+connectAttr -f Rightshut1Plus.output3Dy ($RightFinger4+".rotateY");
+
+connectAttr -f RightHand_CC.shut Rightshut2Multiply.input1X;
+connectAttr -f RightHand_CC.shut Rightshut2Multiply.input1Y;
+connectAttr -f Rightshut2Multiply.outputX Rightshut2Multiplyrev.input1X;
+connectAttr -f Rightshut2Multiply.outputY Rightshut2Multiplyrev.input1Y;
+connectAttr -f Rightshut2Multiplyrev.outputX Rightshut2Plus.input3D[0].input3Dx;
+connectAttr -f Rightshut2Multiplyrev.outputY Rightshut2Plus.input3D[0].input3Dy;
+setAttr Rightshut2Multiplyrev.input2X -1;
+setAttr Rightshut2Multiplyrev.input2Y -1;
+
+//connectAttr -f RightFinger2_finger_control.rotateY Rightshut2Plus.input3D[1].input3Dx;
+//connectAttr -f RightFinger3_finger_control.rotateY Rightshut2Plus.input3D[1].input3Dy;
+connectAttr -f Rightshut2Plus.output3Dx ($RightFinger2+".rotateY");
+connectAttr -f Rightshut2Plus.output3Dy ($RightFinger3+".rotateY");
+
+createNode multiplyDivide -n Rightshut1MultiplxAB1_rz;
+createNode multiplyDivide -n Rightshut1MultiplxAB1_rz1;
+createNode multiplyDivide -n Rightshut1MultiplxAB2_rz;
+createNode multiplyDivide -n Rightshut1MultiplxAB2_rz1;
+createNode plusMinusAverage -n RightThumbPlusAB2;
+createNode multiplyDivide -n Rightshut1MultiplxAB3_rz;
+createNode multiplyDivide -n Rightshut1MultiplxAB3_rz1;
+createNode plusMinusAverage -n RightThumbPlusAB3;
+createNode multiplyDivide -n Rightshut1MultiplxAB4_rz;
+createNode multiplyDivide -n Rightshut1MultiplxAB4_rz1;
+createNode plusMinusAverage -n RightThumbPlusAB4;
+createNode multiplyDivide -n Rightshut1MultiplxAB5_rz;
+createNode multiplyDivide -n Rightshut1MultiplxAB5_rz1;
+createNode plusMinusAverage -n RightThumbPlusAB5;
+
+setAttr "Rightshut1MultiplxAB1_rz.input2X" .1;
+setAttr "Rightshut1MultiplxAB1_rz1.input2X" .1;
+setAttr "Rightshut1MultiplxAB1_rz.input2Y" .1;
+setAttr "Rightshut1MultiplxAB1_rz.input2Z" .1;
+setAttr "Rightshut1MultiplxAB2_rz1.input2X" .1;
+setAttr "Rightshut1MultiplxAB3_rz1.input2X" .1;
+setAttr "Rightshut1MultiplxAB4_rz1.input2X" .1;
+setAttr "Rightshut1MultiplxAB5_rz1.input2X" .1;
+
+connectAttr -f RightHand_CCShape.shut_B1_ry Rightshut1MultiplxAB1_rz.input1X;
+connectAttr -f Rightshut1MultiplxAB1_rz.outputX Rightshut1Multiply.input2X;
+connectAttr -f RightHand_CC.finger1 Rightshut1MultiplxAB2_rz.input1X;
+connectAttr -f RightHand_CCShape.B1_ry Rightshut1MultiplxAB2_rz1.input1X;
+connectAttr -f Rightshut1MultiplxAB2_rz1.outputX Rightshut1MultiplxAB2_rz.input2X;
+connectAttr -f Rightshut1MultiplxAB2_rz.outputX RightThumbPlusAB2.input3D[0].input3Dx;
+connectAttr -f Rightshut1Plus.output3Dx RightThumbPlusAB2.input3D[1].input3Dx;
+connectAttr -f RightThumbPlusAB2.output3Dx RightFinger1_finger_transform.rotateY;
+
+connectAttr -f RightHand_CCShape.shut_C1_ry Rightshut1MultiplxAB1_rz.input1Z;
+connectAttr -f Rightshut1MultiplxAB1_rz.outputZ Rightshut2Multiply.input2X;
+connectAttr -f RightHand_CC.finger2 Rightshut1MultiplxAB3_rz.input1X;
+connectAttr -f RightHand_CCShape.C1_ry Rightshut1MultiplxAB3_rz1.input1X;
+connectAttr -f Rightshut1MultiplxAB3_rz1.outputX Rightshut1MultiplxAB3_rz.input2X;
+connectAttr -f Rightshut1MultiplxAB3_rz.outputX RightThumbPlusAB3.input3D[0].input3Dx;
+connectAttr -f Rightshut2Plus.output3Dx RightThumbPlusAB3.input3D[1].input3Dx;
+connectAttr -f RightThumbPlusAB3.output3Dx RightFinger2_finger_transform.rotateY;
+
+connectAttr -f RightHand_CCShape.shut_D1_ry Rightshut1MultiplxAB1_rz1.input1X;
+connectAttr -f Rightshut1MultiplxAB1_rz1.outputX Rightshut2Multiply.input2Y;
+connectAttr -f RightHand_CC.finger3 Rightshut1MultiplxAB4_rz.input1X;
+connectAttr -f RightHand_CCShape.D1_ry Rightshut1MultiplxAB4_rz1.input1X;
+connectAttr -f Rightshut1MultiplxAB4_rz1.outputX Rightshut1MultiplxAB4_rz.input2X;
+connectAttr -f Rightshut1MultiplxAB4_rz.outputX RightThumbPlusAB4.input3D[0].input3Dx;
+connectAttr -f Rightshut2Plus.output3Dy RightThumbPlusAB4.input3D[1].input3Dx;
+connectAttr -f RightThumbPlusAB4.output3Dx RightFinger3_finger_transform.rotateY;
+
+connectAttr -f RightHand_CCShape.shut_E1_ry Rightshut1MultiplxAB1_rz.input1Y;
+connectAttr -f Rightshut1MultiplxAB1_rz.outputY Rightshut1Multiply.input2Y;
+connectAttr -f RightHand_CC.finger4 Rightshut1MultiplxAB5_rz.input1X;
+connectAttr -f RightHand_CCShape.E1_ry Rightshut1MultiplxAB5_rz1.input1X;
+connectAttr -f Rightshut1MultiplxAB5_rz1.outputX Rightshut1MultiplxAB5_rz.input2X;
+connectAttr -f Rightshut1MultiplxAB5_rz.outputX RightThumbPlusAB5.input3D[0].input3Dx;
+connectAttr -f Rightshut1Plus.output3Dy RightThumbPlusAB5.input3D[1].input3Dx;
+connectAttr -f RightThumbPlusAB5.output3Dx RightFinger4_finger_transform.rotateY;
+
+orientConstraint LeftThumb_finger_control LeftThumb_rig_knuckle;
+orientConstraint LeftFinger1_finger_control LeftFinger1_rig_knuckle;
+orientConstraint LeftFinger2_finger_control LeftFinger2_rig_knuckle;
+orientConstraint LeftFinger3_finger_control LeftFinger3_rig_knuckle;
+orientConstraint LeftFinger4_finger_control LeftFinger4_rig_knuckle;
+
+orientConstraint RightThumb_finger_control RightThumb_rig_knuckle;
+orientConstraint RightFinger1_finger_control RightFinger1_rig_knuckle;
+orientConstraint RightFinger2_finger_control RightFinger2_rig_knuckle;
+orientConstraint RightFinger3_finger_control RightFinger3_rig_knuckle;
+orientConstraint RightFinger4_finger_control RightFinger4_rig_knuckle;
+
+//===========L-----translateZ-----L==============
+createNode multiplyDivide -n Leftdisfinger1Multiplx;
+createNode multiplyDivide -n Leftdisfinger2Multiplx;
+createNode multiplyDivide -n Leftdisfinger3Multiplx;
+createNode multiplyDivide -n Leftdisfinger4Multiplx;
+createNode multiplyDivide -n Leftdisfinger5Multiplx;
+createNode multDoubleLinear -n Leftdisfinger1DoubleLinear;
+createNode multDoubleLinear -n Leftdisfinger1DoubleLinear1;
+createNode multDoubleLinear -n Leftdisfinger1DoubleLinear2;
+createNode multDoubleLinear -n Leftdisfinger1DoubleLinear3;
+createNode multDoubleLinear -n Leftdisfinger1DoubleLinear4;
+createNode multDoubleLinear -n Leftdisfinger1DoubleLinear5;//
+setAttr Leftdisfinger1DoubleLinear.input2 -1;
+setAttr Leftdisfinger1DoubleLinear1.input2 -.001;
+setAttr Leftdisfinger1DoubleLinear2.input2 -.001;
+setAttr Leftdisfinger1DoubleLinear3.input2 -.001;
+setAttr Leftdisfinger1DoubleLinear4.input2 -.001;
+setAttr Leftdisfinger1DoubleLinear5.input2 -.001;//
+
+connectAttr LeftHand_CC.thumb Leftdisfinger5Multiplx.input1X;
+connectAttr LeftHand_CCShape.A1_tz Leftdisfinger1DoubleLinear5.input1;
+connectAttr Leftdisfinger1DoubleLinear5.output Leftdisfinger5Multiplx.input2X;
+connectAttr Leftdisfinger5Multiplx.outputX LeftThumb_finger_transform.translateZ;//
+
+connectAttr LeftHand_CC.finger1 Leftdisfinger1DoubleLinear.input1;
+connectAttr Leftdisfinger1DoubleLinear.output Leftdisfinger1Multiplx.input1X;
+connectAttr LeftHand_CCShape.B1_tz Leftdisfinger1DoubleLinear1.input1;
+connectAttr Leftdisfinger1DoubleLinear1.output Leftdisfinger1Multiplx.input2X;
+connectAttr Leftdisfinger1Multiplx.outputX LeftFinger1_finger_transform.translateZ;
+connectAttr LeftHand_CC.finger2 Leftdisfinger2Multiplx.input1X;//
+connectAttr LeftHand_CCShape.C1_tz Leftdisfinger1DoubleLinear4.input1;//
+connectAttr Leftdisfinger1DoubleLinear4.output Leftdisfinger2Multiplx.input2X;//
+connectAttr Leftdisfinger2Multiplx.outputX LeftFinger2_finger_transform.translateZ;//
+connectAttr LeftHand_CC.finger3 Leftdisfinger3Multiplx.input1X;
+connectAttr LeftHand_CCShape.D1_tz Leftdisfinger1DoubleLinear2.input1;
+connectAttr Leftdisfinger1DoubleLinear2.output Leftdisfinger3Multiplx.input2X;
+connectAttr Leftdisfinger3Multiplx.outputX LeftFinger3_finger_transform.translateZ;
+
+connectAttr LeftHand_CC.finger4 Leftdisfinger4Multiplx.input1X;
+connectAttr LeftHand_CCShape.E1_tz Leftdisfinger1DoubleLinear3.input1;
+connectAttr Leftdisfinger1DoubleLinear3.output Leftdisfinger4Multiplx.input2X;
+connectAttr Leftdisfinger4Multiplx.outputX LeftFinger4_finger_transform.translateZ;
+
+//===========L-----translateX,Y-----L==============
+createNode multiplyDivide -n Leftdisfinger1Mud;
+createNode multiplyDivide -n Leftdisfinger2Mud;
+createNode multiplyDivide -n Leftdisfinger3Mud;
+createNode multiplyDivide -n Leftdisfinger4Mud;
+createNode multiplyDivide -n Leftdisfinger5Mud;
+createNode multiplyDivide -n Leftdisfinger6Mud;
+
+createNode multiplyDivide -n Leftdisfingerxy1Mud;
+createNode multiplyDivide -n Leftdisfingerxy2Mud;
+createNode multiplyDivide -n Leftdisfingerxy3Mud;
+createNode multiplyDivide -n Leftdisfingerxy4Mud;
+createNode multiplyDivide -n Leftdisfingerxy5Mud;
+createNode multiplyDivide -n Leftdisfingerxy6Mud;
+
+
+setAttr Leftdisfingerxy1Mud.input2X -.001;
+setAttr Leftdisfingerxy2Mud.input2X -.001;
+setAttr Leftdisfingerxy3Mud.input2X -.001;
+setAttr Leftdisfingerxy4Mud.input2X -.001;
+setAttr Leftdisfingerxy5Mud.input2X -.001;
+setAttr Leftdisfingerxy1Mud.input2Y -.001;
+setAttr Leftdisfingerxy2Mud.input2Y -.001;
+setAttr Leftdisfingerxy3Mud.input2Y -.001;
+setAttr Leftdisfingerxy4Mud.input2Y -.001;
+setAttr Leftdisfingerxy5Mud.input2Y -.001;
+setAttr Leftdisfingerxy6Mud.input2X -.001;
+setAttr Leftdisfingerxy6Mud.input2Y -.001;
+
+
+connectAttr LeftHand_CC.thumb Leftdisfinger5Mud.input1X;
+connectAttr LeftHand_CCShape.A1_tx Leftdisfingerxy5Mud.input1X;
+connectAttr Leftdisfingerxy5Mud.outputX Leftdisfinger5Mud.input2X;
+connectAttr Leftdisfinger5Mud.outputX LeftThumb_finger_transform.translateX;
+
+connectAttr LeftHand_CC.thumb Leftdisfinger5Mud.input1Y;
+connectAttr LeftHand_CCShape.A1_ty Leftdisfingerxy5Mud.input1Y;
+connectAttr Leftdisfingerxy5Mud.outputY Leftdisfinger5Mud.input2Y;
+connectAttr Leftdisfinger5Mud.outputY LeftThumb_finger_transform.translateY;
+
+connectAttr LeftHand_CC.finger1 Leftdisfinger1Mud.input1X;
+connectAttr Leftdisfinger1Mud.outputX LeftFinger1_finger_transform.translateX;
+connectAttr LeftHand_CCShape.B1_tx Leftdisfingerxy1Mud.input1X;
+connectAttr Leftdisfingerxy1Mud.outputX Leftdisfinger1Mud.input2X;
+connectAttr LeftHand_CC.finger1 Leftdisfinger1Mud.input1Y;
+connectAttr LeftHand_CCShape.B1_ty Leftdisfingerxy1Mud.input1Y;
+connectAttr Leftdisfingerxy1Mud.outputY Leftdisfinger1Mud.input2Y;
+connectAttr Leftdisfinger1Mud.outputY LeftFinger1_finger_transform.translateY;
+
+connectAttr LeftHand_CC.finger2 Leftdisfinger2Mud.input1X;
+connectAttr Leftdisfinger2Mud.outputX LeftFinger2_finger_transform.translateX;
+connectAttr LeftHand_CCShape.C1_tx Leftdisfingerxy2Mud.input1X;
+connectAttr Leftdisfingerxy2Mud.outputX Leftdisfinger2Mud.input2X;
+connectAttr LeftHand_CC.finger2 Leftdisfinger2Mud.input1Y;
+connectAttr LeftHand_CCShape.C1_ty Leftdisfingerxy2Mud.input1Y;
+connectAttr Leftdisfingerxy2Mud.outputY Leftdisfinger2Mud.input2Y;
+connectAttr Leftdisfinger2Mud.outputY LeftFinger2_finger_transform.translateY;
+
+connectAttr LeftHand_CC.finger3 Leftdisfinger3Mud.input1X;
+connectAttr Leftdisfinger3Mud.outputX LeftFinger3_finger_transform.translateX;
+connectAttr LeftHand_CCShape.D1_tx Leftdisfingerxy3Mud.input1X;
+connectAttr Leftdisfingerxy3Mud.outputX Leftdisfinger3Mud.input2X;
+connectAttr LeftHand_CC.finger3 Leftdisfinger3Mud.input1Y;
+connectAttr LeftHand_CCShape.D1_ty Leftdisfingerxy3Mud.input1Y;
+connectAttr Leftdisfingerxy3Mud.outputY Leftdisfinger3Mud.input2Y;
+connectAttr Leftdisfinger3Mud.outputY LeftFinger3_finger_transform.translateY;
+
+connectAttr LeftHand_CC.finger4 Leftdisfinger4Mud.input1X;
+connectAttr Leftdisfinger4Mud.outputX LeftFinger4_finger_transform.translateX;
+connectAttr LeftHand_CCShape.E1_tx Leftdisfingerxy4Mud.input1X;
+connectAttr Leftdisfingerxy4Mud.outputX Leftdisfinger4Mud.input2X;
+connectAttr LeftHand_CC.finger4 Leftdisfinger4Mud.input1Y;
+connectAttr LeftHand_CCShape.E1_ty Leftdisfingerxy4Mud.input1Y;
+connectAttr Leftdisfingerxy4Mud.outputY Leftdisfinger4Mud.input2Y;
+connectAttr Leftdisfinger4Mud.outputY LeftFinger4_finger_transform.translateY;
+
+
+
+//==========L-------rotateX--------L================
+createNode multiplyDivide -n LeftRfinger1Multiplx;
+createNode multiplyDivide -n LeftRfinger2Multiplx;
+createNode multiplyDivide -n LeftRfinger3Multiplx;
+createNode multiplyDivide -n LeftRfinger4Multiplx;
+createNode multiplyDivide -n LeftRfinger5Multiplx;
+createNode multDoubleLinear -n LeftRfinger1DoubleLinear;
+setAttr LeftRfinger1DoubleLinear.input2 -1;
+createNode multDoubleLinear -n LeftRfinger2DoubleLinear;
+setAttr LeftRfinger2DoubleLinear.input2 -.1;
+
+connectAttr LeftHand_CC.finger1 LeftRfinger1DoubleLinear.input1;
+connectAttr LeftRfinger1DoubleLinear.output LeftRfinger1Multiplx.input1X;
+createNode multiplyDivide -n LeftRfinger4MultiplxB1_rx;
+setAttr "LeftRfinger4MultiplxB1_rx.input2X" .1;
+setAttr "LeftRfinger4MultiplxB1_rx.input2Y" .1;
+setAttr "LeftRfinger4MultiplxB1_rx.input2Z" .1;
+connectAttr LeftHand_CCShape.B1_rx LeftRfinger4MultiplxB1_rx.input1X;
+connectAttr LeftRfinger4MultiplxB1_rx.outputX LeftRfinger1Multiplx.input2X;
+connectAttr LeftRfinger1Multiplx.outputX LeftFinger1_finger_transform.rotateX;
+
+connectAttr LeftHand_CC.finger2 LeftRfinger5Multiplx.input1X;
+connectAttr LeftHand_CCShape.C1_rx LeftRfinger2DoubleLinear.input1;
+connectAttr LeftRfinger2DoubleLinear.output LeftRfinger5Multiplx.input2X;
+connectAttr LeftRfinger5Multiplx.outputX LeftFinger2_finger_transform.rotateX;;
+
+connectAttr LeftHand_CC.finger3 LeftRfinger2Multiplx.input1X;
+connectAttr LeftHand_CC.finger3 LeftRfinger3Multiplx.input1X;
+createNode multiplyDivide -n LeftRfinger4MultiplxD1_rx;
+setAttr "LeftRfinger4MultiplxD1_rx.input2X" .1;
+setAttr "LeftRfinger4MultiplxD1_rx.input2Y" .1;
+setAttr "LeftRfinger4MultiplxD1_rx.input2Z" .1;
+connectAttr LeftHand_CCShape.D1_rx LeftRfinger4MultiplxD1_rx.input1X;
+connectAttr LeftRfinger4MultiplxD1_rx.outputX LeftRfinger3Multiplx.input2X;
+connectAttr LeftRfinger3Multiplx.outputX LeftFinger3_finger_transform.rotateX;
+
+connectAttr LeftHand_CC.finger4 LeftRfinger4Multiplx.input1X;
+//connectAttr LeftHand_CC.finger3 LeftRfinger3Multiplx.input1X;
+createNode multiplyDivide -n LeftRfinger4MultiplxE1_rx;
+setAttr "LeftRfinger4MultiplxE1_rx.input2X" .1;
+setAttr "LeftRfinger4MultiplxE1_rx.input2Y" .1;
+setAttr "LeftRfinger4MultiplxE1_rx.input2Z" .1;
+connectAttr LeftHand_CCShape.E1_rx LeftRfinger4MultiplxE1_rx.input1X;
+connectAttr LeftRfinger4MultiplxE1_rx.outputX LeftRfinger4Multiplx.input2X;
+connectAttr LeftRfinger4Multiplx.outputX LeftFinger4_finger_transform.rotateX;
+
+//connectAttr LeftFinger1_finger_control.rotate LeftFinger1_rig_knuckle.rotate;
+//connectAttr LeftFinger2_finger_control.rotate LeftFinger2_rig_knuckle.rotate;
+//connectAttr LeftFinger3_finger_control.rotate LeftFinger3_rig_knuckle.rotate;
+//connectAttr LeftFinger4_finger_control.rotate LeftFinger4_rig_knuckle.rotate;
+
+//connectAttr RightFinger1_finger_control.rotate RightFinger1_rig_knuckle.rotate;
+//connectAttr RightFinger2_finger_control.rotate RightFinger2_rig_knuckle.rotate;
+//connectAttr RightFinger3_finger_control.rotate RightFinger3_rig_knuckle.rotate;
+//connectAttr RightFinger4_finger_control.rotate RightFinger4_rig_knuckle.rotate;
+
+//===========R-----translateZ-----R==============
+createNode multiplyDivide -n Rightdisfinger1Multiplx;
+createNode multiplyDivide -n Rightdisfinger2Multiplx;
+createNode multiplyDivide -n Rightdisfinger3Multiplx;
+createNode multiplyDivide -n Rightdisfinger4Multiplx;
+createNode multDoubleLinear -n Rightdisfinger1DoubleLinear;
+createNode multDoubleLinear -n Rightdisfinger1DoubleLinear1;
+createNode multDoubleLinear -n Rightdisfinger1DoubleLinear2;
+createNode multDoubleLinear -n Rightdisfinger1DoubleLinear3;
+createNode multDoubleLinear -n Rightdisfinger1DoubleLinear4;//
+setAttr Rightdisfinger1DoubleLinear.input2 -1;
+setAttr Rightdisfinger1DoubleLinear1.input2 -.001;
+setAttr Rightdisfinger1DoubleLinear2.input2 -.001;
+setAttr Rightdisfinger1DoubleLinear3.input2 -.001;
+setAttr Rightdisfinger1DoubleLinear4.input2 -.001;//
+connectAttr RightHand_CC.finger1 Rightdisfinger1DoubleLinear.input1;
+connectAttr Rightdisfinger1DoubleLinear.output Rightdisfinger1Multiplx.input1X;
+connectAttr RightHand_CCShape.B1_tz Rightdisfinger1DoubleLinear1.input1;
+connectAttr Rightdisfinger1DoubleLinear1.output Rightdisfinger1Multiplx.input2X;
+connectAttr Rightdisfinger1Multiplx.outputX RightFinger1_finger_transform.translateZ;
+connectAttr RightHand_CC.finger2 Rightdisfinger2Multiplx.input1X;//
+connectAttr RightHand_CCShape.C1_tz Rightdisfinger1DoubleLinear4.input1;//
+connectAttr Rightdisfinger1DoubleLinear4.output Rightdisfinger2Multiplx.input2X;//
+connectAttr Rightdisfinger2Multiplx.outputX RightFinger2_finger_transform.translateZ;//
+connectAttr RightHand_CC.finger3 Rightdisfinger3Multiplx.input1X;
+connectAttr RightHand_CCShape.D1_tz Rightdisfinger1DoubleLinear2.input1;
+connectAttr Rightdisfinger1DoubleLinear2.output Rightdisfinger3Multiplx.input2X;
+connectAttr Rightdisfinger3Multiplx.outputX RightFinger3_finger_transform.translateZ;
+
+connectAttr RightHand_CC.finger4 Rightdisfinger4Multiplx.input1X;
+connectAttr RightHand_CCShape.E1_tz Rightdisfinger1DoubleLinear3.input1;
+connectAttr Rightdisfinger1DoubleLinear3.output Rightdisfinger4Multiplx.input2X;
+connectAttr Rightdisfinger4Multiplx.outputX RightFinger4_finger_transform.translateZ;
+
+//===========L-----translateX,Y-----L==============
+createNode multiplyDivide -n Rightdisfinger1Mud;
+createNode multiplyDivide -n Rightdisfinger2Mud;
+createNode multiplyDivide -n Rightdisfinger3Mud;
+createNode multiplyDivide -n Rightdisfinger4Mud;
+
+createNode multiplyDivide -n Rightdisfingerxy1Mud;
+createNode multiplyDivide -n Rightdisfingerxy2Mud;
+createNode multiplyDivide -n Rightdisfingerxy3Mud;
+createNode multiplyDivide -n Rightdisfingerxy4Mud;
+setAttr Rightdisfingerxy1Mud.input2X -.001;
+setAttr Rightdisfingerxy2Mud.input2X -.001;
+setAttr Rightdisfingerxy3Mud.input2X -.001;
+setAttr Rightdisfingerxy4Mud.input2X -.001;
+setAttr Rightdisfingerxy1Mud.input2Y -.001;
+setAttr Rightdisfingerxy2Mud.input2Y -.001;
+setAttr Rightdisfingerxy3Mud.input2Y -.001;
+setAttr Rightdisfingerxy4Mud.input2Y -.001;
+
+connectAttr RightHand_CC.finger1 Rightdisfinger1Mud.input1X;
+connectAttr Rightdisfinger1Mud.outputX RightFinger1_finger_transform.translateX;
+connectAttr RightHand_CCShape.B1_tx Rightdisfingerxy1Mud.input1X;
+connectAttr Rightdisfingerxy1Mud.outputX Rightdisfinger1Mud.input2X;
+connectAttr RightHand_CC.finger1 Rightdisfinger1Mud.input1Y;
+connectAttr RightHand_CCShape.B1_ty Rightdisfingerxy1Mud.input1Y;
+connectAttr Rightdisfingerxy1Mud.outputY Rightdisfinger1Mud.input2Y;
+connectAttr Rightdisfinger1Mud.outputY RightFinger1_finger_transform.translateY;
+
+connectAttr RightHand_CC.finger2 Rightdisfinger2Mud.input1X;
+connectAttr Rightdisfinger2Mud.outputX RightFinger2_finger_transform.translateX;
+connectAttr RightHand_CCShape.C1_tx Rightdisfingerxy2Mud.input1X;
+connectAttr Rightdisfingerxy2Mud.outputX Rightdisfinger2Mud.input2X;
+connectAttr RightHand_CC.finger2 Rightdisfinger2Mud.input1Y;
+connectAttr RightHand_CCShape.C1_ty Rightdisfingerxy2Mud.input1Y;
+connectAttr Rightdisfingerxy2Mud.outputY Rightdisfinger2Mud.input2Y;
+connectAttr Rightdisfinger2Mud.outputY RightFinger2_finger_transform.translateY;
+
+connectAttr RightHand_CC.finger3 Rightdisfinger3Mud.input1X;
+connectAttr Rightdisfinger3Mud.outputX RightFinger3_finger_transform.translateX;
+connectAttr RightHand_CCShape.D1_tx Rightdisfingerxy3Mud.input1X;
+connectAttr Rightdisfingerxy3Mud.outputX Rightdisfinger3Mud.input2X;
+connectAttr RightHand_CC.finger3 Rightdisfinger3Mud.input1Y;
+connectAttr RightHand_CCShape.D1_ty Rightdisfingerxy3Mud.input1Y;
+connectAttr Rightdisfingerxy3Mud.outputY Rightdisfinger3Mud.input2Y;
+connectAttr Rightdisfinger3Mud.outputY RightFinger3_finger_transform.translateY;
+
+connectAttr RightHand_CC.finger4 Rightdisfinger4Mud.input1X;
+connectAttr Rightdisfinger4Mud.outputX RightFinger4_finger_transform.translateX;
+connectAttr RightHand_CCShape.E1_tx Rightdisfingerxy4Mud.input1X;
+connectAttr Rightdisfingerxy4Mud.outputX Rightdisfinger4Mud.input2X;
+connectAttr RightHand_CC.finger4 Rightdisfinger4Mud.input1Y;
+connectAttr RightHand_CCShape.E1_ty Rightdisfingerxy4Mud.input1Y;
+connectAttr Rightdisfingerxy4Mud.outputY Rightdisfinger4Mud.input2Y;
+connectAttr Rightdisfinger4Mud.outputY RightFinger4_finger_transform.translateY;
+
+createNode multDoubleLinear -n Rightdisfinger1DoubleLinear5;
+createNode multiplyDivide -n Rightdisfinger5Multiplx;
+setAttr Rightdisfinger1DoubleLinear5.input2 -.001;
+
+createNode multiplyDivide -n Rightdisfinger5Mud;
+createNode multiplyDivide -n Rightdisfinger6Mud;
+
+createNode multiplyDivide -n Rightdisfingerxy5Mud;
+createNode multiplyDivide -n Rightdisfingerxy6Mud;
+setAttr Rightdisfingerxy6Mud.input2X -.001;
+setAttr Rightdisfingerxy6Mud.input2Y -.001;
+setAttr Rightdisfingerxy5Mud.input2X -.001;
+setAttr Rightdisfingerxy5Mud.input2Y -.001;
+connectAttr RightHand_CC.thumb Rightdisfinger5Multiplx.input1X;
+connectAttr RightHand_CCShape.A1_tz Rightdisfinger1DoubleLinear5.input1;
+connectAttr Rightdisfinger1DoubleLinear5.output Rightdisfinger5Multiplx.input2X;
+connectAttr Rightdisfinger5Multiplx.outputX RightThumb_finger_transform.translateZ;//
+
+
+
+connectAttr RightHand_CC.thumb Rightdisfinger5Mud.input1X;
+connectAttr RightHand_CCShape.A1_tx Rightdisfingerxy5Mud.input1X;
+connectAttr Rightdisfingerxy5Mud.outputX Rightdisfinger5Mud.input2X;
+connectAttr Rightdisfinger5Mud.outputX RightThumb_finger_transform.translateX;
+
+connectAttr RightHand_CC.thumb Rightdisfinger5Mud.input1Y;
+connectAttr RightHand_CCShape.A1_ty Rightdisfingerxy5Mud.input1Y;
+connectAttr Rightdisfingerxy5Mud.outputY Rightdisfinger5Mud.input2Y;
+connectAttr Rightdisfinger5Mud.outputY RightThumb_finger_transform.translateY;
+
+//==========L-------rotateX--------L================
+createNode multiplyDivide -n RightRfinger1Multiplx;
+createNode multiplyDivide -n RightRfinger2Multiplx;
+createNode multiplyDivide -n RightRfinger3Multiplx;
+createNode multiplyDivide -n RightRfinger4Multiplx;
+createNode multiplyDivide -n RightRfinger5Multiplx;
+createNode multDoubleLinear -n RightRfinger1DoubleLinear;
+setAttr RightRfinger1DoubleLinear.input2 -1;
+createNode multDoubleLinear -n RightRfinger2DoubleLinear;
+setAttr RightRfinger2DoubleLinear.input2 -.1;
+
+connectAttr RightHand_CC.finger1 RightRfinger1DoubleLinear.input1;
+connectAttr RightRfinger1DoubleLinear.output RightRfinger1Multiplx.input1X;
+createNode multiplyDivide -n RightRfinger4MultiplxB1_rx;
+setAttr "RightRfinger4MultiplxB1_rx.input2X" .1;
+setAttr "RightRfinger4MultiplxB1_rx.input2Y" .1;
+setAttr "RightRfinger4MultiplxB1_rx.input2Z" .1;
+connectAttr RightHand_CCShape.B1_rx RightRfinger4MultiplxB1_rx.input1X;
+connectAttr RightRfinger4MultiplxB1_rx.outputX RightRfinger1Multiplx.input2X;
+connectAttr RightRfinger1Multiplx.outputX RightFinger1_finger_transform.rotateX;
+
+connectAttr RightHand_CC.finger2 RightRfinger5Multiplx.input1X;
+connectAttr RightHand_CCShape.C1_rx RightRfinger2DoubleLinear.input1;
+connectAttr RightRfinger2DoubleLinear.output RightRfinger5Multiplx.input2X;
+connectAttr RightRfinger5Multiplx.outputX RightFinger2_finger_transform.rotateX;;
+
+connectAttr RightHand_CC.finger3 RightRfinger2Multiplx.input1X;
+connectAttr RightHand_CC.finger3 RightRfinger3Multiplx.input1X;
+createNode multiplyDivide -n RightRfinger4MultiplxD1_rx;
+setAttr "RightRfinger4MultiplxD1_rx.input2X" .1;
+setAttr "RightRfinger4MultiplxD1_rx.input2Y" .1;
+setAttr "RightRfinger4MultiplxD1_rx.input2Z" .1;
+connectAttr RightHand_CCShape.D1_rx RightRfinger4MultiplxD1_rx.input1X;
+connectAttr RightRfinger4MultiplxD1_rx.outputX RightRfinger3Multiplx.input2X;
+connectAttr RightRfinger3Multiplx.outputX RightFinger3_finger_transform.rotateX;
+
+connectAttr RightHand_CC.finger4 RightRfinger4Multiplx.input1X;
+//connectAttr RightHand_CC.finger3 RightRfinger3Multiplx.input1X;
+createNode multiplyDivide -n RightRfinger4MultiplxE1_rx;
+setAttr "RightRfinger4MultiplxE1_rx.input2X" .1;
+setAttr "RightRfinger4MultiplxE1_rx.input2Y" .1;
+setAttr "RightRfinger4MultiplxE1_rx.input2Z" .1;
+connectAttr RightHand_CCShape.E1_rx RightRfinger4MultiplxE1_rx.input1X;
+connectAttr RightRfinger4MultiplxE1_rx.outputX RightRfinger4Multiplx.input2X;
+connectAttr RightRfinger4Multiplx.outputX RightFinger4_finger_transform.rotateX;
+
+//connectAttr RightFinger1_finger_control.rotate RightFinger1_rig_knuckle.rotate;
+//connectAttr RightFinger2_finger_control.rotate RightFinger2_rig_knuckle.rotate;
+//connectAttr RightFinger3_finger_control.rotate RightFinger3_rig_knuckle.rotate;
+//connectAttr RightFinger4_finger_control.rotate RightFinger4_rig_knuckle.rotate;
+
+//connectAttr RightFinger1_finger_control.rotate RightFinger1_rig_knuckle.rotate;
+//connectAttr RightFinger2_finger_control.rotate RightFinger2_rig_knuckle.rotate;
+//connectAttr RightFinger3_finger_control.rotate RightFinger3_rig_knuckle.rotate;
+//connectAttr RightFinger4_finger_control.rotate RightFinger4_rig_knuckle.rotate;
+
+select -cl  ;
+print "手指控制加载成功 ,Ok!";
+}
+global proc delOldFinger()
+{	
+	int $found=0;
+	string $Fingertransform[10]={"LeftThumb_finger_transform","RightThumb_finger_transform",
+								"LeftFinger1_finger_transform","RightFinger1_finger_transform",
+								"LeftFinger2_finger_transform","RightFinger2_finger_transform",
+								"LeftFinger3_finger_transform","RightFinger3_finger_transform",
+								"LeftFinger4_finger_transform","RightFinger4_finger_transform"};
+	string $OldCtrl[2]={"LeftHand_CC_g","RightHand_CC_g"};
+	string $Fingertransformparent[];
+	string $Fingertransformchild[];
+	for($i in $Fingertransform)
+	{	if( `objExists $i`)
+		{ $found=1;}
+	}
+	if (`objExists $OldCtrl[0]`){delete $OldCtrl;}
+	if(!$found){return;}
+	else
+	{
+		for ($s=0;$s<size($Fingertransform);++$s){	
+			$Fingertransformparent = `listRelatives -p $Fingertransform[$s]`;
+			$Fingertransformchild = `listRelatives -c $Fingertransform[$s]`;
+			parent $Fingertransformchild $Fingertransformparent;
+			}
+		delete $Fingertransform;
+		
+	}
+}
+
+global proc string createSimpleinfulences(string $basejoint,string $secondjoint, string $name,string $group1,string $group2,int $trunoff)
+{
+	string $joint = `joint -name $name`;
+	string $grp1 = `group -n $group1 $joint`;
+	string $grp2 = `group -n $group2 $grp1`;
+	delete `parentConstraint $basejoint $grp2`;
+	if( $secondjoint=="")
+	{delete `orientConstraint $basejoint $grp1`;}
+	else
+	{delete `orientConstraint $basejoint $secondjoint $grp1`;}
+	parent $grp2 $basejoint;
+	if($trunoff==0)
+	{string $mud=`createNode -n ($name+"_mud") multiplyDivide`;
+	connectAttr ($basejoint+".rotate") ($mud+".input2");
+	connectAttr ($mud+".output") ($grp2+".rotate");
+	setAttr ($mud+".input1") -.5 -.5 -.5;}
+	else
+	{string $constrain[]=`orientConstraint -mo -weight 1 $basejoint $secondjoint $group2`;
+	 setAttr ($constrain[0]+".interpType") 2;
+	}
+	string $GP = $grp2+"_"+$grp1;
+	return $GP;
+}
+
+global proc createBaseinfulences(string $basejoint,string $secondjoint,string $name,string $group)
+{
+	string $joint = `joint -name $name`;
+	string $grp = `group -n $group $joint`;
+	delete `pointConstraint $basejoint $secondjoint $grp`;
+	delete `orientConstraint $basejoint $grp`;
+	parent $grp $basejoint;
+}
+
+global proc createTSM2infulences()
+{
+	int $count,$acount=0;
+	string $obj;
+	string $biv;
+	string $Abasejnt[]={"LeftArm_rig_shoulder","RightArm_rig_shoulder","LeftLeg_rig_joint1","RightLeg_rig_joint1"};
+	string $Abasejnt1[]={"LeftLeg_rig_joint2","RightLeg_rig_joint2","LeftArm_rig_elbow","RightArm_rig_elbow"};
+	string $Asecondjnt[]={"LeftArm_rig_clavical","RightArm_rig_clavical","",""};
+	string $Asecondjnt1[]={"LeftLeg_rig_joint1","RightLeg_rig_joint1","LeftArm_rig_shoulder","RightArm_rig_shoulder"};
+	string $ALLobj[]={"LeftArm_rig_clavical","RightArm_rig_clavical",
+					  "Head_rigjoint1","Spine_rig_joint1","RightFinger1_rig_metacarpel",
+					  "RightFinger2_rig_metacarpel","RightFinger3_rig_metacarpel","RightFinger4_rig_metacarpel"};
+	string $ALLbiv[]={"LeftLeg_rig_joint1","RightLeg_rig_joint1","Spine_rig_joint1",
+					  "LeftFinger1_rig_metacarpel","LeftFinger2_rig_metacarpel","LeftFinger3_rig_metacarpel",
+					  "LeftFinger4_rig_metacarpel","LeftThumb_rig_knuckle","RightFinger1_rig_metacarpel",
+					  "RightFinger2_rig_metacarpel","RightFinger3_rig_metacarpel","RightFinger4_rig_metacarpel"};
+	string $Attr[]={".overrideEnabled",".visibility"};
+	string $Pobj[]={"LeftLeg_scalingCompensate","RightLeg_scalingCompensate","LeftLeg_constraintCompensate","RightLeg_constraintCompensate"};
+	string $PobjL[]={"LeftFinger1_pivotCompensate","LeftFinger2_pivotCompensate","LeftFinger3_pivotCompensate","LeftFinger4_pivotCompensate",
+					 "LeftThumb_pivotCompensate"};
+	string $PobjR[]={"RightFinger1_pivotCompensate","RightFinger2_pivotCompensate","RightFinger3_pivotCompensate","RightFinger4_pivotCompensate",
+				     "RightThumb_pivotCompensate"};
+	string $Pobj2[]={"LeftArm_scalingCompensate","RightArm_scalingCompensate","Head_scalingCompensate","LeftArm_constraintCompensate","RightArm_constraintCompensate","Head_constraintCompensate"};
+	string $basejoint[]={"LeftArm_rig_shoulder","RightArm_rig_shoulder","LeftLeg_rig_joint1","RightLeg_rig_joint1",
+						 "LeftArm_rig_elbow","RightArm_rig_elbow","LeftLeg_rig_joint2","RightLeg_rig_joint2"};
+	
+	string $basejointN[]={"LeftArm_rig01","RightArm_rig02","LeftLeg_rig03","RightLeg_rig04",
+						 "LeftArm_rig05","RightArm_rig06","LeftLeg_rig07","RightLeg08"};
+	
+	string $basejoint1[]={"LeftArm_rig_elbow","RightArm_rig_elbow","LeftLeg_rig_joint2","RightLeg_rig_joint2",
+						  "LeftArm_rig_wrist","RightArm_rig_wrist","LeftLeg_rig_joint3","RightLeg_rig_joint3"};
+						  
+	string $basejoint1N[]={"LeftArm_rig011","RightArm_rig012","LeftLeg_rig013","RightLeg_rig014",
+						  "LeftArm_rig015","RightArm_rig016","LeftLeg_rig017","RightLeg_rig018"};
+
+	int $influncejoints=size($Abasejnt);
+	int $ainfluncejoints=size($basejoint);
+
+	for ($obj in $ALLobj)
+	{
+		setAllattr($obj,$Attr[0],0);
+		if ($obj=="Spine_rig_joint1")
+		{
+			setAllattr($obj,$Attr[0],1);
+		}
+	}
+	for ($biv in $ALLbiv)
+	{
+		setAllattr($biv,$Attr[1],1);
+	}
+	Cparent($Pobj,"Spine_rig_joint1");
+	Cparent($PobjL,"LeftArm_rig_wrist");
+	Cparent($PobjR,"RightArm_rig_wrist");
+	duplicate -n Spine_rig_jointC Spine_rig_joint7 ;
+	connectAttr Spine_torsoscale.scale Spine_rig_jointC.scale;
+	parentConstraint -mo Spine_torso_stuff Spine_rig_jointC;
+	Cparent($Pobj2,"Spine_rig_jointC");
+	delete Spine_JOINTS LeftLeg_JOINTS RightLeg_JOINTS LeftArm_JOINTS RightArm_JOINTS Head_JOINTS;
+
+	for($count=0;$count<$influncejoints;$count++)
+	{
+		createSimpleinfulences($Abasejnt[$count],$Asecondjnt[$count],$Abasejnt[$count]+"_infulence",$Abasejnt[$count]+"_infulenceGp",$Abasejnt[$count]+"_infulenceGp1",0);
+		createSimpleinfulences($Abasejnt1[$count],$Asecondjnt1[$count],$Abasejnt1[$count]+"_infulence",$Abasejnt1[$count]+"_infulenceGp",$Abasejnt1[$count]+"_infulenceGp1",1);
+	}
+	for($acount=0;$acount<$ainfluncejoints;$acount++){createBaseinfulences($basejoint[$acount],$basejoint1[$acount],$basejointN[$acount]+"_infulence",$basejoint1N[$acount]+"_jntinfulenceGp");}
+	TSM_finger;
+}
+
+global proc setAllattr(string $obj,string $attr,int $bool)
+{
+	if( `objExists $obj`)
+	{
+		
+		setAttr ($obj+$attr,$bool);
+		//setAttr ($obj+".visibility" $bool);
+	}
+}
+
+
+
+global proc Cparent(string $obj[],string $parent)
+{
+	string $objs[];
+	$objs=$obj;
+	string $i;
+	for ($i in $objs)
+	{
+		parent $i $parent;
+	}
+}
+
+global proc TSMSimpleSkin()
+{
+	
+	string $Skininfluence[]={"Spine_rig_joint1","Spine_rig_joint2","Spine_rig_joint3","Spine_rig_joint4","Spine_rig_joint5","Spine_rig_joint6","Spine_rig_joint6","Spine_rig_jointC",
+							 "LeftArm_rig_clavical","LeftArm_rig_wrist","LeftArm_rig01_infulence","LeftArm_rig05_infulence",
+							 "RightArm_rig_clavical","RightArm_rig_wrist","RightArm_rig02_infulence","RightArm_rig06_infulence",
+							 "Head_rigjoint1","Head_rigjoint3",
+							 "LeftLeg_rig_joint3","LeftLeg_rig_joint4","LeftLeg_rig03_infulence","LeftLeg_rig07_infulence",
+							 "RightLeg_rig_joint3","RightLeg_rig_joint4","RightLeg_rig04_infulence","RightLeg08_infulence",
+							 "LeftThumb_rig_knuckle","LeftThumb_rig_fingerjoint1","LeftThumb_rig_fingerjoint2",
+							 "LeftFinger1_rig_metacarpel","LeftFinger1_rig_knuckle","LeftFinger1_rig_fingerjoint1","LeftFinger1_rig_fingerjoint2",
+							 "LeftFinger2_rig_metacarpel","LeftFinger2_rig_knuckle","LeftFinger2_rig_fingerjoint1","LeftFinger2_rig_fingerjoint2",
+							 "LeftFinger3_rig_metacarpel","LeftFinger3_rig_knuckle","LeftFinger3_rig_fingerjoint1","LeftFinger3_rig_fingerjoint2",
+							 "LeftFinger4_rig_metacarpel","LeftFinger4_rig_knuckle","LeftFinger4_rig_fingerjoint1","LeftFinger4_rig_fingerjoint2",
+							 "RightThumb_rig_knuckle","RightThumb_rig_fingerjoint1","RightThumb_rig_fingerjoint2",
+							 "RightFinger1_rig_metacarpel","RightFinger1_rig_knuckle","RightFinger1_rig_fingerjoint1","RightFinger1_rig_fingerjoint2",
+							 "RightFinger2_rig_metacarpel","RightFinger2_rig_knuckle","RightFinger2_rig_fingerjoint1","RightFinger2_rig_fingerjoint2",
+							 "RightFinger3_rig_metacarpel","RightFinger3_rig_knuckle","RightFinger3_rig_fingerjoint1","RightFinger3_rig_fingerjoint2",
+							 "RightFinger4_rig_metacarpel","RightFinger4_rig_knuckle","RightFinger4_rig_fingerjoint1","RightFinger4_rig_fingerjoint2"};
+	string $Addskin[]={"LeftArm_rig_shoulder_infulence","LeftArm_rig_elbow_infulence","LeftLeg_rig_joint1_infulence","LeftLeg_rig_joint2_infulence",
+				   "RightLeg_rig_joint1_infulence","RightLeg_rig_joint2_infulence","RightArm_rig_shoulder_infulence","RightArm_rig_elbow_infulence"};
+	string $select[]=`ls -sl`;
+	if(size($select))
+	{select $Skininfluence $select;
+	//skinCluster -normalizeWeights 2 -smoothWeightsMaxIterations 3 -dropoffRate 3;
+	SmoothBindSkin;
+	select $Addskin $select;
+	skinClusterInfluence 1 "-ug -dr 4 -ps 0 -ns 10 -lw true -wt 0";
+	for ($i in $Addskin){setAttr ($i+".liw") 0;};
+	select -cl;}
+	else{warning "no geo select!!!";};
+}
+
+global proc tsm_setDrivenKey()
+{
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftArm_rig_shoulder.rotateZ LeftArm_influence4.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftArm_rig_shoulder.rotateZ LeftArm_influence4.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftArm_rig_shoulder.rotateZ LeftArm_influence4.translateZ;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver LeftArm_rig_shoulder.rotateZ LeftArm_influence4.translateX;
+setDrivenKeyframe -driverValue -90 -value 0 -currentDriver LeftArm_rig_shoulder.rotateZ LeftArm_influence4.translateY;
+setDrivenKeyframe -driverValue -90 -value 0 -currentDriver LeftArm_rig_shoulder.rotateZ LeftArm_influence4.translateZ;
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint1.rotateZ LeftLeg_influence1_intermediate.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint1.rotateZ LeftLeg_influence1_intermediate.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint1.rotateZ LeftLeg_influence1_intermediate.translateZ;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver LeftLeg_rig_joint1.rotateZ LeftLeg_influence1_intermediate.translateX;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver LeftLeg_rig_joint1.rotateZ LeftLeg_influence1_intermediate.translateY;
+setDrivenKeyframe -driverValue -90 -value 0.05 -currentDriver LeftLeg_rig_joint1.rotateZ LeftLeg_influence1_intermediate.translateZ;
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightArm_rig_shoulder.rotateZ RightArm_influence4.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightArm_rig_shoulder.rotateZ RightArm_influence4.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightArm_rig_shoulder.rotateZ RightArm_influence4.translateZ;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver RightArm_rig_shoulder.rotateZ RightArm_influence4.translateX;
+setDrivenKeyframe -driverValue -90 -value 0 -currentDriver RightArm_rig_shoulder.rotateZ RightArm_influence4.translateY;
+setDrivenKeyframe -driverValue -90 -value 0 -currentDriver RightArm_rig_shoulder.rotateZ RightArm_influence4.translateZ;
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint1.rotateZ RightLeg_influence1_intermediate.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint1.rotateZ RightLeg_influence1_intermediate.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint1.rotateZ RightLeg_influence1_intermediate.translateZ;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver RightLeg_rig_joint1.rotateZ RightLeg_influence1_intermediate.translateX;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver RightLeg_rig_joint1.rotateZ RightLeg_influence1_intermediate.translateY;
+setDrivenKeyframe -driverValue -90 -value -0.05 -currentDriver RightLeg_rig_joint1.rotateZ RightLeg_influence1_intermediate.translateZ;
+
+
+/////////////////////////////////set knee drive////////////////////////
+/*
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence3.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence3.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence3.translateZ;
+setDrivenKeyframe -driverValue 150 -value 0.025 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence3.translateX;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence3.translateY;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence3.translateZ;
+*/
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence4.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence4.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence4.translateZ;
+setDrivenKeyframe -driverValue 150 -value 0.05 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence4.translateX;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence4.translateY;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence4.translateZ;
+
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence6.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence6.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence6.translateZ;
+setDrivenKeyframe -driverValue 150 -value 0.05 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence6.translateX;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence6.translateY;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence6.translateZ;
+
+/*
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence7.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence7.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence7.translateZ;
+setDrivenKeyframe -driverValue 150 -value 0.025 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence7.translateX;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence7.translateY;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver LeftLeg_rig_joint2.rotateZ LeftLeg_influence7.translateZ;
+*/
+
+/*
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence3.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence3.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence3.translateZ;
+setDrivenKeyframe -driverValue 150 -value 0.025 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence3.translateX;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence3.translateY;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence3.translateZ;
+*/
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence4.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence4.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence4.translateZ;
+setDrivenKeyframe -driverValue 150 -value 0.05 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence4.translateX;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence4.translateY;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence4.translateZ;
+
+
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence6.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence6.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence6.translateZ;
+setDrivenKeyframe -driverValue 150 -value 0.05 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence6.translateX;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence6.translateY;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence6.translateZ;
+
+/*
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence7.translateX;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence7.translateY;
+setDrivenKeyframe -driverValue 0 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence7.translateZ;
+setDrivenKeyframe -driverValue 150 -value 0.025 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence7.translateX;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence7.translateY;
+setDrivenKeyframe -driverValue 150 -value 0 -currentDriver RightLeg_rig_joint2.rotateZ RightLeg_influence7.translateZ;
+*/
+
+/////修正锁骨控制器X轴向
+setAttr "arms_RightArm_multiplyDivide54.input2X" -1;
+
+}
+
+
+
+TSMfingerWin;

@@ -1,0 +1,314 @@
+/*
+起始帧不能输入小于1的数；
+
+*/
+
+
+
+proc YX_UI()
+{
+    if (`window -q -exists YX_Window`) deleteUI YX_Window;
+        window
+            -title "游戏开关" -wh 300 100
+            YX_Window;
+
+            columnLayout -adj 1; 
+       
+                rowColumnLayout -nc 2 -cw 1 70 -cw 2 250;
+                     text -l "时间范围:";  
+                     radioButtonGrp -numberOfRadioButtons 2
+                                    -cw 1 80 -cw 2 50 -cl2 left left
+                                    -labelArray2 "滑块时间" "自定义"
+                                    -sl 1
+                                    -onCommand1 "formLayout -e -en 0 FA;"
+                                    -onCommand2 "formLayout -e -en 1 FA;"
+                                    TimeRange;                
+                      setParent ..;            
+            
+            separator -height 10 -style "in";  
+     
+        formLayout -en 0 FA;    
+            rowColumnLayout -nc 2 -cw 1 50 -cw 2 60 ;
+               text -l "起始帧：";   
+               textField -ed 1 -tx "1" StartFrame;
+               text -l "终止帧：";
+               textField -ed 1 -tx "10" EndFrame;                            
+            setParent ..;
+       setParent ..;
+     
+    separator -height 10 -style "in"; 
+     
+         formLayout;
+             rowColumnLayout -nc 3 -cw 1 150 -cw 2 150 -cw 3 150;
+                 button -l "开始" -w 80 -c "YX_start()";
+                 button -l "结束" -w 90 -c "YX_end()";
+                 button -l "重置" -w 90 -c "YX_clear()";
+           
+       
+  showWindow  YX_Window;     
+  
+
+}
+
+
+
+
+proc key_init(){
+	nameCommand	-c "pickWalkUp"
+				-ann "Walk up in the current hierarchy"
+				PickWalkUp;
+	nameCommand	-c "pickWalkLeft"
+				-ann "Walk Left in the current hierarchy"
+				PickWalkLeft;
+	nameCommand	-c "pickWalkDown"
+				-ann "Walk Down in the current hierarchy"
+				PickWalkDown;
+	nameCommand	-c "pickWalkRight"
+				-ann "Walk Right in the current hierarchy"
+				PickWalkRight;
+	nameCommand	-c "changeSmoothingLevel 1"
+				-ann "Increase smoothing for object"
+				SmoothingLevelIncrease;
+	nameCommand	-c "changeSmoothingLevel 0"
+				-ann "Decrease smoothing for object"
+				SmoothingLevelDecrease;
+				
+	nameCommand -c "T_Left(1)"
+				-ann "Turn left."
+				startLeft;
+	nameCommand -c "T_Left(0)"
+				-ann "Stop left."
+				endLeft;
+	nameCommand -c "T_Right(1)"
+				-ann "Turn Right."
+				startRight;
+	nameCommand -c "T_Right(0)"
+				-ann "Stop Right."
+				endRight;
+	nameCommand -c "T_Up(1)"
+				-ann "Turn Up."
+				startUp;
+	nameCommand -c "T_Up(0)"
+				-ann "Stop Up."
+				endUp;
+	nameCommand -c "T_Down(1)"
+				-ann "Turn Down."
+				startDown;
+	nameCommand -c "T_Down(0)"
+				-ann "Stop Down."
+				endDown;
+	nameCommand -c "T_Front(1)"
+				-ann "Turn Front."
+				startFront;
+	nameCommand -c "T_Front(0)"
+				-ann "Stop Front."
+				endFront;
+	nameCommand -c "T_Back(1)"
+				-ann "Turn Back."
+				startBack;
+    nameCommand -c "T_Back(0)"
+				-ann "Stop Back."
+				endBack;
+	
+}
+proc T_Left(int $cmd){
+	global int $T_Left;
+	$T_Left = $cmd;
+}
+proc T_Right(int $cmd){
+	global int $T_Right;
+	$T_Right = $cmd;
+}
+proc T_Down(int $cmd){
+	global int $T_Down;
+	$T_Down = $cmd;
+}
+proc T_Up(int $cmd){
+	global int $T_Up;
+	$T_Up = $cmd;
+}
+proc T_Front(int $cmd)
+{
+    global int $T_Front;
+    $T_Front=$cmd;
+}
+proc T_Back(int $cmd)
+{
+    global int $T_Back;
+    $T_Back=$cmd;
+}
+
+
+
+proc key_Default(){
+	hotkey -k "Up" 		-name "PickWalkUp"    -rn "";
+	hotkey -k "Down" 	-name "PickWalkDown"    -rn "";
+	hotkey -k "Left" 	-name "PickWalkLeft"    -rn "";
+	hotkey -k "Right" 	-name "PickWalkRight"    -rn"";
+	hotkey -k "Page_Up"    -name "SmoothingLevelIncrease"    -rn "";
+	hotkey -k "Page_Down"    -name "SmoothingLevelDecrease"    -rn "";
+}
+
+proc YX_key(){
+	hotkey -k "Up" 		-name "startUp"			-rn "endUp";
+	hotkey -k "Down" 	-name "startDown"		-rn "endDown";
+	hotkey -k "Left" 	-name "startLeft"		-rn "endLeft";
+	hotkey -k "Right" 	-name "startRight"		-rn "endRight";
+	hotkey -k "Page_Up"    -name "startFront"    -rn "endFront";
+	hotkey -k "Page_Down"    -name "startBack"    -rn "endBack";
+	
+}
+
+
+
+
+global proc YX_start()
+{
+//    window -edit -i true YX_Window; 
+    showWindow MayaWindow;
+    
+    string $sel[]=`ls -sl`;
+    
+    int $min_time=0;
+    int $max_time=0;
+    int $T_Ran = `radioButtonGrp -q -select TimeRange`;
+    int $s_time=`playbackOptions -q -min`;
+    int $e_time=`playbackOptions -q -max`;
+    int $S_Frame = `textField -q -tx StartFrame`;
+    int $E_Frame = `textField -q -tx EndFrame`;
+    
+    string $sel_tx=$sel[0]+"_translateX";
+    string $sel_ty=$sel[0]+"_translateY";
+    string $sel_tz=$sel[0]+"_translateZ";
+    string $sel_rx=$sel[0]+"_rotateX";
+    string $sel_ry=$sel[0]+"_rotateY";
+    string $sel_rz=$sel[0]+"_rotateZ";
+   
+    
+    float $ps_tx=`getAttr ($sel[0]+".translateX")`;
+    float $ps_ty=`getAttr ($sel[0]+".translateY")`;
+    float $ps_tz=`getAttr ($sel[0]+".translateZ")`;
+    float $ps_rx=`getAttr ($sel[0]+".rotateX")`;
+    float $ps_ry=`getAttr ($sel[0]+".rotateY")`;
+    float $ps_rz=`getAttr ($sel[0]+".rotateZ")`;
+    
+    
+    polySphere -n "pilot";    
+    setAttr "pilot.t" $ps_tx $ps_ty $ps_tz;
+    setAttr "pilot.r" $ps_rx $ps_ry $ps_rz;
+    
+    hide  pilot;
+
+    
+    switch($T_Ran)
+    {
+        case 1:
+            
+            $min_time=$s_time;
+            $max_time=$e_time;
+
+            break;
+        case 2:
+
+            if ($S_Frame<$s_time)
+            {
+                playbackOptions -min $S_Frame;
+            }
+            else
+            {
+                playbackOptions -min $s_time;
+            }
+            if ($E_Frame>$e_time)
+            {
+                playbackOptions -max $E_Frame;
+            }
+            else
+            {
+                playbackOptions -max $e_time;
+            }
+            
+            $min_time=$S_Frame;
+            $max_time=$E_Frame;
+            break;
+            
+    }
+
+
+
+    currentTime $min_time;
+    bakeResults -t ($min_time+":"+$max_time) -simulation true $sel[0];
+    string $con_obj = "$t = `currentTime -q`;\n";
+    $con_obj+="$x = pilot.translateX;\n";
+    $con_obj+="$y = pilot.translateY;\n";
+    $con_obj+="$z = pilot.translateZ;\n";
+    $con_obj+="keyframe -index ($t-1) -tc $t -vc $x  "+$sel_tx+";\n";
+    $con_obj+="keyframe -index ($t-1) -tc $t -vc $y  "+$sel_ty+";\n";
+    $con_obj+="keyframe -index ($t-1) -tc $t -vc $z  "+$sel_tz+";\n";
+    $con_obj+="if ($t=="+$max_time+")\n";
+    $con_obj+="{\n\tplay -st false;\n};" ;
+    expression -n "control_obj" -s $con_obj;
+
+    string $con_key="if($T_Left)\n";
+    $con_key+="{\n\tpilot.translateX+=1;\n}\n";
+    $con_key+="if($T_Right)\n";
+    $con_key+="{\n\tpilot.translateX-=1;\n}\n";
+    $con_key+="if($T_Up)\n";
+    $con_key+="{\n\tpilot.translateY+=1;\n}\n";
+    $con_key+="if($T_Down)\n";
+    $con_key+="{\n\tpilot.translateY-=1;\n}";
+    $con_key+="if($T_Front)\n";
+    $con_key+="{\n\tpilot.translateZ+=1;\n}\n";
+    $con_key+="if($T_Back)\n";
+    $con_key+="{\n\tpilot.translateZ-=1;\n}";
+
+    expression -n "control_key" -s $con_key;
+
+
+    key_init();
+    YX_key();
+    clear $sel;
+    
+    play -f true;
+
+
+}
+
+global proc YX_end()
+{
+    play -st false;
+    delete pilot;
+    delete control_obj;
+//    hotkey -fs;
+    key_Default();
+}
+
+
+global proc YX_clear()
+{
+    string $sel[]=`ls -sl`;
+    int $T_Ran = `radioButtonGrp -q -select TimeRange`;
+    int $S_Frame = `textField -q -tx StartFrame`;
+    int $E_Frame = `textField -q -tx EndFrame`;
+    int $s_time=`playbackOptions -q -min`;
+    int $e_time=`playbackOptions -q -max`;
+    
+    
+    switch($T_Ran)
+    {
+        case 1:
+            selectKey  -t (($s_time+1)+":"+$e_time) $sel[0];
+            cutKey -animation keys -clear;
+            currentTime $s_time;
+            timeSliderClearKey;
+            break;
+        case 2:
+            selectKey  -t (($S_Frame+1)+":"+$E_Frame) $sel[0];
+            cutKey -animation keys -clear;
+            currentTime $S_Frame;
+            timeSliderClearKey;
+            break;
+    }
+    
+}
+
+YX_UI;

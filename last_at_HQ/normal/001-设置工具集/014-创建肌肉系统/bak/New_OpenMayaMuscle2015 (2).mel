@@ -1,0 +1,52 @@
+//------------------------------
+//脚本名称：New_OpenMayaMuscle
+//作者：lsy（刘升耀）、wz（王智）
+//编写时间：2016.1
+//版本：V1.0
+//备注：.....
+//------------------------------
+
+global proc New_OpenMayaMuscle(){
+	
+	loadPlugin "C:/Program Files/Autodesk/Maya2015/bin/plug-ins/MayaMuscle.mll";
+	source "cMuscle.mel"; cMuscle_makeMenu();
+	source "//10.99.1.13/Digital/film_project/mocap/001-设置工具集/014-创建肌肉系统/New_cMuscleBuilder.mel";
+	maya_NowMuscleUI;
+	
+	
+}
+
+
+
+
+//UI
+global proc maya_NowMuscleUI(){
+	
+	if(`window -ex maya_NowMuscleUI_win`) deleteUI maya_NowMuscleUI_win;
+	window -t "NowMuscle" maya_NowMuscleUI_win;
+	
+	scrollLayout -cr on -h 150 -w 40;
+	text -l "本脚本只是修改了原Muscle的代码";
+	button -l "Now Muscle Builder" -h 30 -c "New_cMuscleBuilder";
+	text -l "";
+	button -l "Now Apply Muscle Spline Deformer..." -h 30  -c ("Now_cMuscleSplineDeformerUI") ;
+	text -l "";
+	button -l "Custom Muscle shapes..." -h 30 -c ("cMuscleSplineDeformerShapeUI(); ") ;
+	text -l "下面按钮 纠正场景中所有mus节点的反转问题 慎点";
+	button -l "CorrectReversal_Muslce" -h 30 -c "correctReversal_Mus";
+	text -l "下面按钮 纠正场景中选择的mus节点的反转问题";
+	button -l "Select CorrectReversal_Muslce" -h 30 -c "SelectCorrectReversal_Mus";
+	text -l "下面按钮 输出Muscle的Surface蒙皮模型";
+	button -l "Mus Surface Skin" -h 30 -c "Mus_surface_skin";
+	text -l "下面按钮 删去选择的Mus的MuscleSystem";
+	button -l "delete select MusSystem" -h 30 -c "delete_MusSystem";
+	text -l "下面按钮 赋予选择的Mus的Muscle材质";
+	button -l "Assign MusMaterial to Selection" -h 30 -c "Assign_MusMaterial";
+	text -l "下面按钮 一键设置场景中所有mus节点的模型不可渲染 ";
+	button -l "setAll MusMod UnRendering" -h 30 -c "N_MusSurface_UnRendering";
+	text -l "下面按钮 一键更改Mus_deformers_G 删去Mus_objSkins_G ";
+	button -l "Rejigger Mus_deformers_G" -h 30 -c "delete_Mus_objSkins_G";
+	showWindow maya_NowMuscleUI_win;
+}
+
+New_OpenMayaMuscle;

@@ -1,0 +1,65 @@
+global proc shaveScaleTool()
+{
+    if (`window -q -exists shaveScaleToolWindow`) deleteUI shaveScaleToolWindow;
+    window
+        -title "毛发缩放关联" -wh 200 100
+              shaveScaleToolWindow;
+
+    columnLayout -adj 1; 
+       rowColumnLayout -nc 2 -cw 1 210 -cw 2 60;   
+           textFieldGrp -label "指定总控制器：" -text "" -cw 1 100 -cw 2 100 getCtrlTFG;                 
+            button -l "<<获取" -c getCtrl;
+        setParent ..;
+       separator -height 10 -style "in";         
+        text -l "选择要关联的shave节点";
+       separator -height 10 -style "in";         
+        button -l "关联" -c connect;
+         
+     setParent ..; 
+ showWindow  shaveScaleToolWindow; 
+    
+} 
+
+global proc getCtrl()
+{
+  string $selCtrl [] = `ls -sl`; 
+  textFieldGrp -e -tx $selCtrl[0] getCtrlTFG;
+  
+}
+
+global proc connect()
+{
+ string $getCtrl = `textFieldGrp -q -tx getCtrlTFG`;
+ string $getShaveHairShape[] = `lsType("shaveHair")`;
+ string $scale = "";
+ string $rootThickness = "";
+ string $tipThickness = "";
+ string $displacement = "";
+ string $rootSplay = "";
+ string $tipSplay = "";
+ string $ctrlScaleX = "";
+ string $ctrlScaleY = "";
+ string $expression = "";
+ int $shape=0;
+ for($shape;$shape<size($getShaveHairShape)-1;$shape++)
+ {
+  $scale = $getShaveHairShape[$shape]+".scale";
+  $rootThickness = $getShaveHairShape[$shape]+".rootThickness"; 
+  $tipThickness = $getShaveHairShape[$shape]+".tipThickness";
+  $displacement = $getShaveHairShape[$shape]+".displacement";
+  $rootSplay = $getShaveHairShape[$shape]+".rootSplay";
+  $tipSplay = $getShaveHairShape[$shape]+".tipSplay"; 
+  $ctrlScaleX = $getCtrl+".scaleX";
+  $ctrlScaleY = $getCtrl+".scaleY";  
+  
+  float $getscale = startString(`getAttr $scale`,5);
+  float $getrootThickness = startString(`getAttr $rootThickness`,5);
+  float $gettipThickness = startString(`getAttr $tipThickness`,5);
+  float $getrootSplay = startString(`getAttr $rootSplay`,5);
+  float $gettipSplay = startString(`getAttr $tipSplay`,5);
+  
+  $expression += $scale + " = " + $ctrlScaleX + "*" + $getscale + ";\n" + $rootThickness + " = " + $ctrlScaleX + "*" + $getrootThickness + ";\n" +  $tipThickness + " = " + $ctrlScaleX + "*" + $gettipThickness + ";\n" +  $displacement + " = pow( " + $ctrlScaleY + ",1.001) - pow(" + $ctrlScaleY +",1);\n" +  $rootSplay + " = " + $ctrlScaleX + "*" + $getrootSplay + ";\n" +  $tipSplay + " = " + $ctrlScaleX + "*" + $gettipSplay + ";\n" ;       
+ }
+ expression -s $expression -n "shave_scale";      
+}
+shaveScaleTool();

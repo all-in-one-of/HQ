@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>diffuseMap_64.png</file>
+  </qresource>
+</RCC>

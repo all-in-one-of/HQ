@@ -1,0 +1,587 @@
+//*************************
+//制作人：傅凯晖
+//制作日期：2014.11.14
+//*************************
+
+
+//***********
+//   窗口
+//***********
+        
+
+//主窗口
+global proc F_Constraint_Window(){
+    if (`window -q -exists F_constraint_Window`) deleteUI F_constraint_Window;
+    window -t "多重约束驱动工具" F_constraint_Window;
+        columnLayout -adj 1;
+            frameLayout -label "驱动物体" -borderStyle "in";
+                rowLayout -nc 2;
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_list_Driver_1()" DRIVER_1;//驱动物体列表框的第一个列表框
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_list_Driver_2()" DRIVER_2;//驱动物体列表框的第二个列表框
+                    setParent ..;
+                setParent ..;
+            frameLayout -label "被驱动物体" -borderStyle "in";
+                rowLayout -nc 3;
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_list_Driven_1()" DRIVEN_1;//被驱动物体列表框的第一个列表框
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_list_Driven_2()" DRIVEN_2;//被驱动物体列表框的第二个列表框
+                    textScrollList -h 200 -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4 -sc "F_Examine_Driver()" DRIVEN_3;//被驱动物体列表框的第三个列表框
+                    setParent ..;
+                setParent ..;
+            separator -height 5 -style "in"; 
+                rowLayout -nc 6;
+                button -l "驱动" -w 128 -h 30 -en false -c "F_Driver_Window()" Driver_0;
+                button -l "导入驱动物体" -w 128 -h 30 -c "F_Import_Driver()";
+                button -l "导入被驱动物体" -w 128 -h 30 -c "F_Import_Driven()";
+                button -l "移除被驱动物体" -w 128 -h 30 -c "F_Remove_Driven()";
+                button -l "移除不存在约束的物体" -w 128 -h 30 -c "F_Remove_No_Constraint()";
+                button -l "关闭" -w 128 -h 30 -c "F_Close_Window()";
+    showWindow F_constraint_Window;
+}
+
+
+//副窗口
+global proc F_Driver_Window()
+{
+    global string $K_return_Driver_1[];
+    global string $K_return_Driven_2[];
+    global string $K_return_Driven_3[];
+    F_return_Driver_1();
+    F_return_Driven_2();
+    F_return_Driven_3();
+    if (`window -q -exists F2_driver_Window`) deleteUI F2_driver_Window;
+    window -t "驱动" F2_driver_Window;
+        columnLayout;
+            int $n=0;
+            for($n;$n<size($K_return_Driven_3);$n++)
+            {
+                  string $K_Driven_value="Driven_value_"+$n;
+                  rowColumnLayout -nc 4 -cw 1 80 -cw 2 50 -cw 3 30 -cw 4 50;
+                       text -l $K_return_Driven_3[$n];    
+                       textField -tx 0 -ec "F_mod_constraint()" $K_Driven_value;
+                  setParent ..; 
+             }
+                
+            rowColumnLayout -nc 2;
+                button -l "驱动" -w 128 -h 30 -c "F2_Driver_obj()";
+                button -l "取消" -w 128 -h 30 -c "F2_close_Window()";
+                setParent ..; 
+            separator -height 5 -style "in"; 
+
+    showWindow F2_driver_Window;
+}
+
+
+//*******************
+//  窗口列表框内的值
+//*******************
+
+
+//驱动物体列表框的第一个列表框
+global proc F_list_Driver_1()
+{
+    global string $K_Driver_selected;//存储驱动物体的名字
+    global string $K_select_value[];
+    global string $K_select_objAttr[];
+    F_Return_valueNumber("DRIVER_1"); //返回驱动物体第一个框的值
+    if(size($K_select_value)==1)//如果只选择了一个项 则后面的框里显示这个项的属性
+    {
+        F_list_removeAll("DRIVER_2");//清空2框中的项 
+        F_selectObj_Attr($K_select_value[0]); //选择的对象的属性
+        F_textScrollList_addList("DRIVER_2",$K_select_objAttr);//列出选择的对象的属性 
+        $K_Driver_selected=$K_select_value[0];
+        select $K_Driver_selected;//选择驱动物体的名字
+    }
+    else
+    {
+        warning "驱动物体多选还未开放，请不要多选";
+        F_list_onlyOne("DRIVER_1");//只能选择一个
+    }
+    F_Examine_Driver();//检测驱动的按钮是否可以按下
+}
+
+
+//驱动物体列表框的第二个列表框
+global proc F_list_Driver_2()
+{
+    global string $K_Driver_selected;//存储驱动物体的名字
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVER_2"); //返回驱动物体第二个框的值
+    if(size($K_select_value)>1)//如果只选择了一个项
+    {
+        warning "驱动物体属性多选还未开放，请不要多选";
+        F_list_onlyOne("DRIVER_2");//只能选择一个
+    }
+    select $K_Driver_selected;//选择驱动物体的名字
+}
+
+
+//被驱动物体列表框的第一个列表框
+global proc F_list_Driven_1()
+{
+    global string $K_select_value[];
+    global string $select_Connection_Constraint[];
+    F_Return_valueNumber("DRIVEN_1");//返回被驱动物体第一个列表框的值
+    F_select_constraint($K_select_value);//找出选择物体的约束节点
+    F_list_removeAll("DRIVEN_2");//移除被驱动物体第二个列表框的值
+    F_list_removeAll("DRIVEN_3");//移除被驱动物体第三个列表框的值
+    F_textScrollList_addList("DRIVEN_2",$select_Connection_Constraint);//将节点列表添加进被驱动物体的第二个框
+    F_Examine_Driver();//检测驱动的按钮是否可以按下
+}
+
+
+//被驱动物体列表框的第二个列表框
+global proc F_list_Driven_2()
+{
+    global string $K_select_value[];
+    global string $constraint_Attribute[];
+    string $K_Driven3[];
+    F_Return_valueNumber("DRIVEN_2");//返回被驱动物体第二个列表框的值
+    if(size($K_select_value)==1)//如果被驱动物体第二个列表框只选择了一个物体
+    {
+        F_list_constraintAtt($K_select_value[0]);//列出约束节点的属性
+        F_list_removeAll("DRIVEN_3");//移除被驱动物体第三个列表框的值
+        F_textScrollList_addList("DRIVEN_3",$constraint_Attribute);//将节点属性添加进被驱动物体的第三个框
+    }
+    else
+    {
+        F_list_removeAll("DRIVEN_3");
+        int $x=0;
+        int $y=1;
+        int $K_max_num=0;
+        for ($x;$x<size($K_select_value);$x++)//遍历所有的被驱动物体第二个列表框的值
+        {
+            F_list_constraintAtt($K_select_value[$x]);
+            int $K_Driven2_num=size($constraint_Attribute);
+            $K_max_num=`max $K_max_num $K_Driven2_num`;//比较各个被驱动物体下的约束节点的属性的数量，求出数量最多的数
+        }
+        for($y;$y<=$K_max_num;$y++)//按照最大数量来显示项数
+        {
+            string $K_Driven3_num="第"+$y+"项";
+            $K_Driven3[$y-1]=$K_Driven3_num;
+        }
+        F_textScrollList_addList("DRIVEN_3",$K_Driven3);
+    }
+    F_Examine_Driver();//检测驱动的按钮是否可以按下
+}
+
+
+//*****************
+//  窗口按钮的功能
+//*****************
+
+
+//主窗口
+
+//驱动物体的导入
+global proc F_Import_Driver() 
+{
+    F_list_removeAll("DRIVER_1"); 
+    F_list_removeAll("DRIVER_2"); 
+    F_List_Obj("DRIVER_1"); 
+    F_Examine_Driver();
+    F_list_Driver_1();
+}
+
+
+//被驱动物体的导入
+global proc F_Import_Driven() 
+{
+    F_list_removeAll("DRIVEN_1"); 
+    F_list_removeAll("DRIVEN_2");
+    F_list_removeAll("DRIVEN_3");
+    F_List_Obj("DRIVEN_1"); 
+    F_Examine_Driver();
+}
+
+
+//移除被驱动的物体
+global proc F_Remove_Driven()
+{
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVEN_1");
+    F_remove_Item("DRIVEN_1",$K_select_value);
+    F_list_removeAll("DRIVEN_2");
+    F_list_removeAll("DRIVEN_3");
+    F_Examine_Driver();
+}
+
+
+//移除不存在约束的物体
+global proc F_Remove_No_Constraint()
+{
+    global string $K_select_value[];
+    global string $no_Constraint_Object[];
+    global string $no_Constraint[];
+    F_Return_valueNumber("DRIVEN_1");
+    F_select_constraint($K_select_value);
+    F_remove_Item("DRIVEN_1",$no_Constraint_Object);
+    F_remove_Item("DRIVEN_2",$no_Constraint);
+    F_list_removeAll("DRIVEN_3");
+    F_Examine_Driver();
+}
+
+
+//关闭按钮
+global proc F_Close_Window()
+{
+    deleteUI F_constraint_Window;
+    if (`window -q -exists F2_driver_Window`) deleteUI F2_driver_Window;
+}
+
+
+//副窗口
+
+//驱动按钮
+global proc F2_Driver_obj()
+{
+    global string $K_select_value[];
+    global string $constraint_Attribute[];
+    global string $K_return_Driver_1[];
+    global string $K_return_Driver_2[];
+    global string $K_return_Driven_2[];
+    global string $K_return_Driven_3[];
+    
+    
+    F_return_Driver_1();
+    F_return_Driver_2();
+    F_return_Driven_2();
+    F_return_Driven_3();
+    
+    string $K_Driver_obj_Attr=$K_return_Driver_1[0]+"."+$K_return_Driver_2[0];//定义驱动物体的属性的完整名称
+    if(size($K_return_Driven_2)==1)//如果被驱动约束节点属性为1个
+    {
+        int $K_selectNumItem[]=`textScrollList -q -sii DRIVEN_3`;//被驱动物体第三个列表框的选择的值的数量
+        int $x=0;
+        for($x;$x<size($K_return_Driven_3);$x++)
+        {
+            int $y=0;
+            for($y;$y<size($K_selectNumItem);$y++)
+            {
+                string $K_Driven_value="Driven_value_"+$y;           
+                string $K_Driven_obj_Attr=$K_return_Driven_2[0]+"."+$K_return_Driven_3[$y];//被驱动约束节点属性的完整名称
+                float $K_driven_value=`textField -q -tx $K_Driven_value`;
+                F2_Driver_setKeyFrame($K_Driver_obj_Attr,$K_Driven_obj_Attr,$K_driven_value);
+            }
+        }
+    }
+    else//如果被驱动约束节点属性为多个
+    {
+        int $K_selectNumItem[]=`textScrollList -q -sii DRIVEN_3`;//被驱动物体第三个列表框的选择的值的数量
+        int $x=0;
+        for($x;$x<size($K_return_Driven_2);$x++)
+        {
+            F_list_constraintAtt($K_return_Driven_2[$x]);//列出被驱动物体第二个列表框的值
+            int $y=0;
+            for($y;$y<size($K_selectNumItem);$y++)
+            {
+                if($K_selectNumItem[$y]<=size($constraint_Attribute))//如果被驱动物体节点属性的个数小于或等于当前约束属性的个数 位置
+                {
+                    string $K_Driven_value="Driven_value_"+$y;    
+                    float $K_driven_value= `textField -q -tx $K_Driven_value`;
+                    string $K_Driven_obj_Attr=$K_return_Driven_2[$x]+"."+$constraint_Attribute[$K_selectNumItem[$y]-1];//被驱动约束节点属性的完整名称
+                    F2_Driver_setKeyFrame($K_Driver_obj_Attr,$K_Driven_obj_Attr,$K_driven_value);
+                }
+                else
+                {
+                    string $warn=$K_return_Driven_2[$x]+"不存在"+$K_return_Driven_3[$y]+" 这一项 " ;
+                    warning $warn;
+                }
+            }
+        }
+    }
+}
+
+
+//窗口2的关闭按钮
+global proc F2_close_Window()
+{
+    deleteUI F2_driver_Window;
+}
+
+
+//*****************
+//     功能函数
+//*****************
+
+
+//驱动物体和被驱动物体的导入
+global proc F_List_Obj(string $name) 
+{ 
+    string $select_Now[]=`ls -sl`;
+    F_textScrollList_addList($name,$select_Now); 
+    textScrollList -e -si $select_Now[0] $name;
+}
+
+
+//读取物体属性
+global proc F_selectObj_Attr(string $obj){ 
+    global string $K_select_objAttr[];
+    string $K_select_objAttr[]=`listAttr -k $obj`;
+}
+
+
+//添加 textScrollList 列表里的内容
+global proc F_textScrollList_addList(string $name,string $list_Add[]){ 
+    int $F_F=0;
+    for ($F_F=0;$F_F<size($list_Add);$F_F++)
+    {
+        textScrollList -e -append $list_Add[$F_F] $name;
+    }
+}
+
+
+//返回选择的列表里的内容
+global proc F_Return_valueNumber(string $name){ 
+    global string $K_select_value[];
+    string $K_select_value[]=`textScrollList -q -si $name`;
+}
+
+
+//移除一个列表里的物体
+global proc F_remove_Item(string $name,string $remove[])
+{
+    int $i=0;
+    for ($i=0;$i<size($remove);$i++)
+    {
+        textScrollList -e -ri $remove[$i] $name;
+    }
+}
+
+
+//清空列表里的内容
+global proc F_list_removeAll(string $name) 
+{
+    textScrollList -e -ra $name;
+}
+
+
+//控制列表框只能单选
+global proc F_list_onlyOne(string $name)
+{
+    textScrollList -e -da $name;
+    textScrollList -e -sii 1 $name;
+}
+
+
+//选择物体的约束
+global proc F_select_constraint(string $name[])
+{
+    global string $select_Connection_Constraint[];//约束值
+    global string $no_Constraint_Object[];//不存在约束的物体
+    global string $no_Constraint[];//被驱动物体框 2 的不存在约束的字符串
+    clear $select_Connection_Constraint;
+    clear $no_Constraint_Object;//没有约束物体
+    clear $no_Constraint;//没有约束物体的提示信息
+    int $x=0;
+    string $select_Now[]=`ls -sl`;
+    //查找命名空间
+    string $namespace="";
+    string $namespace_buffer[]; 
+    int $namespace_numTokens = 0;
+
+    $namespace_numTokens = `tokenize $name[0] ":" $namespace_buffer`;
+
+    if( $namespace_numTokens > 1 )
+    {
+    	for( $i = 0; $i < (size($namespace_buffer) - 1); $i++ )
+    	{
+    		$namespace += $namespace_buffer[$i];
+    		$namespace += ":";
+    	}
+    }
+
+    
+    for($x;$x<size($name);$x++)//遍历所有物体
+    {
+        string $select_Connections[]=`listConnections $name[$x]`;//选择物体的关联属性
+        if(size($select_Connections)==0)//如果没有关联属性
+        {
+            string $warn=$name[$x]+" 不存在约束";
+            $no_Constraint_Object[size($no_Constraint_Object)]=$name[$x];
+            $no_Constraint[size($no_Constraint)]= $warn;
+            $select_Connection_Constraint[size($select_Connection_Constraint)] = $warn;
+            
+        }
+        else
+        {
+            select $select_Connections;
+            string $select_Constraint[]=`ls -sl ($namespace+"*Constraint*")`;//选择物体名字中包含“Constraint”
+            if(size($select_Constraint)==0)//如果没有物体名字中包含“Constraint”
+            {
+                string $warn=$name[$x]+" 不存在约束";
+                $no_Constraint_Object[size($no_Constraint_Object)]=$name[$x];
+                $no_Constraint[size($no_Constraint)]= $warn;
+                $select_Connection_Constraint[size($select_Connection_Constraint)] = $warn;
+            }
+            else
+            {
+                select $select_Constraint;
+                string $select_Connection_Constraint_old[]=`ls -sl ($name[$x]+"*")`;//选择物体名字中包含"物体名字"
+                if(size($select_Connection_Constraint_old)==0)//如果没有物体名字中包含"物体名字"
+                {
+                    string $warn=$name[$x]+" 不存在约束";
+                    $no_Constraint_Object[size($no_Constraint_Object)]=$name[$x];
+                    $no_Constraint[size($no_Constraint)]= $warn;
+                    $select_Connection_Constraint[size($select_Connection_Constraint)] = $warn;
+                }
+                else
+                {
+                    int $y=0;
+                    for($y;$y<size($select_Connection_Constraint_old);$y++)
+                    {
+                        $select_Connection_Constraint[size($select_Connection_Constraint)]=$select_Connection_Constraint_old[$y];
+                    }
+                }
+            }
+        }
+    }
+    select $select_Now;
+}
+
+
+//列出单个约束节点下的约束属性值
+global proc F_list_constraintAtt(string $name)
+{
+    global string $constraint_Attribute[];
+    string $constraint_Attribute[]=`listAttr -ud $name`;
+}
+
+
+//检查驱动按钮按下的条件是否达成
+global proc F_Examine_Driver()
+{
+//    global string $K_return_Driver_2[];
+    global string $K_return_Driven_3[];
+//    F_return_Driver_2();
+    F_return_Driven_3();
+    if (`window -q -exists F2_driver_Window`) deleteUI F2_driver_Window;
+    
+    if(size($K_return_Driven_3)==0)//如果被驱动物体第三个列表框的值有为空
+    {
+        button -e -en false Driver_0;
+    }
+    else
+    {
+        button -e -en true Driver_0;
+    }
+}
+
+
+//返回驱动物体第一个列表框的值
+global proc F_return_Driver_1()
+{
+    global string $K_return_Driver_1[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVER_1");
+    $K_return_Driver_1=$K_select_value;
+}
+
+
+//返回驱动物体第二个列表框的值
+global proc F_return_Driver_2()
+{
+    global string $K_return_Driver_2[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVER_2");
+    $K_return_Driver_2=$K_select_value;
+}
+
+
+//返回被驱动物体第一个列表框的值
+global proc F_return_Driven_1()
+{
+    global string $K_return_Driven_1[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVEN_1");
+    $K_return_Driven_1=$K_select_value;
+}
+
+
+//返回被驱动物体第二个列表框的值
+global proc F_return_Driven_2()
+{
+    global string $K_return_Driven_2[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVEN_2");
+    $K_return_Driven_2=$K_select_value;
+}
+
+
+//返回被驱动物体第三个列表框的值
+global proc F_return_Driven_3()
+{
+    global string $K_return_Driven_3[];
+    global string $K_select_value[];
+    F_Return_valueNumber("DRIVEN_3");
+    $K_return_Driven_3=$K_select_value;
+}
+
+
+//设置驱动功能
+global proc F2_Driver_setKeyFrame(string $Driver_Attr,string $Driven_Attr,float $Driven_value)
+{
+    setAttr $Driven_Attr $Driven_value;
+    setDrivenKeyframe -cd $Driver_Attr $Driven_Attr;//驱动关键帧
+    keyTangent -itt linear -ott linear $Driven_Attr;
+    print "驱动完毕";
+    print "\n";
+}
+
+
+//批量修改约束节点权重的值
+global proc F_mod_constraint()
+{
+    global string $K_return_Driven_2[];
+    global string $K_return_Driven_3[];
+    global string $constraint_Attribute[];
+    
+    F_return_Driven_2();
+    F_return_Driven_3();
+
+    
+    if(size($K_return_Driven_2)==1)//如果被驱动约束节点属性为1个
+    {
+        int $K_selectNumItem[]=`textScrollList -q -sii DRIVEN_3`;//被驱动物体第三个列表框的选择的值的数量
+        int $x=0;
+        for($x;$x<size($K_return_Driven_3);$x++)
+        {
+            int $y=0;
+            
+            for($y;$y<size($K_selectNumItem);$y++)
+            {  
+                string $K_Driven_value="Driven_value_"+$y;
+                string $K_Driven_obj_Attr=$K_return_Driven_2[0]+"."+$K_return_Driven_3[$y];//被驱动约束节点属性的完整名称
+                float $K_driven_value=`textField -q -tx $K_Driven_value`;
+                setAttr $K_Driven_obj_Attr $K_driven_value;
+            }
+        }
+    }
+    else//如果被驱动约束节点属性为多个
+    {
+        int $K_selectNumItem[]=`textScrollList -q -sii DRIVEN_3`;//被驱动物体第三个列表框的选择的值的数量
+        int $x=0;
+        for($x;$x<size($K_return_Driven_2);$x++)
+        {
+            F_list_constraintAtt($K_return_Driven_2[$x]);//列出被驱动物体第二个列表框的值
+            int $y=0;
+            for($y;$y<size($K_selectNumItem);$y++)
+            {
+                if($K_selectNumItem[$y]<=size($constraint_Attribute))//如果被驱动物体节点属性的个数小于或等于当前约束属性的个数 位置
+                {
+                    string $K_Driven_value="Driven_value_"+$y;    
+                    float $K_driven_value= `textField -q -tx $K_Driven_value`;
+                    string $K_Driven_obj_Attr=$K_return_Driven_2[$x]+"."+$constraint_Attribute[$K_selectNumItem[$y]-1];//被驱动约束节点属性的完整名称
+                    setAttr $K_Driven_obj_Attr $K_driven_value;
+                }
+                else
+                {
+                    string $warn=$K_return_Driven_2[$x]+"不存在"+$K_return_Driven_3[$y]+" 这一项 " ;
+                    warning $warn;
+                }
+            }
+        }
+    }
+}
+
+if (`window -q -exists F2_driver_Window`) deleteUI F2_driver_Window;
+F_Constraint_Window();

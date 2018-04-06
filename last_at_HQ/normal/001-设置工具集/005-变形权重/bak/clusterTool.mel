@@ -1,0 +1,33 @@
+python "execfile('//10.99.1.2/数码电影/部门文件/02生产二线/02G角色/J-技术文件/001-设置工具集/005-变形权重/clusterTool.py');";
+
+
+
+global proc clusterTool()
+{
+    if (`window -q -exists clusterToolWindow`) deleteUI clusterToolWindow;
+    window -title "簇工具" -wh 200 300
+           clusterToolWindow;
+
+    columnLayout -adjustableColumn 1;
+    
+    string $form= `formLayout`;
+    
+    string $UI0=`button -w 160 -h 20 -label "创建簇" -command "python(\"lz_cluster()\")"`;
+	string $UI1=`button -w 160 -h 20 -label "镜像簇" -command "python(\"lz_dupCluster()\")"`;
+    string $UI2=`button -w 160 -h 20 -label "复制簇" -command "python(\"lz_cluToclu()\")"`;
+ 
+    formLayout -edit
+               -attachForm $UI0 "top" 10
+               -attachForm $UI0 "left" 10
+               -attachForm $UI1 "top" 40
+               -attachForm $UI1 "left" 10
+               -attachForm $UI2 "top" 70
+               -attachForm $UI2 "left" 10
+               $form;
+     setParent ..;
+   setParent..; 
+
+ showWindow  clusterToolWindow;
+  
+ }
+clusterTool(); 

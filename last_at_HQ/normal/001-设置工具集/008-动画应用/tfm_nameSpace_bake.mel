@@ -1,0 +1,49 @@
+global string $tempNamespace;
+global proc get_currNameSpace()
+{     
+	global string $tempNamespace;
+	$tempNamespace="";
+       string $sles[]=`ls -sl`;
+       string $buffer[];
+       string $a="";
+       $numTokens = `tokenize $sles[0]  ":" $buffer`;
+  	for($i=0;$i<$numTokens-1;$i++){
+	  $a+=$buffer[$i]+":";
+	}
+	if($numTokens>1){
+       $tempNamespace=$a;
+	}
+	else{
+	print "error";
+	}
+}
+global proc fm_toggleFaceMachineEvaluation()
+{
+	
+	global string $anzovinInterfaceCurrentCharacterNamespace;
+	global string $tempNamespace;
+	get_currNameSpace();
+	$anzovinInterfaceCurrentCharacterNamespace=$tempNamespace;
+
+	int $value = 1 - `getAttr ($anzovinInterfaceCurrentCharacterNamespace + "FM_data.enableFaceMachine")`;
+	
+	setAttr ($anzovinInterfaceCurrentCharacterNamespace + "FM_data.enableFaceMachine") $value;
+	
+	string $fmSkinClusters[] = `ls -type "fmSkinCluster" ($anzovinInterfaceCurrentCharacterNamespace + "*")`;
+	for($fmSkinCluster in $fmSkinClusters) {
+		if ($value == 1)
+			setAttr ($fmSkinCluster + ".nodeState") 0;
+		else
+			setAttr ($fmSkinCluster + ".nodeState") 1;
+	}
+	
+	string $fmRelativeBlends[] = `ls -type "fmRelativeBlend" ($anzovinInterfaceCurrentCharacterNamespace + "*")`;
+	for($fmRelativeBlend in $fmRelativeBlends) {
+		if ($value == 1)
+			setAttr ($fmRelativeBlend + ".nodeState") 0;
+		else
+			setAttr ($fmRelativeBlend + ".nodeState") 1;
+	}
+}
+
+fm_toggleFaceMachineEvaluation();

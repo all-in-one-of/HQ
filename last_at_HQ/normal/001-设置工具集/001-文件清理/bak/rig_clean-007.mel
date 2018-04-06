@@ -1,0 +1,1975 @@
+global proc rig_clean()
+{
+    if (`window -q -exists rig_cleanWindow`) deleteUI rig_cleanWindow;
+    window
+        -title "设置清理" -wh 250 500
+              rig_cleanWindow;
+
+    columnLayout -adjustableColumn 1;
+        ///添加新的命名
+        frameLayout -label "设置清理" -borderStyle "etchedIn"
+                -collapse 0 -collapsable 1
+                -marginWidth 5 -marginHeight 5;
+                                                                    
+
+          columnLayout -columnAttach "both" 5 -rowSpacing 5 -columnWidth 220;
+          
+             rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 70;  
+              checkBox -label "选择所有" -v 1
+                       -onc "checkBox -e -v 1 UnknowNodeCBX;checkBox -e -v 1 UnusedShadeNodeCBX;checkBox -e -v 1 duplicateShadeNodeCBX;checkBox -e -v 1 UnusedSkinNodeCBX;checkBox -e -v 1 UnusedLightLinkCBX;checkBox -e -v 1 UnusedLayersCBX;checkBox -e -v 1 UnusedInfluencesCBX;checkBox -e -v 1 UnusedOrigNodeCBX" 
+                       -ofc "checkBox -e -v 0 UnknowNodeCBX;checkBox -e -v 0 UnusedShadeNodeCBX;checkBox -e -v 0 duplicateShadeNodeCBX;checkBox -e -v 0 UnusedSkinNodeCBX;checkBox -e -v 0 UnusedLightLinkCBX;checkBox -e -v 0 UnusedLayersCBX;checkBox -e -v 0 UnusedInfluencesCBX;checkBox -e -v 0 UnusedOrigNodeCBX"; 
+              button -label "清理所选项"  -c Clean;
+            setParent ..;             
+ 
+             separator -height 10 -style "in";          
+          
+            rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 50;  
+              checkBox -label "清理未知节点" -v 1 UnknowNodeCBX;
+              button -label "清理" -c cleanUnknowNode;
+            setParent ..;
+                                                      
+            rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 50;  
+              checkBox -label "清理无链接的材质节点" -v 1 UnusedShadeNodeCBX;
+              button -label "清理" -c cleanUnusedShade;
+            setParent ..;  
+            
+            rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 50;  
+              checkBox -label  "清理重复的材质节点" -v 1 duplicateShadeNodeCBX;
+              button -label "清理" -c cleanDuplicateShade;
+            setParent ..;              
+            
+            
+            rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 50;  
+              checkBox -label "清理多余蒙皮节点" -v 1 UnusedSkinNodeCBX;
+              button -label "清理" -c cleanUnusedSkinNode;
+            setParent ..;              
+            
+            rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 50;  
+              checkBox -label "清理多余灯光链接" -v 1 UnusedLightLinkCBX;
+              button -label "清理" -c cleanLightLink;
+            setParent ..; 
+                           
+            rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 50;  
+              checkBox -label "清空层" -v 1 UnusedLayersCBX;
+              button -label "清理" -c cleanLayers;
+            setParent ..; 
+            
+            rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 50;  
+              checkBox -label "清理多余蒙皮影响" -v 1 UnusedInfluencesCBX;
+              button -label "清理" -c cleanUnsedInfluence;
+            setParent ..; 
+
+            rowColumnLayout -nc 2 -columnWidth 1 140 -columnWidth 2 50;  
+              checkBox -label "清理多余Orig节点" -v 0 UnusedOrigNodeCBX;
+              button -label "清理" -c cleanUnsedOrigNode;
+            setParent ..; 
+            
+            
+            separator -height 10 -style "none";                          
+            
+            separator -height 10 -style "doubleDash";     
+            
+            
+            button -label "重名检查(傅凯辉)..."  -c CheckOverAllNameListWin_Fu;                
+            
+            
+           
+      
+            separator -height 10 -style "none";                          
+            
+            separator -height 10 -style "doubleDash";     
+            
+            
+            button -label "重名检查(陈文渊)..."  -c CheckOverAllNameListWin_Chen;              
+                        
+           
+            
+            separator -height 10 -style "none";                          
+            
+            separator -height 10 -style "doubleDash";                                                                                                         
+
+            button -label "贴图检查面板..."  -c FTM_BuildMainUI;
+                                   
+            
+           setParent ..;
+          setParent..;
+ 
+         frameLayout -label "TSM清理" -borderStyle "etchedIn"
+                -collapse 0 -collapsable 1
+                -marginWidth 5 -marginHeight 5;
+            
+         string $form= `formLayout`;
+    
+         string $UI0=`button -w 160 -h 20 -label "Delete Extra Node"  -c lls_deleteExtraNode` ;
+	     string $UI1=`button -w 160 -h 20 -label "Delete Extra TSM Menu"  -c lls_deleteExtraTSMMenu` ;
+         string $UI2=`button -w 160 -h 20 -label "Add TSM Menu"  -c lls_addTSMMenu` ;
+ 
+         formLayout -edit
+                    -attachForm $UI0 "top" 10
+                    -attachForm $UI0 "left" 10
+                    -attachForm $UI1 "top" 40
+                    -attachForm $UI1 "left" 10
+                    -attachForm $UI2 "top" 70
+                    -attachForm $UI2 "left" 10
+               $form;
+          setParent ..;
+       setParent..; 
+
+                          
+        setParent..;
+        showWindow  rig_cleanWindow;
+
+}
+
+/*global proc selectAllOptions()
+{
+  int $UnkonwNode = `checkBox -q -v selectAllCBX`;
+  if($UnkonwNode == 1)
+  {
+    checkBox -e -v 1 selectAllCBX     
+  }   
+}
+*/
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc cleanUnknowNode()
+{
+ string $del_unknow[] = `ls -type "unknown"`;
+ string $del_unknow_int = size($del_unknow);
+ int $j;
+ for($j = 0;$j<size($del_unknow);$j++)
+ { 
+  if(`objExists $del_unknow[$j]`)
+ {	
+  lockNode -lock 0 $del_unknow[$j];
+  delete $del_unknow[$j];
+  };
+ };
+ print ("总共清理 " + $del_unknow_int + " 个未知节点！\n" );   
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc cleanUnusedShade()
+{
+ hyperShadePanelMenuCommand("hyperShadePanel1", "deleteUnusedNodes"); 
+ catch(removeDuplicateShadingNetworks( 0 )); 
+ print ("清理完毕！\n" );     
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+global proc cleanDuplicateShade()
+{
+ OptimizeSceneOptions;
+ scOpt_performOneCleanup( { "shadingNetworksOption" } );
+ if (`window -exists OptionBoxWindow`) deleteUI -window OptionBoxWindow;
+ saveOptionBoxSize(); 
+ print ("清理完毕！\n" );        
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+global proc cleanUnusedSkinNode()
+{
+ string $ListSkin[] = `ls -type skinCluster`;
+ int $UnusedSkinNode=0;
+ string $checkConnection[];
+ for($UnusedSkinNode;$UnusedSkinNode<size($ListSkin);$UnusedSkinNode++)
+ {
+//string $checkConnection[] = `listConnections -t joint $ListSkin[$UnusedSkinNode]`;//只列出骨骼影响，有时候是影响体，也要算
+  string $checkConnection[] = `listConnections $ListSkin[$UnusedSkinNode]`; 
+  if(size($checkConnection) == 0)
+  {
+    delete $ListSkin[$UnusedSkinNode];  
+  }  
+ } 
+ if(size($checkConnection)!=0)
+ {
+   print ("总共清理 " + $UnusedSkinNode + " 个多余蒙皮节点！\n" );      
+ }
+ else
+ {
+   print ("总共清理 " + ($UnusedSkinNode-1) + " 个多余蒙皮节点！\n" );       
+ }     
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+global proc cleanLightLink()
+{
+  int $debug=0;
+  int $uselessLinkCount;
+  int $dlsLinkers, $dosLinkers, $isgLinkers, $ipseLinkers, $drgLinkers, $dhrgLinkers;
+  string $ws = `workspace -q -fn`;
+  string $fn = `file -sn -q -shn`;
+  string $file = $ws + "/linkers_in_" + $fn + ".txt";
+  int $fileId;
+  $startTime = `timerX`;
+  waitCursor -st on;
+  string $linkers_dls[] = `listConnections -plugs true -source no defaultLightSet.message`;
+  string $linkers_dos[] = `listConnections -plugs true -source no defaultObjectSet.message`;
+  string $linkers_isg[] = `listConnections -plugs true -source no initialShadingGroup.message`;
+  string $linkers_ipse[] = `listConnections -plugs true -source no initialParticleSE.message`;
+  string $linkers_drg[] = `listConnections -plugs true -source no defaultRenderGlobals.message`;
+  string $linkers_dhrg[] = `listConnections -plugs true -source no defaultHardwareRenderGlobals.message`;
+  int $linkersCount =
+        size($linkers_dls) +
+        size($linkers_dos) +
+        size($linkers_isg) +
+        size($linkers_ipse) +
+        size($linkers_dhrg) +
+        size($linkers_dhrg);
+   if ($debug) {
+        $fileId = `fopen $file "w"`;
+        fprint $fileId ($linkersCount + " linkers found!\r\n");
+        fprint $fileId ("Below are linkers considered useless, \r\n" +
+            "which can be disconnected by running { fh_cleanUpLightlinkers(0) }!\r\n");
+        fprint $fileId ("\r\n");
+    } else if ( $linkersCount > 5000 ) {
+        print "Maya 正在断开无用灯光链接，请稍候……\n";
+    }
+   if (size($linkers_dls) != 0) {
+        for ( $linker in $linkers_dls ) {
+            string $srcAttr;
+            string $tmp[] = stringToStringArray($linker, ".");
+            int $len = size($tmp);
+            string $linkerNode = $tmp[0]+"."+$tmp[1];
+            if ( $tmp[$len-1] == "shadowLight" ) {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".shadowObject")`;
+            } else {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".object")`;
+            }
+            if ( $srcAttr == "" ) {
+                continue;
+            } else if
+                ( $srcAttr == "initialShadingGroup.message" // connections between initialShadingGroup.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "initialParticleSE.message" // connections between initialParticleSE.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultObjectSet.message" // connections between defaultObjectSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultLightSet.message" // connections between defaultLightSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "hyperGraphLayout.message" // connections between hyperGraphLayout.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultRenderGlobals.message" // connections between defaultRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultHardwareRenderGlobals.message" // connections between defaultHardwareRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                )
+            {
+                if ($debug) {
+                    fprint $fileId ("connection defaultLightSet.msg "+$linker+";\r\n");
+                } else {
+                    disconnectAttr defaultLightSet.message $linker;
+                }
+                $dlsLinkers++;
+            }
+        }
+    }
+    clear $linkers_dls;
+    if (size($linkers_dos) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dos ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultObjectSet.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultObjectSet.message $linker;
+            }
+            $dosLinkers++;
+        }
+    }
+    clear $linkers_dos;
+    if (size($linkers_isg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_isg ) {
+            if($linker != "initialMaterialInfo.shadingGroup") {
+                if ($debug) {
+                    fprint $fileId ("connection initialShadingGroup.msg " + $linker + ";\r\n");
+                } else {
+                    disconnectAttr initialShadingGroup.message $linker;
+                }
+                $isgLinkers++;
+            }
+        }
+    }
+    clear $linkers_isg;
+    if (size($linkers_ipse) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_ipse ) {
+            if ($debug) {
+                fprint $fileId ("connection initialParticleSE.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr initialParticleSE.message $linker;
+            }
+            $ipseLinkers++;
+        }
+    }
+    clear $linkers_ipse;
+    if (size($linkers_drg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_drg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultRenderGlobals.message $linker;
+            }
+            $drgLinkers++;
+        }
+    }
+    clear $linkers_drg;
+    if (size($linkers_dhrg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dhrg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultHardwareRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultHardwareRenderGlobals.message $linker;
+            }
+            $dhrgLinkers++;
+        }
+    }
+    clear $linkers_dhrg;
+    $uselessLinkCount =
+        $dlsLinkers + $dosLinkers +
+        $isgLinkers + $ipseLinkers +
+        $dhrgLinkers + $drgLinkers;
+    if (!$debug) {
+        print ($dlsLinkers + " 个链接从 defaultLightSet 断开！\n");
+        print ($dosLinkers + " 个链接从 defaultObjectSet 断开！\n");
+        print ($isgLinkers + " 个链接从 initialShadingGroup 断开！\n");
+        print ($ipseLinkers + " 个链接从 initialParticleSE 断开！\n");
+        print ($drgLinkers + " 个链接从 defaultRenderGlobals 断开！\n");
+        print ($dhrgLinkers + " 个链接从 defaultHardwareRenderGlobals 断开！\n");
+    }
+    print ("总共清理 " + $uselessLinkCount + " 个无用灯光链接！\n" );
+    clear $linkers_dos;
+    clear $linkers_dls;
+    clear $linkers_isg;
+    clear $linkers_ipse;
+    if ($debug) {
+        fprint $fileId ("\r\n");
+        fprint $fileId ("场景中共有 " + $uselessLinkCount + " 个无用链接！\r\n");
+        fclose $fileId;
+        print ("链接信息已写入到 "+$file+"\n");
+        print ("你可以运行 { fh_cleanUpLightlinkers(0); } 把它们断开!\n");
+    }
+    waitCursor -st off;
+    $elaspedTime = `timerX -startTime $startTime`;
+    //print ("总共耗时： "+$elaspedTime+" 秒!\n");
+    string $lign[] = `ls "lightLinker1.link[*].lightIgnored"`;
+    string $oign[] = `ls "lightLinker1.link[*].objectIgnored"`;
+    string $sllk[]= `ls "lightLinker1.slnk[*].shadowLight"`;
+    string $solk[]= `ls "lightLinker1.slnk[*].shadowObject"`;
+    string $slig[]= `ls "lightLinker1.sign[*].shadowLightIgnored"`;
+    string $soig[]= `ls "lightLinker1.sign[*].shadowObjectIgnored"`;
+    int $linkersCount = size($lign)+size($oign)+size($sllk)+size($solk)+size($slig)+size($soig);
+    if ($linkersCount > 1000) {
+        warning ("找到 "+$linkersCount + " 个非照明（使某灯光不照明某物体的）灯光链接，这可能导致 maya 变慢！\n");
+    }        
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+global proc cleanLayers()
+{
+ string $listLayer[] = `lsType("displayLayer")`;
+ int $l;
+ for($l=1;$l<(size($listLayer)-1);$l++)
+ {
+  catch(`delete $listLayer[$l]`);    
+ }
+ print ("总共清理 " + ($l-1) + " 个多余层！\n" );    
+} 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+global proc cleanUnsedInfluence()
+{  
+    string $selMOD[] = `ls -type mesh`;    
+    int $m;
+    for($m=0;$m<size($selMOD);$m++)
+    {
+     select -add $selMOD[$m];  
+    }
+     pickWalk -d up;     
+    
+    string $selOBJ[] = `ls -sl`;
+    int $s=0;
+    for($s;$s<size($selOBJ);$s++)
+    {
+      select -r $selOBJ[$s]; 
+      removeUnusedInfluences;         
+     }
+     
+   select -cl;  
+   print ("完成清理蒙皮！\n" ); 
+       
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc cleanUnsedOrigNode()
+{
+   select -r "*Orig*";
+   string $selOrig[] = `ls -sl`;
+   select -cl;
+   string $delOrig[] = {};
+   int $o=0;
+   int $d=0;
+   int $NumOrigNode=0;
+   for($o;$o<size($selOrig);$o++)
+   {
+    string $ifConnection[] = `listConnections $selOrig[$o]`;
+    if(size($ifConnection) == 0)
+    {
+      $delOrig[$d] = $selOrig[$o]; 
+      $d++; 
+      select -add $delOrig[$d-1];    
+     }
+    }
+    
+    $NumOrigNode = size(`ls -sl`); 
+        
+    delete;   
+       
+    print ("总共清理 " + $NumOrigNode + " 个多余Orig废节点！\n" );          
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+global proc Clean()
+{
+  int $UnkonwNode = `checkBox -q -v UnknowNodeCBX`;
+  int $UnusedShadeNode = `checkBox -q -v UnusedShadeNodeCBX`;
+  int $UnusedSkinNode = `checkBox -q -v UnusedSkinNodeCBX`; 
+  int $UnusedLightLink = `checkBox -q -v UnusedLightLinkCBX`; 
+  int $UnusedLayers = `checkBox -q -v UnusedLayersCBX`;
+  int $UnusedInfluences = `checkBox -q -v  UnusedInfluencesCBX`; 
+  int $duplicateShadeNode = `checkBox -q -v duplicateShadeNodeCBX`;
+  int $UnusedOrigNode = `checkBox -q -v UnusedOrigNodeCBX`;
+
+          
+ /////////////////////////////////////////////////////////清理未知节点////////////////////////////////////////////////////////////////////////////// 
+  if($UnkonwNode == 1)
+  {
+    string $del_unknow[] = `ls -type "unknown"`;
+    int $delUnknow = size($del_unknow);
+    int $j;
+    for($j = 0;$j<size($del_unknow);$j++)
+    { 
+      if(`objExists $del_unknow[$j]`)
+      {	
+        lockNode -lock 0 $del_unknow[$j];  
+        delete $del_unknow[$j];
+       };
+     }; 
+    print ("总共清理 " + $delUnknow + " 个未知节点！\n" );     
+  }
+
+//////////////////////////////////////////////////////////Delete unused shading Nodes///////////////////////////////////////
+  if($UnusedShadeNode == 1) 
+  {
+    hyperShadePanelMenuCommand("hyperShadePanel1", "deleteUnusedNodes");
+    catch(removeDuplicateShadingNetworks( 0 )); 
+    print ("清理完毕！\n" );           
+   } 
+
+//////////////////////////////////////////////////////////Delete duplicate shading networks///////////////////////////////////////
+  if($duplicateShadeNode == 1) 
+  {
+    OptimizeSceneOptions;  
+    scOpt_performOneCleanup( { "shadingNetworksOption" } );
+    if (`window -exists OptionBoxWindow`) deleteUI -window OptionBoxWindow;
+    saveOptionBoxSize();      
+  }
+
+
+
+
+
+
+///////////////////////////////////////////////清理多余的蒙皮节点//////////////////////////////////////////////////
+  if($UnusedSkinNode == 1) 
+  {
+    string $ListSkin[] = `ls -type skinCluster`;
+    int $UnusedSkinNode=0;
+    string $checkConnection[];
+    for($UnusedSkinNode;$UnusedSkinNode<size($ListSkin);$UnusedSkinNode++)
+    {
+      //string $checkConnection[] = `listConnections -t joint $ListSkin[$UnusedSkinNode]`;//只列出骨骼影响，有时候是影响体，也要算
+      string $checkConnection[] = `listConnections $ListSkin[$UnusedSkinNode]`;     
+      if(size($checkConnection) == 0)
+      {
+        delete $ListSkin[$UnusedSkinNode];  
+       }  
+     } 
+     if(size($checkConnection)!=0)
+     {
+       print ("总共清理 " + $UnusedSkinNode + " 个多余蒙皮节点！\n" );      
+      }
+     else
+     {    
+       print ("总共清理 " + ($UnusedSkinNode-1) + " 个多余蒙皮节点！\n" );       
+      }     
+    }
+
+//////////////////////////////////////////////清理层////////////////////////////////////////////////////////////////////////////////
+  if($UnusedLayers == 1) 
+  {
+    string $listLayer[] = `lsType("displayLayer")`;
+    for($layers=1;$layers<(size($listLayer)-1);$layers++)
+    {
+      catch(`delete $listLayer[$layers]`);    
+     } 
+     print ("总共清理 " + ($layers-1) + " 个多余层！\n" );     
+   }
+   
+//////////////////////////////////////////////清理多余蒙皮影响////////////////////////////////////////////////////////////////////////////////
+  if($UnusedInfluences == 1) 
+  {
+
+    string $selMOD[] = `ls -type mesh`;    
+    int $m;
+    for($m=0;$m<size($selMOD);$m++)
+    {
+     select -add $selMOD[$m];  
+    }
+     pickWalk -d up;     
+
+
+
+    string $selOBJ[] = `ls -sl`;
+    int $s=0;
+    for($s;$s<size($selOBJ);$s++)
+    {
+      select -r $selOBJ[$s]; 
+      removeUnusedInfluences;         
+     }
+   select -cl;       
+   print ("完成清理蒙皮！\n" );    
+  }   
+   
+//////////////////////////////////////////////////////////清理多余Orig节点////////////////////////////////////////////////////////////////////////////////   
+
+  if($UnusedOrigNode == 1) 
+  {
+   select -r "*Orig*";
+   string $selOrig[] = `ls -sl`;
+   select -cl;
+   string $delOrig[] = {};
+   int $o=0;
+   int $d=0;
+   int $NumOrigNode=0;
+   for($o;$o<size($selOrig);$o++)
+   {
+    string $ifConnection[] = `listConnections $selOrig[$o]`;
+    if(size($ifConnection) == 0)
+    {
+      $delOrig[$d] = $selOrig[$o]; 
+      $d++; 
+      select -add $delOrig[$d-1];    
+     }
+    }
+    
+    $NumOrigNode = size(`ls -sl`); 
+        
+    delete;   
+       
+    print ("总共清理 " + $NumOrigNode + " 个多余Orig废节点！\n" );      
+             
+  }    
+   
+   
+
+//////////////////////////////////////////////////////////清理灯光链接////////////////////////////////////////////////////////////////////////////////
+  if($UnusedLightLink == 1) 
+  {
+    int $debug=0;
+    int $uselessLinkCount;
+    int $dlsLinkers, $dosLinkers, $isgLinkers, $ipseLinkers, $drgLinkers, $dhrgLinkers;
+    string $ws = `workspace -q -fn`;
+    string $fn = `file -sn -q -shn`;
+    string $file = $ws + "/linkers_in_" + $fn + ".txt";
+    int $fileId;
+    $startTime = `timerX`;
+    waitCursor -st on;
+    string $linkers_dls[] = `listConnections -plugs true -source no defaultLightSet.message`;
+    string $linkers_dos[] = `listConnections -plugs true -source no defaultObjectSet.message`;
+    string $linkers_isg[] = `listConnections -plugs true -source no initialShadingGroup.message`;
+    string $linkers_ipse[] = `listConnections -plugs true -source no initialParticleSE.message`;
+    string $linkers_drg[] = `listConnections -plugs true -source no defaultRenderGlobals.message`;
+    string $linkers_dhrg[] = `listConnections -plugs true -source no defaultHardwareRenderGlobals.message`;
+    int $linkersCount =
+        size($linkers_dls) +
+        size($linkers_dos) +
+        size($linkers_isg) +
+        size($linkers_ipse) +
+        size($linkers_dhrg) +
+        size($linkers_dhrg);
+    if ($debug) {
+        $fileId = `fopen $file "w"`;
+        fprint $fileId ($linkersCount + " linkers found!\r\n");
+        fprint $fileId ("Below are linkers considered useless, \r\n" +
+            "which can be disconnected by running { fh_cleanUpLightlinkers(0) }!\r\n");
+        fprint $fileId ("\r\n");
+    } else if ( $linkersCount > 5000 ) {
+        print "Maya 正在断开无用灯光链接，请稍候……\n";
+    }
+    if (size($linkers_dls) != 0) {
+        for ( $linker in $linkers_dls ) {
+            string $srcAttr;
+            string $tmp[] = stringToStringArray($linker, ".");
+            int $len = size($tmp);
+            string $linkerNode = $tmp[0]+"."+$tmp[1];
+            if ( $tmp[$len-1] == "shadowLight" ) {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".shadowObject")`;
+            } else {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".object")`;
+            }
+            if ( $srcAttr == "" ) {
+                continue;
+            } else if
+                ( $srcAttr == "initialShadingGroup.message" // connections between initialShadingGroup.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "initialParticleSE.message" // connections between initialParticleSE.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultObjectSet.message" // connections between defaultObjectSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultLightSet.message" // connections between defaultLightSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "hyperGraphLayout.message" // connections between hyperGraphLayout.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultRenderGlobals.message" // connections between defaultRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultHardwareRenderGlobals.message" // connections between defaultHardwareRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                )
+            {
+                if ($debug) {
+                    fprint $fileId ("connection defaultLightSet.msg "+$linker+";\r\n");
+                } else {
+                    disconnectAttr defaultLightSet.message $linker;
+                }
+                $dlsLinkers++;
+            }
+        }
+    }
+    clear $linkers_dls;
+    if (size($linkers_dos) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dos ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultObjectSet.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultObjectSet.message $linker;
+            }
+            $dosLinkers++;
+        }
+    }
+    clear $linkers_dos;
+    if (size($linkers_isg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_isg ) {
+            if($linker != "initialMaterialInfo.shadingGroup") {
+                if ($debug) {
+                    fprint $fileId ("connection initialShadingGroup.msg " + $linker + ";\r\n");
+                } else {
+                    disconnectAttr initialShadingGroup.message $linker;
+                }
+                $isgLinkers++;
+            }
+        }
+    }
+    clear $linkers_isg;
+    if (size($linkers_ipse) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_ipse ) {
+            if ($debug) {
+                fprint $fileId ("connection initialParticleSE.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr initialParticleSE.message $linker;
+            }
+            $ipseLinkers++;
+        }
+    }
+    clear $linkers_ipse;
+    if (size($linkers_drg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_drg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultRenderGlobals.message $linker;
+            }
+            $drgLinkers++;
+        }
+    }
+    clear $linkers_drg;
+    if (size($linkers_dhrg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dhrg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultHardwareRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultHardwareRenderGlobals.message $linker;
+            }
+            $dhrgLinkers++;
+        }
+    }
+    clear $linkers_dhrg;
+    $uselessLinkCount =
+        $dlsLinkers + $dosLinkers +
+        $isgLinkers + $ipseLinkers +
+        $dhrgLinkers + $drgLinkers;
+    if (!$debug) {
+        print ($dlsLinkers + " 个链接从 defaultLightSet 断开！\n");
+        print ($dosLinkers + " 个链接从 defaultObjectSet 断开！\n");
+        print ($isgLinkers + " 个链接从 initialShadingGroup 断开！\n");
+        print ($ipseLinkers + " 个链接从 initialParticleSE 断开！\n");
+        print ($drgLinkers + " 个链接从 defaultRenderGlobals 断开！\n");
+        print ($dhrgLinkers + " 个链接从 defaultHardwareRenderGlobals 断开！\n");
+    }
+    print ("总共清理 " + $uselessLinkCount + " 个无用灯光链接！\n" );
+    clear $linkers_dos;
+    clear $linkers_dls;
+    clear $linkers_isg;
+    clear $linkers_ipse;
+    if ($debug) {
+        fprint $fileId ("\r\n");
+        fprint $fileId ("场景中共有 " + $uselessLinkCount + " 个无用链接！\r\n");
+        fclose $fileId;
+        print ("链接信息已写入到 "+$file+"\n");
+        print ("你可以运行 { fh_cleanUpLightlinkers(0); } 把它们断开!\n");
+    }
+    waitCursor -st off;
+    $elaspedTime = `timerX -startTime $startTime`;
+    //print ("总共耗时： "+$elaspedTime+" 秒!\n");
+    string $lign[] = `ls "lightLinker1.link[*].lightIgnored"`;
+    string $oign[] = `ls "lightLinker1.link[*].objectIgnored"`;
+    string $sllk[]= `ls "lightLinker1.slnk[*].shadowLight"`;
+    string $solk[]= `ls "lightLinker1.slnk[*].shadowObject"`;
+    string $slig[]= `ls "lightLinker1.sign[*].shadowLightIgnored"`;
+    string $soig[]= `ls "lightLinker1.sign[*].shadowObjectIgnored"`;
+    int $linkersCount = size($lign)+size($oign)+size($sllk)+size($solk)+size($slig)+size($soig);
+    if ($linkersCount > 1000) {
+        warning ("找到 "+$linkersCount + " 个非照明（使某灯光不照明某物体的）灯光链接，这可能导致 maya 变慢！\n");
+    }      
+  }
+
+
+
+//////////////////////////////////////////////清理多余的空组////////////////////////////////////////////////////////////////////////////////
+//OptimizeSceneOptions;
+//scOpt_performOneCleanup( { "transformOption" } );
+   print ("全部清理完毕！\n" );  
+}
+
+
+
+
+global proc lls_deleteExtraNode()
+{
+   $switchNodes = `ls -dep -type script`;
+     for($switchNode in $switchNodes)
+       {
+          if(endsWith($switchNode, "TSM2FKIKSwitch"))
+          if($switchNode!="TSM2FKIKSwitch")
+          delete $switchNode;
+      }
+
+}
+
+global proc lls_deleteExtraTSMMenu()
+{
+global string $gMainWindow;
+int $i;
+
+do
+{
+$i=0;
+$findMenus = `lsUI -type "menu"`;
+for($findMenu in $findMenus)
+{
+    if ($findMenu == "TSM2ControlsMenu")
+        $i++;
+}
+
+if($i!=0)
+  deleteUI -menu TSM2ControlsMenu;  
+}
+while($i!=0);
+
+doEnableNodeItems true all;
+menu -to true -label "TSM Controls" -parent $gMainWindow TSM2ControlsMenu; 
+menuItem -label "FKIK Switch" -command "cycleCheck -e off;int $i;string $selNodes[] = `selectedNodes`; string $buffer[]; int $numTokens = 0;$numTokens = `tokenize $selNodes[0] \"|\" $buffer`;string $theNode = $buffer[$numTokens-1];string $ns = \"\";$numTokens = `tokenize $theNode \":\" $buffer`;$theNode = $buffer[ $numTokens-1 ];if( $numTokens > 1 ){	for( $i = 0; $i < (size($buffer) - 1); $i++ )	{		$ns += $buffer[$i];		$ns += \":\";	}}$numTokens = `tokenize $theNode \"_\" $buffer`;string $sysPref = $buffer[0];string $switchAttribute = $sysPref + \"_FKIK\";string $upperBody = $ns + \"Upper_Body\";string $userswitch = $upperBody + \".\" + $switchAttribute;int $currentMode = `getAttr $userswitch`;string $controlSet;if( $currentMode == 0 ){	$controlSet = $ns + $sysPref + \"_IK_Controls\";	}else{	$controlSet = $ns + $sysPref + \"_FK_Controls\";}select $controlSet;string $controls[] = `selectedNodes`; for( $i = 0; $i < size($controls); $i++ ) {	string $control = $controls[$i];	$numTokens = `tokenize $control \"|\" $buffer`;	$control = $buffer[$numTokens-1];		string $switch = $control + \"_SWITCH\";		if( `objExists $switch` )	{		string $controlAttributes[] = `listAttr -k $control`;		string $switchAttributes[] = `listAttr -k $switch`;				int $j;		for( $j = 0; $j < size($controlAttributes); $j++ )		{			if( $controlAttributes[$j] == \"Reposition\" )			{				$j++;			}				string $attributeToSet = $control + \".\" + $controlAttributes[$j];			int $foundAttribute = 0;			int $k;			for( $k = 0; $k < size($switchAttributes); $k++ )			{				if( $controlAttributes[$j] == $switchAttributes[$k] )				{					$foundAttribute = 1;					string $attributeToGet = $switch + \".\" + $switchAttributes[$k];					float $valueOfAttribute = `getAttr $attributeToGet`;					setAttr $attributeToSet $valueOfAttribute; 				}			}			if( $foundAttribute == 0 )			{				setAttr $attributeToSet 0;			}			setKeyframe $attributeToSet;		}	}}if( $currentMode == 0 ){	$currentMode = 1;	}else{	$currentMode = 0;}setAttr $userswitch $currentMode;setKeyframe $userswitch;$keytime = `findKeyframe -which previous -attribute $switchAttribute -animation objects $upperBody`;$now = `currentTime -query`;if( $keytime == $now ){	setKeyframe -time 0 $userswitch;	$keytime = 0;}keyTangent -time $keytime -outTangentType step -attribute $switchAttribute -	animation objects $upperBody;cycleCheck -e on;select -clear;"; menuItem -label "Refresh Rig" -command "doEnableNodeItems false all; doEnableNodeItems true all;;";
+
+}
+
+global proc lls_addTSMMenu()
+{
+ global string $gMainWindow;
+  
+doEnableNodeItems true all;    
+menu -to true -label "TSM Controls" -parent $gMainWindow TSM2ControlsMenu; 
+menuItem -label "FKIK Switch" -command "cycleCheck -e off;int $i;string $selNodes[] = `selectedNodes`; string $buffer[]; int $numTokens = 0;$numTokens = `tokenize $selNodes[0] \"|\" $buffer`;string $theNode = $buffer[$numTokens-1];string $ns = \"\";$numTokens = `tokenize $theNode \":\" $buffer`;$theNode = $buffer[ $numTokens-1 ];if( $numTokens > 1 ){	for( $i = 0; $i < (size($buffer) - 1); $i++ )	{		$ns += $buffer[$i];		$ns += \":\";	}}$numTokens = `tokenize $theNode \"_\" $buffer`;string $sysPref = $buffer[0];string $switchAttribute = $sysPref + \"_FKIK\";string $upperBody = $ns + \"Upper_Body\";string $userswitch = $upperBody + \".\" + $switchAttribute;int $currentMode = `getAttr $userswitch`;string $controlSet;if( $currentMode == 0 ){	$controlSet = $ns + $sysPref + \"_IK_Controls\";	}else{	$controlSet = $ns + $sysPref + \"_FK_Controls\";}select $controlSet;string $controls[] = `selectedNodes`; for( $i = 0; $i < size($controls); $i++ ) {	string $control = $controls[$i];	$numTokens = `tokenize $control \"|\" $buffer`;	$control = $buffer[$numTokens-1];		string $switch = $control + \"_SWITCH\";		if( `objExists $switch` )	{		string $controlAttributes[] = `listAttr -k $control`;		string $switchAttributes[] = `listAttr -k $switch`;				int $j;		for( $j = 0; $j < size($controlAttributes); $j++ )		{			if( $controlAttributes[$j] == \"Reposition\" )			{				$j++;			}				string $attributeToSet = $control + \".\" + $controlAttributes[$j];			int $foundAttribute = 0;			int $k;			for( $k = 0; $k < size($switchAttributes); $k++ )			{				if( $controlAttributes[$j] == $switchAttributes[$k] )				{					$foundAttribute = 1;					string $attributeToGet = $switch + \".\" + $switchAttributes[$k];					float $valueOfAttribute = `getAttr $attributeToGet`;					setAttr $attributeToSet $valueOfAttribute; 				}			}			if( $foundAttribute == 0 )			{				setAttr $attributeToSet 0;			}			setKeyframe $attributeToSet;		}	}}if( $currentMode == 0 ){	$currentMode = 1;	}else{	$currentMode = 0;}setAttr $userswitch $currentMode;setKeyframe $userswitch;$keytime = `findKeyframe -which previous -attribute $switchAttribute -animation objects $upperBody`;$now = `currentTime -query`;if( $keytime == $now ){	setKeyframe -time 0 $userswitch;	$keytime = 0;}keyTangent -time $keytime -outTangentType step -attribute $switchAttribute -	animation objects $upperBody;cycleCheck -e on;select -clear;"; menuItem -label "Refresh Rig" -command "doEnableNodeItems false all; doEnableNodeItems true all;;";
+
+}
+
+
+
+///////////////////////////////////////////////////////////////重命名检查/////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+global proc CheckOverAllNameListWin_Fu()
+{
+ python "execfile('//10.99.1.2/数码电影/临时交换/02生产二线/02G角色/员工文件/F_傅凯晖/01.Work/pyc/run_repeatName.py')";   
+}
+
+
+///////////////////////////////////////////////////////////////重命名检查-陈文渊/////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+
+global proc string[] checkOverNameAllObj(int $mode)
+{
+	//float $st=`timerX`;
+	string $sel[]=`ls -dag`;
+	string $overName[];
+	clear $overName;
+	if (($mode)&&(`textScrollList -ex checkOverAllNameList`))
+		textScrollList  -e -ra  checkOverAllNameList;
+	for($s in $sel)
+	{
+		if(`gmatch $s "*|*"`){
+			$overName[`size $overName`]=$s;
+			if (($mode)&&(`textScrollList -ex checkOverAllNameList`)){
+				textScrollList  -e -append  $s checkOverAllNameList;
+			}
+		}
+		
+	}
+	if (($mode)&&(`textScrollList -ex checkOverAllNameList`))
+		window -e -title ("存在"+`size $overName` + "个重名的对象") checkOverAllName;
+	//print (`timerX -st $st`+"\n");
+
+	return $overName;
+	//size $overName;
+}
+
+global proc CheckOverAllNameListWin_Chen()
+{
+	if (`window -ex checkOverAllName`)
+		deleteUI checkOverAllName;
+
+	window -title "不存在重名的对象" -resizeToFitChildren true checkOverAllName;
+		
+	string $mianLayout=`formLayout  -nd 1000 `;
+		$control1 = `textScrollList
+			-ams 1
+    -sc selobj
+			checkOverAllNameList`;
+	formLayout -e 
+
+		-attachPosition $control1 "left" 0 57
+		-attachPosition $control1 "right" 0 944
+		-attachForm $control1 "top"  10 
+		-attachPosition $control1 "bottom" 0 898
+		$mianLayout;
+	window -e -w 664 -h 262  checkOverAllName;
+	checkOverNameAllObj(1);
+	showWindow checkOverAllName;
+/////////////////////////
+string $h[];
+string $listtSs[]=`textScrollList -q -ai checkOverAllNameList`;
+for($i=0 ; $i<size($listtSs) ;$i++)
+{
+string $buffer[];
+$numTokens = `tokenize $listtSs[$i] "|" $buffer`;
+$h[$i]=$buffer[$numTokens-1];
+}
+string $dela[]=stringArrayRemoveDuplicates($h);
+textScrollList  -e -ra  checkOverAllNameList;
+for($delaobj in $dela)
+textScrollList  -e -append  $delaobj checkOverAllNameList;
+	
+}
+
+global proc selobj()
+{
+string $ns = "";
+string $listtSs[]=`textScrollList -q -si checkOverAllNameList`;
+for($listtSsobj in $listtSs)
+{
+string $buffer[];
+$numTokens = `tokenize $listtSsobj ":" $buffer`;
+$thename=$buffer[$numTokens-1];
+if($numTokens>1)
+{
+   for($i=0;$i<(size($buffer)-1);$i++)
+   {
+       $ns+=$buffer[$i];
+       $ns+=":";
+       
+   }
+
+}select  ($ns+"*|"+$ns+$thename);
+}
+}
+
+
+
+///////////////////////////////////////////////////////////////贴图检查面板/////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+/*  This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: FileTextureManager v2.0
+''    Author: Crow Yeh
+''    Last Updated: April 16, 2002
+''    Update/Change this file at:
+''    http://www.highend3d.com/maya/mel/?section=project#1012
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///											///
+/// Procedure Name :	FileTextureManager.mel						///
+///											///
+/// Updated :	April, 2002								///
+///                                                                                     ///
+/// Author :	Crow Yeh								///
+/// Contact :	crow@citiz.net								///
+///											///
+/// Description :									///
+///											///
+///		FileTextureManager basically does these jobs:				///
+///		1. Analyse scene file textures.						///
+///		2. Copy or move the original texture files to user defined path.	///
+///		3. Reset file textures' path.						///
+///											///
+///		FileTextureManager is designed and written to be used on NT or		///
+///		IRIX. It has been tested on both NT and IRIX or cross. On other		///
+///		OS which uses "\" or "/" to separate path, like Linux, it should	///
+///		work properly, which has not been tested yet. But it worths a try.	///
+///											///
+/// How to use :									///
+///											///
+///		Put the script in your scripts folder then type and execute 		///
+///		"FileTextureManager" in the command line or Script Editor, 		///
+///		an UI window will appear. Then follow the help in the UI 		///
+///		window to finish your job. Have fun!					///
+///											///
+/// Inputs :	None									///
+///											///
+/// Return :	None									///
+/// 											///
+/// All Rights Reserved .								///
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////
+// MEL Starts //
+////////////////
+
+
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+// Get the right format of path(folder) to match current OS.
+//
+proc string FTM_GetPath (string $FTM_FileOrPath, string $FTM_OldPath)
+//$FTM_FileOrPath	Input type: file or path
+//$FTM_OldPath		The input
+{
+	//Only want the path.
+	if ($FTM_FileOrPath == "file")
+		$FTM_OldPath = `dirname $FTM_OldPath`;
+	//Get rid of the slash at the end.
+	$FTM_OldPath = `substitute "\\\\*$" $FTM_OldPath ""`;
+	$FTM_OldPath = `substitute "/*$" $FTM_OldPath ""`;
+	//Get the right path.
+	string $FTM_RightPath;
+	global int $FTMg_OS;
+	if ($FTMg_OS == 0)//nt
+		$FTM_RightPath = `toNativePath $FTM_OldPath` + "\\";
+	else if ($FTMg_OS == 1)//irix
+		$FTM_RightPath = `fromNativePath $FTM_OldPath` + "/";
+	return $FTM_RightPath;
+}
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+// Get the right format of input file's fullname (including path) to match current OS.
+// Return a string array, the first element is the right format of the input file's
+// fullname (including path), the second element is the shortname of input file (without path).
+//
+proc string[] FTM_GetFile (string $FTM_OldFullPath)
+{
+	string $FTM_RightPath[];
+	string $FTM_PathElements[];
+	int $FTM_PathElementsSize;
+
+	// fullname
+	global int $FTMg_OS;
+	if ($FTMg_OS == 0)//nt
+	{
+		$FTM_RightPath[0] = `toNativePath $FTM_OldFullPath`;
+		$FTM_PathElementsSize = `tokenize $FTM_RightPath[0] "\\" $FTM_PathElements`;
+		$FTM_RightPath[1] = $FTM_PathElements[$FTM_PathElementsSize - 1];
+	}
+	else if ($FTMg_OS == 1)//irix
+	{
+		$FTM_RightPath[0] = `fromNativePath $FTM_OldFullPath`;
+		$FTM_PathElementsSize = `tokenize $FTM_RightPath[0] "/" $FTM_PathElements`;
+		$FTM_RightPath[1] = $FTM_PathElements[$FTM_PathElementsSize - 1];
+	}
+	return $FTM_RightPath;
+}
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+// Analyse all the file texture nodes in current scene.
+//
+proc string[] FTM_FileTextureAnalyst ()
+{
+// All the file texture nodes maybe point to texture files in different paths(folders).
+// Here I use  "group" to indicate different paths , which means there are n "groups" of
+// different paths if the file texture nodes point to files in n different paths.
+
+// The tricky idea used here is to create a new temporary transform node each time the procedure
+// find a new "group". Then just add new attribute ("FTM_File_n") to each node to hold the names of
+// the file texture nodes , which point to texture files in the certain "group".
+// As a result, how many temporary transform nodes we have , how many different "groups" we found.
+// And for each temporary transform node, how many attributes begin with "FTM_File_" in name it has,
+// how many file texture nodes point to that path we found.
+
+	// All the file texture nodes found in current scene.
+	string $FTM_Files[] = `ls -typ file`;
+
+	// Different groups.
+	string $FTM_Groups[];
+	// The amount of different "groups".
+	int $FTM_GroupsSize;
+	// "Group" for not specified file texute nodes.
+	string $FTM_EmptyGroup = `createNode transform`;
+	int $FTM_EmptyGroupSize = 0;
+
+	// Figure out how many "groups" there are in current scene, and put each file texture node
+	// into proper "group".
+	for ($eachFile in $FTM_Files)
+	{
+		$FTM_GroupsSize = size($FTM_Groups);
+		// Get the path of current file texture node
+		string $FTM_CurrentFullPath = `getAttr ($eachFile + ".fileTextureName")`;
+		string $FTM_CurrentPath = dirname ($FTM_CurrentFullPath);
+
+		// File texutre was specified.
+		if (size($FTM_CurrentFullPath) != 0)
+		{
+			// Compare current path to all "groups" have been found. If matches then add new attribute
+			// to current "group" to hold the name of current file texture node, and exist the compare
+			// loop immediately.
+			for ($j=0; $j<$FTM_GroupsSize; $j++)
+			{
+				// Get the path of current "group".
+				string $FTM_OldFile = `getAttr ($FTM_Groups[$j] + ".FTM_File_0")`;
+				string $FTM_OldPath = dirname (`getAttr ($FTM_OldFile + ".fileTextureName")`);
+				// Compare current path to all "groups" have been found.
+				if ($FTM_CurrentPath == $FTM_OldPath)
+				{
+					// Figure out how many file textue nodes are contained in current "group".
+					string $FTM_FilesStored[] = `listAttr -string ("FTM_File_" + "\*") $FTM_Groups[$j]`;
+					int $FTM_FilesStoredSize = size ($FTM_FilesStored);
+					// The amount of file texture nodes stored is the new index.
+					addAttr -longName ("FTM_File_" + $FTM_FilesStoredSize) -dt "string" $FTM_Groups[$j];
+					setAttr -type "string" ($FTM_Groups[$j] + ".FTM_File_" + $FTM_FilesStoredSize) $eachFile;
+					break;
+				}
+			}
+			// No "group" matches means new "group" was found.
+			if ($j >= $FTM_GroupsSize)
+			{
+				// Create new "group", and add new attribute to it to hold the name
+				// of current file texure node.
+				$FTM_Groups[$FTM_GroupsSize] = `createNode transform`;
+				addAttr -longName "FTM_File_0" -dt "string" $FTM_Groups[$FTM_GroupsSize];
+				setAttr -type "string" ($FTM_Groups[$FTM_GroupsSize] + ".FTM_File_0") $eachFile;
+				continue;
+			}
+		}
+		// File texture was not specified yet. Use $FTM_EmptyGroup to hold the corresponding name for a second.
+		else
+		{
+			addAttr -longName ("FTM_File_" + $FTM_EmptyGroupSize) -dt "string" $FTM_EmptyGroup;
+			setAttr -type "string" ($FTM_EmptyGroup + ".FTM_File_" + $FTM_EmptyGroupSize) $eachFile;
+			$FTM_EmptyGroupSize = $FTM_EmptyGroupSize + 1;
+		}
+	}
+	// There is no empty "group" at all. Delete the unwanted temporary transform node.
+	if ($FTM_EmptyGroupSize == 0)
+		delete $FTM_EmptyGroup;
+	// Empty "group" exists, append it to the main "groups".
+	else
+	{
+		$FTM_GroupsSize = size($FTM_Groups);
+		$FTM_Groups[$FTM_GroupsSize] = $FTM_EmptyGroup;
+	}
+
+	select -cl;
+
+	return $FTM_Groups;
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+
+//
+// Command executed when "Analyse Scene File Textures" button pressed.
+//
+global proc FTM_AnalyseFileTextures (string $FTM_ParentUI)
+{
+	FTM_BuildMessageWindow;
+
+	waitCursor -state on;
+
+	global string $FTM_Groups[];
+	// Delete the temporary transform nodes.
+	if (size($FTM_Groups) != 0)
+	{
+		for ($FTM_Group in $FTM_Groups)
+		{
+			if ( size(`ls -transforms $FTM_Group`) )
+				delete $FTM_Group;
+		}
+	}
+	// Reasign values to the global string.
+	$FTM_Groups = `FTM_FileTextureAnalyst`;
+
+	// Make sure the cooresponding UI uniqe.
+	if (`columnLayout -q -ex ($FTM_ParentUI + "|FTM_AnalysisCheckerColumn")`)
+		deleteUI ($FTM_ParentUI + "|FTM_AnalysisCheckerColumn");
+
+	if (size($FTM_Groups) == 0)
+		text -e -l "No file textures found!" ($FTM_ParentUI + "|FTM_EmptyAnalysisText");
+	else
+	{
+		text -e -l "分析结果:" ($FTM_ParentUI + "|FTM_EmptyAnalysisText");
+
+		setParent $FTM_ParentUI;
+		
+		columnLayout FTM_AnalysisCheckerColumn;
+		string $FTM_TotalResults = "Total " + size(`ls -typ file`) + " file textures point to " + size($FTM_Groups) + " (different) path(s) : ";
+		text -l $FTM_TotalResults;
+		//text -l "" -h 10;            
+		// Analyse each file in each "group".
+		columnLayout -adjustableColumn true;
+                        checkBox -label "选择"
+                        -onc "selectAll"
+                        -ofc "selectNothing";
+		 for ($FTM_Group in $FTM_Groups)
+		{
+			string $FTM_FilesStored[] = `listAttr -string ("FTM_File_" + "\*") $FTM_Group`;
+			int $FTM_FilesStoredSize = size ($FTM_FilesStored);
+			string $FTM_FirstFile = `getAttr ($FTM_Group + ".FTM_File_0")`;
+			string $FTM_CurrentFullPath = `getAttr ($FTM_FirstFile + ".fileTextureName")`;
+			string $FTM_CurrentPath = dirname ($FTM_CurrentFullPath);
+
+			string $FTM_FileTexturesAnalysis;
+			// File texture not specified yet. In other words, empty file texture nodes.
+			if (size($FTM_CurrentFullPath) == 0)
+				$FTM_FileTexturesAnalysis = $FTM_FilesStoredSize + " texture(s) NOT specified. So they are NOT exist.";
+			// File texture specified, but no path information.
+			else if (size($FTM_CurrentPath) == 0)
+				$FTM_FileTexturesAnalysis = $FTM_FilesStoredSize + " texture(s) have no path information. So they are NOT exist(s).";
+			// Normal status.
+			else
+			{
+				// Correct the path format for current OS.
+				$FTM_CurrentPath = `FTM_GetPath "path" $FTM_CurrentPath`;
+				$FTM_FileTexturesAnalysis = $FTM_FilesStoredSize + " texture(s) point to === \" " + $FTM_CurrentPath + " \".";
+			}
+
+			// Queue the names of the files stored in current "group" for later quick selecting.
+			string $FTM_CurrentFile[];
+			global string $FTM_CurrentFiles = "";
+			// Strings used to hold files exist or notExist.
+			string $FTM_Exist[] = {};
+			int $FTM_ExistSize = 0;
+			string $FTM_NotExist[] = {};
+			int $FTM_NotExistSize = 0;
+
+			for ($i=0; $i<size($FTM_FilesStored); $i++)
+			{
+				// Store the names of files in current "group".
+				$FTM_CurrentFile[$i] = `getAttr ($FTM_Group + "." + $FTM_FilesStored[$i])`;
+				$FTM_CurrentFiles = $FTM_CurrentFiles + $FTM_CurrentFile[$i] + " ";
+
+
+
+				// Check if the file exsist or not, then asign the name to responding variable.
+				string $FTM_CurrentFilePath = `getAttr ($FTM_CurrentFile[$i] + ".fileTextureName")`;
+				if ( `file -q -ex $FTM_CurrentFilePath`)
+				{
+					$FTM_Exist[$FTM_ExistSize] = $FTM_CurrentFile[$i];
+					$FTM_ExistSize = $FTM_ExistSize + 1;
+
+				}
+				else
+				{
+					$FTM_NotExist[$FTM_NotExistSize] = $FTM_CurrentFile[$i];
+					$FTM_NotExistSize = $FTM_NotExistSize + 1;
+				}
+
+
+                                                     
+			}
+
+                          string $FTM_MainChecker = `checkBox -l $FTM_FileTexturesAnalysis -al left ("CB"+$FTM_Group)`; 
+                     
+			// Only build responding sub-checker for the files have path information.
+			string $FTM_ExistSubChecker;
+			string $FTM_NotExistSubChecker;
+			if (size($FTM_CurrentFullPath) != 0  && size($FTM_CurrentPath) != 0)
+			{
+				columnLayout -adj 1 -cat left 30;
+					// A list of exist files, which is used for selection.
+					string $FTM_ExistFiles = "";
+					for ($i=0; $i<$FTM_ExistSize; $i++)
+						$FTM_ExistFiles = $FTM_ExistFiles + $FTM_Exist[$i] + " ";
+					$FTM_ExistSubChecker = `checkBox -l ($FTM_ExistSize + " of them exist(s).") -al left
+						-onc ("select -add " + $FTM_ExistFiles) -ofc ("select -deselect " + $FTM_ExistFiles) `;
+                                   
+					// A list of NOT exist files, which is used for selection.
+					string $FTM_NotExistFiles = "";
+					for ($i=0; $i<$FTM_NotExistSize; $i++)
+						$FTM_NotExistFiles = $FTM_NotExistFiles + $FTM_NotExist[$i] + " ";
+					$FTM_NotExistSubChecker = `checkBox -l ($FTM_NotExistSize + " of them NOT exist(s).") -al left
+						-onc ("select -add " + $FTM_NotExistFiles) -ofc ("select -deselect " + $FTM_NotExistFiles)`;
+				setParent ($FTM_ParentUI + "|FTM_AnalysisCheckerColumn");
+
+				// Main checker's onCommand and offCommand should influnce responding subcheckers in this case;
+				checkBox -e -onc ("select -add " + $FTM_CurrentFiles + ";checkBox -e -v 1 -vis 0 " + $FTM_ExistSubChecker + ";checkBox -e -v 1 -vis 0 " + $FTM_NotExistSubChecker)
+					-ofc ("select -deselect " + $FTM_CurrentFiles + ";checkBox -e -v 0 -vis 1 " + $FTM_ExistSubChecker + ";checkBox -e -v 0 -vis 1 " + $FTM_NotExistSubChecker)
+					$FTM_MainChecker;
+
+			}
+			// Main checker's onCommand and offCommand should NOT influnce responding subcheckers in this case;
+			else
+				checkBox -e -onc ("select -add " + $FTM_CurrentFiles) -ofc ("select -deselect " + $FTM_CurrentFiles) $FTM_MainChecker;
+
+		}
+	}
+	waitCursor -state off;
+
+	deleteUI FTM_MessageWindow;
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+
+//
+//Comand executed when Browse button pressed.
+//
+global proc FTM_BrowseCmd (string $FTM_FileOrPath, string $FTM_TextField, string $FTM_WhichButton, int $FTM_BrowseType)
+//$FTM_FileOrPath		Pass to FTM_ChangeTextField
+//$FTM_TextField		Pass to FTM_ChangeTextField
+//$FTM_WhichButton		Pass to fileBrowser, which will be the label of the dialog
+//$FTM_BrowseType		Pass to fileBrowser, which will define to get dialog for file or folder
+{
+	string $FTM_CurrentProject = `workspace -q -rd`;
+	workspace -dir $FTM_CurrentProject;
+	string $FTM_Temp = "";
+		$FTM_Temp = $FTM_Temp + "FTM_ChangeTextField ";
+		$FTM_Temp = $FTM_Temp + ("\"" + $FTM_FileOrPath + "\" ");
+		$FTM_Temp = $FTM_Temp + ("\"" + $FTM_TextField + "\" ");
+	fileBrowser $FTM_Temp $FTM_WhichButton "" $FTM_BrowseType;
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+//
+//The callback command on fileBrowser.
+//
+global proc FTM_ChangeTextField (string $FTM_FileOrPath, string $FTM_TextField, string $FTM_File, string $FTM_FileType)
+//$FTM_FileOrPath	How to deal with the input path , will be pass to FTM_GetPath
+//$FTM_TextField	The name of the control need to be edited
+//$FTM_File		The file specified
+//$FTM_FileType		The file type specified
+{
+	string $FTM_Path = `FTM_GetPath $FTM_FileOrPath $FTM_File`;
+	textFieldButtonGrp -e -text $FTM_Path $FTM_TextField;
+	//Close the dialog for IRIX.
+	global int $FTMg_OS;
+	if ($FTMg_OS == 1)
+		window -e -vis false projectViewerWindow;
+}
+
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+//
+// Warning window for unknown OS.
+//
+proc FTM_UnknownOS (string $FTM_os)
+{
+	global int $FTMg_OS;
+
+	windowPref -enableAll false;
+
+	if (`window -exists FTM_UnknownOSWindow`)
+		deleteUI FTM_UnknownOSWindow;
+	window -s 0 -mnb 0 -mxb 0 -wh 400 200 -t "Not Tested OS" FTM_UnknownOSWindow;
+	string $FTM_UnknownOSMainForm = `formLayout -nd 100`;
+		string $FTM_UnknownOSInfoColumn = `columnLayout -adj 1`;
+			text -l ("FileTextureManager is not tested on \" " + $FTM_os + " \"\nBut, it maybe work.\n\nPlease specify which separator the OS use to describe path.\n\n") -al center;
+			// Default separator si "/" .
+			$FTMg_OS = 1;
+			radioButtonGrp -nrb 2 -select 1 -l "Path Separator : " -l1 "   / " -l2 "   \\ " -cw3 100 100 100
+					-on1 "$FTMg_OS = 1" -on2 "$FTMg_OS = 0";
+		string $FTM_UnknownOSFunctionForm = `formLayout -p $FTM_UnknownOSMainForm`;
+			string $FTM_UnknownOSTryButton = `button -l "Try it" -h 30 -w 120 -c "deleteUI FTM_UnknownOSWindow;FTM_BuildMainUI"`;
+			string $FTM_UnknownOSExitButton = `button -l "Exit" -h 30 -w 80 -c "deleteUI FTM_UnknownOSWindow"`;
+		formLayout -e
+			-af $FTM_UnknownOSExitButton right 0
+			-an $FTM_UnknownOSExitButton left
+			-ac $FTM_UnknownOSTryButton right 10 $FTM_UnknownOSExitButton
+			-an $FTM_UnknownOSTryButton left
+			$FTM_UnknownOSFunctionForm;
+	formLayout -e
+		-af $FTM_UnknownOSInfoColumn top 20
+		-af $FTM_UnknownOSInfoColumn left 20
+		-af $FTM_UnknownOSInfoColumn right 20
+		-ac $FTM_UnknownOSInfoColumn bottom 15 $FTM_UnknownOSFunctionForm
+		-af $FTM_UnknownOSFunctionForm left 10
+		-af $FTM_UnknownOSFunctionForm right 10
+		-af $FTM_UnknownOSFunctionForm bottom 10
+		-an $FTM_UnknownOSFunctionForm top
+		$FTM_UnknownOSMainForm;
+	showWindow FTM_UnknownOSWindow;
+
+	windowPref -enableAll true;
+}
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+//
+// Build the processing message window in the right position and size.
+//
+global proc FTM_BuildMessageWindow ()
+{
+	windowPref -enableAll false;
+
+	// Caculate the position for the message window.
+	int $FTM_MainWindowPos[] = `window -q -tlc FTM_MainWindow`;
+	int $FTM_MainWindowSize[] = `window -q -wh FTM_MainWindow`;
+	int $FTM_MessageWindowPos[];
+	$FTM_MessageWindowPos[0] = $FTM_MainWindowPos[0] + ($FTM_MainWindowSize[1] - 100)/2;
+	$FTM_MessageWindowPos[1] = $FTM_MainWindowPos[1] + ($FTM_MainWindowSize[0] - 200)/2;
+
+	if (`window -ex FTM_MessageWindow`)
+		deleteUI FTM_MessageWindow;
+	window -s 1 -tb 0 -wh 200 100 -tlc $FTM_MessageWindowPos[0] $FTM_MessageWindowPos[1] FTM_MessageWindow;
+	string $FTM_MessageForm = `formLayout`;
+		string $FTM_Message = `text -l "Processing ...... Please wait" -al center`;
+	formLayout -e
+		-af $FTM_Message top 0
+		-af $FTM_Message bottom 0
+		-af $FTM_Message left 0
+		-af $FTM_Message right 0
+		$FTM_MessageForm;
+	showWindow FTM_MessageWindow;
+
+	windowPref -enableAll true;
+}
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+
+//Build the main UI.
+//
+
+global proc FTM_BuildMainUI ()
+{
+//Make sure the window will be displayed in proper size.
+windowPref -enableAll false;
+//If the UI exits , delete it.
+if (`window -exists FTM_MainWindow`)
+	deleteUI FTM_MainWindow;
+//Build a new UI.
+window -title "贴图文件收集器. 极翔天使汉化" -wh 500 600 -tlc 200 200 -ret FTM_MainWindow;
+	string $FTM_MainForm = `formLayout`;
+		string $FTM_Tabs = `tabLayout -imw 0 -imh 0`;
+//Option tab
+		string $FTM_OptionForm = `formLayout`;
+			string $FTM_OptionScroll = `scrollLayout -cr true`;
+			string $FTM_OptionColumn = `columnLayout -adj 1 -rs 5`;
+//Analyse area
+				formLayout -nd 100 FTM_AnalyseForm;
+						string $FTM_AnalyseColumn = `columnLayout -cat both 30 -adj 1 -rs 5`;
+							button -l "开始收集场景贴图文件" -h 30 -w 250 FTM_AnalyseButton;
+							text -l "" -h 5;
+							text -l "勾选所需文件进行操作. <可进行多重选择>";
+                setParent..;
+				separator -style "in" -h 10;	
+						string $FTM_AnalysisScroll = `scrollLayout -p FTM_AnalyseForm`;
+						
+							string $FTM_AnalysisColumn = `columnLayout -cat left 15`;
+								text -l "没有找到相关资料." FTM_EmptyAnalysisText;
+							button -e -c ("FTM_AnalyseFileTextures " + $FTM_AnalysisColumn) ($FTM_AnalyseColumn + "|FTM_AnalyseButton");
+				
+				formLayout -e
+					-af $FTM_AnalyseColumn left 0
+					-af $FTM_AnalyseColumn right 0
+					-af $FTM_AnalyseColumn top 5
+					-af $FTM_AnalyseColumn bottom 300
+					-ac $FTM_AnalysisScroll top 5 $FTM_AnalyseColumn
+					-af $FTM_AnalysisScroll bottom 0
+					-af $FTM_AnalysisScroll left 0
+					-af $FTM_AnalysisScroll right 0
+					($FTM_OptionColumn + "|FTM_AnalyseForm");
+			setParent $FTM_OptionColumn;
+				separator -style "in" -h 10;
+//Operation mode
+			radioButtonGrp -l "操作模式" -la3 "自动并建包" "自动"  "手动" -nrb 3 -select 1 -cl3 right left left -cw3 120 100 100 FTM_OperationMode;
+//Set source directory area
+				textFieldButtonGrp -label "源目录" -text "" -buttonLabel "浏览..." -adj 2 -en 0 -cw 1 120 -cw 3 60 -cl3 right left center FTM_SourceDirectoryField;
+//Set target directory area
+				string $FTM_CurrentProject = `workspace -q -rd`;
+				string $FTM_CurrentSourceImagesDir = $FTM_CurrentProject + "sourceimages";
+				string $FTM_SourceImages = `FTM_GetPath "path" $FTM_CurrentSourceImagesDir`;
+				textFieldButtonGrp -label "目标目录" -text $FTM_SourceImages -buttonLabel "浏览..." -adj 2 -cw 1 120 -cw 3 60 -cl3 right left center FTM_TargetDirectoryField;
+				separator -style "in" -h 5;
+//Create new folder area
+				checkBoxGrp -ncb 1 -l1 "在目标目录下建立新的文件夹" -adj 1 -v1 0 -cat 1 left 101 FTM_MakeFolderChecker;
+				textFieldGrp -label "文件夹名称" -text "MyTextureFiles" -en 0 -cw2 120 180 -cl2 right left FTM_NewFolderNameField;
+				separator -style "in" -h 5;
+//Update texture file area
+				rowLayout -nc 2 -cw 1 120 -cat 1 right 0 -cl2 left left FTM_AddPrefixRow;
+					checkBox -l "增加前缀" -v 0 FTM_AddPrefixChecker;
+					textField -tx "prefix_" -en 0 -w 150 FTM_PrefixField;
+			setParent $FTM_OptionColumn;
+				rowLayout -nc 2 -cw 1 120 -cat 1 right 0 -cl2 left left FTM_AddSuffixRow;
+					checkBox -l "增加后缀" -v 0 FTM_AddSuffixChecker;
+					textField -tx "_suffix" -en 0 -w 150 FTM_SuffixField;
+			setParent $FTM_OptionColumn;
+				checkBoxGrp -ncb 1 -l1 "取代序列" -adj 1 -v1 0 -cat 1 left 101 FTM_ReplaceStringChecker;
+				textFieldGrp -l "旧的序列" -tx "旧的序列" -en 0 -cw2 120 150 -cl2 right left FTM_OldStringField;
+				textFieldGrp -l "新的序列" -tx "新的序列" -en 0 -cw2 120 150 -cl2 right left FTM_NewStringField;
+		formLayout -e
+			-af $FTM_OptionScroll top 5
+			-af $FTM_OptionScroll left 0
+			-af $FTM_OptionScroll right 0
+			-af $FTM_OptionScroll bottom 0
+			$FTM_OptionForm;
+		setParent $FTM_Tabs;
+//Help tab
+			string $FTM_HelpForm = `formLayout`;
+//Description area
+				scrollField -ww true -editable false FTM_HelpField;
+//About FileTextureManager
+			setParent $FTM_HelpForm;
+				string $FTM_AboutFrame = `frameLayout -l "关于场景贴图收集器" -fn boldLabelFont -cll 0 -bv true -bs "in" -li 5`;
+				string $FTM_AboutForm = `formLayout`;
+					string $FTM_AboutTextLeft = `text -l "脚本名称 :\nUpdated :\nAuthor :\nContact :\n汉化作者 ：\n\nAll  Rights  Reserved." -al left`;
+					string $FTM_AboutTextRight = `text -l "FileTextureManager.mel\nApril, 2002\nCrow Yeh\nCrow@citiz.net\n极翔天使" -al left`;
+				formLayout -e
+					-af $FTM_AboutTextLeft left 10
+					-af $FTM_AboutTextLeft top 5
+					-an $FTM_AboutTextLeft right
+					-af $FTM_AboutTextLeft bottom 5
+					-ac $FTM_AboutTextRight left 10 $FTM_AboutTextLeft
+					-af $FTM_AboutTextRight top 5
+					-an $FTM_AboutTextRight right
+					-af $FTM_AboutTextRight bottom 5
+					$FTM_AboutForm;
+			formLayout -e
+				-ac FTM_HelpField bottom 5 $FTM_AboutFrame
+				-af FTM_HelpField top 5
+				-af FTM_HelpField left 0
+				-af FTM_HelpField right 0
+				-an $FTM_AboutFrame top
+				-af $FTM_AboutFrame left 0
+				-af $FTM_AboutFrame right 0
+				-af $FTM_AboutFrame bottom 0
+				$FTM_HelpForm;
+//Function form.
+	setParent $FTM_MainForm;
+		string $FTM_FunctionForm = `formLayout -h 30 -numberOfDivisions 100`;
+			string $FTM_CopyButton = `button -l "拷贝文件"
+							-c ("FTM_Function \"Copy\" " + $FTM_OptionColumn)`;
+			string $FTM_MoveButton = `button -l "移动文件"
+							-c ("FTM_Function \"Move\" " + $FTM_OptionColumn)`;
+			string $FTM_SetButton = `button -l "设置路径"
+							-c ("FTM_Function \"Set\" " + $FTM_OptionColumn)`;
+			string $FTM_ResetButton = `button -l "重新设置" -c ("FTM_ResetUI " + $FTM_OptionColumn + " " + $FTM_AnalysisColumn)`;
+			string $FTM_CloseButton = `button -l "关闭FTM"
+							-c ("global string $FTM_Groups[]; if (size($FTM_Groups) != 0){	for ($FTM_Group in $FTM_Groups)	{if ( size(`ls -transforms $FTM_Group`) )delete $FTM_Group;} } $FTM_Groups = {}; deleteUI FTM_MainWindow; select -cl;")`;
+		formLayout -e
+			-ap $FTM_CopyButton right 1 20
+			-af $FTM_CopyButton top 0
+			-af $FTM_CopyButton left 0
+			-af $FTM_CopyButton bottom 0
+			-ap $FTM_MoveButton left 1 20
+			-ap $FTM_MoveButton right 1 40
+			-af $FTM_MoveButton top 0
+			-af $FTM_MoveButton bottom 0
+			-ap $FTM_SetButton left 1 40
+			-ap $FTM_SetButton right 1 60
+			-af $FTM_SetButton top 0
+			-af $FTM_SetButton bottom 0
+			-af $FTM_ResetButton top 0
+			-af $FTM_ResetButton bottom 0
+			-ap $FTM_ResetButton left 1 60
+			-ap $FTM_ResetButton right 1 80
+			-ap $FTM_CloseButton left 1 80
+			-af $FTM_CloseButton top 0
+			-af $FTM_CloseButton right 0
+			-af $FTM_CloseButton bottom 0
+			$FTM_FunctionForm;
+	formLayout -e
+		-af $FTM_Tabs top 0
+		-af $FTM_Tabs left 0
+		-af $FTM_Tabs right 0
+		-ac $FTM_Tabs bottom 3 $FTM_FunctionForm
+		-af $FTM_FunctionForm left 0
+		-af $FTM_FunctionForm right 0
+		-af $FTM_FunctionForm bottom 0
+		-an $FTM_FunctionForm top
+		$FTM_MainForm;
+
+FTM_EditUIControl $FTM_OptionColumn $FTM_HelpForm;
+
+tabLayout -e -tl $FTM_OptionForm "选项" $FTM_Tabs;
+tabLayout -e -tl $FTM_HelpForm "帮助" $FTM_Tabs;
+showWindow FTM_MainWindow;
+//Make sure other windows will be displayed in proper size.
+windowPref -enableAll true;
+
+}
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+
+global proc selectAll()
+{  	
+  global string $FTM_CurrentFiles;
+  global string $FTM_Groups[];    
+  string $split[];
+  tokenize $FTM_CurrentFiles " " $split;       
+  for ($FTM_Group in $FTM_Groups)
+  {
+    checkBox -e -v 1 ("CB"+$FTM_Group); 
+   }
+  for($i=0;$i<size($split);$i++)
+  {
+    select -add $split[$i];
+  }
+}
+
+global proc selectNothing()
+{
+  global string $FTM_CurrentFiles;
+  global string $FTM_Groups[];
+  string $split[];
+  tokenize $FTM_CurrentFiles " " $split; 
+  for ($FTM_Group in $FTM_Groups)
+  {
+    checkBox -e -v 0 ("CB"+$FTM_Group);
+   }
+  for($i=0;$i<size($split);$i++)
+  {
+    select -deselect $split[$i];
+  }
+}
+
+//
+// Edit the UI Controls after they've been built
+//
+global proc FTM_EditUIControl (string $FTM_OptionColumn, string $FTM_HelpForm)
+{
+	// Adding "|" separator to the control name is necessary that
+	// Maya adds "|" to the control's full name(path) automaticly after creating it.
+
+// Operation mode
+	radioButtonGrp -e -on1 ("textFieldButtonGrp -e -en  0 -tx \"\" " + $FTM_OptionColumn + "|FTM_SourceDirectoryField")
+	               -on2 ("textFieldButtonGrp -e -en 0 -tx \"\" " + $FTM_OptionColumn + "|FTM_SourceDirectoryField")
+			       -on3 ("textFieldButtonGrp -e -en 1 -tx \"\" " + $FTM_OptionColumn + "|FTM_SourceDirectoryField")
+			        ($FTM_OptionColumn + "|FTM_OperationMode");
+			        
+// Set source directory
+	textFieldButtonGrp -e -bc ("FTM_BrowseCmd \"file\" \"" + $FTM_OptionColumn + "|FTM_SourceDirectoryField\" \"Set_S.D.\" 0")
+			($FTM_OptionColumn + "|FTM_SourceDirectoryField");
+// Set target directory
+	textFieldButtonGrp -e -bc ("FTM_BrowseCmd \"path\" \"" + $FTM_OptionColumn + "|FTM_TargetDirectoryField\" \"Set_T.D.\" 4")
+			($FTM_OptionColumn + "|FTM_TargetDirectoryField");
+		
+// Make new folder
+	checkBoxGrp -e -on1 ("textFieldGrp -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_NewFolderNameField")
+			-of1 ("textFieldGrp -e -en 0 -text \"MyTextureFiles\" " + $FTM_OptionColumn + "|FTM_NewFolderNameField")
+			($FTM_OptionColumn + "|FTM_MakeFolderChecker");
+// Add prefix
+	checkBox -e -onc ("textField -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_PrefixField")
+			-ofc ("textField -e -en 0 -text \"prefix_\" " + $FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_PrefixField")
+			($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_AddPrefixChecker");
+// Add suffix
+	checkBox -e -onc ("textField -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_SuffixField")
+			-ofc ("textField -e -en 0 -text \"_suffix\" " + $FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_SuffixField")
+			($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_AddSuffixChecker");
+// Replace string
+	checkBoxGrp -e -on1 ("textFieldGrp -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_OldStringField; textFieldGrp -e -en 1 -text \"\" " + $FTM_OptionColumn + "|FTM_NewStringField")
+			-of1 ("textFieldGrp -e -en 0 -text \"OldString\" " + $FTM_OptionColumn + "|FTM_OldStringField; textFieldGrp -e -en 0 -text \"NewString\" " + $FTM_OptionColumn + "|FTM_NewStringField")
+			($FTM_OptionColumn + "|FTM_ReplaceStringChecker");
+
+// Help description field
+	string $FTM_HelpDescription = "\n[Description]:\n";
+		$FTM_HelpDescription += "  FileTextureManager basically does these jobs:\n";
+		$FTM_HelpDescription += "  1. Analyse scene file textures.\n";
+		$FTM_HelpDescription += "  2. Copy or move the original texture files to user defined path.\n";
+		$FTM_HelpDescription += "  3. Reset file textures' path.\n\n";
+		$FTM_HelpDescription += "[Work Flow]:\n";
+		$FTM_HelpDescription += "  Step 1. Analyse scene file textures.(optional)\n";
+		$FTM_HelpDescription += "  Step 2. Select scene file textures (nodes) you want to manage by checking on the related checkers in the UI. You can also do this by your own method, Eg. select them in Hypershade.\n";
+		$FTM_HelpDescription += "  Step 3. Set options as needed.\n";
+		$FTM_HelpDescription += "  Step 4. Do copy, move or set by pressing related button.\n";
+		$FTM_HelpDescription += "  Step 5. Press \"Exit\" button to exit FileTextureManager. (important)\n\n";
+		$FTM_HelpDescription += "[Tips]:\n";
+		$FTM_HelpDescription += "  1. To convert \"\\\" to \"/\" or \"/\" to \"\\\" in the path, just analyse scene file textures, then select all the file textures point to the same \"wrong\" path by simply checking on the related checkers, set target directory to where related texture files are, reset the path by pressing \"Set Path\". Now you've done!\n";
+		$FTM_HelpDescription += "  2. Always keep 2 different version for each texture file. Eg. \"abc_LowRes.tga\" is in low resolution while \"abc_HighRes.tga\" is in high resolution. Do your job using low-res textures to speed the interactant. Just remember to use FileTextureManager to reset each file texture to point to the related high-res texture before rendering. (Add prefix, add suffix or even replace string.)\n";
+		$FTM_HelpDescription += "  3. The FileTextureManager's UI does not update dynamically like what Attribute Editor does, so it is better to re-analyse scene file textures each time you finish an FTM job. This is not necessary if you do not use the Analyse function at all.\n\n";
+		$FTM_HelpDescription += "[Notes]:\n";
+		$FTM_HelpDescription += "  1. Add suffix function has limitation on the texture file name. To be sure it work as desired, the file name must be in a regular format, Eg. \"filename.ext\", \"filename.[#...#].ext\", \"filename.ext.[#...#]\", etc. The add suffix function will always replace the first \".\" found in the whole file name with \"suffix.\".\n";
+		$FTM_HelpDescription += "  2. Add prfix, add suffix and replace string can be executed at the same time to each file texture. Replace string is caculated first, then add suffix, and add prefix last.\n";
+		$FTM_HelpDescription += "  3. It is highly recommended not to contain \".\" in prefix, suffix, old string and new string.\n";
+		$FTM_HelpDescription += "  4. Zero or more transform node will be created to hold some important information needed by FileTextureManager when using it, they will be automatically removed when you press \"Reset FTM\" or \"Exit\". So it is important to exit FileTextureManager by pressing \"Exit\" button. Press the close button on the top-right corner of the UI may pollute your scene. This can usually be fixed by restarting FileTextureManager immediately before you do any modifications to the scene.\n";
+		$FTM_HelpDescription += "  5. Sometimes process fails. The reason may be various. The most possible reason could be one of or both the following two: a. Texture file is not found in the source directory; b. Permission denied on reading or writing or deleting.\n";
+		$FTM_HelpDescription += "  6. FileTexureManager works on both NT and IRIX, both are tested. For other OS, if \"\\\" or \"/\" is used to separate path, like Linux, FileTextureManager should work properly. FileTextureManager is not tested on OS except NT and IRIX, but it worths a try.\n\n";
+		$FTM_HelpDescription += "[Details]:\n";
+		$FTM_HelpDescription += "  1. Analysing scene file textures let you know how many file textures there are in the scene, where there are, whether they exist or not, etc. It also allows user select all the texture files point to same path by only one simple click.\n";
+		$FTM_HelpDescription += "  2. How to choose operation mode depends on different source directory status. If file is there where it point to, use Automatic mode, otherwise use Manual mode.\n";
+		$FTM_HelpDescription += "  3. Other functions are pretty definite as marked in the UI.\n";
+
+	scrollField -e -text $FTM_HelpDescription ($FTM_HelpForm + "|FTM_HelpField");
+}
+
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+// Reset the UI to its initial state.
+//
+global proc FTM_ResetUI (string $FTM_OptionColumn, string $FTM_AnalysisColumn)
+{
+	waitCursor -state on;
+
+	// The main window;
+	window -e -wh 380 600 FTM_MainWindow;
+
+	// Analyse area
+	text -e -l "Not analysed yet." ($FTM_AnalysisColumn + "|FTM_EmptyAnalysisText");
+
+	// Delete the temporary transform nodes.
+	global string $FTM_Groups[];
+	if (size($FTM_Groups) != 0)
+	{
+		for ($FTM_Group in $FTM_Groups)
+		{
+			if ( size(`ls -transforms $FTM_Group`) )
+				delete $FTM_Group;
+		}
+	}
+	// Empty the global string.
+	$FTM_Groups = {};
+
+	if (`columnLayout -q -ex ($FTM_AnalysisColumn + "|FTM_AnalysisCheckerColumn")`)
+		deleteUI ($FTM_AnalysisColumn + "|FTM_AnalysisCheckerColumn");
+
+	// Operation mode
+	radioButtonGrp -e -select 1 ($FTM_OptionColumn + "|FTM_OperationMode");
+	// Source directory field
+	textFieldButtonGrp -e -text "" -en 0 ($FTM_OptionColumn + "|FTM_SourceDirectoryField");
+	// Target directory field
+	string $FTM_CurrentProject = `workspace -q -rd`;
+	string $FTM_CurrentSourceImagesDir = $FTM_CurrentProject + "sourceimages";
+	string $FTM_SourceImages = `FTM_GetPath "path" $FTM_CurrentSourceImagesDir`;
+	textFieldButtonGrp -e -text $FTM_SourceImages ($FTM_OptionColumn + "|FTM_TargetDirectoryField");
+	// Make new folder area
+	checkBoxGrp -e -v1 0 ($FTM_OptionColumn + "|FTM_MakeFolderChecker");
+	textFieldGrp -e -text "我的贴图文件" -en 0 ($FTM_OptionColumn + "|FTM_NewFolderNameField");
+	// Add prefix area
+	checkBox -e -v 0 ($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_AddPrefixChecker");
+	textField -e -text "prefix_" -en 0 ($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_PrefixField");
+	// Add suffix area
+	checkBox -e -v 0 ($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_AddSuffixChecker");
+	textField -e -text "_suffix" -en 0 ($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_SuffixField");
+	// Replace string area
+	checkBoxGrp -e -v1 0 ($FTM_OptionColumn + "|FTM_ReplaceStringChecker");
+	textFieldGrp -e -text "OldString" -en 0 ($FTM_OptionColumn + "|FTM_OldStringField");
+	textFieldGrp -e -text "NewString" -en 0 ($FTM_OptionColumn + "|FTM_NewStringField");
+
+	select -cl;
+	waitCursor -state off;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+proc string createNewPath(string $FTM_picFullPath,string $FTM_oldTargetDirectory)
+{
+string $FTM_RightPath[];
+string $FTM_PathElements[];
+int $FTM_PathElementsSize;
+$FTM_RightPath[0] = `toNativePath $FTM_picFullPath`;
+$FTM_PathElementsSize = `tokenize $FTM_RightPath[0] "\\" $FTM_PathElements`;
+
+global int $FTMg_OS;
+$FTM_TargetDirectorys = `FTM_GetPath "path" $FTM_oldTargetDirectory`;
+$FTM_TargetDirectorys = $FTM_TargetDirectorys + $FTM_PathElements[$FTM_PathElementsSize-2];
+if (!`file -q -ex $FTM_TargetDirectorys`)
+{
+	if ($FTMg_OS == 0)
+			system ("md \"" + $FTM_TargetDirectorys + "\"");
+	else if ($FTMg_OS == 1)
+			system ("mkdir \"" + $FTM_TargetDirectorys+ "\"");
+}
+$FTM_TargetDirectorys= `FTM_GetPath "path" $FTM_TargetDirectorys`;
+return $FTM_TargetDirectorys;
+}
+
+// The Copy, Move and Set functions.
+//
+global proc FTM_Function (string $FTM_Function, string $FTM_OptionColumn)
+{
+	string $FTM_SelectedFiles[] = `ls -sl -typ file`;
+	// If there is no file texture node selected, popup
+	// confirm dialog to remind user to select at least
+	// one file texture node.
+	if ( size($FTM_SelectedFiles) <= 0)
+		confirmDialog -t "No file texture node selected" -ma center -b "OK"
+			-m "Select at least one file texture node please" -p FTM_MainWindow;
+	// File texture node selected , do the function.
+	else
+	{
+		window -e -vis 0 FTM_MainWindow;
+		FTM_BuildMessageWindow;
+
+		waitCursor -state on;
+
+		// First get elements ready.
+		global int $FTMg_OS;
+		int $FTM_OperationMode = `radioButtonGrp -q -select ($FTM_OptionColumn + "|FTM_OperationMode")`;
+
+		// Source directory.
+		string $FTM_SourceDirectory;
+
+		// Target directory.
+		string $FTM_TargetDirectory = `textFieldButtonGrp -q -text ($FTM_OptionColumn + "|FTM_TargetDirectoryField")`;
+		$FTM_TargetDirectory = `FTM_GetPath "path" $FTM_TargetDirectory`;
+		// Check if new folder needed. If needed, create one only when the folder does not exist.
+		if ( `checkBoxGrp -q -v1 ($FTM_OptionColumn + "|FTM_MakeFolderChecker")` )
+		{
+			string $FTM_NewFolderName = `textFieldGrp -q -text ($FTM_OptionColumn + "|FTM_NewFolderNameField")`;
+			$FTM_TargetDirectory = $FTM_TargetDirectory + $FTM_NewFolderName;
+			if (!`file -q -ex $FTM_TargetDirectory`)
+			{
+				if ($FTMg_OS == 0)
+					system ("md \"" + $FTM_TargetDirectory + "\"");
+				else if ($FTMg_OS == 1)
+					system ("mkdir \"" + $FTM_TargetDirectory + "\"");
+			}
+			$FTM_TargetDirectory = `FTM_GetPath "path" $FTM_TargetDirectory`;
+		}
+
+		// Define command for function.
+		string $FTM_FunctionCmd;
+		if ($FTM_Function == "Copy")
+		{
+			if ($FTMg_OS == 0)
+				$FTM_FunctionCmd = "copy";
+			else if ($FTMg_OS == 1)
+				$FTM_FunctionCmd = "cp";
+		}
+		else if ($FTM_Function == "Move")
+		{
+			if ($FTMg_OS == 0)
+				$FTM_FunctionCmd = "move";
+			else if ($FTMg_OS == 1)
+				$FTM_FunctionCmd = "mv";
+		}
+
+		// Execute command of current function for every file texture node selected.
+		for ($FTM_SelectedFile in $FTM_SelectedFiles)
+		{
+			string $FTM_CurrentFile = `getAttr ($FTM_SelectedFile + ".fileTextureName")`;
+			string $FTM_SourceFile[] = `FTM_GetFile $FTM_CurrentFile`;
+			string $FTM_OriginSourceFile = $FTM_SourceFile[1];
+
+			// The file texture is not specified.
+			if (size($FTM_OriginSourceFile) == 0)
+				warning ($FTM_SelectedFile + " :  File texture is not specified.");
+			// The file texture is specified.
+			else
+			{
+
+				// If replace string was selected, replace the string specified.
+				if ( `checkBoxGrp -q -v1 ($FTM_OptionColumn + "|FTM_ReplaceStringChecker")` )
+				{
+					string $FTM_OldString = `textFieldGrp -q -tx ($FTM_OptionColumn + "|FTM_OldStringField")`;
+					string $FTM_MatchExpression = "(" + $FTM_OldString + ")+";
+					string $FTM_NewString = `textFieldGrp -q -tx ($FTM_OptionColumn + "|FTM_NewStringField")`;
+					for ($i=0; $i<size($FTM_SourceFile[1]); $i++)
+						$FTM_SourceFile[1] = `substitute $FTM_MatchExpression $FTM_SourceFile[1] $FTM_NewString`;
+				}
+
+				// Add prefix or(and) append suffix.
+				string $FTM_Prefix;
+				string $FTM_Suffix;
+				// If prefix was set, add it to the file name.
+				if ( `checkBox -q -v ($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_AddPrefixChecker")` )
+					$FTM_Prefix = `textField -q -tx ($FTM_OptionColumn + "|FTM_AddPrefixRow|FTM_PrefixField")`;
+
+				// If suffix was set, append it to the file name.
+				// In this case, we meet a limitation: the function will only work as desired when file name
+				// is in normal format, which should look like "filename.[].fileExtension": middle part
+				// and fileExtention are both optional and filename itself can NOT contain "." .
+				if ( `checkBox -q -v ($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_AddSuffixChecker")` )
+				{
+					string $FTM_Suffix = `textField -q -tx ($FTM_OptionColumn + "|FTM_AddSuffixRow|FTM_SuffixField")` + ".";
+
+					// Replace the first "." found in file name with "suffix."
+					$FTM_SourceFile[1] = `substitute "\\.+" $FTM_SourceFile[1] $FTM_Suffix`;
+				}
+				$FTM_SourceFile[1] = $FTM_Prefix + $FTM_SourceFile[1];
+
+				// Function process.
+				string $FTM_FinalCmd;
+				string $FTM_FunctionResult;
+				if ($FTM_Function != "Set")
+				{
+					if ($FTM_OperationMode == 1)
+					{
+						$FTM_FinalCmd = $FTM_FunctionCmd + " \"" + $FTM_SourceFile[0] + "\" \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+						$FTM_FunctionResult = $FTM_SelectedFile + " :  " + $FTM_Function + " \"" + $FTM_SourceFile[0] + "\" to \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+					}
+					else if ($FTM_OperationMode == 2)
+					{
+						$FTM_SourceDirectory = `textFieldButtonGrp -q -text ($FTM_OptionColumn + "|FTM_SourceDirectoryField")`;
+						$FTM_SourceDirectory = `FTM_GetPath "path" $FTM_SourceDirectory`;
+						$FTM_FinalCmd = $FTM_FunctionCmd + " \"" + $FTM_SourceDirectory + $FTM_OriginSourceFile + "\" \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+						$FTM_FunctionResult = $FTM_SelectedFile + " :  " + $FTM_Function + " \"" + $FTM_SourceDirectory + $FTM_SourceFile[1] + "\" to \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+					}
+					else if ($FTM_OperationMode == 3)
+					{
+						$FTM_TargetDirectory=`textFieldButtonGrp -q -text ($FTM_OptionColumn + "|FTM_TargetDirectoryField")`;
+						$new_FTM_TargetDirectory =createNewPath($FTM_SourceFile[0],$FTM_TargetDirectory);
+						print    "yzl";
+						print    $new_FTM_TargetDirectory ;
+						$FTM_FinalCmd = $FTM_FunctionCmd + " \"" + $FTM_SourceFile[0] + "\" \"" + $new_FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+					        $FTM_FunctionResult = $FTM_SelectedFile + " :  " + $FTM_Function + " \"" + $FTM_SourceFile[0] + "\" to \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+					}
+				}
+				else if ($FTM_Function == "Set")
+				{
+					setAttr -typ "string" ($FTM_SelectedFile + ".fileTextureName") ($FTM_TargetDirectory + $FTM_SourceFile[1]);
+					$FTM_FunctionResult = $FTM_SelectedFile + " :  Set to \"" + $FTM_TargetDirectory + $FTM_SourceFile[1] + "\"";
+				}
+
+				// Do the function.
+				// System command only executed when the function is not "Set".
+				if ($FTM_Function != "Set")
+					system ($FTM_FinalCmd);
+
+				// Print the function result.
+			if($FTM_OperationMode != 3)
+				{
+				if ( `file -q -ex ($FTM_TargetDirectory + $FTM_SourceFile[1])` )
+				{
+					if ($FTM_Function == "Move")
+					{
+						// File copied but not removed -- not actually "move".
+						if ( `file -q -ex $FTM_SourceFile[0]` || `file -q -ex ($FTM_SourceDirectory + $FTM_OriginSourceFile)`)
+						{
+							$FTM_FunctionResult = "Succeed >>>>>> " + $FTM_FunctionResult + " But the original file is not removed. Check the HELP for possible reasons.";
+							warning ($FTM_FunctionResult);
+						}
+						else
+						{
+							$FTM_FunctionResult = "Succeed >>>>>> " + $FTM_FunctionResult;
+							print ($FTM_FunctionResult + "\n");
+						}
+					}
+					else
+					{
+						$FTM_FunctionResult = "Succeed >>>>>> " + $FTM_FunctionResult;
+						print ($FTM_FunctionResult + "\n");
+					}
+				}
+				else
+				{
+					if ($FTM_Function == "Set")
+						$FTM_FunctionResult = "Succeed >>>>>> " + $FTM_FunctionResult + " >>>>>> But destination does NOT exist.";
+					else if ($FTM_Function != "Set")
+						$FTM_FunctionResult = "Fail >>>>>> " + $FTM_FunctionResult + " >>>>>> Check the HELP for possible reasons.";
+					warning ($FTM_FunctionResult);
+				}
+			}
+		}
+	}
+
+		waitCursor -state off;
+		deleteUI FTM_MessageWindow;
+		window -e -vis 1 FTM_MainWindow;
+		confirmDialog -t "Job finished" -m "Job finished.\nRefer to Script Editor for details." -ma center -b "OK" -p FTM_MainWindow;
+	}
+}
+
+//////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+//
+// The main procedure.
+// Query current OS, then build the main UI.
+//
+global proc FileTextureManager ()
+{
+	select -cl;
+	global int $FTMg_OS ;
+	$FTM_os =`about -os`;
+	if ($FTM_os == "nt")
+	{
+		$FTMg_OS = 0;
+		FTM_BuildMainUI;
+	}
+	else if ($FTM_os == "irix")
+	{
+		$FTMg_OS = 1;
+		FTM_BuildMainUI;
+	}
+	else
+	FTM_UnknownOS $FTM_os;
+}
+
+
+
+
+rig_clean();
+
+
+
+
+

@@ -1,0 +1,180 @@
+global proc createFoiilceOnNurbs()
+{
+    if (`window -q -exists createFoiilceOnNurbsWin`) deleteUI createFoiilceOnNurbsWin;
+    window -title "曲面上创建毛囊" -wh 500 500
+           -maximizeButton 0 -minimizeButton 1
+           createFoiilceOnNurbsWin;
+    
+    columnLayout -adj 1 -rs 5;
+       
+    text -l " 先选择曲面" -al left;
+    separator;
+    rowColumnLayout -nc 1 -cw 1 100;                                        
+       checkBox -l "添加骨骼" -v 1 AddJointCB;                           
+    setParent ..; 
+    
+    rowColumnLayout -nc 2 -cw 1 80 -cw 2 80;
+     optionMenuGrp -label "方向："  -columnWidth 1 38 UVOMG;
+         menuItem -label "U"; 
+         menuItem -label "V";
+     intField -value 1 countIF; 
+    setParent ..;
+           			   			       
+    rowColumnLayout -nc 1 -cw 1 80;                 
+      button -l "创建" -c "creatFollicle"; 
+    setParent ..;                   
+
+   showWindow  createFoiilceOnNurbsWin;              
+}
+createFoiilceOnNurbs;
+
+global proc creatFollicle()
+{
+  int $getUVcount = `intField -q -v countIF`;
+  int $IfcreateJoint = `checkBox -q -v AddJointCB`;
+  int $getUVoption = `optionMenuGrp -q -sl UVOMG`;
+  
+  string $selNURBShape[] = `ls -sl -dag -typ "shape"`;
+  int $n=0;
+  for($n;$n<size($selNURBShape);$n++)
+  {
+    string $hsys = `createNode hairSystem`;
+    string $getHsys[] = `pickWalk -d up`;
+    int $groupNumsize = size(`ls -an "follicle_G*"`); 
+    string $groupName = "follicle_G"+$groupNumsize;   
+    group -em -n $groupName;
+    select -cl;
+    int $ind[1];
+    $ind[0] = 0;
+    float $f=0.0;
+/////U//////////////////    
+    if($getUVoption == 1)
+    {
+
+     if($getUVcount==1)
+     {
+       int $jntN = 1;
+       for($f;$f<$getUVcount;$f++ )
+       {            
+        float $v = 0.5;
+        float $u = 0.5;
+        string $newHair = createHairCurveNode( $hsys, $selNURBShape[$n], $u,$v,10, false, false, false, false, "", 3.0, $ind, "","",1);
+        string $getFollicle[] = `pickWalk -d up`;
+        parent $getFollicle[0] $groupName; 
+        select -cl; 
+        if($IfcreateJoint == 1)
+        {
+          string $createJoint = `joint -n ("joint"+$jntN)`;
+          string $parentJoint[] = `parent $createJoint $getFollicle[0]`; 
+          string $getTheJoint =  `rename $parentJoint[0] ($getFollicle[0]+"_joint1")`;
+          setAttr ($getTheJoint+".translateX") 0;
+          setAttr ($getTheJoint+".translateY") 0;
+          setAttr ($getTheJoint+".translateZ") 0;
+          setAttr ($getTheJoint+".rotateX") 0;
+          setAttr ($getTheJoint+".rotateY") 0;  
+          setAttr ($getTheJoint+".rotateZ") 0;               
+          select -cl;                             
+        }         
+        $jntN++;        
+      }               
+      delete  $getHsys;           
+    }
+   
+    if($getUVcount>1)
+    {
+      int $jntN = 1;     
+      for($f;$f<$getUVcount;$f++ )
+      {            
+        float $v = 0.5;
+        float $u = $f/($getUVcount-1);
+        string $newHair = createHairCurveNode( $hsys, $selNURBShape[$n], $u,$v,10, false, false, false, false, "", 3.0, $ind, "","",1);
+        string $getFollicle[] = `pickWalk -d up`;
+        parent $getFollicle[0] $groupName; 
+        select -cl;
+        if($IfcreateJoint == 1)
+        {
+          string $createJoint = `joint -n ("joint"+$jntN)`;
+          string $parentJoint[] = `parent $createJoint $getFollicle[0]`; 
+          string $getTheJoint =  `rename $parentJoint[0] ($getFollicle[0]+"_joint1")`;
+          setAttr ($getTheJoint+".translateX") 0;
+          setAttr ($getTheJoint+".translateY") 0;
+          setAttr ($getTheJoint+".translateZ") 0;
+          setAttr ($getTheJoint+".rotateX") 0;
+          setAttr ($getTheJoint+".rotateY") 0;  
+          setAttr ($getTheJoint+".rotateZ") 0;               
+          select -cl;                  
+         } 
+        $jntN++;                     
+       }               
+       delete  $getHsys;         
+      }                     
+    }
+/////V//////////////////       
+    if($getUVoption == 2)
+    {
+
+     if($getUVcount==1)
+     {
+       int $jntN = 1;
+       for($f;$f<$getUVcount;$f++ )
+       {            
+        float $v = 0.5;
+        float $u = 0.5;
+        string $newHair = createHairCurveNode( $hsys, $selNURBShape[$n], $u,$v,10, false, false, false, false, "", 3.0, $ind, "","",1);
+        string $getFollicle[] = `pickWalk -d up`;
+        parent $getFollicle[0] $groupName; 
+        select -cl; 
+        if($IfcreateJoint == 1)
+        {
+          string $createJoint = `joint -n ("joint"+$jntN)`;
+          string $parentJoint[] = `parent $createJoint $getFollicle[0]`; 
+          string $getTheJoint =  `rename $parentJoint[0] ($getFollicle[0]+"_joint1")`;
+          setAttr ($getTheJoint+".translateX") 0;
+          setAttr ($getTheJoint+".translateY") 0;
+          setAttr ($getTheJoint+".translateZ") 0;
+          setAttr ($getTheJoint+".rotateX") 0;
+          setAttr ($getTheJoint+".rotateY") 0; 
+          setAttr ($getTheJoint+".rotateZ") 0;                
+          select -cl;                 
+        }         
+        $jntN++;        
+      }               
+      delete  $getHsys;           
+    }
+   
+    if($getUVcount>1)
+    {
+      int $jntN = 1;     
+      for($f;$f<$getUVcount;$f++ )
+      {            
+        float $v = $f/($getUVcount-1);
+        float $u = 0.5;
+        string $newHair = createHairCurveNode( $hsys, $selNURBShape[$n], $u,$v,10, false, false, false, false, "", 3.0, $ind, "","",1);
+        string $getFollicle[] = `pickWalk -d up`;
+        parent $getFollicle[0] $groupName; 
+        select -cl;
+        if($IfcreateJoint == 1)
+        {
+          string $createJoint = `joint -n ("joint"+$jntN)`;
+          string $parentJoint[] = `parent $createJoint $getFollicle[0]`; 
+          string $getTheJoint =  `rename $parentJoint[0] ($getFollicle[0]+"_joint1")`;
+          setAttr ($getTheJoint+".translateX") 0;
+          setAttr ($getTheJoint+".translateY") 0;
+          setAttr ($getTheJoint+".translateZ") 0;
+          setAttr ($getTheJoint+".rotateX") 0;
+          setAttr ($getTheJoint+".rotateY") 0;  
+          setAttr ($getTheJoint+".rotateZ") 0;               
+          select -cl;                    
+         } 
+        $jntN++;                     
+       }               
+       delete  $getHsys;         
+      }                     
+     }        
+   }    
+   print "毛囊添加完成！";     
+}
+
+
+
+

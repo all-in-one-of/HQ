@@ -1,0 +1,424 @@
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+/////////                       ///////////////////                        ///////////
+/////////                        /////////////////                        ////////////
+//////////                        ///////////////                        /////////////
+//////////                         /////////////                         /////////////
+///////////                         ///////////                         //////////////
+////////////                         //////////                        ///////////////
+////////////                         /////////                        ////////////////
+/////////////                         ///////                        /////////////////
+//////////////                         /////                        //////////////////
+///////////////                        /////                       ///////////////////
+////////////////                       ////                       ////////////////////
+//////////////////                      ///                     //////////////////////
+///////////////////                     //                    ////////////////////////
+/////////////////////                   //                  //////////////////////////
+///////////////////////                  /               /////////////////////////////
+////////////////////////                                //////////////////////////////
+///////////////////////////                           ////////////////////////////////
+/////////////////////////////                         ////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+global proc YY_Scan()
+{
+
+global string $YY_ScanPose[];
+	if(`window -q -ex YY_Scan`)
+	{
+	deleteUI YY_Scan;
+	};
+window -wh 356 450 
+	   -s 0
+	   YY_Scan;
+columnLayout -w 300;
+frameLayout  -w 350
+	         -cll 1 -cl 0 -bs "etchedIn" 
+	         -l "检查 BindPose 工具"
+			 -mw 10
+			 -mh 10
+			 -labelAlign "top" ;
+
+columnLayout -cal "center"  -rs 10  -adj 1 -w 350;
+radioButtonGrp -nrb 2 -sl 1  -l "设置 BindPose 状态"  
+	           -cat 1 "left" 10
+			   -cat 2 "left" 0
+			   -l1 "分离"  -l2 "连接" 
+			   -cc1 "global int $u = 0"
+			   -cc2 "global int $u = 1";
+
+rowLayout -nc 4 -cw4 100 55 80 80;
+
+text -l "bindPose 个数";
+textField -tx "" -en 1 pn;//////////////
+button -w 80 -l "         应用" -c "YY_Detach";
+button -w 80 -l "  删除节点" -c "YY_del";
+
+setParent -top;
+    //setParent ..;
+///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+frameLayout -cll 1 -cl 0 -bs "etchedOut" -w 350
+	         -l "检查 Character 中未归零属性工具"
+			 -mw 10
+			 -mh 10
+			 -labelAlign "top" ;
+columnLayout -w 350  
+	         -cat "left" 5;
+text -l "检查 Character 中未归零属性工具";
+rowLayout -nc 3 -w 350;
+textField -w 40 -tx "无" -en 1 -bgc 1 0 0 txsc;
+button  -w 80 -al "center" -l "    开始检查"  -c "scan" qq ;
+button -w 80  -al "center" -l "    更改成零" -c "ch" ww;
+setParent -top;
+
+////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+frameLayout -cll 1 -cl 0 -bs "etchedOut" -w 350
+	         -l "检查默认名称工具"
+			 -mw 10
+			 -mh 10
+			 -labelAlign "top" ;
+
+columnLayout -cat "left" 5 ;
+rowLayout -nc 3 -cat 2 "left" 35 -cat 3 "left" -5 ;
+text  -w 120 -l "检查默认名骨骼";
+textField -w 50 -tx "Number" jn;
+button -w 125 -al "center" -l "查找默认名骨骼" -c "chjoint";
+setParent ..;
+rowLayout -nc 3 -cat 2 "left" 35 -cat 3 "left" -5;
+
+text  -w 120 -l "检查默认名线";
+textField -w 50 -tx "Number" ncn;
+button -w 125 -al "center" -l "查找默认名线" -c "crbs";
+setParent -top;
+//////////////////////////////////////////////////////////
+frameLayout -cll 1 -cl 0 -bs "etchedOut" -w 350
+	         -l " 检查物体未归零，名字空间，层 工具"
+			 -mw 10
+			 -mh 10
+			 -labelAlign "top" ;
+columnLayout -rs 10 -w 350;
+text -l "         检查物体未归零，名字空间，层 工具";
+rowLayout -w 350 -nc 5 
+	-cat 2 "left" 0 
+	-cat 3 "left" -55 
+	-cat 4 "left" 55
+    -cat 5 "left" 20;
+columnLayout -rs 5;
+text -l "未归零物体个数";
+text -l "名字空间个数";
+text -l "层个数";
+setParent ..;
+columnLayout;
+textField -w 40 -tx "Zero" ja;
+textField -w 40 -tx "Zero" jb;
+textField -w 40 -tx "Zero" jc;
+setParent ..;
+columnLayout;
+button -w 50 -l "归零";
+button -w 50 -l "去除" -c "movname";
+button -w 50 -l "删除层" -c "delayer";
+setParent ..;
+button -w 60 -h 66 -al "center" -l "检查全部" -c "scanobj";
+button -w 60 -h 66 -al "center" -l "应用全部" -c "YY_all";
+setParent ..;
+
+////////////////////////////////////////////////////////////
+showWindow YY_Scan;
+
+sp;
+                             };
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+global proc sp()
+{
+
+		global string $YY_ScanPose[];	
+string $YY_ScanPose[] = `ls -type dagPose`;
+int $num = size($YY_ScanPose);
+textField -e -tx $num pn;
+};
+
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+global proc YY_Detach()
+	{
+	global string $YY_ScanPose[];
+global int $u;
+textField -e -tx (size($YY_ScanPose)) pn;
+print (size($YY_ScanPose));
+//print $YY_Scan[0];
+for($i = 0;$i<size($YY_ScanPose);$i++)
+{
+	string $post = $YY_ScanPose[$i] + ".bindPose";
+setAttr $post $u;
+};
+//nodeType bindPose1;
+};
+
+
+global proc YY_del()
+{
+global string $YY_ScanPose[];
+for($y = 0;$y < size($YY_ScanPose);$y ++)
+{
+select -r $YY_ScanPose[$y];
+delete;
+           };
+             sp;      };
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+global proc scan()
+	{int $t = 0;
+	
+		select -cl;
+			global string $selnz[];
+		//string $selnz[];
+	string $char[] = `ls -type character`;
+	print (size($char));
+	for($m = 0;$m < size($char);$m++)
+	{
+		
+	
+string $ObjAttr[]=`character -q $char[$m]`;
+
+for($g = 0;$g < size($ObjAttr);$g++)
+  {
+	  //print $ObjAttr[$g];
+	 int $mk = `getAttr -lock $ObjAttr[$g]`;
+	 string $jk[];
+	string $tok = ` tokenize $ObjAttr[$g] "." $jk`;
+	  if(($jk[1] != "ikfk") && ($jk[1] != "scaleX")
+		  &&($jk[1] != "scaleY")
+		  && ($jk[1] != "scaleZ")
+		  &&($mk != 1))
+	  {
+float $f = `getAttr $ObjAttr[$g]`;
+if($f != 0)
+    {
+select -tgl $ObjAttr[$g];
+$t++;
+   };
+        };
+	 if(($jk[1] == "scaleX" )||($jk[1] == "scaleY" )||($jk[1] == "scaleZ" ) )
+	{
+	float $fh = `getAttr $ObjAttr[$g]`;
+	
+	if($fh != 1)
+    {
+select -tgl $ObjAttr[$g];
+$t++;
+   };
+	};
+		
+               };
+	//	print $t;
+		  // $t++;
+
+	
+		textField -e -tx $t txsc;
+	};
+	 string $selnz[] = `ls -sl`;
+                              };
+		         
+global proc ch()
+{
+
+global string $selnz[];
+
+	//string $char2[] = `ls -type character`;	
+	//for($mn = 0;$mn < size($char2);$mn++)
+	{
+//print $selnz[2];
+for($mm = 0;$mm < size($selnz);$mm++)
+{
+	 string $jkc[];
+	string $tok = ` tokenize $selnz[$mm] "." $jkc`;
+	if(($jkc[1] == "scaleX")||($jkc[1] == "scaleY")||($jkc[1] == "scaleZ"))
+{
+		setAttr $selnz[$mm] 1;
+	  }
+else 
+{
+setAttr $selnz[$mm] 0;
+
+       };
+
+              };
+
+                    };
+       scan;                    };
+
+YY_Scan;
+////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+global proc chjoint()
+{
+select -cl;
+select "joint*";
+string $chj[] = `ls -sl`;
+//select -cl;
+int $jn = (size($chj) - 1);
+textField -e -tx $jn jn;
+
+};
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+global proc crbs()
+{
+select -cl;
+string $YY_nur[] = `ls -s "nurbsCircle*"`;
+if((size($YY_nur)) != 0)
+{
+//string $chnb[] = `ls -sl`;
+//select -cl;
+int $jin = size($YY_nur);
+textField -e -tx $jin ncn;
+}
+else 
+{
+textField -e -tx 0 ncn;
+};
+};
+/////////////////////////////////////////////
+global proc scanobj()
+{
+//select  -all -vis;
+	select -cl;
+string $sk[] = `ls -g -v -ut -tr -o`;
+//print (size($sk));
+for($f = 0;$f<size($sk);$f++)
+{
+string $noty = `nodeType $sk[$f]`;
+	if($noty == "transform")
+{
+    select -tgl $sk[$f];
+	print ($sk[$f] + "\n");
+    };
+         };
+//string $obj[] = `filterExpand -ex 1 -sm 10 -sm 12`;
+//print $obj[0];
+string $obj[] = `ls -sl`;
+int $tt = 0;
+select -cl;
+for($yy_i = 0;$yy_i<size($obj);$yy_i++)
+{
+	print ($obj[$yy_i] + "\n");
+	string $YY_tn = $obj[$yy_i] + ".t";
+	string $YY_rn = $obj[$yy_i] + ".r";
+	string $YY_sn = $obj[$yy_i] + ".s";
+//vector $YY_t = `xform -q -t  $obj[$yy_i]`;
+//vector $YY_r = `xform -q -ro $obj[$yy_i]`;
+float $YY_t[3] = `getAttr $YY_tn`;
+float $YY_r[3] = `getAttr $YY_rn`;
+float $YY_s[3] = `getAttr $YY_sn`;
+if(($YY_t[0] != 0 )||($YY_t[1] != 0 )||($YY_t[2] != 0 )||
+   ($YY_r[0] != 0 )||($YY_r[1] != 0 )||($YY_r[2] != 0 )||
+   ($YY_s[0] != 1 )||($YY_s[1] != 1 )||($YY_s[2] != 1 ))
+{
+	select -tgl $obj[$yy_i];
+$tt++;
+      };
+	
+};
+//print $tt;
+textField -e -tx $tt ja;
+/////////////////////////////////////
+string $nsp[] = `namespaceInfo -lon`;
+textField -e -tx ((size($nsp)) - 1) jb;
+///////////////////////////////////////////////
+string $dpl[] = `ls -type displayLayer`;
+textField -e -tx ((size($dpl))-1) jc;
+/////////////////////////////////////////////
+   };
+
+/////////////////////////////////////////////////////  
+/////////////////////////////////////////////////////  
+global proc delayer()
+{
+string $dly[] = `ls -type displayLayer`;
+	
+for($dl = 0;$dl<size($dly);$dl++)
+{
+	if($dly[$dl] != "defaultLayer")
+	{
+	print $dly[$dl];
+delete $dly[$dl];
+};
+string $YY_dy[] = `ls -type displayLayer`;
+textField -e -tx (size($YY_dy) - 1) jc;
+};
+};
+///////////////////////////////////////////
+////////////////////////////////////////////////////
+global proc movname()
+{
+string $movena[] = `namespaceInfo -lon`;
+for($mn = 0;$mn <size($movena);$mn++)
+	if($movena[$mn] != "UI")
+{
+{
+	namespace -f -mv $movena[$mn] ":";
+	namespace -f -rm $movena[$mn];
+};
+};
+string $mohou[] = `namespaceInfo -lon`;
+textField -e -tx (size($mohou) - 1 ) jb;
+};
+
+global proc YY_all()
+{
+movname;
+delayer;
+};
+window -e
+	   -wh 356 450 
+	   YY_Scan;

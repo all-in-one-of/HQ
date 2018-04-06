@@ -1,0 +1,326 @@
+global proc rig_clean()
+{
+    if (`window -q -exists rig_cleanWindow`) deleteUI rig_cleanWindow;
+    window
+        -title "设置清理" -wh 200 500
+              rig_cleanWindow;
+
+    columnLayout -adjustableColumn 1;
+        ///添加新的命名
+        frameLayout -label "清除灯光材质未知节点" -borderStyle "etchedIn"
+                -collapse 0 -collapsable 1
+                -marginWidth 5 -marginHeight 5;
+
+                    rowColumnLayout -numberOfColumns 2
+                            -cw 1 150 -cw 2 60 
+                             -cs 1 5 -cs 2 0 ;
+                       // text -label "清除灯光材质未知节点： ";
+                       
+                        button -label "Clean"  -c Clean;
+                        setParent ..;
+            setParent..;
+ 
+         frameLayout -label "TSM清理" -borderStyle "etchedIn"
+                -collapse 0 -collapsable 1
+                -marginWidth 5 -marginHeight 5;
+            
+         string $form= `formLayout`;
+    
+         string $UI0=`button -w 160 -h 20 -label "Delete Extra Node"  -c lls_deleteExtraNode` ;
+	     string $UI1=`button -w 160 -h 20 -label "Delete Extra TSM Menu"  -c lls_deleteExtraTSMMenu` ;
+         string $UI2=`button -w 160 -h 20 -label "Add TSM Menu"  -c lls_addTSMMenu` ;
+ 
+         formLayout -edit
+                    -attachForm $UI0 "top" 10
+                    -attachForm $UI0 "left" 10
+                    -attachForm $UI1 "top" 40
+                    -attachForm $UI1 "left" 10
+                    -attachForm $UI2 "top" 70
+                    -attachForm $UI2 "left" 10
+               $form;
+          setParent ..;
+       setParent..; 
+      separator -height 10 -style "none";       
+       text -l " 清理内容：" -al left; 
+       text -l " 1.清理未知节点，没用的节点，多余的材质节点，以及蒙皮节点" -al left;          
+       text -l " 2.清理灯光链接" -al left;
+       text -l " 3.清理层" -al left;                       
+       //text -l " 4.清理多余的空组" -al left;  
+                          
+        setParent..;
+        showWindow  rig_cleanWindow;
+
+}
+
+global proc Clean()
+{
+   /////////////////////////////////////////////////////////清理未知节点//////////////////////////////////////////////////////////////////////////////
+
+string $del_unknow[] = `ls -type "unknown"`;
+string $del_unknow_int = size($del_unknow);
+int $j;
+for($j = 0;$j<size($del_unknow);$j++)
+{ 
+if(`objExists $del_unknow[$j]`)
+{	
+lockNode -lock 0 $del_unknow[$j];
+delete $del_unknow[$j];
+};
+};
+print ("总共清理 " + $del_unknow_int + " 个未知节点！\n" );
+//text -e -l ("共去除 " + $del_unknow_int + " 个节点");
+
+//////////////////////////////////////////////////////////Delete unused Nodes & duplicate shading networks///////////////////////////////////////
+
+hyperShadePanelMenuCommand("hyperShadePanel1", "deleteUnusedNodes");
+//OptimizeSceneOptions;
+//scOpt_performOneCleanup( { "shadingNetworksOption" } );
+//if (`window -exists OptionBoxWindow`) deleteUI -window OptionBoxWindow;
+//saveOptionBoxSize();
+catch(removeDuplicateShadingNetworks( 0 ));
+
+///////////////////////////////////////////////清理多余的蒙皮节点/////////////
+
+string $ListSkin[] = `ls -type skinCluster`;
+for($s in $ListSkin)
+{
+  string $checkConnection[] = `listConnections -t joint $s`;
+  if(size($checkConnection) == 0)
+  {
+    delete $s;  
+  }  
+}
+//////////////////////////////////////////////清理多余的空组////////////////////////////////////////////////////////////////////////////////
+//OptimizeSceneOptions;
+//scOpt_performOneCleanup( { "transformOption" } );
+
+//////////////////////////////////////////////清理层////////////////////////////////////////////////////////////////////////////////
+
+string $listLayer[] = `lsType("displayLayer")`;
+int $l;
+for($l=1;$l<(size($listLayer)-1);$l++)
+{
+ catch(`delete $listLayer[$l]`);    
+}
+
+
+
+//////////////////////////////////////////////////////////清理灯光链接////////////////////////////////////////////////////////////////////////////////
+
+int $debug=0;
+    int $uselessLinkCount;
+    int $dlsLinkers, $dosLinkers, $isgLinkers, $ipseLinkers, $drgLinkers, $dhrgLinkers;
+    string $ws = `workspace -q -fn`;
+    string $fn = `file -sn -q -shn`;
+    string $file = $ws + "/linkers_in_" + $fn + ".txt";
+    int $fileId;
+    $startTime = `timerX`;
+    waitCursor -st on;
+    string $linkers_dls[] = `listConnections -plugs true -source no defaultLightSet.message`;
+    string $linkers_dos[] = `listConnections -plugs true -source no defaultObjectSet.message`;
+    string $linkers_isg[] = `listConnections -plugs true -source no initialShadingGroup.message`;
+    string $linkers_ipse[] = `listConnections -plugs true -source no initialParticleSE.message`;
+    string $linkers_drg[] = `listConnections -plugs true -source no defaultRenderGlobals.message`;
+    string $linkers_dhrg[] = `listConnections -plugs true -source no defaultHardwareRenderGlobals.message`;
+    int $linkersCount =
+        size($linkers_dls) +
+        size($linkers_dos) +
+        size($linkers_isg) +
+        size($linkers_ipse) +
+        size($linkers_dhrg) +
+        size($linkers_dhrg);
+    if ($debug) {
+        $fileId = `fopen $file "w"`;
+        fprint $fileId ($linkersCount + " linkers found!\r\n");
+        fprint $fileId ("Below are linkers considered useless, \r\n" +
+            "which can be disconnected by running { fh_cleanUpLightlinkers(0) }!\r\n");
+        fprint $fileId ("\r\n");
+    } else if ( $linkersCount > 5000 ) {
+        print "Maya 正在断开无用灯光链接，请稍候……\n";
+    }
+    if (size($linkers_dls) != 0) {
+        for ( $linker in $linkers_dls ) {
+            string $srcAttr;
+            string $tmp[] = stringToStringArray($linker, ".");
+            int $len = size($tmp);
+            string $linkerNode = $tmp[0]+"."+$tmp[1];
+            if ( $tmp[$len-1] == "shadowLight" ) {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".shadowObject")`;
+            } else {
+                $srcAttr = `connectionInfo -sfd ($linkerNode+".object")`;
+            }
+            if ( $srcAttr == "" ) {
+                continue;
+            } else if
+                ( $srcAttr == "initialShadingGroup.message" // connections between initialShadingGroup.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "initialParticleSE.message" // connections between initialParticleSE.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultObjectSet.message" // connections between defaultObjectSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultLightSet.message" // connections between defaultLightSet.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "hyperGraphLayout.message" // connections between hyperGraphLayout.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultRenderGlobals.message" // connections between defaultRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                || $srcAttr == "defaultHardwareRenderGlobals.message" // connections between defaultHardwareRenderGlobals.msg    lightLinker1.lnk[*].olnk
+                )
+            {
+                if ($debug) {
+                    fprint $fileId ("connection defaultLightSet.msg "+$linker+";\r\n");
+                } else {
+                    disconnectAttr defaultLightSet.message $linker;
+                }
+                $dlsLinkers++;
+            }
+        }
+    }
+    clear $linkers_dls;
+    if (size($linkers_dos) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dos ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultObjectSet.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultObjectSet.message $linker;
+            }
+            $dosLinkers++;
+        }
+    }
+    clear $linkers_dos;
+    if (size($linkers_isg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_isg ) {
+            if($linker != "initialMaterialInfo.shadingGroup") {
+                if ($debug) {
+                    fprint $fileId ("connection initialShadingGroup.msg " + $linker + ";\r\n");
+                } else {
+                    disconnectAttr initialShadingGroup.message $linker;
+                }
+                $isgLinkers++;
+            }
+        }
+    }
+    clear $linkers_isg;
+    if (size($linkers_ipse) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_ipse ) {
+            if ($debug) {
+                fprint $fileId ("connection initialParticleSE.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr initialParticleSE.message $linker;
+            }
+            $ipseLinkers++;
+        }
+    }
+    clear $linkers_ipse;
+    if (size($linkers_drg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_drg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultRenderGlobals.message $linker;
+            }
+            $drgLinkers++;
+        }
+    }
+    clear $linkers_drg;
+    if (size($linkers_dhrg) != 0) {
+        fprint $fileId ("\r\n");
+        for ( $linker in $linkers_dhrg ) {
+            if ($debug) {
+                fprint $fileId ("connection defaultHardwareRenderGlobals.msg " + $linker + ";\r\n");
+            } else {
+                disconnectAttr defaultHardwareRenderGlobals.message $linker;
+            }
+            $dhrgLinkers++;
+        }
+    }
+    clear $linkers_dhrg;
+    $uselessLinkCount =
+        $dlsLinkers + $dosLinkers +
+        $isgLinkers + $ipseLinkers +
+        $dhrgLinkers + $drgLinkers;
+    if (!$debug) {
+        print ($dlsLinkers + " 个链接从 defaultLightSet 断开！\n");
+        print ($dosLinkers + " 个链接从 defaultObjectSet 断开！\n");
+        print ($isgLinkers + " 个链接从 initialShadingGroup 断开！\n");
+        print ($ipseLinkers + " 个链接从 initialParticleSE 断开！\n");
+        print ($drgLinkers + " 个链接从 defaultRenderGlobals 断开！\n");
+        print ($dhrgLinkers + " 个链接从 defaultHardwareRenderGlobals 断开！\n");
+    }
+    print ("总共清理 " + $uselessLinkCount + " 个无用灯光链接！\n" );
+    clear $linkers_dos;
+    clear $linkers_dls;
+    clear $linkers_isg;
+    clear $linkers_ipse;
+    if ($debug) {
+        fprint $fileId ("\r\n");
+        fprint $fileId ("场景中共有 " + $uselessLinkCount + " 个无用链接！\r\n");
+        fclose $fileId;
+        print ("链接信息已写入到 "+$file+"\n");
+        print ("你可以运行 { fh_cleanUpLightlinkers(0); } 把它们断开!\n");
+    }
+    waitCursor -st off;
+    $elaspedTime = `timerX -startTime $startTime`;
+    //print ("总共耗时： "+$elaspedTime+" 秒!\n");
+    string $lign[] = `ls "lightLinker1.link[*].lightIgnored"`;
+    string $oign[] = `ls "lightLinker1.link[*].objectIgnored"`;
+    string $sllk[]= `ls "lightLinker1.slnk[*].shadowLight"`;
+    string $solk[]= `ls "lightLinker1.slnk[*].shadowObject"`;
+    string $slig[]= `ls "lightLinker1.sign[*].shadowLightIgnored"`;
+    string $soig[]= `ls "lightLinker1.sign[*].shadowObjectIgnored"`;
+    int $linkersCount = size($lign)+size($oign)+size($sllk)+size($solk)+size($slig)+size($soig);
+    if ($linkersCount > 1000) {
+        warning ("找到 "+$linkersCount + " 个非照明（使某灯光不照明某物体的）灯光链接，这可能导致 maya 变慢！\n");
+    }
+ 
+}
+
+
+
+
+global proc lls_deleteExtraNode()
+{
+   $switchNodes = `ls -dep -type script`;
+     for($switchNode in $switchNodes)
+       {
+          if(endsWith($switchNode, "TSM2FKIKSwitch"))
+          if($switchNode!="TSM2FKIKSwitch")
+          delete $switchNode;
+      }
+
+}
+
+global proc lls_deleteExtraTSMMenu()
+{
+global string $gMainWindow;
+int $i;
+
+do
+{
+$i=0;
+$findMenus = `lsUI -type "menu"`;
+for($findMenu in $findMenus)
+{
+    if ($findMenu == "TSM2ControlsMenu")
+        $i++;
+}
+
+if($i!=0)
+  deleteUI -menu TSM2ControlsMenu;  
+}
+while($i!=0);
+
+doEnableNodeItems true all;
+menu -to true -label "TSM Controls" -parent $gMainWindow TSM2ControlsMenu; 
+menuItem -label "FKIK Switch" -command "cycleCheck -e off;int $i;string $selNodes[] = `selectedNodes`; string $buffer[]; int $numTokens = 0;$numTokens = `tokenize $selNodes[0] \"|\" $buffer`;string $theNode = $buffer[$numTokens-1];string $ns = \"\";$numTokens = `tokenize $theNode \":\" $buffer`;$theNode = $buffer[ $numTokens-1 ];if( $numTokens > 1 ){	for( $i = 0; $i < (size($buffer) - 1); $i++ )	{		$ns += $buffer[$i];		$ns += \":\";	}}$numTokens = `tokenize $theNode \"_\" $buffer`;string $sysPref = $buffer[0];string $switchAttribute = $sysPref + \"_FKIK\";string $upperBody = $ns + \"Upper_Body\";string $userswitch = $upperBody + \".\" + $switchAttribute;int $currentMode = `getAttr $userswitch`;string $controlSet;if( $currentMode == 0 ){	$controlSet = $ns + $sysPref + \"_IK_Controls\";	}else{	$controlSet = $ns + $sysPref + \"_FK_Controls\";}select $controlSet;string $controls[] = `selectedNodes`; for( $i = 0; $i < size($controls); $i++ ) {	string $control = $controls[$i];	$numTokens = `tokenize $control \"|\" $buffer`;	$control = $buffer[$numTokens-1];		string $switch = $control + \"_SWITCH\";		if( `objExists $switch` )	{		string $controlAttributes[] = `listAttr -k $control`;		string $switchAttributes[] = `listAttr -k $switch`;				int $j;		for( $j = 0; $j < size($controlAttributes); $j++ )		{			if( $controlAttributes[$j] == \"Reposition\" )			{				$j++;			}				string $attributeToSet = $control + \".\" + $controlAttributes[$j];			int $foundAttribute = 0;			int $k;			for( $k = 0; $k < size($switchAttributes); $k++ )			{				if( $controlAttributes[$j] == $switchAttributes[$k] )				{					$foundAttribute = 1;					string $attributeToGet = $switch + \".\" + $switchAttributes[$k];					float $valueOfAttribute = `getAttr $attributeToGet`;					setAttr $attributeToSet $valueOfAttribute; 				}			}			if( $foundAttribute == 0 )			{				setAttr $attributeToSet 0;			}			setKeyframe $attributeToSet;		}	}}if( $currentMode == 0 ){	$currentMode = 1;	}else{	$currentMode = 0;}setAttr $userswitch $currentMode;setKeyframe $userswitch;$keytime = `findKeyframe -which previous -attribute $switchAttribute -animation objects $upperBody`;$now = `currentTime -query`;if( $keytime == $now ){	setKeyframe -time 0 $userswitch;	$keytime = 0;}keyTangent -time $keytime -outTangentType step -attribute $switchAttribute -	animation objects $upperBody;cycleCheck -e on;select -clear;"; menuItem -label "Refresh Rig" -command "doEnableNodeItems false all; doEnableNodeItems true all;;";
+
+}
+
+global proc lls_addTSMMenu()
+{
+ global string $gMainWindow;
+  
+doEnableNodeItems true all;    
+menu -to true -label "TSM Controls" -parent $gMainWindow TSM2ControlsMenu; 
+menuItem -label "FKIK Switch" -command "cycleCheck -e off;int $i;string $selNodes[] = `selectedNodes`; string $buffer[]; int $numTokens = 0;$numTokens = `tokenize $selNodes[0] \"|\" $buffer`;string $theNode = $buffer[$numTokens-1];string $ns = \"\";$numTokens = `tokenize $theNode \":\" $buffer`;$theNode = $buffer[ $numTokens-1 ];if( $numTokens > 1 ){	for( $i = 0; $i < (size($buffer) - 1); $i++ )	{		$ns += $buffer[$i];		$ns += \":\";	}}$numTokens = `tokenize $theNode \"_\" $buffer`;string $sysPref = $buffer[0];string $switchAttribute = $sysPref + \"_FKIK\";string $upperBody = $ns + \"Upper_Body\";string $userswitch = $upperBody + \".\" + $switchAttribute;int $currentMode = `getAttr $userswitch`;string $controlSet;if( $currentMode == 0 ){	$controlSet = $ns + $sysPref + \"_IK_Controls\";	}else{	$controlSet = $ns + $sysPref + \"_FK_Controls\";}select $controlSet;string $controls[] = `selectedNodes`; for( $i = 0; $i < size($controls); $i++ ) {	string $control = $controls[$i];	$numTokens = `tokenize $control \"|\" $buffer`;	$control = $buffer[$numTokens-1];		string $switch = $control + \"_SWITCH\";		if( `objExists $switch` )	{		string $controlAttributes[] = `listAttr -k $control`;		string $switchAttributes[] = `listAttr -k $switch`;				int $j;		for( $j = 0; $j < size($controlAttributes); $j++ )		{			if( $controlAttributes[$j] == \"Reposition\" )			{				$j++;			}				string $attributeToSet = $control + \".\" + $controlAttributes[$j];			int $foundAttribute = 0;			int $k;			for( $k = 0; $k < size($switchAttributes); $k++ )			{				if( $controlAttributes[$j] == $switchAttributes[$k] )				{					$foundAttribute = 1;					string $attributeToGet = $switch + \".\" + $switchAttributes[$k];					float $valueOfAttribute = `getAttr $attributeToGet`;					setAttr $attributeToSet $valueOfAttribute; 				}			}			if( $foundAttribute == 0 )			{				setAttr $attributeToSet 0;			}			setKeyframe $attributeToSet;		}	}}if( $currentMode == 0 ){	$currentMode = 1;	}else{	$currentMode = 0;}setAttr $userswitch $currentMode;setKeyframe $userswitch;$keytime = `findKeyframe -which previous -attribute $switchAttribute -animation objects $upperBody`;$now = `currentTime -query`;if( $keytime == $now ){	setKeyframe -time 0 $userswitch;	$keytime = 0;}keyTangent -time $keytime -outTangentType step -attribute $switchAttribute -	animation objects $upperBody;cycleCheck -e on;select -clear;"; menuItem -label "Refresh Rig" -command "doEnableNodeItems false all; doEnableNodeItems true all;;";
+
+}
+rig_clean();

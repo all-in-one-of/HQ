@@ -1,0 +1,5 @@
+defult  maya默认的簇权重面板
+
+new     更新之后的簇权重面板
+
+需要使用哪个可以把里面的两个mel拷贝到C:\Users\pengcx\Documents\maya\2013-x64\scripts，重开maya就可以了。

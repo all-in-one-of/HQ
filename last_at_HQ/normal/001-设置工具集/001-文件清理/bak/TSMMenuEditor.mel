@@ -1,0 +1,100 @@
+ /*
+此脚本用来编辑MAYA界面中的TSM菜单：
+1、清除场景中由于多重参考TSM文件生成的多余节点。
+2、清除界面中多余的TSM菜单。
+3、当TSM菜单全部消失时，重新生成一个。
+
+用法：在脚本编辑器中执行此脚本。
+
+华强数码电影技术部  骆立思
+Copyleft (c) 2012 Lisi Luo. Life is wonderful, have fun together^_^
+*/
+
+
+
+global proc TSMEditorUI()
+{
+    string $title;
+    $title = "TSM Menu Editor";
+	int $width = 250;
+	int $height = 120;
+	
+    //create window
+	if(`window -q -exists TSMEditorUIWin`){
+    	deleteUI TSMEditorUIWin;
+    }
+
+    string $win = `window -title $title -widthHeight $width $height TSMEditorUIWin`;
+    
+    //////////////
+     // create a formLayout
+       string $form= `formLayout`;
+    ///////////////////
+       string $UI0=`button -w 160 -h 20 -label "Delete Extra Node"  -c lls_deleteExtraNode` ;
+	   string $UI1=`button -w 160 -h 20 -label "Delete Extra TSM Menu"  -c lls_deleteExtraTSMMenu` ;
+       string $UI2=`button -w 160 -h 20 -label "Add TSM Menu"  -c lls_addTSMMenu` ;
+  /////////////////////////  
+    formLayout -edit
+       -attachForm $UI0 "top" 10
+       -attachForm $UI0 "left" 10
+       -attachForm $UI1 "top" 40
+       -attachForm $UI1 "left" 10
+       -attachForm $UI2 "top" 70
+       -attachForm $UI2 "left" 10
+    $form;
+    ///////////////////
+       setParent..;
+    //////////////
+    showWindow $win;
+}
+
+global proc lls_deleteExtraNode()
+{
+   $switchNodes = `ls -dep -type script`;
+     for($switchNode in $switchNodes)
+       {
+          if(endsWith($switchNode, "TSM2FKIKSwitch"))
+          if($switchNode!="TSM2FKIKSwitch")
+          delete $switchNode;
+      }
+
+}
+
+global proc lls_deleteExtraTSMMenu()
+{
+global string $gMainWindow;
+int $i;
+
+do
+{
+$i=0;
+$findMenus = `lsUI -type "menu"`;
+for($findMenu in $findMenus)
+{
+    if ($findMenu == "TSM2ControlsMenu")
+        $i++;
+}
+
+if($i!=0)
+  deleteUI -menu TSM2ControlsMenu;  
+}
+while($i!=0);
+
+doEnableNodeItems true all;
+menu -to true -label "TSM Controls" -parent $gMainWindow TSM2ControlsMenu; 
+menuItem -label "FKIK Switch" -command "cycleCheck -e off;int $i;string $selNodes[] = `selectedNodes`; string $buffer[]; int $numTokens = 0;$numTokens = `tokenize $selNodes[0] \"|\" $buffer`;string $theNode = $buffer[$numTokens-1];string $ns = \"\";$numTokens = `tokenize $theNode \":\" $buffer`;$theNode = $buffer[ $numTokens-1 ];if( $numTokens > 1 ){	for( $i = 0; $i < (size($buffer) - 1); $i++ )	{		$ns += $buffer[$i];		$ns += \":\";	}}$numTokens = `tokenize $theNode \"_\" $buffer`;string $sysPref = $buffer[0];string $switchAttribute = $sysPref + \"_FKIK\";string $upperBody = $ns + \"Upper_Body\";string $userswitch = $upperBody + \".\" + $switchAttribute;int $currentMode = `getAttr $userswitch`;string $controlSet;if( $currentMode == 0 ){	$controlSet = $ns + $sysPref + \"_IK_Controls\";	}else{	$controlSet = $ns + $sysPref + \"_FK_Controls\";}select $controlSet;string $controls[] = `selectedNodes`; for( $i = 0; $i < size($controls); $i++ ) {	string $control = $controls[$i];	$numTokens = `tokenize $control \"|\" $buffer`;	$control = $buffer[$numTokens-1];		string $switch = $control + \"_SWITCH\";		if( `objExists $switch` )	{		string $controlAttributes[] = `listAttr -k $control`;		string $switchAttributes[] = `listAttr -k $switch`;				int $j;		for( $j = 0; $j < size($controlAttributes); $j++ )		{			if( $controlAttributes[$j] == \"Reposition\" )			{				$j++;			}				string $attributeToSet = $control + \".\" + $controlAttributes[$j];			int $foundAttribute = 0;			int $k;			for( $k = 0; $k < size($switchAttributes); $k++ )			{				if( $controlAttributes[$j] == $switchAttributes[$k] )				{					$foundAttribute = 1;					string $attributeToGet = $switch + \".\" + $switchAttributes[$k];					float $valueOfAttribute = `getAttr $attributeToGet`;					setAttr $attributeToSet $valueOfAttribute; 				}			}			if( $foundAttribute == 0 )			{				setAttr $attributeToSet 0;			}			setKeyframe $attributeToSet;		}	}}if( $currentMode == 0 ){	$currentMode = 1;	}else{	$currentMode = 0;}setAttr $userswitch $currentMode;setKeyframe $userswitch;$keytime = `findKeyframe -which previous -attribute $switchAttribute -animation objects $upperBody`;$now = `currentTime -query`;if( $keytime == $now ){	setKeyframe -time 0 $userswitch;	$keytime = 0;}keyTangent -time $keytime -outTangentType step -attribute $switchAttribute -	animation objects $upperBody;cycleCheck -e on;select -clear;"; menuItem -label "Refresh Rig" -command "doEnableNodeItems false all; doEnableNodeItems true all;;";
+
+}
+
+global proc lls_addTSMMenu()
+{
+ global string $gMainWindow;
+  
+doEnableNodeItems true all;    
+menu -to true -label "TSM Controls" -parent $gMainWindow TSM2ControlsMenu; 
+menuItem -label "FKIK Switch" -command "cycleCheck -e off;int $i;string $selNodes[] = `selectedNodes`; string $buffer[]; int $numTokens = 0;$numTokens = `tokenize $selNodes[0] \"|\" $buffer`;string $theNode = $buffer[$numTokens-1];string $ns = \"\";$numTokens = `tokenize $theNode \":\" $buffer`;$theNode = $buffer[ $numTokens-1 ];if( $numTokens > 1 ){	for( $i = 0; $i < (size($buffer) - 1); $i++ )	{		$ns += $buffer[$i];		$ns += \":\";	}}$numTokens = `tokenize $theNode \"_\" $buffer`;string $sysPref = $buffer[0];string $switchAttribute = $sysPref + \"_FKIK\";string $upperBody = $ns + \"Upper_Body\";string $userswitch = $upperBody + \".\" + $switchAttribute;int $currentMode = `getAttr $userswitch`;string $controlSet;if( $currentMode == 0 ){	$controlSet = $ns + $sysPref + \"_IK_Controls\";	}else{	$controlSet = $ns + $sysPref + \"_FK_Controls\";}select $controlSet;string $controls[] = `selectedNodes`; for( $i = 0; $i < size($controls); $i++ ) {	string $control = $controls[$i];	$numTokens = `tokenize $control \"|\" $buffer`;	$control = $buffer[$numTokens-1];		string $switch = $control + \"_SWITCH\";		if( `objExists $switch` )	{		string $controlAttributes[] = `listAttr -k $control`;		string $switchAttributes[] = `listAttr -k $switch`;				int $j;		for( $j = 0; $j < size($controlAttributes); $j++ )		{			if( $controlAttributes[$j] == \"Reposition\" )			{				$j++;			}				string $attributeToSet = $control + \".\" + $controlAttributes[$j];			int $foundAttribute = 0;			int $k;			for( $k = 0; $k < size($switchAttributes); $k++ )			{				if( $controlAttributes[$j] == $switchAttributes[$k] )				{					$foundAttribute = 1;					string $attributeToGet = $switch + \".\" + $switchAttributes[$k];					float $valueOfAttribute = `getAttr $attributeToGet`;					setAttr $attributeToSet $valueOfAttribute; 				}			}			if( $foundAttribute == 0 )			{				setAttr $attributeToSet 0;			}			setKeyframe $attributeToSet;		}	}}if( $currentMode == 0 ){	$currentMode = 1;	}else{	$currentMode = 0;}setAttr $userswitch $currentMode;setKeyframe $userswitch;$keytime = `findKeyframe -which previous -attribute $switchAttribute -animation objects $upperBody`;$now = `currentTime -query`;if( $keytime == $now ){	setKeyframe -time 0 $userswitch;	$keytime = 0;}keyTangent -time $keytime -outTangentType step -attribute $switchAttribute -	animation objects $upperBody;cycleCheck -e on;select -clear;"; menuItem -label "Refresh Rig" -command "doEnableNodeItems false all; doEnableNodeItems true all;;";
+
+}
+
+
+TSMEditorUI;
