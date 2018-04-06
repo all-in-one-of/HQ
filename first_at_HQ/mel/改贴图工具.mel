@@ -1,0 +1,441 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: Texture Tools
+''    Author:  
+''    Last Updated: Nov 26, 2008
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/mel_scripts/rendering/misc/4207.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+/* //////////////////////////////////////////////////////////////////////////////////////
+Author: Daniel Moreno
+e-mail:danimor3k@yahoo.com.br
+
+description:
+
+
+Install:
+        Put the entire code into a shelf.
+        1 - open script editor then FILE > LOAD SCRIPT
+        2 - select FILE > SEND SCRIPT TO SHELF
+        3 - Done!
+
+Usage:
+        Change Path - Changes path of selectedfile textures
+        Copy Textures - Copy all textures to a directory
+
+        Prefix Path - Prefix File selected textures
+
+        Select all files - Select All files
+        Reload Textures - Reload all files in scene
+        Zero Reflection - Zero reflection for selected shaders
+
+        Image Filter - Sets ALL file textures to selected filter
+
+        Enable / Disable Bot if > Pixels - Obeys this rule to apply BOT files
+        Enable / Disable Bot to all files
+        Check size > displays sizes to all files
+
+        Tranfer UV - Mass Transfer UV. Select source and click source UV. then select objects
+        and click transfer.
+
+*/ //////////////////////////////////////////////////////////////////////////////////////
+
+if (`window -ex tex` == 1){
+	deleteUI tex;
+	}
+
+window -t "Texture Tools 1.0" -menuBar 0 -sizeable 1 -resizeToFitChildren 1 -widthHeight 300 200 tex;
+
+columnLayout -rowSpacing 5;
+	frameLayout -cll 1 -label "File Textures" -w 300 -borderStyle "in";
+		columnLayout -rowSpacing 5;
+			rowLayout -columnWidth2 150 150 -numberOfColumns 2;
+				button -l "           Change Path" -w 140 -c DM_change_path -annotation "Changes Texture Path for Selected Files" pathButton;
+				button -l "           Copy Textures" -w 140 -c DM_copy_files -annotation "Copies All Files to Specified Dir" copyButton;
+			setParent ..;
+		setParent ..;
+	setParent ..;
+
+
+	frameLayout -cll 1 -label "Texture Tools" -w 300 -borderStyle "in";
+		columnLayout -rowSpacing 5;
+			rowLayout -columnWidth3 100 100 100 -numberOfColumns 3;
+				button -l "   Select All Files" -w 95 -c DM_select_all_files -annotation "Select All Files" allfilesButton;
+				button -l "Reload Textures" -w 95 -c DM_reload_textures -annotation "Reload All Files" reloadButton;
+				button -l "Zero Reflection" -w 95 -c DM_zero_ref -annotation "Zeros Reflectivity for Selected Shaders" refButton;
+				setParent ..;
+		setParent ..;
+	setParent ..;
+	frameLayout -cll 1 -label "Image Filter" -w 300 -borderStyle "in";
+		columnLayout -rowSpacing 5;
+			rowLayout -columnWidth6 50 50 50 50 50 50 -numberOfColumns 6;
+				button -l "Off" -w 45 -c DM_filter_off -annotation "Select All Image Filters Off" 0Button;
+				button -l "Mip" -w 45 -c DM_filter_mipmap -annotation "Select All Image Filters Mipmap" 1Button;
+				button -l "Box" -w 45 -c DM_filter_box -annotation "Select All Image Filters Box" 2Button;
+				button -l "Quad" -w 45 -c DM_filter_quadratic -annotation "Select All Image Filters Quadratic" 3Button;
+				button -l "Quar" -w 45 -c DM_filter_quartic -annotation "Select All Image Filters Quartic" 4Button;
+				button -l "Gaus" -w 45 -c DM_filter_gaussian -annotation "Select All Image Filters Gaussian" 5Button;
+			setParent ..;
+		setParent ..;
+	setParent ..;
+	frameLayout -cll 1 -label "Memory Caching" -w 300 -borderStyle "in";
+		columnLayout -rowSpacing 5;
+			rowLayout -columnWidth4 100 100 50 60 -numberOfColumns 4;
+				button -l "Enable BOT if >" -w 90 -c DM_Make_Bot -annotation "Enable Memory Caching for files bigger than:" MakeButton;
+				button -l "Disable BOT if <" -w 90 -c DM_UnMake_Bot -annotation "Disable Memory Caching for files smaller than:" UnmakeButton;
+				textField  -w 40 -text "2048" -annotation "Filetexture Size" imgsizebutton;
+				text -w 50 -label "pixels" -fn "boldLabelFont" text1;
+			setParent ..;
+			rowLayout -columnWidth4 100 100 60 60 -numberOfColumns 4;
+			button -l "Enable All BOT" -w 90 -c DM_All_Bot -annotation "Enable Memory Caching for All files" allbotButton;
+			button -l "Disable All BOT" -w 90 -c DM_UnAll_Bot -annotation "Disable Memory Caching for All files" UnallbotButton;
+			button -l "Check Sizes" -w 90 -c DM_checksizes -annotation "Check File Sizes" checkButton;
+			setParent ..;
+		setParent ..;
+	setParent ..;
+	frameLayout -cll 1 -label "Transfer UVs" -w 300 -borderStyle "in";
+ 		columnLayout -rowSpacing 10;
+			rowLayout -columnWidth3 110 85 110 -numberOfColumns 3;
+				button -l "     Source UV" -w 100 -c DM_source_obj -annotation "Makes the Selected Object the Source UV Object" borderonButton;
+				text -label "  ------------------->   ";
+				button -l " Transfer Selected!" -w 100 -c DM_transfer_selected -annotation "Transfers UV from source to Selected Objects" borderoffButton;
+			setParent ..;
+			rowLayout -columnWidth3 13 105 105 -numberOfColumns 3;
+				string $source_uv;
+				text -label "";
+				text -label $source_uv -font "boldLabelFont" sourcebutton;
+				text -label "";
+			setParent ..;
+		setParent ..;
+	setParent ..;
+	$progressCTRL = `progressBar -maxValue 100000 -width 300 -h 10 texprogress`;
+setParent ..;
+
+	textField -text "Script by Daniel Moreno --=-- www.danmoreno.com " -fn "boldLabelFont" -editable false -width 300 StatusLine;
+
+showWindow tex;
+
+proc DM_select_all_files(){
+
+	string $allfiles[] = `ls -type file`;
+	select $allfiles;
+	print ("Number of Files Selected: " + size($allfiles));
+}
+
+proc DM_source_obj(){
+
+	string $UV_source[] = `ls -selection`;
+	$source_uv = `listRelatives -shapes $UV_source[0]`;
+	text -e -label $source_uv -align "center" sourcebutton;
+	print ("Source UV Object: " + $UV_source[0]);
+	showWindow tex;
+}
+
+proc DM_transfer_selected(){
+
+	string $UV_destination[] = `ls -selection`;
+	int $ponto =size($UV_destination);
+	$ponto = 100000 / $ponto;
+
+	$destination_uv = `listRelatives -shapes $UV_destination`;
+
+	string $source_uv = `text -q -label sourcebutton`;
+
+  	for ($shape in $UV_destination) {
+		polyTransfer -vc 0 -uv 1 -v 0 -ao $source_uv $shape;
+		print ("UV from " + $source_uv + "  ------>  " + $shape + "\n");
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+}
+
+proc DM_filter_off(){
+	string $shaders[];
+	$files = `ls -type file`;
+	int $ponto =size($files);
+	$ponto = 100000 / $ponto;
+
+	for ($i in $files) {
+		setAttr ($i + ".filterType") 0;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("All File Filters OFF \n");
+}
+
+	proc DM_filter_mipmap(){
+	string $shaders[];
+	$files = `ls -type file`;
+	int $ponto =size($files);
+	$ponto = 100000 / $ponto;
+
+	for ($i in $files) {
+		setAttr ($i + ".filterType") 1;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("All File Filters MIPMAP \n");
+}
+
+proc DM_filter_box(){
+	string $shaders[];
+	$files = `ls -type file`;
+	int $ponto =size($files);
+	$ponto = 100000 / $ponto;
+
+	for ($i in $files) {
+		setAttr ($i + ".filterType") 2;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("All File Filters BOX \n");
+}
+
+proc DM_filter_quadratic(){
+	string $shaders[];
+	$files = `ls -type file`;
+	int $ponto =size($files);
+	$ponto = 100000 / $ponto;
+
+	for ($i in $files) {
+		setAttr ($i + ".filterType") 3;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("All File Filters QUADRATIC \n");
+}
+
+proc DM_filter_quartic(){
+	string $shaders[];
+	$files = `ls -type file`;
+	int $ponto =size($files);
+	$ponto = 100000 / $ponto;
+
+	for ($i in $files) {
+		setAttr ($i + ".filterType") 4;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("All File Filters QUARTIC \n");
+}
+
+proc DM_filter_gaussian(){
+	string $shaders[];
+	$files = `ls -type file`;
+	int $ponto =size($files);
+	$ponto = 100000 / $ponto;
+
+	for ($i in $files) {
+		setAttr ($i + ".filterType") 5;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("All File Filters GAUSSIAN \n");
+}
+
+
+proc DM_reload_textures(){
+
+	string $obj[] = `ls -type file`;
+
+	string $att;
+	int $ponto =size($obj);
+	$ponto = 100000 / $ponto;
+
+	for ($a in $obj){
+		$att = $a + ".fileTextureName";
+
+			    string $currFile = `getAttr $att`;
+					if ($currFile != "") {
+						int $i;
+						string $allTextures[] = `ls -typ file -type mentalrayTexture`;
+
+						// this loop is needed to guarantee all texture nodes who
+						// reference this file gets updated.
+						for ($i = 0; $i < size($allTextures); $i++) {
+						string $ithFile = `getAttr ($allTextures[$i] + ".ftn")`;
+						if ($ithFile == $currFile)
+						setAttr ($allTextures[$i] + ".ftn") -type "string" $currFile;
+						}
+					}
+	progressBar -edit -step $ponto texprogress;
+	}
+	progressBar -edit -step (-100000) texprogress;
+	print ("All Files Reloaded \n");
+
+}
+
+proc DM_change_path(){
+
+fileBrowserDialog -m 4 -fc "DM_ChangeDir" -ft "image" -an "Select Dir" ;
+}
+
+
+proc int DM_ChangeDir(string $dirpath,string $type) {
+	string $name;
+	string $filename;
+	string $newpath;
+	string $files[];
+	string $att;
+    $files = `ls -selection`;
+	int $ponto =size($files);
+	$ponto = 100000 / $ponto;
+
+	for ($obj in $files) {
+		$name = `getAttr ($obj + ".fileTextureName")`;
+  		string $filename = `match "[^/\\]*$" $name`;
+  		$newpath = $dirpath + "/" + $filename;
+		setAttr -type "string" ($obj + ".fileTextureName") $newpath;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("New Texture Path set to: " + $dirpath + "\n");
+	return true;
+}
+
+
+proc DM_zero_ref(){
+	string $shaders[];
+	$shaders = `ls -selection`;
+	int $ponto = size($shaders);
+	$ponto = 100000 / $ponto;
+
+	for ($i in $shaders) {
+		if (`attributeExists "reflectivity" $i`) {
+			setAttr ($i + ".reflectivity") 0;
+			print ("Set Zero Reflection for: " + $i + "\n" );
+			}
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+}
+
+proc DM_copy_files(){
+	string $collect = fileBrowser( "DM_CopyDir", "Text", "", 4 );
+}
+
+
+proc int DM_CopyDir(string $dirpath,string $type) {
+
+	string $allfiles[] = `ls -type file`;
+	int $ponto = size($allfiles);
+	$ponto = 100000 / $ponto;
+	string $name;
+	string $filename;
+	string $newpath;
+
+	for ($obj in $allfiles){
+		$name = `getAttr ($obj + ".fileTextureName")`;
+		$filename = `match "[^/\\]*$" $name`;
+		$newpath = $dirpath + "/" + $filename;
+		sysFile -copy $newpath $name;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("Copied Texture Files to: " + $dirpath + "\n");
+	return true;
+}
+
+ proc DM_Make_Bot(){
+	string $allfiles[] = `ls -type file`;
+	int $imgsize = `textField  -query -text  imgsizebutton`;
+	int $ponto = size($allfiles);
+	$ponto = 100000 / $ponto;
+
+	for ($i in $allfiles){
+		string $resatt = $i + ".osx";
+		int $res = `getAttr $resatt`;
+		if ($res > $imgsize) {
+			setAttr ($i + ".useCache") 1;
+			print ("Enable BOT for: " + $i + "\n");
+			}
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+}
+
+proc DM_UnMake_Bot(){
+	string $allfiles[] = `ls -type file`;
+	int $imgsize = `textField  -query -text  imgsizebutton`;
+	int $ponto = size($allfiles);
+	$ponto = 100000 / $ponto;
+	for ($i in $allfiles){
+		string $resatt = $i + ".osx";
+		int $res = `getAttr $resatt`;
+		if ($res < $imgsize) {
+			setAttr ($i + ".useCache") 0;
+			print ("Disable BOT for: " + $i + "\n");
+			}
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+}
+
+proc DM_All_Bot(){
+	string $allfiles[] = `ls -type file`;
+	int $ponto = size($allfiles);
+	$ponto = 100000 / $ponto;
+        for ($i in $allfiles){
+		setAttr ($i + ".useCache") 1;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("Enable BOT for All files \n");
+}
+
+proc DM_UnAll_Bot(){
+
+ 	string $allfiles[] = `ls -type file`;
+	int $ponto = size($allfiles);
+  	$ponto = 100000 / $ponto;
+        for ($i in $allfiles){
+		setAttr ($i + ".useCache") 0;
+		progressBar -edit -step $ponto texprogress;
+		}
+	progressBar -edit -step (-100000) texprogress;
+	print ("Disable BOT for All files \n");
+}
+
+
+proc DM_checksizes(){
+	string $allfiles[] = `ls -type file`;
+	int $ponto = size($allfiles);
+	$ponto = 100000 / $ponto;
+
+	int $a = 0;
+	int $b = 0;
+	int $c = 0;
+	int $d = 0;
+
+	for ($i in $allfiles){
+		$size = `getAttr ($i + ".osx")`;
+
+		if ($size <= 1024){	$a = $a + 1;}
+		if ($size <= 2048){	$b = $b + 1;}
+		if ($size <= 3072){	$c = $c + 1;}
+		if ($size > 3072){	$d = $d + 1;}
+
+		progressBar -edit -step $ponto texprogress;
+		}
+
+		int $b1 = `max ($b - $a) 0`;
+		int $c1 = `max (($c - $a) -$b) 0`;
+		int $d1 = `max ((($d - $c) - $b) - $a) 0`;
+
+
+		print ("below  1024 pixels --> " + $a + "\n");
+		print ("1024 - 2048 pixels --> " + $b1 + "\n");
+		print ("2048 - 3072 pixels --> " + $c1 + "\n");
+		print ("above  3072 pixels --> " + $d1 + "\n");
+
+
+		// print (`sort $allsizes`);
+		progressBar -edit -step (-100000) texprogress;
+		}
+

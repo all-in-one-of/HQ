@@ -1,0 +1,47 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: Uninstancer
+''    Author:  
+''    Last Updated: Jan 15, 2009
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/plugins/dynamics/4331.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+//
+// Copyright (C) 2007 Nimble Studios Inc.
+//
+
+global proc string nsGetSelectedShape( string $selection, string $shapeType )
+{
+	// The return value should always be a full path.
+	//
+	string $fullPath[] = `ls -l $selection`;
+	$selection = $fullPath[0];
+	if ( `nodeType $selection` == "transform" )
+	{
+		string $children[] = `listRelatives -fullPath -children $selection`;
+		string $child;
+
+		for ( $child in $children )
+		{
+			if ( `nodeType $child` == $shapeType &&
+			     !`getAttr ($child + ".intermediateObject")` )
+			{
+				$selection = $child;
+				break;
+			}
+		}
+	}
+
+	if ( `nodeType $selection` != $shapeType )
+	{
+		$selection = "";
+	}
+	
+	return $selection;
+}

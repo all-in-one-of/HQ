@@ -1,0 +1,1103 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: dg Add Attrs
+''    Author:  
+''    Last Updated: Jan 21, 2008
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/mel_scripts/animation/4432.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+//////////////////////////////////////////////////////////////////
+// dgAddAttrs v1.0 - script file
+// Creation Date - 13.12.2006
+//
+//Author:   Denislav Georgiev
+//web:	    www.puppetTD.com
+//e-mail:	denis@puppetTD.com
+//
+// Description:
+//	 With this script you can add more than 1 attribute in one time
+//		 you can also choose between min/max and softMin/softMax
+//		 for the attributes. One more feature is that you can add
+//		 vector attributes with float or int values.
+//		
+// For additional information on using the script go to Help,
+//
+//
+//                 UPDATES 
+// Update - 01.21.2008
+// "Replace" button was replaced with 2 new buttons "Add" and "Remove" with which you can add or remove new
+//  attribute fields without affecting the existing ones
+//
+//
+//
+//***************************************************************
+// source and call the script with "dgAddAttrs"
+//***************************************************************
+///////////////////////////////////////////////////////////////////
+
+
+global proc dgAddAttrs()
+{
+	if (`window -exists dgAddAttrsUI`)
+		deleteUI dgAddAttrsUI;
+/*	if (`windowPref -exists dgAddAttrsUI`)
+		windowPref -remove dgAddAttrsUI;
+	*/
+	window -title "dgAddAttrs"
+		   -wh 300 560
+		   -s 0
+		   dgAddAttrsUI;
+	
+	menuBarLayout menuBar;
+		menu -l "Edit" editMenu;
+			menuItem -l "Reset Window" -c "resetUI()";
+		menu -l "Help" helpMenu;
+			menuItem -l "Help" -c "helpWin()";
+			menuItem -l "About" -c "aboutWin()";
+	
+////// defining the form layout...........
+	
+	formLayout mainForm;
+	
+		frameLayout -borderStyle "etchedIn" -l "Data Type:"
+					-labelAlign "bottom"
+					radioButtonsFL;
+		
+			formLayout radioForm;
+		
+		radioCollection dtRadioButtons;
+		radioButton -l "Integer" -onCommand "editUI(\"fieldsEnabled\")" intRadio;
+		radioButton -l "Float" -onCommand "editUI(\"fieldsEnabled\")" floatRadio;
+		radioButton -l "Vector_int" -onCommand "editUI(\"fieldsEnabled\")" vecIntRadio;
+		radioButton -l "Vector_float" -onCommand "editUI(\"fieldsEnabled\")" vecFloatRadio;
+		radioButton -l "Boolean" -onCommand "editUI(\"fieldsDisabled\")" boolRadio;
+		radioButton -l "Enum" -onCommand "editUI(\"enumOn\");" -offCommand "editUI(\"enumOff\");"  enumRadio;
+		radioButton -l "String" -onCommand "editUI(\"fieldsDisabled\")" stringRadio;
+		checkBox -l "Make attribute keyable" -v 1 keyableCB;
+		
+		setParent mainForm;
+		
+	separator -style "in" sep1;
+	
+	text -l "Number of Attributes:" attrNumText;
+	intField -v 1 -w 40 -minValue 1 attrNumberField;
+	button -l "Add" -c "addAttrFields()" addButton;
+	button -l "Remove" -c "removeAttrFields()" replaceButton;
+	
+	separator -style "double" sep2;
+	
+	scrollLayout -childResizable 1
+				 -horizontalScrollBarThickness 0
+				 -verticalScrollBarThickness 0
+				 attrFieldsScroll;
+		
+		columnLayout -adj 1 attrFieldsColumn;
+		
+	setParent mainForm;
+	separator -style "double" sep3;
+	
+	radioCollection minVals;
+		radioButton -l "No Min" -onc "editUI(\"noMinOn\")" -ofc "editUI(\"noMinOff\")" noMinVal;
+		radioButton -l "Use Min" minVal;
+		radioButton -l "Use Soft Min" smnVal;
+		radioCollection -e -sl minVal minVals;
+		
+	separator -style "out" sep4;
+
+	radioCollection maxVals;
+		radioButton -l "No Max" -onc "editUI(\"noMaxOn\")" -ofc "editUI(\"noMaxOff\")" noMaxVal;
+		radioButton -l "Use Max" maxVal;
+		radioButton -l "Use Soft Max" smxVal;
+		radioCollection -e -sl maxVal maxVals;
+
+	
+		text -l "Default:" dvText;
+		floatField -pre 0 dvField;
+		
+		text -l "Minimum:" minText;
+		floatField -pre 0 minField;
+	
+		text -l "Maximum:" maxText;
+		floatField -pre 0 maxField;
+		
+		separator -style "in" sep5;
+			
+		text -l "Enum Names:" enumLabel;
+		textScrollList enumTSL;
+		button -l "Remove" -enable 0 -c "removeTSL()" removeEnumB;
+	
+		text -l "New name:" newEnumT;
+		textField -enable 0 newEnumTF;
+		button -l "Add" -enable 0 -c "addTSL()" addEnumB;
+		separator -style "out" sep6;
+		
+		button -l "Add Attrs" -h 30 -c "getAttrNames()" addAttrButton;
+
+		radioCollection -e -select floatRadio dtRadioButtons;
+
+		
+////// Start positioning the radioButtons in the radioButton form Layout...
+		
+	formLayout -e		
+		-af intRadio "left" 5
+		-af intRadio "top" 5
+		
+		-af floatRadio "left" 5
+		-ac floatRadio "top" 5 intRadio
+		
+		-ac vecIntRadio "left" 15 intRadio
+		-af vecIntRadio "top" 5
+		
+		-aoc vecFloatRadio "left" 0 vecIntRadio
+		-ac vecFloatRadio "top" 5 vecIntRadio
+		
+		-ac boolRadio "left" 30 vecIntRadio
+		-af boolRadio "top" 5
+		
+		-aoc enumRadio "left" 0 boolRadio
+		-ac enumRadio "top" 5 boolRadio
+		
+		-af stringRadio "left" 5
+		-ac stringRadio "top" 5 floatRadio
+		
+		-ac keyableCB "left" 70 stringRadio
+		-ac keyableCB "top" 15 enumRadio
+		radioForm;
+
+////// END positioning the controlers in the radioButton form Layout...
+
+	formLayout -e 
+		
+		-af radioButtonsFL "left" 1
+		-af radioButtonsFL "right" 1
+		-af radioButtonsFL "top" 1
+		
+		-af sep1 "left" 0
+		-af sep1 "right" 0
+		-ac sep1 "top" 1 radioButtonsFL
+		
+		-af attrNumText "left" 3
+		-ac attrNumText "top" 6 sep1
+		
+		-ac attrNumberField "left" 5 attrNumText
+		-ac attrNumberField "top" 2 sep1
+		-af attrNumberField "right" 120
+		
+		-ac addButton "left" 5 attrNumberField
+		-ac addButton "top" 2 sep1
+		-af addButton "right" 70
+		
+		-ac replaceButton "left" 5 addButton
+		-ac replaceButton "top" 2 sep1
+		-af replaceButton "right" 5
+		
+		-af sep2 "left" 0
+		-af sep2 "right" 0
+		-ac sep2 "top" 3 attrNumText
+		
+		-af attrFieldsScroll "left" 0
+		-af attrFieldsScroll "right" 0
+		-ac attrFieldsScroll "top" 1 sep2
+		-ap attrFieldsScroll "bottom" 0 43
+		
+		-af sep3 "left" 0
+		-af sep3 "right" 0
+		-ac sep3 "top" 1 attrFieldsScroll
+		
+		-af noMinVal "left" 20
+		-ac noMinVal "top" 5 sep3
+		
+		-ac minVal "left" 10 noMinVal
+		-ac minVal "top" 5 sep3
+		
+		-ac smnVal "left" 10 minVal
+		-ac smnVal "top" 5 sep3
+		
+		-af sep4 "left" 10
+		-af sep4 "right" 10
+		-ac sep4 "top" 1 smnVal
+		
+		-af noMaxVal "left" 20
+		-ac noMaxVal "top" 5 sep4
+		
+		-aoc maxVal "left" 0 minVal
+		-ac maxVal "top" 5 sep4
+		
+		-aoc smxVal "left" 0 smnVal
+		-ac smxVal "top" 5 sep4
+		
+		-af dvText "left" 5
+		-ac dvText "top" 15 smxVal
+		
+		-ac dvField "left" 20 dvText
+		-ac dvField "top" 10 smxVal
+		-af dvField "right" 20
+		
+		-af minText "left" 5
+		-ac minText "top" 10 dvText
+		
+		-aoc minField "left" 0 dvField
+		-af minField "right" 20
+		-ac minField "top" 5 dvField
+		
+		-af maxText "left" 5
+		-ac maxText "top" 10 minText
+		
+		-aoc maxField "left" 0 minField
+		-af maxField "right" 20
+		-ac maxField "top" 5 minField
+		
+		-af sep5 "left" 0
+		-af sep5 "right" 0
+		-ac sep5 "top" 2 maxField
+		
+		-af enumLabel "left" 5
+		-ac enumLabel "top" 2 sep5
+		
+		-af enumTSL "left" 65
+		-af enumTSL "right" 60
+		-ac enumTSL "top" 5 enumLabel
+		-ap enumTSL "bottom" 0 87
+		
+		-ac removeEnumB "left" 5 enumTSL
+		-af removeEnumB "right" 5
+		-ac removeEnumB "top" 40 sep5
+		
+		-af newEnumT "left" 5
+		-ac newEnumT "top" 8 enumTSL
+		
+		-aoc newEnumTF "left" -1 enumTSL
+		-ac newEnumTF "top" 3 enumTSL
+		-aoc newEnumTF "right" 0 enumTSL
+		
+		-ac addEnumB "left" 5 newEnumTF
+		-aoc addEnumB "top" 0 newEnumTF
+		-af addEnumB "right" 5
+		
+		-af sep6 "left" 0
+		-af sep6 "right" 0
+		-ac sep6 "top" 1 newEnumTF
+		
+		-af addAttrButton "left" 50
+		-af addAttrButton "right" 50
+		-ac addAttrButton "top" 5 sep6
+
+		mainForm;
+	
+	showWindow dgAddAttrsUI;
+}
+
+//************* END Creating THE IU ***********************
+
+/////////////////////////////////////////////
+/// proc for editing the UI 
+
+global proc editUI (string $state)
+{
+	switch ($state)
+	{
+	case "fieldsDisabled":
+		floatField -e -enable 0 dvField;
+		floatField -e -enable 0 minField;
+		floatField -e -enable 0 maxField;
+		
+		radioButton -e -enable 0 noMinVal;
+		radioButton -e -enable 0 minVal;
+		radioButton -e -enable 0 smnVal;
+		radioButton -e -enable 0 noMaxVal;
+		radioButton -e -enable 0 maxVal;
+		radioButton -e -enable 0 smxVal;
+		break;
+	
+		case "fieldsEnabled":
+		floatField -e -enable 1 dvField;
+		floatField -e -enable 1 minField;
+		floatField -e -enable 1 maxField;
+		
+		radioButton -e -enable 1 noMinVal;
+		radioButton -e -enable 1 minVal;
+		radioButton -e -enable 1 smnVal;
+		radioButton -e -enable 1 noMaxVal;
+		radioButton -e -enable 1 maxVal;
+		radioButton -e -enable 1 smxVal;
+		break;
+		
+	case "enumOn":
+		button  -e -enable 1 removeEnumB;
+		button  -e -enable 1 addEnumB;
+		textField -e -enable 1 newEnumTF;
+		textScrollList -e -enable 1 enumTSL;
+			
+		floatField -e -enable 0 dvField;
+		floatField -e -enable 0 minField;
+		floatField -e -enable 0 maxField;
+		
+		radioButton -e -enable 0 noMinVal;
+		radioButton -e -enable 0 minVal;
+		radioButton -e -enable 0 smnVal;
+		radioButton -e -enable 0 noMaxVal;
+		radioButton -e -enable 0 maxVal;
+		radioButton -e -enable 0 smxVal;
+		break;
+		
+	case "enumOff":
+		button  -e -enable 0 removeEnumB;
+		button  -e -enable 0 addEnumB;
+		textField -e -enable 0 newEnumTF;
+		textScrollList -e -enable 0 enumTSL;
+		break;	
+	
+	case "noMinOn":
+		floatField -e -enable 0 minField;
+		break;
+		
+	case "noMinOff":
+		floatField -e -enable 1 minField;
+		break;
+		
+	case "noMaxOn":
+		floatField -e -enable 0 maxField;
+		break;
+		
+	case "noMaxOff":
+		floatField -e -enable 1 maxField;
+		break;
+	}
+}
+
+/// procedure for replacing the current attribute fields with the
+// 	number specified in the Number Of Attrs field
+
+global proc removeAttrFields()
+{
+//// removing attrs starting from the below...
+	string $attrNamesDel[] = `columnLayout -q -childArray attrFieldsColumn`;
+	int $numOldAttrs = `size ($attrNamesDel)`;
+	
+	if ($numOldAttrs >= 1)
+	{
+		deleteUI $attrNamesDel[($numOldAttrs -1)];
+	}
+	else if ($numOldAttrs == 0)
+	{
+		error "There are no more fields to remove";
+	}
+}
+
+// proc for adding new attribute field to the existing ones
+// without deleting the old one...
+
+global proc addAttrFields()
+{
+//// getting the old ones number:
+	string $attrNamesDel[] = `columnLayout -q -childArray attrFieldsColumn`;
+	int $numOldAttrs = `size ($attrNamesDel)`;
+	/// updating the UI with the new number of Fields for the Attr Names
+	int $numNewAttrs = 	`intField -q -v attrNumberField`;
+	
+	for ($i = ($numOldAttrs); $i < ($numNewAttrs + $numOldAttrs); $i++)
+	{
+		textFieldGrp -l ("Attribute" + ($i + 1) + ":")
+					 -cw 1 60
+					 -cw 2 200
+					 -p attrFieldsColumn
+					 ("attrName" + $i);
+	}
+}
+
+/// And the moment of the truth...
+/// The procedure for gettings the attribute's names
+
+global proc getAttrNames()
+{
+	string $dataType = `radioCollection -q -select dtRadioButtons`;
+	int $keyableState = `checkBox -q -v keyableCB`;
+	int $attrNums = `columnLayout -q -numberOfChildren attrFieldsColumn`;
+	string $attrNames[];
+	float $defVal = `floatField -q -value dvField`;
+	float $minVal = `floatField -q -value minField`;
+	float $maxVal = `floatField -q -value maxField`;
+	string $minRadioState = `radioCollection -q -select minVals`;
+	string $maxRadioState = `radioCollection -q -select maxVals`;
+	
+	for ($z=0; $z < $attrNums; $z++)
+	{
+		string $attrFieldText = `textFieldGrp -q -text ("attrName" + $z)`;
+		if ($attrFieldText == "")
+		{
+			error "One or more of the fields are empty. Please fill them and try again";
+		}
+	}
+		
+/////////////////////////////////////////////////////////////////////////
+///// calling the proc's for adding attributes
+///// depengind of the current Data Type
+	
+	if ($dataType == "intRadio" || $dataType == "floatRadio" || $dataType == "vecIntRadio" || $dataType == "vecFloatRadio")
+	{
+		intFloatRadio ($attrNums, $dataType, $keyableState, $defVal, $minVal, $maxVal);
+	}
+	else if ($dataType == "stringRadio")
+	{
+		stringRadio($attrNums);	
+	}
+	else if ($dataType == "boolRadio")
+	{
+		booleanRadio($attrNums, $keyableState);
+	}
+	else if ($dataType == "enumRadio")
+	{
+		enumRadio($attrNums, $keyableState);
+	}
+}
+
+//////////////////////////////////////////////////////////////
+//// procedure for adding attributes with No Min values, int or float
+global proc intFloatRadio(int $attrNums, string $dataType, int $keyableState, float $defVal, float $minVal, float $maxVal)
+{
+	string $minRadioState = `radioCollection -q -select minVals`;
+	string $maxRadioState = `radioCollection -q -select maxVals`;
+	string $selected[] = `ls -sl`;
+
+//// adding integer attributes depending on their min, max radioButton statement
+	if ($dataType == "intRadio")
+	{
+		if ($minRadioState == "noMinVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal -min $minVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal -smn $minVal $selected[$i];	
+				}
+			}
+		}
+		
+		else if ($minRadioState == "noMinVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal -max $maxVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal -max $maxVal -min $minVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal -max $maxVal -smn $minVal $selected[$i];	
+				}
+			}
+		}
+		
+		else if ($minRadioState == "noMinVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal -smx $maxVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal -smx $maxVal -min $minVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long -k $keyableState -dv $defVal -smx $maxVal -smn $minVal $selected[$i];	
+				}
+			}
+		}
+	}
+	
+//// adding float attributes depending on their min, max radioButton statement
+	else if ($dataType == "floatRadio")
+	{
+		if ($minRadioState == "noMinVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal -min $minVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal -smn $minVal $selected[$i];	
+				}
+			}
+		}
+		
+		else if ($minRadioState == "noMinVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal -max $maxVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal -max $maxVal -min $minVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal -max $maxVal -smn $minVal $selected[$i];	
+				}
+			}
+		}
+		
+		else if ($minRadioState == "noMinVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal -smx $maxVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal -smx $maxVal -min $minVal $selected[$i];	
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double -k $keyableState -dv $defVal -smx $maxVal -smn $minVal $selected[$i];	
+				}
+			}
+		}
+	}
+	
+//// adding vector Int attributes depending on their min, max radioButton statement
+	else if ($dataType == "vecIntRadio")
+	{
+		if ($minRadioState == "noMinVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -dv $defVal -k $keyableState -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -dv $defVal -k $keyableState -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -dv $defVal -k $keyableState -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -k $keyableState -dv $defVal -min $minVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -k $keyableState -dv $defVal -min $minVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -k $keyableState -dv $defVal -min $minVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -k $keyableState -dv $defVal -smn $minVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -k $keyableState -dv $defVal -smn $minVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -k $keyableState -dv $defVal -smn $minVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		
+		else if ($minRadioState == "noMinVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -k $keyableState -dv $defVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -k $keyableState -dv $defVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -k $keyableState -dv $defVal -max $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -k $keyableState -dv $defVal -min $minVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -k $keyableState -dv $defVal -min $minVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -k $keyableState -dv $defVal -min $minVal -max $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -k $keyableState -dv $defVal -smn $minVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -k $keyableState -dv $defVal -smn $minVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -k $keyableState -dv $defVal -smn $minVal -max $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		
+		else if ($minRadioState == "noMinVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -k $keyableState -dv $defVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -k $keyableState -dv $defVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -k $keyableState -dv $defVal -smx $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -k $keyableState -dv $defVal -min $minVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -k $keyableState -dv $defVal -min $minVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -k $keyableState -dv $defVal -min $minVal -smx $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at long3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at long -k $keyableState -dv $defVal -smn $minVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at long -k $keyableState -dv $defVal -smn $minVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at long -k $keyableState -dv $defVal -smn $minVal -smx $maxVal -p $currentAttr $selected[$i];	
+				}
+			}
+		}
+	}
+	
+//// adding vector Float attributes depending on their min, max radioButton statement
+	else if ($dataType == "vecFloatRadio")
+	{
+		if ($minRadioState == "noMinVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -dv $defVal -k $keyableState -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -dv $defVal -k $keyableState -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -dv $defVal -k $keyableState -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -k $keyableState -dv $defVal -min $minVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -k $keyableState -dv $defVal -min $minVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -k $keyableState -dv $defVal -min $minVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "noMaxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -k $keyableState -dv $defVal -smn $minVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -k $keyableState -dv $defVal -smn $minVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -k $keyableState -dv $defVal -smn $minVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		
+		else if ($minRadioState == "noMinVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -k $keyableState -dv $defVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -k $keyableState -dv $defVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -k $keyableState -dv $defVal -max $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -k $keyableState -dv $defVal -min $minVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -k $keyableState -dv $defVal -min $minVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -k $keyableState -dv $defVal -min $minVal -max $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "maxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -k $keyableState -dv $defVal -smn $minVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -k $keyableState -dv $defVal -smn $minVal -max $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -k $keyableState -dv $defVal -smn $minVal -max $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		
+		else if ($minRadioState == "noMinVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -k $keyableState -dv $defVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -k $keyableState -dv $defVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -k $keyableState -dv $defVal -smx $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "minVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -k $keyableState -dv $defVal -min $minVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -k $keyableState -dv $defVal -min $minVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -k $keyableState -dv $defVal -min $minVal -smx $maxVal -p $currentAttr $selected[$i];
+				}
+			}
+		}
+		else if ($minRadioState == "smnVal" && $maxRadioState == "smxVal")
+		{
+			for ($i=0; $i<size($selected); $i++)
+			{
+				for ($a=0; $a < $attrNums; $a++)
+				{
+					string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+					addAttr -ln $currentAttr -at double3 $selected[$i];
+						addAttr -ln ($currentAttr + "X") -at double -k $keyableState -dv $defVal -smn $minVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Y") -at double -k $keyableState -dv $defVal -smn $minVal -smx $maxVal -p $currentAttr $selected[$i];
+						addAttr -ln ($currentAttr + "Z") -at double -k $keyableState -dv $defVal -smn $minVal -smx $maxVal -p $currentAttr $selected[$i];	
+				}
+			}
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/// proc for adding string attributes
+
+global proc stringRadio(int $attrNums)
+{
+	string $selected[] = `ls -sl`;
+	for ($i = 0; $i<size($selected); $i++)
+	{
+		for ($a=0; $a<$attrNums; $a++)
+		{
+			string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+			addAttr -ln $currentAttr -dt "string" $selected[$i];			
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// proc for adding boolean attributes
+
+global proc booleanRadio(int $attrNums, int $keyableState)
+{
+	string $selected[] = `ls -sl`;
+	for ($i=0; $i<size($selected); $i++)
+	{
+		for ($a=0; $a<$attrNums; $a++)
+		{
+			string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+			addAttr -ln $currentAttr -at bool -k $keyableState $selected[$i];
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// proc for adding new Enum in the TSL...
+
+global proc addTSL()
+{
+	string $enumName = `textField -q -text newEnumTF`;
+	textScrollList -e -append $enumName enumTSL;
+	textField -e -text "" newEnumTF;
+}
+
+/// proc for removing Enum from the TSL...
+
+global proc removeTSL()
+{
+	string $selectedTSL[] = `textScrollList -q -selectItem enumTSL`;
+	textScrollList -e -removeItem $selectedTSL[0] enumTSL;
+}
+
+///// Proc for adding Enum attributes
+
+global proc enumRadio(int $attrNums, int $keyableState)
+{
+	string $selected[] = `ls -sl`;
+	string $enums[] = `textScrollList -q -allItems enumTSL`;
+	string $currentEnums[];
+	for ($i=0; $i<size ($selected); $i++)
+	{
+		for ($a=0; $a<$attrNums; $a++)
+		{
+			string $currentAttr = `textFieldGrp -q -text ("attrName" + $a)`;
+			for ($e=0; $e< size($enums); $e++)
+			{
+				$currentEnums[$e] = $enums[$e];
+			}
+			string $enumsChilds = stringArrayToString ($currentEnums, ":");
+			addAttr -ln $currentAttr -k $keyableState -at enum -en ($enumsChilds) $selected[$i];
+		}
+	}
+}
+
+//////////////////////////////////////////
+////////proc for resetting the UI
+
+global proc resetUI()
+{
+	string $layoutChild[] = `columnLayout -q -childArray attrFieldsColumn`;
+	for ($attr in $layoutChild)
+	{
+		deleteUI $attr;
+	}
+	radioCollection -e -select floatRadio dtRadioButtons;
+	intField -e -v 0 attrNumberField;
+	checkBox -e -v 1 keyableCB;
+	radioCollection -e -select minVal minVals;
+	radioCollection -e -select maxVal maxVals;
+	floatField -e -v 0 dvField;
+	floatField -e -v 0 minField;
+	floatField -e -v 0 maxField;
+	textScrollList -e -removeAll enumTSL;
+}
+
+////////////////////////////////////////////////////////////////////
+//// YES :).. end of the procedures.. everything seems to work properly
+
+///// here few UI's: about and help
+
+
+///// About UI ////////////////////////////////////////////////////
+global proc aboutWin()
+{
+		if (`window -exists aboutUI`)
+		deleteUI aboutUI;
+	
+	window -t "About"
+		-wh 220	170
+		-s 0
+		aboutUI;
+	
+	columnLayout -adj 1 helpColumn;
+		
+		text -l "\ndgAddAttrs  version 1.1";
+		text -l "\n\n\n Author:       Denislav Georgiev" -align "left";
+		text -l "\n Web:          www.puppetTD.com" -align "left";
+		text -l " E-mail:        denis@puppettd.com" -align "left";
+		
+	showWindow aboutUI;
+}
+
+
+///// Help UI /////////////////////////////////////////////////
+
+global proc helpWin()
+{
+		if (`window -exists helpUI`)
+		deleteUI helpUI;
+	
+	window -t "Help"
+		-wh 420 235
+		-s 0
+		helpUI;
+	
+	columnLayout -adj 1 helpColumn;
+		scrollField -wordWrap true
+			-h 205
+			-editable 0
+			-text ("With this script you can add more than 1 attribute in one time" +
+		 			" you can also choose between min/max and softMin/softMax" +
+		 			" for the attributes. One more feature is that you can add" +
+		 			" vector attributes with float or int values." + 
+					" Type the number of attributes you'd like to add and hit Update" +
+					" The new fields will be created and you are ready to add you'r attributes" + 
+					" \n\n" +
+					"The softMin and softMax are similar to those that you have in the blendshapes editor" +
+					" They are limited to the min and max you specify (when you slide them)" +
+					" but if you enter smaller or bigger value that will work" +
+					"\n\n\n" +
+					" INTENTIONALLY I've made the script not to remove the attr names and values, after" + 
+					" you hit Add Attrs. Anyway if you want to reset the UI Go to Edit > Reset Window" + 
+					"\n\n\nUPDATES\n\"Replace\" button was replaced with 2 new buttons \"Add\" and \"Remove\" " +
+					"with which you can add or remove new attribute fields without affecting the existing ones.");
+//  attribute fields without affecting the existing ones;
+
+	showWindow helpUI;
+}

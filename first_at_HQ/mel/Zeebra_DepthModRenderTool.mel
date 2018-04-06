@@ -1,0 +1,1756 @@
+// Zeeebra V1.0 Interactive camera depth modification tool
+// Created by Isoparm AKA Martin Thomas Andrada Sacramento, 10/25/05 MADE IN THE PHILIPPINES. MAY CAUSE NEARSIGHTEDNESS.
+// Based off the Depth of Field as a Post Process tutorial by Kris Kapp, which in turn was based of Tom Kluyskens' work.
+//
+// This script creates fake ZDepth setup for a scene file. It will basically convert all shaders in a scene to render only black and white (or any color determined by the artist), 
+// based off their distance from the render cam and the range of the near and far clipping plane (Initially, White near the cam, black farther off).
+// It will also maintain shader transparency, and it works on Paint Effects as well. The render output can be used as a Z-Depth element or for DOF in post.
+// Basic operations:
+// 1. Queries wether a render cam has been selected, and if so further queries the unit of measurement settings for the scene and set the unit factor based off that. If setup
+//      already exists, reexecutes control window.
+// 2. Creates a shading network to be connected to the camera and existing Blinn, Phong, Phong E, Lambert, Anisotropic, Layered, Surface, Shading Map, Ramp, and Ocean Shaders.
+//      The network will not connect to the default Lambert1 shading material and any useBackground shader.
+// 3. Turns off all pre existing lights in the scene file (dosen't delete so the script is referenceing friendly).
+// 4. Creates an ambient light for geometry and directional light for PFX. The corresponding objects are then associated with their respective lights.
+// 5. Creates control curves for the near and far clipping planes of the camera and the color entry lists of the Z ramp. Executes a control window.
+//
+// To operate the script, selet the render cam and click. A window will appear where you can keyframe the various settings, and it is recommended that you animate here instead of
+// directly in the Zramp node.
+//
+// When editing the number of lights in the window, please remember to click on the Update Lights button  before rendering so as to update the number of entry lists on the PFX light
+// as well. Various options exist such as noise functions for the Zramp.
+//
+// Important Note:
+// For certain Paint Effects types which derive their color from texture images, such as the dead birch PFX, you will have to generate a black and white matte
+// image to replace the original to get the desired results. This may be addressed in the future via a prepared library of black and white matte images to be included
+// with this script (for future updates as time will allow).
+//
+// For any comments and recommendations, please email me at martinik24@gmail.com .
+
+string $ZDepthCamChecker[];
+string $ZDepthCam[];
+string $currentUnitOfMeasurement;
+float $currentUnitValue;
+float $currentUnitValue2;
+int $ZisConnected;
+string $ZBreakObj;
+string $ZShaders[];
+string $currentZShader;
+string $ZBreakObj;
+string $ZLights[];
+string $ZLightsEdit;
+string $ZLightType[];
+string $ZPFX[];
+string $ZPFXEdit;
+string $ZPfxAtBreak[];
+string $ZPfxAtCurrent;
+string $ZCurrentInerp;
+
+
+// These attributes are just for multiList shader types.
+string $ZMultiQuery[];
+int $ZRaw;
+int $ZCooked;
+int $ZMultiRemover;
+int $ZMultiRemover2;
+int $ZColorListExists;
+int $ZColorListExists2;
+string $ZMultiRemoverExecute;
+int $ZCurrentLayeredColorEntry;
+string $ZLayeredColorObjToken[];
+string $ZLayeredObjType[];
+
+//GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+if (`objExists ZDepthRamp`)
+
+{ZWin;}
+
+else
+
+{
+
+$ZDepthCamChecker = `ls -sl -dag -st`;
+$ZDepthCam = `ls -sl`;
+
+if ($ZDepthCamChecker[3] == "camera")
+
+{
+if (`window -exists ZControlWindow`)
+deleteUI ZControlWindow;
+
+
+$currentUnitOfMeasurement = `currentUnit -q -l`;
+
+if ($currentUnitOfMeasurement == "mm")
+{
+$currentUnitValue = .1;
+$currentUnitValue2 = 10.0;
+}
+
+else if ($currentUnitOfMeasurement == "cm")
+{
+$currentUnitValue = 1.0;
+$currentUnitValue2 = 1.0;
+}
+
+else if ($currentUnitOfMeasurement == "m")
+{
+$currentUnitValue = 100;
+$currentUnitValue2 = 0.01;
+}
+
+else if ($currentUnitOfMeasurement == "in")
+{
+$currentUnitValue = 2.54;
+$currentUnitValue2 = 0.393700787;
+}
+
+else if ($currentUnitOfMeasurement == "ft")
+{
+$currentUnitValue = 30.48;
+$currentUnitValue2 = 0.032808399;
+}
+
+else if ($currentUnitOfMeasurement == "yd")
+{
+$currentUnitValue = 91.44;
+$currentUnitValue2 = 0.010936133;
+}
+
+else
+{$currentUnitValue = 0.0;
+$currentUnitValue2 = 0.0;
+};
+
+
+createNode multiplyDivide -n ZDepthMultiplier;
+setAttr ZDepthMultiplier.input2X $currentUnitValue;
+setAttr ZDepthMultiplier.input2Y $currentUnitValue;
+setAttr ZDepthMultiplier.input2Z $currentUnitValue;
+
+createNode setRange -n ZDepthSetRange;
+setAttr ZDepthSetRange.maxX 1;
+connectAttr ZDepthMultiplier.outputX ZDepthSetRange.oldMaxX;
+connectAttr ZDepthMultiplier.outputY ZDepthSetRange.oldMinX;
+
+createNode samplerInfo -n ZDepthSamplerInfo;
+connectAttr ZDepthSamplerInfo.pointCameraZ ZDepthSetRange.valueX;
+
+shadingNode -asTexture ramp -n ZDepthRamp;
+setAttr ZDepthRamp.type 0;
+removeMultiInstance -break true ZDepthRamp.colorEntryList[2];
+setAttr "ZDepthRamp.colorEntryList[1].position" 1;
+setAttr "ZDepthRamp.colorEntryList[1].color" -type double3 1 1 1 ;
+setAttr "ZDepthRamp.colorEntryList[0].color" -type double3 0 0 0 ;
+connectAttr ZDepthSetRange.outValueX ZDepthRamp.vCoord;
+setAttr "ZDepthRamp.defaultColorR" 0;
+setAttr "ZDepthRamp.defaultColorG" 0;
+setAttr "ZDepthRamp.defaultColorB" 0;
+
+curve -d 3 -p 1.108194 0 -2.002011 -p 0.783612 0 -2.785623 -p 0 0 -3.110205 -p -0.783612 0 -2.785623 -p -1.108194 0 -2.002011 -p -0.370227 0 0.312452 -p 0 0 0.465805 -p 0.370227 0 0.312452 -k 0 -k 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 5 -k 5  -n zNearClipPlane;
+duplicate -n zFarClipPlane zNearClipPlane;
+transformLimits -tz -1 0 -etz 0 1 zFarClipPlane;
+setAttr zFarClipPlane.rotateY -180;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+parent zFarClipPlane zNearClipPlane;
+
+select -r zNearClipPlane;
+group -n ZCurveIntercessor; xform -os -piv 0 0 0;
+select -cl;
+parent ZCurveIntercessor $ZDepthCam[0];
+setAttr "ZCurveIntercessor.translateX" 0;
+setAttr "ZCurveIntercessor.translateY" 0;
+setAttr "ZCurveIntercessor.translateZ" 0;
+setAttr "ZCurveIntercessor.rotateX" 0;
+setAttr "ZCurveIntercessor.rotateY" 0;
+setAttr "ZCurveIntercessor.rotateZ" 0;
+parent -w zNearClipPlane;
+setAttr "ZCurveIntercessor.scaleX" 1;
+setAttr "ZCurveIntercessor.scaleY" 1;
+setAttr "ZCurveIntercessor.scaleZ" 1;
+parent zNearClipPlane ZCurveIntercessor;
+select -r zNearClipPlane;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+transformLimits -tz -1 0 -etz 0 1 zNearClipPlane;
+setAttr -lock true "ZCurveIntercessor.tx";
+setAttr -lock true "ZCurveIntercessor.ty";
+setAttr -lock true "ZCurveIntercessor.tz";
+setAttr -lock true "ZCurveIntercessor.rx";
+setAttr -lock true "ZCurveIntercessor.ry";
+setAttr -lock true "ZCurveIntercessor.rz";
+setAttr -lock true "ZCurveIntercessor.sx";
+setAttr -lock true "ZCurveIntercessor.sy";
+setAttr -lock true "ZCurveIntercessor.sz";
+setAttr -lock true "ZCurveIntercessor.v";
+setAttr "zNearClipPlane.translateX" 0;
+setAttr "zNearClipPlane.translateY" 0;
+setAttr "zNearClipPlane.translateZ" 0;
+setAttr "zNearClipPlane.rotateX" 90;
+setAttr "zNearClipPlane.rotateY" 0;
+setAttr "zNearClipPlane.rotateZ" -90;
+setAttr "zNearClipPlane.scaleX" 1;
+setAttr "zNearClipPlane.scaleY" 1;
+setAttr "zNearClipPlane.scaleZ" 1;
+select -r zNearClipPlane;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+setAttr -lock true -keyable false "zNearClipPlane.tx";
+setAttr -lock true -keyable false "zNearClipPlane.ty";
+setAttr -lock true -keyable false "zNearClipPlane.rx";
+setAttr -lock true -keyable false "zNearClipPlane.ry";
+setAttr -lock true -keyable false "zNearClipPlane.rz";
+setAttr -lock true -keyable false "zNearClipPlane.sx";
+setAttr -lock true -keyable false "zNearClipPlane.sy";
+setAttr -lock true -keyable false "zNearClipPlane.sz";
+setAttr -lock true -keyable false "zNearClipPlane.v";
+
+setAttr zNearClipPlane.tz -10;
+setAttr zFarClipPlane.tz -100;
+
+duplicate -n zColorInput0 zFarClipPlane;
+
+addAttr -ln color -at float3 -uac zColorInput0;
+addAttr -ln colorR -at "float" -p color zColorInput0;
+addAttr -ln colorG -at "float" -p color zColorInput0;
+addAttr -ln colorB -at "float" -p color zColorInput0;
+setAttr -type float3 zColorInput0.color 0 0 0;
+setAttr -e -keyable true zColorInput0.color;
+setAttr -e -keyable true zColorInput0.colorR;
+setAttr -e -keyable true zColorInput0.colorG;
+setAttr -e -keyable true zColorInput0.colorB;
+
+setAttr -lock true -keyable false "zFarClipPlane.tx";
+setAttr -lock true -keyable false "zFarClipPlane.ty";
+setAttr -lock true -keyable false "zFarClipPlane.rx";
+setAttr -lock true -keyable false "zFarClipPlane.ry";
+setAttr -lock true -keyable false "zFarClipPlane.rz";
+setAttr -lock true -keyable false "zFarClipPlane.sx";
+setAttr -lock true -keyable false "zFarClipPlane.sy";
+setAttr -lock true -keyable false "zFarClipPlane.sz";
+setAttr -lock true -keyable false "zFarClipPlane.v";
+
+addAttr -ln farClipDistance -at double zFarClipPlane;
+setAttr -e -keyable true zFarClipPlane.farClipDistance;
+
+closeCurve -ch 1 -ps 0 -rpo 1 -bb 0.5 -bki 0 -p 0.1 "zNearClipPlane";
+closeCurve -ch 1 -ps 0 -rpo 1 -bb 0.5 -bki 0 -p 0.1 "zFarClipPlane";
+
+createNode plusMinusAverage -n ZDepthFarClipAddition;
+connectAttr -f zNearClipPlane.translateZ ZDepthFarClipAddition.input1D[0];
+connectAttr -f zFarClipPlane.translateZ ZDepthFarClipAddition.input1D[1];
+
+createNode multiplyDivide -n ZDepthClipMultiplier;
+setAttr "ZDepthClipMultiplier.input2X" -1;
+setAttr "ZDepthClipMultiplier.input2Y" -1;
+setAttr "ZDepthClipMultiplier.input2Z" -1;
+connectAttr -f ZDepthFarClipAddition.output1D ZDepthClipMultiplier.input1X;
+connectAttr -f zNearClipPlane.translateZ ZDepthClipMultiplier.input1Y;
+
+connectAttr -f ZDepthClipMultiplier.outputY ($ZDepthCam[0] + ".nearClipPlane");
+connectAttr -f ZDepthClipMultiplier.outputX ($ZDepthCam[0] + ".farClipPlane");
+setAttr ($ZDepthCam[0] + ".bestFitClippingPlanes") false;
+connectAttr -f ZDepthFarClipAddition.output1D zFarClipPlane.farClipDistance;
+connectAttr -f zFarClipPlane.farClipDistance ZDepthMultiplier.input1Y;
+connectAttr -f zNearClipPlane.translateZ ZDepthMultiplier.input1X;
+
+
+SelectAllLights;
+pickWalk -d down;
+$ZLights = `ls -sl`;
+
+for ($ZLightsEdit in $ZLights)
+
+{
+select -r $ZLightsEdit;
+$ZLightType = `ls -sl -st`;
+
+
+if ($ZLightType[1] == "ambientLight")
+
+{
+$ZisConnected = `connectionInfo -id ($ZLightsEdit + ".intensity")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZLightsEdit + ".intensity")`;
+disconnectAttr $ZBreakObj ($ZLightsEdit + ".intensity");
+};
+
+setAttr ($ZLightsEdit + ".intensity") 0;
+setAttr ($ZLightsEdit + ".useRayTraceShadows") 0;
+}
+
+
+else if ($ZLightType[1] == "directionalLight")
+
+{
+$ZisConnected = `connectionInfo -id ($ZLightsEdit + ".intensity")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZLightsEdit + ".intensity")`;
+disconnectAttr $ZBreakObj ($ZLightsEdit + ".intensity");
+};
+
+setAttr ($ZLightsEdit + ".intensity") 0;
+setAttr ($ZLightsEdit + ".useRayTraceShadows") 0;
+setAttr ($ZLightsEdit + ".useDepthMapShadows") 0;
+}
+
+
+else if  ($ZLightType[1] == "areaLight")
+
+{
+$ZisConnected = `connectionInfo -id ($ZLightsEdit + ".intensity")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZLightsEdit + ".intensity")`;
+disconnectAttr $ZBreakObj ($ZLightsEdit + ".intensity");
+};
+
+setAttr ($ZLightsEdit + ".intensity") 0;
+setAttr ($ZLightsEdit + ".useRayTraceShadows") 0;
+setAttr ($ZLightsEdit + ".useDepthMapShadows") 0;
+
+$ZisConnected = `connectionInfo -id ($ZLightsEdit + ".lightGlow")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZLightsEdit + ".lightGlow")`;
+disconnectAttr $ZBreakObj ($ZLightsEdit + ".lightGlow");
+};
+
+}
+
+
+else if ($ZLightType[1] == "pointLight")
+
+{lightBreaker($ZLightsEdit);}
+
+
+else if ($ZLightType[1] == "spotLight")
+
+{lightBreaker($ZLightsEdit);}
+
+
+else if ($ZLightType[1] == "volumeLight")
+
+{lightBreaker($ZLightsEdit);}
+
+
+else
+
+{select -cl;};
+
+};
+
+setAttr "defaultRenderGlobals.enableDefaultLight" 0;
+
+
+createNode ambientLight -n ZDepthAmbientLightShape;
+setAttr ZDepthAmbientLightShape.ambientShade 0;
+select -cl;
+SelectAllGeometry;
+select -tgl ZDepthAmbientLightShape;
+MakeLightLinks;
+select -cl;
+
+duplicate -n ZPFXRamp ZDepthRamp;
+connectAttr -f ZDepthRamp.colorEntryList[0] ZPFXRamp.colorEntryList[0];
+connectAttr -f ZDepthRamp.colorEntryList[1] ZPFXRamp.colorEntryList[1];
+shadingNode -asUtility place2dTexture -n ZPFXplace2dTexture ;
+connectAttr -f ZPFXplace2dTexture.outUV ZPFXRamp.uvCoord;
+connectAttr -f ZPFXplace2dTexture.outUvFilterSize ZPFXRamp.uvFilterSize;
+setAttr "ZPFXplace2dTexture.wrapV" 0;
+connectAttr -f ZDepthRamp.noise ZPFXRamp.noise;
+connectAttr -f ZDepthRamp.noiseFreq ZPFXRamp.noiseFreq;
+connectAttr -f ZDepthRamp.uWave ZPFXRamp.uWave;
+connectAttr -f ZDepthRamp.vWave ZPFXRamp.vWave;
+connectAttr -f ZDepthRamp.interpolation ZPFXRamp.interpolation;
+
+shadingNode -asLight directionalLight -n ZDepthPFXLightShape;
+connectAttr -force ZPFXRamp.outColor ZDepthPFXLightShape.color;
+setAttr "ZDepthPFXLight.emitSpecular" 0;
+select -cl;
+SelectAllGeometry;
+select -tgl ZDepthPFXLightShape;
+BreakLightLinks;
+select -cl;
+
+createNode plusMinusAverage -n ZPFXDirectionalLightScale;
+setAttr ZPFXDirectionalLightScale.operation 2;
+connectAttr -f ZDepthClipMultiplier.outputX ZPFXDirectionalLightScale.input1D[0];
+connectAttr -f ZDepthClipMultiplier.outputY ZPFXDirectionalLightScale.input1D[1];
+
+select -cl;
+parent ZDepthPFXLight zFarClipPlane;
+setAttr "ZDepthPFXLight.translateX" 0;
+setAttr "ZDepthPFXLight.translateY" 0;
+setAttr "ZDepthPFXLight.translateZ" 0;
+setAttr "ZDepthPFXLight.rotateX" 90;
+setAttr "ZDepthPFXLight.rotateY" 0;
+setAttr "ZDepthPFXLight.rotateZ" -180;
+connectAttr -f ZPFXDirectionalLightScale.output1D ZDepthPFXLight.scaleX;
+connectAttr -f ZPFXDirectionalLightScale.output1D ZDepthPFXLight.scaleY;
+connectAttr -f ZPFXDirectionalLightScale.output1D ZDepthPFXLight.scaleZ;
+
+createNode multiplyDivide -n ZPFXLightScaleFactor;
+setAttr ZPFXLightScaleFactor.input2X $currentUnitValue;
+connectAttr -f ZPFXDirectionalLightScale.output1D ZPFXLightScaleFactor.input1X;
+connectAttr -f ZPFXLightScaleFactor.outputX ZDepthPFXLight.scaleX;
+connectAttr -f ZPFXLightScaleFactor.outputX ZDepthPFXLight.scaleY;
+connectAttr -f ZPFXLightScaleFactor.outputX ZDepthPFXLight.scaleZ;
+
+setAttr -lock true -keyable false "ZDepthPFXLight.tx";
+setAttr -lock true -keyable false "ZDepthPFXLight.ty";
+setAttr -lock true -keyable false "ZDepthPFXLight.tz";
+setAttr -lock true -keyable false "ZDepthPFXLight.rx";
+setAttr -lock true -keyable false "ZDepthPFXLight.ry";
+setAttr -lock true -keyable false "ZDepthPFXLight.rz";
+setAttr -lock true -keyable false "ZDepthPFXLight.v";
+
+group -n curveOffseter -em; xform -os -piv 0 0 0;
+parent curveOffseter ZDepthPFXLight;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+setAttr curveOffseter.scaleX $currentUnitValue2;
+setAttr curveOffseter.scaleY $currentUnitValue2;
+setAttr curveOffseter.scaleZ $currentUnitValue2;
+
+parent zColorInput0 curveOffseter;
+setAttr "zColorInput0.rotateY" 90;
+select -r zColorInput0;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0;
+
+duplicate -n zCtrlSource zColorInput0;
+setAttr -lock true -keyable false "zCtrlSource.tx";
+setAttr -lock true -keyable false "zCtrlSource.tz";
+setAttr -lock true -keyable false "zCtrlSource.rx";
+setAttr -lock true -keyable false "zCtrlSource.ry";
+setAttr -lock true -keyable false "zCtrlSource.rz";
+setAttr -keyable false "zCtrlSource.sx";
+setAttr -keyable false "zCtrlSource.sy";
+setAttr -keyable false "zCtrlSource.sz";
+setAttr zCtrlSource.v 0;
+setAttr -keyable false "zCtrlSource.v";
+
+setAttr -lock true -keyable false "zColorInput0.tx";
+setAttr -lock true -keyable false "zColorInput0.tz";
+setAttr -lock true -keyable false "zColorInput0.rx";
+setAttr -lock true -keyable false "zColorInput0.ry";
+setAttr -lock true -keyable false "zColorInput0.rz";
+setAttr -keyable false "zColorInput0.sx";
+setAttr -keyable false "zColorInput0.sy";
+setAttr -keyable false "zColorInput0.sz";
+setAttr -lock true -keyable false "zColorInput0.v";
+
+transformLimits -ty 0 1 -ety 1 1 zColorInput0;
+duplicate -n zColorInput1 zColorInput0;
+setAttr zColorInput1.ty 1;
+setAttr -type float3 zColorInput1.color 1 1 1;
+
+connectAttr -f ZDepthRamp.colorEntryList[0].position zColorInput0.translateY;
+connectAttr -f ZDepthRamp.colorEntryList[1].position zColorInput1.translateY;
+connectAttr -f ZDepthRamp.colorEntryList[0].color zColorInput0.color;
+connectAttr -f ZDepthRamp.colorEntryList[1].color zColorInput1.color;
+closeCurve -ch 1 -ps 0 -rpo 1 -bb 0.5 -bki 0 -p 0.1 "zColorInput0";
+closeCurve -ch 1 -ps 0 -rpo 1 -bb 0.5 -bki 0 -p 0.1 "zColorInput1";
+closeCurve -ch 1 -ps 0 -rpo 1 -bb 0.5 -bki 0 -p 0.1 "zCtrlSource";
+
+createNode multiplyDivide -n ZEntryListScale;
+setAttr ZEntryListScale.operation 2;
+setAttr ZEntryListScale.input1X -100;
+createNode plusMinusAverage -n ZScaleOffset;
+connectAttr -f zFarClipPlane.translateZ ZScaleOffset.input1D[0];
+connectAttr -f ZScaleOffset.output1D ZEntryListScale.input2X;
+
+connectAttr ZEntryListScale.outputX zColorInput0.sx;
+connectAttr ZEntryListScale.outputX zColorInput0.sy;
+connectAttr ZEntryListScale.outputX zColorInput0.sz;
+connectAttr ZEntryListScale.outputX zColorInput1.sx;
+connectAttr ZEntryListScale.outputX zColorInput1.sy;
+connectAttr ZEntryListScale.outputX zColorInput1.sz;
+reorder -r 1 zColorInput0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// This is the shader disconnection/reconnection part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et lambert`;
+
+for ($currentZShader in $ZShaders)
+
+{
+colorBreaker($currentZShader, "lambert1");
+ambientBreaker($currentZShader, "lambert1");
+incandescenceBreaker($currentZShader, "lambert1");
+diffuseBreaker($currentZShader, "lambert1");
+translucenceBreaker($currentZShader, "lambert1");
+glowIntensityBreaker($currentZShader, "lambert1");
+setAttr ($currentZShader + ".refractions") 0;
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et blinn`;
+
+for ($currentZShader in $ZShaders)
+
+{
+colorBreaker($currentZShader, "0");
+ambientBreaker($currentZShader, "0");
+incandescenceBreaker($currentZShader, "0");
+diffuseBreaker($currentZShader, "0");
+translucenceBreaker($currentZShader, "0");
+glowIntensityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+specularBreaker($currentZShader, "0");
+reflectivityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et phong`;
+
+for ($currentZShader in $ZShaders)
+
+{
+colorBreaker($currentZShader, "0");
+ambientBreaker($currentZShader, "0");
+incandescenceBreaker($currentZShader, "0");
+diffuseBreaker($currentZShader, "0");
+translucenceBreaker($currentZShader, "0");
+glowIntensityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+specularBreaker($currentZShader, "0");
+reflectivityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et phongE`;
+
+for ($currentZShader in $ZShaders)
+
+{
+colorBreaker($currentZShader, "0");
+ambientBreaker($currentZShader, "0");
+incandescenceBreaker($currentZShader, "0");
+diffuseBreaker($currentZShader, "0");
+translucenceBreaker($currentZShader, "0");
+glowIntensityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+specularBreaker($currentZShader, "0");
+reflectivityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et anisotropic`;
+
+for ($currentZShader in $ZShaders)
+
+{
+colorBreaker($currentZShader, "0");
+ambientBreaker($currentZShader, "0");
+incandescenceBreaker($currentZShader, "0");
+diffuseBreaker($currentZShader, "0");
+translucenceBreaker($currentZShader, "0");
+glowIntensityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+specularBreaker($currentZShader, "0");
+reflectivityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et shadingMap`;
+
+for ($currentZShader in $ZShaders)
+
+{
+colorBreaker($currentZShader, "0");
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".shadingMapColor")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".shadingMapColor")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".shadingMapColor");
+connectAttr ZDepthRamp.outColor ($currentZShader + ".shadingMapColor");
+}
+
+else if ($ZisConnected == 0)
+{
+connectAttr ZDepthRamp.outColor ($currentZShader + ".shadingMapColor");
+}
+
+else
+{select -cl;};
+
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et surfaceShader`;
+
+for ($currentZShader in $ZShaders)
+
+{
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".outColor")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".outColor")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".outColor");
+connectAttr ZDepthRamp.outColor ($currentZShader + ".outcolor");
+}
+
+else if ($ZisConnected == 0)
+{
+connectAttr ZDepthRamp.outColor ($currentZShader + ".outColor");
+}
+
+else
+{select -cl;};
+
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".outGlowColor")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".outGlowColor")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".outGlowColor");
+setAttr ($currentZShader + ".outGlowColor") 0 0 0;
+}
+
+else if ($currentZShader == 0)
+{
+setAttr ($currentZShader + ".outGlowColor") 0 0 0;
+}
+
+else
+{select -cl;};
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et rampShader`;
+
+for ($currentZShader in $ZShaders)
+{
+//This will get you the number of entry list objects for a rampShader multi list attribute. :]. The minus one is just for my for loop not to delete entry list 0.
+//The trick is to use the listAttr command with a -multi flag, and divide the output by the number of attributes per entry list: For color for example you divide it by 7, for reflectivity 4.
+$ZMultiQuery = `listAttr -multi ($currentZShader + ".color")`;
+$ZRaw = `size $ZMultiQuery`;
+$ZCooked = (($ZRaw) / 7) -1;
+
+for ($ZMultiRemover = $ZCooked; $ZMultiRemover > 0; $ZMultiRemover--)
+
+{
+$ZMultiRemoverExecute = "removeMultiInstance -break true ($currentZShader + \".color[" + $ZMultiRemover + "]\")";
+eval $ZMultiRemoverExecute;
+
+};
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".color[0].color_Color")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".color[0].color_Color")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".color[0].color_Color");
+connectAttr ZDepthRamp.outColor ($currentZShader + ".color[0].color_Color");
+}
+
+else if ($ZisConnected == 0)
+{
+connectAttr ZDepthRamp.outColor ($currentZShader + ".color[0].color_Color");
+}
+
+else
+{select -cl;};
+
+clear $ZMultiQuery;
+
+
+
+$ZMultiQuery = `listAttr -multi ($currentZShader + ".incandescence")`;
+$ZRaw = `size $ZMultiQuery`;
+$ZCooked = (($ZRaw) / 7) -1;
+
+for ($ZMultiRemover = $ZCooked; $ZMultiRemover > 0; $ZMultiRemover--)
+
+{
+$ZMultiRemoverExecute = "removeMultiInstance -break true ($currentZShader + \".incandescence[" + $ZMultiRemover + "]\")";
+eval $ZMultiRemoverExecute;
+};
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".incandescence[0].incandescence_Color")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".incandescence[0].incandescence_Color")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".incandescence[0].incandescence_Color");
+setAttr ($currentZShader + ".incandescence[0].incandescence_Color") 0 0 0;
+}
+
+else if ($ZisConnected == 0)
+{
+setAttr ($currentZShader + ".incandescence[0].incandescence_Color") 0 0 0;
+}
+
+else
+{select -cl;};
+
+clear $ZMultiQuery;
+
+
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".forwardScatter")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".forwardScatter")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".forwardScatter");
+setAttr ($currentZShader + ".forwardScatter") 0;
+}
+
+else if ($ZisConnected == 0)
+{
+setAttr ($currentZShader + ".forwardScatter") 0;
+}
+
+else
+{select -cl;};
+
+
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".specularity")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".specularity")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".specularity");
+setAttr ($currentZShader + ".specularity") 0;
+}
+
+else if ($ZisConnected == 0)
+{
+setAttr ($currentZShader + ".specularity") 0;
+}
+
+else
+{select -cl;};
+
+
+
+$ZMultiQuery = `listAttr -multi ($currentZShader + ".reflectivity")`;
+$ZRaw = `size $ZMultiQuery`;
+$ZCooked = (($ZRaw) / 4) -1;
+
+for ($ZMultiRemover = $ZCooked; $ZMultiRemover > 0; $ZMultiRemover--)
+
+{
+$ZMultiRemoverExecute = "removeMultiInstance -break true ($currentZShader + \".reflectivity[" + $ZMultiRemover + "]\")";
+eval $ZMultiRemoverExecute;
+};
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".reflectivity[0].reflectivity_FloatValue")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".reflectivity[0].reflectivity_FloatValue")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".reflectivity[0].reflectivity_FloatValue");
+setAttr ($currentZShader + ".reflectivity[0].reflectivity_FloatValue") 0;
+}
+
+else if ($ZisConnected == 0)
+{
+setAttr ($currentZShader + ".reflectivity[0].reflectivity_FloatValue") 0;
+}
+
+else
+{select -cl;};
+
+clear $ZMultiQuery;
+
+
+
+$ZMultiQuery = `listAttr -multi ($currentZShader + ".environment")`;
+$ZRaw = `size $ZMultiQuery`;
+$ZCooked = (($ZRaw) / 7) -1;
+
+for ($ZMultiRemover = $ZCooked; $ZMultiRemover > 0; $ZMultiRemover--)
+
+{
+$ZMultiRemoverExecute = "removeMultiInstance -break true ($currentZShader + \".environment[" + $ZMultiRemover + "]\")";
+eval $ZMultiRemoverExecute;
+};
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".environment[0].environment_Color")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".environment[0].environment_Color")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".environment[0].environment_Color");
+setAttr ($currentZShader + ".environment[0].environment_Color") 0 0 0;
+}
+
+else if ($ZisConnected == 0)
+{
+setAttr ($currentZShader + ".environment[0].environment_Color") 0 0 0;
+}
+
+else
+{select -cl;};
+
+clear $ZMultiQuery;
+
+
+
+ambientBreaker($currentZShader, "0");
+diffuseBreaker($currentZShader, "0");
+translucenceBreaker($currentZShader, "0");
+glowIntensityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et oceanShader`;
+
+for ($currentZShader in $ZShaders)
+
+{
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".waterColor")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".waterColor")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".waterColor");
+connectAttr ZDepthRamp.outColor ($currentZShader + ".waterColor");
+}
+
+else if ($ZisConnected == 0)
+{
+connectAttr ZDepthRamp.outColor ($currentZShader + ".waterColor");
+}
+
+else
+{select -cl;};
+
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".foamColor")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".foamColor")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".foamColor");
+connectAttr ZDepthRamp.outColor ($currentZShader + ".foamColor");
+}
+
+else if ($ZisConnected == 0)
+{
+connectAttr ZDepthRamp.outColor ($currentZShader + ".foamColor");
+}
+
+else
+{select -cl;};
+
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".troughShadowing")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".troughShadowing")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".troughShadowing");
+setAttr ($currentZShader + ".troughShadowing") 0;
+}
+
+else if ($ZisConnected == 0)
+{
+setAttr ($currentZShader + ".troughShadowing") 0;
+}
+
+else
+{select -cl;};
+
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".specularity")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".specularity")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".specularity");
+setAttr ($currentZShader + ".specularity") 0;
+}
+
+else if ($ZisConnected == 0)
+{
+setAttr ($currentZShader + ".specularity") 0;
+}
+
+else
+{select -cl;};
+
+
+$ZMultiQuery = `listAttr -multi ($currentZShader + ".environment")`;
+$ZRaw = `size $ZMultiQuery`;
+$ZCooked = (($ZRaw) / 7) -1;
+
+for ($ZMultiRemover = $ZCooked; $ZMultiRemover > 0; $ZMultiRemover--)
+
+{
+$ZMultiRemoverExecute = "removeMultiInstance -break true ($currentZShader + \".environment[" + $ZMultiRemover + "]\")";
+eval $ZMultiRemoverExecute;
+};
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".environment[0].environment_Color")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".environment[0].environment_Color")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".environment[0].environment_Color");
+setAttr ($currentZShader + ".environment[0].environment_Color") 0 0 0;
+}
+
+else if ($ZisConnected == 0)
+{
+setAttr ($currentZShader + ".environment[0].environment_Color") 0 0 0;
+}
+
+else
+{select -cl;};
+
+clear $ZMultiQuery;
+
+
+
+ambientBreaker($currentZShader, "0");
+incandescenceBreaker($currentZShader, "0");
+diffuseBreaker($currentZShader, "0");
+translucenceBreaker($currentZShader, "0");
+reflectivityBreaker($currentZShader, "0");
+glowIntensityBreaker($currentZShader, "0");
+setAttr ($currentZShader + ".refractions") 0;
+
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+
+$ZShaders = `ls -et layeredShader`;
+
+for ($currentZShader in $ZShaders)
+
+{
+
+$ZisConnected = `connectionInfo -id ( $currentZShader + ".compositingFlag")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + ".compositingFlag")`;
+disconnectAttr $ZBreakObj ($currentZShader + ".compositingFlag");
+};
+
+setAttr ($currentZShader + ".compositingFlag") 1;
+
+
+$ZMultiQuery = `listAttr -multi ($currentZShader + ".inputs")`;
+$ZRaw = `size $ZMultiQuery`;
+$ZCooked = ($ZRaw) / 13;
+
+for ($ZMultiRemover = $ZCooked; $ZMultiRemover > 0; $ZMultiRemover--)
+
+{
+$ZCurrentLayeredColorEntry = (($ZMultiRemover * 13) - 13) +1;
+
+$ZisConnected = `connectionInfo -id ($currentZShader + "." + $ZMultiQuery[$ZCurrentLayeredColorEntry])`;
+
+if ($ZisConnected == 1)
+
+{
+$ZBreakObj = `connectionInfo -sfd ($currentZShader + "." + $ZMultiQuery[$ZCurrentLayeredColorEntry])`;
+string $ZLayeredColorObjToken[];
+tokenize($ZBreakObj, ".", $ZLayeredColorObjToken);
+select -cl;
+select -r $ZLayeredColorObjToken[0];
+$ZLayeredObjType = `ls -sl -st`;
+
+if ($ZLayeredObjType[1] == "lambert") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "blinn") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "phong") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "phongE") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "anisotropic") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "layeredShader") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "rampShader") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "surfaceShader") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "shadingMap") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "useBackground") {clear $ZLayeredObjType; continue;}
+
+else if ($ZLayeredObjType[1] == "oceanShader") {clear $ZLayeredObjType; continue;}
+
+else
+
+{
+disconnectAttr $ZBreakObj ($currentZShader + "." + $ZMultiQuery[$ZCurrentLayeredColorEntry]);
+connectAttr ZDepthRamp.outColor ($currentZShader + "." + $ZMultiQuery[$ZCurrentLayeredColorEntry]);
+};
+
+clear $ZLayeredObjType;
+
+}
+
+else 
+
+{
+connectAttr ZDepthRamp.outColor ($currentZShader + "." + $ZMultiQuery[$ZCurrentLayeredColorEntry]);
+};
+
+};
+
+clear $ZMultiQuery;
+
+};
+
+clear $ZShaders;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// This is the PFX setup part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+SelectAllBrushes;
+$ZPFX = `ls -sl`;
+
+for ($ZPFXEdit in $ZPFX)
+
+
+{
+
+string $ZPfxAtBreak[] = {".color1R", ".color1G", ".color1B", ".color2R", ".color2G", ".color2B", ".incandescence1R", ".incandescence1G", ".incandescence1B", ".incandescence2R", ".incandescence2G", ".incandescence2B", ".specular", ".specularColorR", ".specularColorG", ".specularColorB", ".glowColorR", ".glowColorG", ".glowColorB", ".hueRand", ".satRand", ".valRand", ".branchReflectivity", ".leafReflectivity", ".flowerReflectivity", ".shadowOffset", ".shadowDiffusion", ".shadowTransparency", ".backShadow", ".brightnessRand", ".depthShadow", ".depthShadowDepth", ".leafColor1R", ".leafColor1G", ".leafColor1B", ".leafColor2R", ".leafColor2G", ".leafColor2B", ".leafSpecular", ".leafTranslucence", ".fringeRemoval", ".leafHueRand", ".leafSatRand", ".leafValRand", ".budColorR", ".budColorG", ".budColorB", ".flowerSpecular", ".flowerTranslucence", ".petalColor1R", ".petalColor1G", ".petalColor1B", ".petalColor2R", ".petalColor2G", ".petalColor2B", ".flowerHueRand", ".flowerSatRand", ".flowerValRand", ".texColor1R", ".texColor1G", ".texColor1B", ".texColor2R", ".texColor2G", ".texColor2B", ".thornSpecular", ".thornBaseColorR", ".thornBaseColorG", ".thornBaseColorB", ".thornTipColorR", ".thornTipColorG", ".thornTipColorB", ".translucence"};
+
+for ($ZPfxAtCurrent in $ZPfxAtBreak)
+
+{
+
+$ZisConnected = `connectionInfo -id ( $ZPFXEdit + $ZPfxAtCurrent)`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZPFXEdit + $ZPfxAtCurrent)`;
+disconnectAttr $ZBreakObj ($ZPFXEdit + $ZPfxAtCurrent);
+};
+
+};
+
+
+setAttr ($ZPFXEdit + ".color1R") 1;
+setAttr ($ZPFXEdit + ".color1G") 1;
+setAttr ($ZPFXEdit + ".color1B") 1;
+setAttr ($ZPFXEdit + ".color2R") 1;
+setAttr ($ZPFXEdit + ".color2G") 1;
+setAttr ($ZPFXEdit + ".color2B") 1;
+setAttr ($ZPFXEdit + ".incandescence1R") 0;
+setAttr ($ZPFXEdit + ".incandescence1G") 0;
+setAttr ($ZPFXEdit + ".incandescence1B") 0;
+setAttr ($ZPFXEdit + ".incandescence2R") 0;
+setAttr ($ZPFXEdit + ".incandescence2G") 0;
+setAttr ($ZPFXEdit + ".incandescence2B") 0;
+setAttr ($ZPFXEdit + ".specular") 0;
+setAttr ($ZPFXEdit + ".specularColorR") 0;
+setAttr ($ZPFXEdit + ".specularColorG") 0;
+setAttr ($ZPFXEdit + ".specularColorB") 0;
+setAttr ($ZPFXEdit + ".glowColorR") 0;
+setAttr ($ZPFXEdit + ".glowColorG") 0;
+setAttr ($ZPFXEdit + ".glowColorB") 0;
+setAttr ($ZPFXEdit + ".hueRand") 0;
+setAttr ($ZPFXEdit + ".satRand") 0;
+setAttr ($ZPFXEdit + ".valRand") 0;
+setAttr ($ZPFXEdit + ".branchReflectivity") 0;
+setAttr ($ZPFXEdit + ".leafReflectivity") 0;
+setAttr ($ZPFXEdit + ".flowerReflectivity") 0;
+setAttr ($ZPFXEdit + ".shadowOffset") 0;
+setAttr ($ZPFXEdit + ".shadowDiffusion") 0;
+setAttr ($ZPFXEdit + ".shadowTransparency") 0;
+setAttr ($ZPFXEdit + ".backShadow") 0;
+setAttr ($ZPFXEdit + ".brightnessRand") 0;
+setAttr ($ZPFXEdit + ".depthShadow") 0;
+setAttr ($ZPFXEdit + ".depthShadowDepth") 0;
+setAttr ($ZPFXEdit + ".leafColor1R") 1;
+setAttr ($ZPFXEdit + ".leafColor1G") 1;
+setAttr ($ZPFXEdit + ".leafColor1B") 1;
+setAttr ($ZPFXEdit + ".leafColor2R") 1;
+setAttr ($ZPFXEdit + ".leafColor2G") 1;
+setAttr ($ZPFXEdit + ".leafColor2B") 1;
+setAttr ($ZPFXEdit + ".leafColor2B") 1;
+setAttr ($ZPFXEdit + ".leafSpecular") 0;
+setAttr ($ZPFXEdit + ".leafTranslucence") 1;
+setAttr ($ZPFXEdit + ".fringeRemoval") 1;
+setAttr ($ZPFXEdit + ".leafHueRand") 0;
+setAttr ($ZPFXEdit + ".leafSatRand") 0;
+setAttr ($ZPFXEdit + ".leafValRand") 0;
+setAttr ($ZPFXEdit + ".budColorR") 1;
+setAttr ($ZPFXEdit + ".budColorG") 1;
+setAttr ($ZPFXEdit + ".budColorB") 1;
+setAttr ($ZPFXEdit + ".flowerSpecular") 0;
+setAttr ($ZPFXEdit + ".flowerTranslucence") 1;
+setAttr ($ZPFXEdit + ".petalColor1R") 1;
+setAttr ($ZPFXEdit + ".petalColor1G") 1;
+setAttr ($ZPFXEdit + ".petalColor1B") 1;
+setAttr ($ZPFXEdit + ".petalColor2R") 1;
+setAttr ($ZPFXEdit + ".petalColor2G") 1;
+setAttr ($ZPFXEdit + ".petalColor2B") 1;
+setAttr ($ZPFXEdit + ".flowerHueRand") 0;
+setAttr ($ZPFXEdit + ".flowerSatRand") 0;
+setAttr ($ZPFXEdit + ".flowerValRand") 0;
+setAttr ($ZPFXEdit + ".texColor1R") 1;
+setAttr ($ZPFXEdit + ".texColor1G") 1;
+setAttr ($ZPFXEdit + ".texColor1B") 1;
+setAttr ($ZPFXEdit + ".texColor2R") 1;
+setAttr ($ZPFXEdit + ".texColor2G") 1;
+setAttr ($ZPFXEdit + ".texColor2B") 1;
+setAttr ($ZPFXEdit + ".thornSpecular") 0;
+setAttr ($ZPFXEdit + ".thornBaseColorR") 1;
+setAttr ($ZPFXEdit + ".thornBaseColorG") 1;
+setAttr ($ZPFXEdit + ".thornBaseColorB") 1;
+setAttr ($ZPFXEdit + ".thornTipColorR") 1;
+setAttr ($ZPFXEdit + ".thornTipColorG") 1;
+setAttr ($ZPFXEdit + ".thornTipColorB") 1;
+setAttr ($ZPFXEdit + ".translucence") 1;
+
+$ZMultiQuery = `listAttr -multi ($ZPFXEdit + ".environment")`;
+$ZRaw = `size $ZMultiQuery`;
+$ZCooked = (($ZRaw) / 7) -1;
+
+for ($ZMultiRemover = $ZCooked; $ZMultiRemover > 0; $ZMultiRemover--)
+
+{
+$ZMultiRemoverExecute = "removeMultiInstance -break true ($ZPFXEdit + \".environment[" + $ZMultiRemover + "]\")";
+eval $ZMultiRemoverExecute;
+};
+
+$ZisConnected = `connectionInfo -id ( $ZPFXEdit + ".environment[0].environment_Color")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZPFXEdit + ".environment[0].environment_Color")`;
+disconnectAttr $ZBreakObj ($ZPFXEdit + ".environment[0].environment_Color");
+}
+
+setAttr ($ZPFXEdit + ".environment[0].environment_Color") 0 0 0;
+
+clear $ZMultiQuery;
+};
+
+clear $ZPFX;
+
+ZWin;
+
+}
+
+else
+
+{print "Please select the render camera for the scene file. Kung pwede lang ha. :p";};
+
+
+};
+
+
+
+
+
+
+
+
+
+
+// Procedures.
+
+
+
+
+
+
+
+
+
+
+
+
+
+proc lightBreaker(string $ZLightsEdit)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ($ZLightsEdit + ".intensity")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZLightsEdit + ".intensity")`;
+disconnectAttr $ZBreakObj ($ZLightsEdit + ".intensity");
+};
+
+setAttr ($ZLightsEdit + ".intensity") 0;
+setAttr ($ZLightsEdit + ".useRayTraceShadows") 0;
+setAttr ($ZLightsEdit + ".useDepthMapShadows") 0;
+
+$ZisConnected = `connectionInfo -id ($ZLightsEdit + ".lightGlow")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZLightsEdit + ".lightGlow")`;
+disconnectAttr $ZBreakObj ($ZLightsEdit + ".lightGlow");
+};
+
+$ZisConnected = `connectionInfo -id ($ZLightsEdit + ".fogGeometry")`;
+
+if ($ZisConnected == 1)
+{
+$ZBreakObj = `connectionInfo -sfd ($ZLightsEdit + ".fogGeometry")`;
+disconnectAttr $ZBreakObj ($ZLightsEdit + ".fogGeometry");
+};
+
+$ZisConnected = `connectionInfo -id ($ZLightsEdit + ".fogIntensity")`;
+
+if ($ZisConnected == 1)
+
+{
+$ZBreakObj = `connectionInfo -sfd ($ZLightsEdit + ".fogIntensity")`;
+disconnectAttr $ZBreakObj ($ZLightsEdit + ".fogIntensity");
+};
+
+setAttr ($ZLightsEdit + ".fogIntensity") 0;
+
+};
+
+
+
+
+proc colorBreaker(string $ZAttribute, string $ZShadExclude)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ( $ZAttribute + ".color")`;
+
+if (($ZisConnected == 1) && ($ZAttribute != $ZShadExclude))
+{
+$ZBreakObj = `connectionInfo -sfd ($ZAttribute + ".color")`;
+disconnectAttr $ZBreakObj ($ZAttribute + ".color");
+connectAttr ZDepthRamp.outColor ($ZAttribute + ".color");
+}
+
+else if (($ZisConnected == 0) && ($ZAttribute != $ZShadExclude))
+{
+connectAttr ZDepthRamp.outColor ($ZAttribute + ".color");
+}
+
+else
+{select -cl;};
+
+};
+
+
+
+
+proc ambientBreaker(string $ZAttribute, string $ZShadExclude)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ($ZAttribute + ".ambientColor")`;
+
+if (($ZisConnected == 1) && ($ZAttribute != $ZShadExclude))
+{
+$ZBreakObj = `connectionInfo -sfd ($ZAttribute + ".ambientColor")`;
+disconnectAttr $ZBreakObj ($ZAttribute + ".ambientColor");
+setAttr ($ZAttribute + ".ambientColor") 0 0 0;
+}
+
+else if (($ZisConnected == 0) && ($ZAttribute != $ZShadExclude))
+{
+setAttr ($ZAttribute + ".ambientColor") 0 0 0;
+}
+
+else
+{select -cl;};
+
+};
+
+
+
+
+proc incandescenceBreaker(string $ZAttribute, string $ZShadExclude)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ( $ZAttribute + ".incandescence")`;
+
+if (($ZisConnected == 1) && ($ZAttribute != $ZShadExclude))
+{
+$ZBreakObj = `connectionInfo -sfd ($ZAttribute + ".incandescence")`;
+disconnectAttr $ZBreakObj ($ZAttribute + ".incandescence");
+setAttr ($ZAttribute + ".incandescence") 0 0 0;
+}
+
+else if (($ZisConnected == 0) && ($ZAttribute != $ZShadExclude))
+{
+setAttr ($ZAttribute + ".incandescence") 0 0 0;
+}
+
+else
+{select -cl;};
+
+};
+
+
+
+
+proc diffuseBreaker(string $ZAttribute, string $ZShadExclude)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ( $ZAttribute + ".diffuse")`;
+
+if (($ZisConnected == 1) && ($ZAttribute != $ZShadExclude))
+{
+$ZBreakObj = `connectionInfo -sfd ($ZAttribute + ".diffuse")`;
+disconnectAttr $ZBreakObj ($ZAttribute + ".diffuse");
+setAttr ($ZAttribute + ".diffuse") 1;
+}
+
+else if (($ZisConnected == 0) && ($ZAttribute != $ZShadExclude))
+{
+setAttr ($ZAttribute + ".diffuse") 1;
+}
+
+else
+{select -cl;};
+
+};
+
+
+
+
+proc translucenceBreaker(string $ZAttribute, string $ZShadExclude)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ( $ZAttribute + ".translucence")`;
+
+if (($ZisConnected == 1) && ($ZAttribute != $ZShadExclude))
+{
+$ZBreakObj = `connectionInfo -sfd ($ZAttribute + ".translucence")`;
+disconnectAttr $ZBreakObj ($ZAttribute + ".translucence");
+setAttr ($ZAttribute + ".translucence") 0;
+}
+
+else if (($ZisConnected == 0) && ($ZAttribute != $ZShadExclude))
+{
+setAttr ($ZAttribute + ".translucence") 0;
+}
+
+else
+{select -cl;};
+
+};
+
+
+
+
+proc glowIntensityBreaker(string $ZAttribute, string $ZShadExclude)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ( $ZAttribute + ".glowIntensity")`;
+
+if (($ZisConnected == 1) && ($ZAttribute != $ZShadExclude))
+{
+$ZBreakObj = `connectionInfo -sfd ($ZAttribute + ".glowIntensity")`;
+disconnectAttr $ZBreakObj ($ZAttribute + ".glowIntensity");
+setAttr ($ZAttribute + ".glowIntensity") 0;
+}
+
+else if (($ZisConnected == 0) && ($ZAttribute != $ZShadExclude))
+{
+setAttr ($ZAttribute + ".glowIntensity") 0;
+}
+
+else
+{select -cl;};
+
+};
+
+
+
+
+proc specularBreaker(string $ZAttribute, string $ZShadExclude)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ( $ZAttribute + ".specularColor")`;
+
+if (($ZisConnected == 1) && ($ZAttribute != $ZShadExclude))
+{
+$ZBreakObj = `connectionInfo -sfd ($ZAttribute + ".specularColor")`;
+disconnectAttr $ZBreakObj ($ZAttribute + ".specularColor");
+setAttr ($ZAttribute + ".specularColor") 0 0 0;
+}
+
+else if (($ZisConnected == 0) && ($ZAttribute != $ZShadExclude))
+{
+setAttr ($ZAttribute + ".specularColor") 0 0 0;
+}
+
+else
+{select -cl;};
+
+};
+
+
+
+
+proc reflectivityBreaker(string $ZAttribute, string $ZShadExclude)
+
+{
+
+string $ZBreakObj;
+int $ZisConnected;
+$ZisConnected = `connectionInfo -id ( $ZAttribute + ".reflectivity")`;
+
+if (($ZisConnected == 1) && ($ZAttribute != $ZShadExclude))
+{
+$ZBreakObj = `connectionInfo -sfd ($ZAttribute + ".reflectivity")`;
+disconnectAttr $ZBreakObj ($ZAttribute + ".reflectivity");
+setAttr ($ZAttribute + ".reflectivity") 0;
+}
+
+else if (($ZisConnected == 0) && ($ZAttribute != $ZShadExclude))
+{
+setAttr ($ZAttribute + ".reflectivity") 0;
+}
+
+else
+{select -cl;};
+
+};
+
+
+
+
+proc updateZLights()
+
+{
+
+int $ZColorListExists;
+int $ZColorListExists2;
+int $ZMultiRemover;
+int $ZMultiRemover2;
+
+for ($ZMultiRemover = 100; $ZMultiRemover >= 0; $ZMultiRemover--)
+
+{
+$ZColorListExists = `objExists ("zColorInput" + $ZMultiRemover)`;
+
+
+$ZMultiQuery = `listAttr -multi ZDepthRamp.colorEntryList`;
+
+for ($ZMultiRemover2 = 2; $ZMultiRemover2 < 602; $ZMultiRemover2 = $ZMultiRemover2 + 6)
+
+{
+if ( "colorEntryList[" + $ZMultiRemover + "].color" == $ZMultiQuery[$ZMultiRemover2])
+
+{
+$ZColorListExists2 = 1;
+break;
+}
+
+else
+
+{
+$ZColorListExists2 = 0;
+};
+
+};
+
+
+if (($ZColorListExists == 0) && ($ZColorListExists2 == 0))
+
+{select -cl;}
+
+else if (($ZColorListExists == 1) && ($ZColorListExists2 == 1))
+
+{select -cl;}
+
+else if (($ZColorListExists == 0) && ($ZColorListExists2 == 1))
+
+{
+duplicate -n ("zColorInput" + $ZMultiRemover) zCtrlSource;
+setAttr ("zColorInput" + $ZMultiRemover + ".visibility") 1;
+setAttr -lock true -keyable false ("zColorInput" + $ZMultiRemover + ".visibility");
+connectAttr ("ZDepthRamp.colorEntryList[" + $ZMultiRemover + "].position") ("zColorInput" + $ZMultiRemover + ".ty");
+connectAttr ("ZDepthRamp.colorEntryList[" + $ZMultiRemover + "].color") ("zColorInput" + $ZMultiRemover + ".color");
+connectAttr ZEntryListScale.outputX ("zColorInput" + $ZMultiRemover + ".sx");
+connectAttr ZEntryListScale.outputX ("zColorInput" + $ZMultiRemover + ".sy");
+connectAttr ZEntryListScale.outputX ("zColorInput" + $ZMultiRemover + ".sz");
+
+setAttr ("ZPFXRamp.colorEntryList[" + $ZMultiRemover + "].color") -type double3 0.0 0.0 0.0;
+setAttr ("ZPFXRamp.colorEntryList[" + $ZMultiRemover + "].position") 0.0;
+connectAttr ("ZDepthRamp.colorEntryList[" + $ZMultiRemover + "].color") ("ZPFXRamp.colorEntryList[" + $ZMultiRemover + "].color");
+connectAttr ("ZDepthRamp.colorEntryList[" + $ZMultiRemover + "].position") ("ZPFXRamp.colorEntryList[" + $ZMultiRemover + "].position");
+}
+
+else if (($ZColorListExists == 1) && ($ZColorListExists2 == 0))
+
+{
+delete ("zColorInput" + $ZMultiRemover);
+$ZMultiRemoverExecute = "removeMultiInstance -break true ZPFXRamp.colorEntryList[" + $ZMultiRemover + "]";
+eval $ZMultiRemoverExecute;
+}
+
+else
+
+{ select -cl;};
+
+clear $ZMultiQuery;
+
+};
+};
+
+
+
+
+proc ZWin()
+
+{
+               if (`window -exists ZControlWindow`)
+               deleteUI ZControlWindow;
+
+
+               window -t "Zeeebra V1.0 Interactive camera depth modification tool" ZControlWindow;
+               columnLayout;
+       attrColorSliderGrp -l "Current Entry Color" ZColor;
+       attrFieldSliderGrp -l "Current Entry Position" ZPosition;
+       rampColorPort -node "ZDepthRamp" -sc ZColor -sp ZPosition;
+       attrFieldSliderGrp -at zNearClipPlane.tz -l "Near Clip" ZNear;
+       attrFieldSliderGrp -at zFarClipPlane.tz -l "Far Clip" ZFar;
+       attrFieldSliderGrp -at zFarClipPlane.farClipDistance -l "Far Clip Actuall" ZFarAct;
+       button -l "Update Light Setup" -c "updateZLights" ZUpdate;
+       attrFieldSliderGrp -at ZScaleOffset.input1D[1] -l "Controller Scale Offset" ZContScale;
+       button -l "Delete Depth Setup" -c "deleteZSetup" ZDel;
+       text -l "";
+       separator -width 430;
+       text -l "";
+       text -l "Ramp Functions";
+       text -l "";
+       optionMenu -label "Ramp Interpolation" -cc "ZOptMenu" ZRampInterpolation;
+ 				menuItem -label "None";
+ 				menuItem -label "Linear";
+ 				menuItem -label "Exponential Up";
+ 				menuItem -label "Exponential Down";
+ 				menuItem -label "Smooth";
+ 				menuItem -label "Bump";
+ 				menuItem -label "Spike";
+                                optionMenu -e -sl 2 ZRampInterpolation;
+       attrFieldSliderGrp -at ZDepthRamp.noise -l "Ramp Noise" ZRampNoise;
+       attrFieldSliderGrp -at ZDepthRamp.noiseFreq -l "Ramp Noise Freq" ZRampNoiseFreq;
+       attrFieldSliderGrp -at ZDepthRamp.uWave -l "Ramp uWave" ZRampUWave;
+       attrFieldSliderGrp -at ZDepthRamp.vWave -l "Ramp vWave" ZRampVWave;
+
+
+               showWindow ZControlWindow;
+};
+
+
+
+
+proc deleteZSetup()
+
+{
+if (`objExists ZCurveIntercessor`){ delete ZCurveIntercessor; };
+if (`objExists ZDepthAmbientLight`){ delete ZDepthAmbientLight; };
+if (`objExists ZDepthRamp`){ delete ZDepthRamp; };
+if (`objExists ZPFXRamp`){ delete ZPFXRamp; };
+if (`objExists ZPFXplace2dTexture`){ delete ZPFXplace2dTexture; };
+if (`objExists ZDepthSetRange`){ delete ZDepthSetRange; };
+if (`objExists ZDepthMultiplier`){ delete ZDepthMultiplier; };
+if (`objExists ZPFXLightScaleFactor`){ delete ZPFXLightScaleFactor; };
+if (`objExists ZDepthSamplerInfo`){ delete ZDepthSamplerInfo; };
+if (`objExists ZPFXDirectionalLightScale`){ delete ZPFXDirectionalLightScale; };
+if (`objExists ZDepthClipMultiplier`){ delete ZDepthClipMultiplier; };
+if (`objExists ZDepthFarClipAddition`){ delete ZDepthFarClipAddition; };
+deleteUI ZControlWindow;
+};
+
+
+
+
+proc ZOptMenu()
+
+{
+string $ZCurrentInerp = `optionMenu -q -v ZRampInterpolation`;
+
+if ($ZCurrentInerp == "None")
+   {setAttr ZDepthRamp.interpolation 0;}
+else if ($ZCurrentInerp == "Linear")
+   {setAttr ZDepthRamp.interpolation 1;}
+else if ($ZCurrentInerp == "Exponential Up")
+   {setAttr ZDepthRamp.interpolation 2;}
+else if ($ZCurrentInerp == "Exponential Down")
+   {setAttr ZDepthRamp.interpolation 3;}
+else if ($ZCurrentInerp == "Smooth")
+   {setAttr ZDepthRamp.interpolation 4;}
+else if ($ZCurrentInerp == "Bump")
+   {setAttr ZDepthRamp.interpolation 5;}
+else
+   {setAttr ZDepthRamp.interpolation 6;};  
+};
+
+
+
+
+
+
+//end script

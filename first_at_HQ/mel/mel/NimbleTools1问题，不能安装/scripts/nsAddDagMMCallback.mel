@@ -1,0 +1,26 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: Uninstancer
+''    Author:  
+''    Last Updated: Jan 15, 2009
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/plugins/dynamics/4331.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+//
+// Copyright (C) 2006 Nimble Studios Inc.
+//
+//       www.NimbleStudiosInc.com
+//
+
+global proc nsAddDagMMCallback( string $callback )
+{
+	global string $nsDagMMCallbacks[];
+
+	$nsDagMMCallbacks[ `size $nsDagMMCallbacks` ] = $callback;
+}

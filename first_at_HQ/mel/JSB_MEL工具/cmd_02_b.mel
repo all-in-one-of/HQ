@@ -1,0 +1,88 @@
+if( `objExists shb` ) 
+delete shb;
+if( `objExists gxy` ) 
+delete gxy;
+if(`window -ex maMWindow`) 
+deleteUI maMWindow; 
+polyCube -n shb;
+addAttr -ln length -at double  |shb;
+setAttr -e -keyable true |shb.length;
+addAttr -ln width -at double  |shb;
+setAttr -e -keyable true |shb.width;
+addAttr -ln height -at double  |shb;
+setAttr -e -keyable true |shb.height;
+setAttr "shb.visibility" 0;
+window -t" 建模参考工具（Reference in modeling）" -w 400 -h 400 maMWindow;
+	scrollLayout -hst 0;
+	columnLayout -adj 1;
+
+		$polys = `ls -sl`; 
+		$poly = $polys[0]; 
+		float $bb[] = `polyEvaluate -b $poly`; 
+		float $xLength = $bb[3] - $bb[0]; 
+		float $yLength = $bb[4] - $bb[1]; 
+		float $zLength = $bb[5] - $bb[2]; 
+	text"                         ";
+		setAttr "shb.length" $xLength;
+		setAttr "shb.width" $zLength;
+		setAttr "shb.height" $yLength;
+	text"                         ";
+	button -l "测量（Measure）" -c "measure()" mybutton;
+	text"                         ";
+text"                         ";
+//	attrFieldSliderGrp -l"length" -min 0 -max 10000 -at("shb.length")theSliderGroup1;
+//	text"                         ";
+//	attrFieldSliderGrp -l"width" -min 0 -max 10000 -at("shb.width")theSliderGroup2;
+//	text"                         ";
+//	attrFieldSliderGrp -l"height" -min 0 -max 10000 -at("shb.height")theSliderGroup3;
+//	text"                         ";
+
+	addAttr -ln zzzzzzzz -at double3 |shb;
+	addAttr -ln zzzzzzzzX -at double -p zzzzzzzz  |shb;
+	addAttr -ln zzzzzzzzY -at double -p zzzzzzzz  |shb;
+	addAttr -ln zzzzzzzzZ -at double -p zzzzzzzz  |shb;
+	setAttr -type double3 |shb.zzzzzzzz $xLength $yLength $zLength;
+	attrFieldGrp -at("shb.zzzzzzzz") -label("X , Y , Z =") -pre 3;
+text"                         ";
+text"                         ";
+text"                         ";
+text"                         ";
+global proc measure()
+{
+	$polys = `ls -sl`; 
+	$poly = $polys[0]; 
+	//float $bb[] = `polyEvaluate -b $poly`; 
+	float $bb[]=`xform -q -bb -ws $poly`;
+	float $xLength = $bb[3] - $bb[0]; 
+	float $yLength = $bb[4] - $bb[1]; 
+	float $zLength = $bb[5] - $bb[2]; 
+	setAttr "shb.length" $xLength;
+	setAttr "shb.width" $zLength;
+	setAttr "shb.height" $yLength;
+	setAttr -type double3 |shb.zzzzzzzz $xLength $yLength $zLength;
+}
+
+	button -l "创建（Create）" -c "create()" yourbutton;
+	text"                         ";
+global proc create()
+{
+if( `objExists theSliderGroup4` ) 
+delete theSliderGroup4;
+		$polys = `ls -sl`; 
+		$poly = $polys[0]; 
+CenterPivot;
+		string $polytx = $poly+".translateX";
+		string $polyty = $poly+".translateY";
+		string $polytz = $poly+".translateZ";
+		float $polytx_v=`getAttr $polytx`;
+		float $polyty_v=`getAttr $polyty`;
+		float $polytz_v=`getAttr $polytz`;
+		nurbsCube -p $polytx_v $polyty_v $polytz_v -ax 0 1 0 -n gxy -w 1 -lr 1 -hr 1 -d 3 -u 1 -v 1 -ch 1;
+		CenterPivot;
+	attrFieldSliderGrp -l"X" -min 0 -max 500 -at("gxy.scaleX")theSliderGroup4;
+	text"                         ";
+	attrFieldSliderGrp -l"Y" -min 0 -max 500 -at("gxy.scaleY")theSliderGroup5;
+	text"                         ";
+	attrFieldSliderGrp -l"Z" -min 0 -max 500 -at("gxy.scaleZ")theSliderGroup6;
+}
+showWindow  maMWindow;

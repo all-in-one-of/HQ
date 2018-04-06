@@ -1,0 +1,15 @@
+samples in Y 要创建的粒子网格精度数
+
+aspect ratio 对比密度
+assign new file-texture
+先创建文件材质节点
+
+assign selected fils-texture 
+
+把贴图赋给选择的材质节点
+
+
+把材质赋给选择的平面（最好是NURBS面，POLY的UV必须是0-1）
+
+
+创建

@@ -1,0 +1,17 @@
+本插件
+
+为一粒子群体控制插件
+先要把粒子接点与控制器关联
+
+运动的方式有
+
+bug-head direction主题方向、bug-wander徘徊
+
+target-seek目标搜寻、target-moth seek目标查找、target-arrival目标到达（一个物体到下一个物体运动A-B-C）、target-pursuit目标追击、target-shadow目标尾随、target-follow目标跟随、target-obstacle avoidance目标障碍避开，
+
+neighbor-alignment临近粒子保持阵列、
+neighbor-cohesion临近粒子保持凝聚、
+neighbor-separation临近粒子保持分开、
+nerghbor-keep distance临近粒子保持距离
+
+

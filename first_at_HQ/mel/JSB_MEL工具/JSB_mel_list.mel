@@ -1,0 +1,57 @@
+global string $JSB_address;
+global string $JSB_cmd_01;
+global string $JSB_cmd_02;
+global string $JSB_cmd_03;
+global string $JSB_cmd_04;
+global string $JSB_cmd_05;
+global string $JSB_cmd_06;
+global string $JSB_cmd_07;
+global string $JSB_cmd_08;
+global string $JSB_cmd_09;
+global string $JSB_cmd_10;
+$JSB_cmd_01 = "source \"" + $JSB_address + "cmd_01.mel" + "\"";
+$JSB_cmd_02 = "source \"" + $JSB_address + "cmd_02.mel" + "\"";
+$JSB_cmd_03 = "source \"" + $JSB_address + "cmd_03.mel" + "\"";
+$JSB_cmd_04 = "source \"" + $JSB_address + "cmd_04.mel" + "\"";
+$JSB_cmd_05 = "source \"" + $JSB_address + "cmd_05.mel" + "\"";
+$JSB_cmd_06 = "source \"" + $JSB_address + "cmd_06.mel" + "\"";
+$JSB_cmd_07 = "source \"" + $JSB_address + "cmd_07.mel" + "\"";
+$JSB_cmd_08 = "source \"" + $JSB_address + "cmd_08.mel" + "\"";
+$JSB_cmd_09 = "source \"" + $JSB_address + "cmd_09.mel" + "\"";
+$JSB_cmd_10 = "source \"" + $JSB_address + "cmd_10.mel" + "\"";
+if(`menu -q -ex jsb_tools`)
+{
+	deleteUI jsb_tools;
+};
+menu -l "技术部_小工具" -to 1 -p MayaWindow jsb_tools;
+	menuItem  -l "光滑工具(Smooth assistant)" -c $JSB_cmd_01;
+	menuItem -d 1;
+	menuItem -l "建模参考工具（Reference in modeling）" -c $JSB_cmd_02;
+	menuItem -d 1;
+	menuItem -l "两点间距离测量(measure distance between points)" -c $JSB_cmd_03;
+	menuItem -d 1;
+	menuItem -l "双面板显示(double panes)" -c $JSB_cmd_04;
+	menuItem -d 1;
+menuItem  -l "相机预览" -c $JSB_cmd_06;
+	menuItem -d 1;
+menuItem  -l "渲染检查" -c $JSB_cmd_07;
+	menuItem -d 1;
+menuItem  -l "删除没用材质" -c $JSB_cmd_08;
+	menuItem -d 1;
+menuItem -l "约束（灯光—摄像机）" -c $JSB_cmd_09;
+	menuItem -d 1;
+menuItem -l "灯光常用属性的通道控制" -c $JSB_cmd_10;
+menuItem -d 1;
+	menuItem -subMenu true -label "灯光(light)" ;
+	//menu -l "灯光(light)" " -to 1 -p sMayaWindow sjsb_tools;
+		menuItem -d 1;
+		menuItem -label "默认灯光设置（default light)" -c $JSB_cmd_05;
+		menuItem -d 1;
+		menuItem -label "kkkk" ;
+		menuItem -d 1;
+		setParent -menu ..;
+
+ 			//radioMenuItemCollection;
+	
+
+

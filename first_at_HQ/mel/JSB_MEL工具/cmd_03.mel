@@ -1,0 +1,44 @@
+if(`window -ex theirwindow`)
+deleteUI theirwindow;
+if( `objExists cat` ) 
+delete cat;
+polyCube -n cat;
+setAttr "cat.visibility" 0;
+addAttr -ln laosun -at double  |cat;
+setAttr -e -keyable true |cat.laosun;
+window -t"两点间长度计算(measure distance between points)" theirwindow;
+columnLayout -adj 1;
+text" ";
+button -bgc 0.76 1 1 -l "单  击  测  量" -c "measure( )";
+text" ";
+attrFieldSliderGrp -attribute "cat.laosun" -bgc 0.85 0.55 1 -l "L e n g t h ";
+showWindow theirwindow;
+global proc measure()
+{
+string $sel[]=`ls -sl -fl`;
+
+string $sele_start=$sel[0];
+int $size_sele;
+$size_sele=size($sel);
+string $sele_end=$sel[$size_sele-1];
+vector $start_position=`pointPosition $sele_start`;
+vector $end_position=`pointPosition $sele_end`;
+
+float $s_x, $s_y, $s_z, $e_x, $e_y, $e_z;
+$s_x=$start_position.x;
+$s_y=$start_position.y;
+$s_z=$start_position.z;
+$e_x=$end_position.x;
+$e_y=$end_position.y;
+$e_z=$end_position.z;
+float $ptp_length;
+float $chax=$s_x-$e_x;
+float $chay=$s_y-$e_y;
+float $chaz=$s_z-$e_z;
+float $ptpx_length=`pow $chax 2`;
+float $ptpy_length=`pow $chay 2`;
+float $ptpz_length=`pow $chaz 2`;
+float $ptp_length=`pow ($ptpx_length + $ptpy_length + $ptpz_length) 0.5`;
+
+setAttr cat.laosun $ptp_length;
+}

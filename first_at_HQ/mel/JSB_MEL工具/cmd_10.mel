@@ -1,0 +1,180 @@
+
+global proc gxy_spottool()
+{
+	string $sele_1[]=`ls -type spotLight`;
+	int $chicun1=size($sele_1);
+	if( $chicun1>0 )
+	{
+		int $id1=0;
+		for($id1=0;$id1<$chicun1;$id1++)
+		{
+		int $ok_1=`attributeExists "gxy"  $sele_1[$id1]`;	
+		string $abc_1=$sele_1[$id1];
+
+  			if ($ok_1==0) 
+			{
+	
+				addAttr -ln "gxy" -at long  $abc_1;
+
+				string $gxy_fs_1=$abc_1+".dmapFilterSize";
+				setAttr -k on $gxy_fs_1;
+				string $gxy_rl_1=$abc_1+"*"+".dmapResolution";
+				setAttr -k on $gxy_rl_1;
+	
+				string $gxy_decay_1=$abc_1+".decayRate_add";
+				addAttr -ln "decayRate_add"  -min 0 -max 3 -at long  $abc_1;
+
+				setAttr -e-keyable true $gxy_decay_1;
+				
+     				string $sele_decay_1=$abc_1+".decayRate_add";
+
+				string $sele_decay_true_1=$abc_1+".decayRate";
+
+int $yy=`getAttr $sele_decay_true_1`;
+setAttr $sele_decay_1 $yy;
+
+				connectAttr $sele_decay_1 $sele_decay_true_1;
+  					
+		
+			}
+		}
+	}
+
+
+/////////////////////////////
+
+string $sele_3[]=`ls -type directionalLight`;
+int $chicun3=size($sele_3);
+if( $chicun3>0 )
+{
+	
+	int $id3=0;
+		for($id3=0;$id3<$chicun3;$id3++)
+		{
+			int $ok_3=`attributeExists "gxy"  $sele_3[$id3]`;
+			string $abc3=$sele_3[$id3];
+ 			if ($ok_3==0)  		
+			 {
+				addAttr -ln "gxy" -at long  $abc3;
+				string $gxy_fs_d=$abc3+".dmapFilterSize";
+				setAttr -k on $gxy_fs_d;
+				string $gxy_rl_d=$abc3+".dmapResolution";
+				setAttr -k on $gxy_rl_d;
+			}
+		}
+}
+
+/////////////////////////////////
+string $selection5[]=`ls -type areaLight`;
+int $chicun5=size($selection5);
+if($chicun5>0)
+{			
+		int $id5=0;
+		for($id5=0;$id5<$chicun5;$id5++)
+		{
+			int $ok_5=`attributeExists "gxy"  $selection5[$id5]`;
+			string $abc5=$selection5[$id5];			
+  			if ($ok_5==0) 
+			{
+
+				addAttr -ln "gxy" -at long  $abc5;
+
+				string $gxy_fs_a=$abc5+".dmapFilterSize";
+				setAttr -k on $gxy_fs_a;
+				string $gxy_rl_a=$abc5+".dmapResolution";
+				setAttr -k on $gxy_rl_a;
+
+
+				string $gxy_decay_a=$abc5+".decayRate_add";
+				addAttr -ln "decayRate_add"  -min 0 -max 3 -at long  $abc5;
+				setAttr -e-keyable true $gxy_decay_a;
+				
+    				string $sele_decay_3=$selection5[$id5]+".decayRate_add";
+				string $sele_decay_true_3=$selection5[$id5]+".decayRate";
+				
+int $yy1=`getAttr $sele_decay_true_3`;
+setAttr $sele_decay_3 $yy1;
+
+connectAttr $sele_decay_3 $sele_decay_true_3;
+
+  			} 
+		
+		}
+	}
+/////////////////////////////////
+string $selection6[]=`ls -type volumeLight`;
+int $chicun6=size($selection6);
+if($chicun6>0)
+{	
+	int $id6=0;
+		for($id6=0;$id6<$chicun6;$id6++)
+		{
+			int $ok_6=`attributeExists "gxy"  $selection6[$id6]`;
+			string $abc6=$selection6[$id6];
+			if ($ok_6==0)  		
+			 {
+				addAttr -ln "gxy" -at long  $abc6;
+				string $gxy_fs_v=$abc6+".dmapFilterSize";
+				setAttr -k on $gxy_fs_v;
+				string $gxy_rl_v=$abc6+".dmapResolution";
+				setAttr -k on $gxy_rl_v;
+
+			}
+		}
+}
+
+/////////////////////////////////
+
+string $sele_4[]=`ls -type pointLight`;
+int $chicun4=size($sele_4);
+	if( $chicun4>0 )
+	{
+		int $id4=0;
+
+		for($id4=0;$id4<$chicun4;$id4++)
+		{
+			int $ok_4=`attributeExists "gxy"  $sele_4[$id4]`;
+			string $abc_4=$sele_4[$id4];			
+  			if ($ok_4==0) 
+			{
+
+				addAttr -ln "gxy" -at long  $abc_4;
+
+				string $gxy_fs_p=$abc_4+".dmapFilterSize";
+				setAttr -k on $gxy_fs_p;
+				string $gxy_rl_p=$abc_4+".dmapResolution";
+				setAttr -k on $gxy_rl_p;
+
+				string $gxy_decay_p=$abc_4+".decayRate_add";
+				addAttr -ln "decayRate_add"  -min 0 -max 3 -at long $abc_4;
+				setAttr -e-keyable true $gxy_decay_p;
+				
+    				string $sele_decay2=$sele_4[$id4]+".decayRate_add";
+				string $sele_decay_true2=$sele_4[$id4]+".decayRate";
+
+int $yy2=`getAttr $sele_decay_true2`;
+setAttr $sele_decay2 $yy2;
+
+
+				connectAttr $sele_decay2 $sele_decay_true2;
+			} 
+		
+		}
+	}
+
+}
+if(`window -ex whsWindow`) 
+deleteUI whsWindow; 
+window -t"灯光常用属性的通道控制" -w 400 -h 200 whsWindow;
+	columnLayout -adj 1 -cat "both" 120;
+text" ";
+text" ";
+button -bgc 0.45 0.35 0.45 -l "确 定" -w 80 -h 32 -c "gxy_spottool()" ;
+text" ";
+showWindow whsWindow;
+
+
+
+
+
+

@@ -1,0 +1,337 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: Kinetic Lightning
+''    Author:  
+''    Last Updated: Mar 22, 2009
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/mel_scripts/dynamics/5384.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+//=================================================================================================================//
+//  kineticLightning.mel
+//  Written by Cruz deWilde
+//  Email: dewilde@avantgravity.com
+//  Portfolio:  http://www.avantgravity.com/
+//  Last update: 09/11/2008
+//=================================================================================================================//
+
+//  Load the kineticLightningGUI utility if it's not already running
+
+kineticLightningGUI();
+
+//=================================================================================================================//
+// function: kineticLightningGUI()
+// This function creates the control panel window which generates the kinetic lightning effect.
+//=================================================================================================================//
+
+global proc kineticLightningGUI() {
+
+
+	global string $klWindow = "kineticLightningGUI";
+
+	string $klNameDefault = "kineticLightning";
+	int $klStartFrameDefault = 1;
+	int $klLagTimeDefault = 10;
+	int $klDurationDefault = 20;
+
+	int $klCurveSegmentsDefault = 10;
+	float $klThicknessDefault = 2;
+	float $klMaxSpreadDefault = 2;
+	float $klGlowIntensityDefault = 0.35;
+	float $klLightIntensityDefault = 1.5;
+	float $klColorRedDefault = 0.5;
+	float $klColorGreenDefault = 1.0;
+	float $klColorBlueDefault = 1.0;
+	int $klPathTypeDefault = 2;
+	int $klModeDefault = 1;
+
+   	if (`window -ex $klWindow`) {
+		deleteUI $klWindow;
+	}
+
+	window -t "Kinetic Lightning v2.0  ~Cruz deWilde~" -tb 1 -rtf 0 -wh 364 470 -s 1 -mnb 1 -mxb 0 -mb 1 -tlb 1 $klWindow;
+	menu -label "File";
+		menuItem -label "Reset" -command "klReset($klWindow)";
+		menuItem -label "Close" -command "deleteUI $klWindow";
+	menu -label "About";
+ 		menuItem -label "About Kinetic Lightning" -command "klAbout";
+
+	formLayout klForm;
+	scrollLayout -cr 1 klScroll;
+	columnLayout -columnWidth 354 -w 354 -h 400 -adjustableColumn true -cal "center" -rowSpacing 8 -cat "both" 5 MainColumn;
+
+		frameLayout -label "Kinetic Lightning Usage Information" -collapse true -collapsable true -bs "etchedOut" klUsageFrame;
+			columnLayout -w 354 -adjustableColumn true -cal "center" -rowSpacing 2 -cat "both" 5 klUsageColumn;
+			separator -st "single" -w 310;
+			text -al "left" -l "This script creates a variety of kinetic lightning effects between\nselected objects or locators.";
+			
+			separator -st "out" -w 310;
+			
+			text -al "left" -fn "tinyBoldLabelFont" -l "Path Types:";
+			
+			text -al "left" -l "   Chain: Lightning travels from the first selected node to each\n              successive selected node in order of selection.\n   Radial: Lightning radiates from one selected node to every other\n              selected node in order of selection.\n   Chaos: Lightning travels from every selected node to every\n              other selected node in order of selection.\n";
+			
+			separator -st "out" -w 310;
+			
+			text -al "left" -fn "tinyBoldLabelFont" -l "Timing Modes:";
+			
+			text -al "left" -l "   Sequential: Lightning travels between the nodes in order of\n              selection, one after another.  Each new segment begins\n              the frame after the prior segment's leading locator has\n              reached its destination.\n   Simultaneous: Lightning travels between the selected nodes at\n              the same time.";
+			
+			separator -st "out" -w 310;
+						
+			text -al "left" -fn "tinyBoldLabelFont" -l "Timing Options:";
+						
+			text -al "left" -l "   Start Frame: Start frame of the kinetic lightning effect.\n   Segment Duration: Number of frames required the leading\n              locator of a lightning segment to reach its destination.\n   Lag Time: Number of frames required for the trailing locator to\n              begin following the leader. This value effectively defines\n              the length of the lightning segment as a function of time.";
+			
+			separator -st "out" -w 310;
+			
+			text -al "left" -fn "tinyBoldLabelFont" -l "Aesthetic Options:";
+			
+			text -al "left" -l "   Curve Segments: Kinetic lightning is made up of soft body\n              curves with extruded surfaces. This value sets the\n              number of segments in the kinetic lightning.\n   Lightning Thickness: Determines how fat the kinetic lightning is\n              by specifying the radius of the circle that gets extruded\n              along the curve from which the lightning is constructed.\n   Maximum Spread: Controls the amount of jitter in the kinetic\n              lightning. The higher the value, the greater the jitter.\n   Glow Intensity: Specifies the brightness of the kinetic lightning\n              and its accompanying halo when rendered.\n   Light Intensity: Specifies a multiplier through which to amplify or\n              dampen the light cast on surrounding objects.\n   Lightning Color: Specifies the color of the lightning effect.\n\n   Please consult Maya's documentation on 'Effects > Create\n              Lightning' for more information.";
+			
+			separator -st "single" -w 310 ;
+			setParent MainColumn;
+
+		frameLayout -label "Kinetic Lightning Parameters" -collapse false -collapsable true -bs "etchedOut" klInputFrame;
+			columnLayout -columnWidth 354 -adjustableColumn true -cal "center" -rowSpacing 2 -cat "both" 5 klInputColumn;
+			separator -st "single" -w 310 ;
+			text -al "left" -l "Please make sure to select at least two objects or locators\nto define your kinetic lightning path.";
+			
+			separator -st "single" -w 310 ;
+
+			rowColumnLayout -nc 2 -cw 1 115 -cw 2 196 ;
+				text -l "Kinetic Lightning Name:";
+				textField -it $klNameDefault klName;
+				setParent ..;
+			
+			separator -st "out" -w 310;
+
+			radioButtonGrp -numberOfRadioButtons 3 -cw4 90 75 75 75 -annotation "Path Types -- Chain: The kinetic lightning travels from one node to the next in order of selection.  Radial: The first selected node to fires to every other selected node.  Chaos: every selected node fires to every other selected node." -label "Path Type" -labelArray3 "Chaos" "Chain" "Radial" -sl $klPathTypeDefault klPathType;
+			radioButtonGrp -numberOfRadioButtons 2 -label "Timing Mode" -labelArray2 "Sequential" "Simultaneous" -cw 1 90 -sl $klModeDefault klMode;
+			
+			separator -st "out" -w 310 ;
+			
+			intSliderGrp -cw3 115 40 100 -l "Start Frame" -ann "Starting frame for the kinetic lightning to begin its path." -field true -min 1 -max 5000 -v $klStartFrameDefault klStartFrame;
+			intSliderGrp -cw3 115 40 100 -l "Segment Duration" -ann "Number of frames the kinetic lightning travels before its tail begins to disappear.  (Effectively, this is the kinetic lightning segment length measured in frames.)" -field true -min 1 -max 100 -v $klDurationDefault klDuration;
+			intSliderGrp -cw3 115 40 100 -l "Lag Time" -ann "Number of frames the kinetic lightning segment will trail after the leading end of the  segment has completed its journey from one node to the next." -field true -min 0 -max 100 -v $klLagTimeDefault klLagTime;
+		
+			separator -st "out" -w 310 ;
+		
+			intSliderGrp -cw3 115 40 100 -l "Curve Segments" -ann "Kinetic lightning is made up of soft body curves with extruded surfaces. The Curve Segments value sets the number of segments in the kinetic lightning. " -field true -min 5 -max 100 -v $klCurveSegmentsDefault klCurveSegments;
+			floatSliderGrp -cw3 115 40 100 -l "Lightning Thickness" -ann "The klThickness attribute determines how fat the kinetic lightning is. It specifies the radius of the circle that gets extruded along the curve that makes up the kinetic lightning." -field true -min 0.0 -max 100.0 -v $klThicknessDefault -pre 3 klThickness;
+			floatSliderGrp -cw3 115 40 100 -l "Maximum Spread" -ann "Controls the amount of jitter in the kinetic lightning. The greater the value, the more the kinetic lightning jitters." -field true -min 0.0 -max 50.0 -v $klMaxSpreadDefault -pre 3 klMaxSpread;
+			floatSliderGrp -cw3 115 40 100 -l "Glow Intensity" -ann "Specifies the brightness of the kinetic lightning when rendered." -field true -min 0.0 -max 5.0 -v $klGlowIntensityDefault -pre 3 klGlowIntensity;
+			floatSliderGrp -cw3 115 40 100 -l "Light Intensity" -ann "Specifies a multiplier through which to amplify or dampen the light cast on surrounding objects." -field true -min 0.0 -max 5.0 -v $klLightIntensityDefault -pre 3 klLightIntensity;
+			
+
+			//colorSliderButtonGrp -h 20 -cat 1 "left" 35 -cat 2 "left" -25 -cat 3 "left" 36 -ad3 60 -cat 4 "left" 1000 -l "Lightning Color" -ann "Defines the color of the kinetic lightning shader.  Click the swatch to invoke the color chooser." -rgb $klColorRedDefault $klColorGreenDefault $klColorBlueDefault klColor;
+			colorSliderGrp -cw 1 115 -cw 2 40 -l "Lightning Color" -ann "Defines the color of the kinetic lightning shader.  Click the swatch to invoke the color chooser." -rgb $klColorRedDefault $klColorGreenDefault $klColorBlueDefault klColor;
+
+		
+			separator -st "single" -w 310 ;
+			
+			setParent MainColumn;
+			setParent MainColumn;
+	setParent -top;	
+	
+	string $klApply = `button -w 155 -h 20 -label "Create Kinetic Lightning" -command "kineticLightning" -ann "Creates kinetic lightning based on the specified parameters."`;
+	string $klInit = `button -w 150 -h 20 -label "Delete all lightning" -command "deleteKineticLightning" -ann "Deletes all lightning generated by the script, along with any and all relevant shaders and shading engines (provided the user has not renamed them)."`;
+
+
+	formLayout -edit
+
+	-attachForm $klApply "left" 2
+	-attachForm $klApply "bottom" 2
+	-attachPosition $klApply "right" 0 50
+	-attachControl $klInit "left" 2 $klApply 
+	-attachForm $klInit "bottom" 2
+	-attachForm $klInit "right" 2
+	-attachForm klScroll "top" 1
+	-attachForm klScroll "left" 1
+	-attachForm klScroll "right" 1
+	-attachControl klScroll "bottom" 2 $klApply
+
+	klForm;
+	// Force the proper size of the window before showing it...
+	window -edit -wh 364 470 $klWindow;
+	showWindow $klWindow; 
+}
+
+//=================================================================================================================//
+// function: kineticLightning()
+// This function is responsible for creating the lightning effect whose parameters are defined within
+// the kineticLightningGUI window.  
+//=================================================================================================================//
+
+global proc kineticLightning() {
+
+	print ("\n\n\n\n\n\n\n");
+	print ("======== kineticLightning.mel == Cruz deWilde == www.avantgravity.com ========\n");
+
+
+	//string $scriptStart = `date -time`;
+	string $nodeList[] = `ls -sl`;
+
+
+	if (size($nodeList) < 2) {
+		confirmDialog -t "Further input required..." -m "Please select at least two nodes to define kinetic lightning path." -b Continue;
+		return;
+	}
+
+	// Turn grouping option on.
+	int $groupKineticLightning = 1;
+	// For the purposes of this script, the creation of the kinetic lightning should start at 0 and end at 1.
+	int $klStart = 0;
+	int $klEnd = 1;
+
+	string $klName = `textField -q -tx klName`;
+
+
+	// Make sure not to step on previously existing kinetic lightning names.
+	int $i = 1;
+	while (objExists($klName + "_" + $i)) {
+		$i++;
+	}
+	$klName = ($klName + "_" + $i);
+
+	// Obtain the type of kinetic lightning path to be used
+	int $klPathType = `radioButtonGrp -q -sl klPathType`;
+
+	// Obtain the number of curve segments for each kinetic lightning segment
+	int $klCurveSegments = `intSliderGrp -q -v klCurveSegments`;
+
+	float $klThickness = `floatSliderGrp -q -v klThickness`;
+	float $klMaxSpread = `floatSliderGrp -q -v klMaxSpread`;
+	float $klGlowIntensity = `floatSliderGrp -q -v klGlowIntensity`;
+
+	// Create the kinetic lightning with the given parameters
+	string $klList[] = `lightning $klName $groupKineticLightning $klPathType $klCurveSegments $klThickness $klMaxSpread $klStart $klEnd $klGlowIntensity`;
+	int $count = 0;
+	string $myKineticLightning;	
+	for ($myKineticLightning in $klList) {
+		select -r $myKineticLightning;
+		print ("Currently animating " + $myKineticLightning + "\n");
+		animateKineticLightning($myKineticLightning, $count);
+		$count++;
+	}
+	select -cl;
+	currentTime -e `intSliderGrp -q -v klStartFrame`;
+	//string $scriptEnd = `date -time`;
+	//print ("Kinetic Lightning script began at " + $scriptStart + " and ended at " + $scriptEnd + "\n");
+}
+//=================================================================================================================//
+// End of kineticLightning()
+//=================================================================================================================//
+
+//=================================================================================================================//
+// function: animateKineticLightning(string $kl, int $counter)
+// This function is responsible for keyframing the motion of the kinetic lightning effect according
+// to the parameters specified.
+//=================================================================================================================//
+
+global proc animateKineticLightning (string $kl, int $counter) {
+	// First make sure we have our curve and joint
+	if ($kl == "") {
+		confirmDialog -t "Error..." -m "Missing kinetic lightning name." -b Continue;
+		return;
+	}
+	// set the light intensity and color of the kinetic lightning now that it's been created
+	setAttr ($kl + ".lightIntensity") `floatSliderGrp -q -v klLightIntensity`;
+	float $klColor[] = `colorSliderGrp -q -rgb klColor`;
+	setAttr ($kl + ".colorR") $klColor[0];
+	setAttr ($kl + ".colorG") $klColor[1];
+	setAttr ($kl + ".colorB") $klColor[2];
+
+	int $klStartFrame = `intSliderGrp -q -v klStartFrame`;
+	int $klLagTime = `intSliderGrp -q -v klLagTime`;
+	int $klDuration = `intSliderGrp -q -v klDuration`;
+	int $offset = ($counter * $klLagTime);
+
+	if (`radioButtonGrp -q -sl klMode` == 2) {
+		$offset = 0;
+	}
+
+
+	print ("offset is currently " + $offset + " and kinetic lightning start frame is " + $klStartFrame + "\n");
+
+	// First keyframe the shift of lightningEnd attribute from 0 to 1
+	currentTime -e ($klStartFrame + $offset);
+	setAttr ($kl + ".lightningEnd") 0;
+	setKeyframe ($kl + ".lightningEnd");
+
+	currentTime -e ($klStartFrame + $offset + $klLagTime);
+	setAttr ($kl + ".lightningEnd") 1;
+	setKeyframe ($kl + ".lightningEnd");
+
+	// Now keyframe the shift of lightningStart attribute from 0 to 1
+	currentTime -e ($klStartFrame + $klDuration + $offset);
+	setAttr ($kl + ".lightningStart") 0;
+	setKeyframe ($kl + ".lightningStart");
+
+	currentTime -e ($klStartFrame + $klDuration + $offset + $klLagTime);
+	setAttr ($kl + ".lightningStart") 1;
+	setKeyframe ($kl + ".lightningStart");
+	
+}
+//=================================================================================================================//
+// End of animateKineticLightning()
+//=================================================================================================================//
+
+//=================================================================================================================//
+// function: deleteKineticLightning() 
+// After confirming request with the user, this function deletes all kinetic lightning generated by the script, 
+// along with any and all relevant shaders and shading engines (provided the user has not renamed them).
+//=================================================================================================================//
+
+global proc deleteKineticLightning() {
+
+	print ("Confirming user request to delete all kinetic lightning.\n");
+	string $klConfirmDelete = `confirmDialog -title "Confirm" -message "This will delete all lightning groups and shaders (provided you have not renamed them). Are you sure?" -button "Yes" -button "No" -defaultButton "Yes" -cancelButton "No" -dismissString "No"`;
+
+	if ($klConfirmDelete == "No") {
+		print ("User chose to abort the deletion of all kinetic lightning.\n");
+		return;
+	} else {
+		print ("Deleting all kinetic lightning along with related shaders and shading engines at user's request.\n");
+		// Note Maya's built-in misspelling of "Lig(n)tning"...
+		select -r "LigntningShader*";
+		doDelete;
+		select -ne "LigntningShader*";
+		doDelete;
+		select -r "LightningGroup*";
+		doDelete;
+	}
+}
+//=================================================================================================================//
+// End of deleteKineticLightning()
+//=================================================================================================================//
+
+//=================================================================================================================//
+// function: klReset(string $klWindow)
+// Re-sources the script and rebuilds the UI window.
+//=================================================================================================================//
+global proc klReset(string $klWindow) {
+	deleteUI $klWindow;
+	kineticLightningGUI;
+}
+//=================================================================================================================//
+// End of klReset()
+//=================================================================================================================//
+
+
+//=================================================================================================================//
+// function: klAbout()
+// A simple "About Box" for the script.
+//=================================================================================================================//
+global proc klAbout() {
+	confirmDialog -title "About Kinetic Lightning" -message "Script: Kinetic Lightning (version 2.0)\nLanguage: Mel\nDate: 08/26/2008\n\nAuthor: Cruz deWilde\nEmail: dewilde@avantgravity.com\nPortfolio: www.avantgravity.com\n\nFunction: This script creates a variety of kinetic lightning\neffects between selected objects or locators. Please expand\nthe \'Kinetic lightning Usage Information\' tab for details.\n\nPlease visit www.avantgravity.com for more information\nabout the author." -button "OK" -db "OK" -cb "OK";
+}
+//=================================================================================================================//
+// End of klAbout()
+//=================================================================================================================//
+

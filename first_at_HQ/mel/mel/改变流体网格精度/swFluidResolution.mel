@@ -1,0 +1,68 @@
+///////////////////////////////////////////////////
+// Fluid Resolution Uniform Multiplier
+// 
+// This is a simple little UI that makes adjusting
+// fluid container resolutions quicker. I was tired
+// of opening calculator to get the fraction of the
+// the current resolution and then going through
+// Maya's menus to edit the resolution properly. This
+// script resets initial state properly and works
+// the same way as the "Edit Fluid Resolution" menu
+// item, but at the fraction you choose. Works with 
+// both 2D and 3D containers.
+//
+// Note: Resolutions are rounded down to the nearest 
+//	 whole number as containers can't have 
+//	 fractional resolution values.
+//
+// If you enjoy this script, please email me at 
+// scottwillman@gmail.com
+// Do not alter without permission
+////////////////////////////////////////////////////
+
+if (`window -exists swFluidRes`) {
+	deleteUI swFluidRes ;
+	}
+	
+if (`windowPref -exists swFluidRes`) {
+	windowPref -remove swFluidRes;
+	}
+	
+//Start of UI
+window  -title "swFluidRes v1.0" 
+	-widthHeight 260 80
+	-sizeable false
+	-titleBar true 
+	swFluidRes;
+	
+	columnLayout;
+		text -l "";
+ 		rowLayout -numberOfColumns 3
+ 			  -columnWidth3 100 40 100
+ 			  -adjustableColumn 2
+ 			  -columnAlign  1 "right"
+ 			  -columnAttach 1 "both" 5
+ 			  -columnAttach 2 "both" 5
+ 			  -columnAttach 3 "left" 7;
+ 			text -label "Fluid Res Multiplier";
+ 			floatField -value 1.0 -pre 2 fluidMult;
+ 			button -l "     Apply" -w 70 -c doIt;
+
+showWindow swFluidRes;
+
+proc doIt() {
+
+	float $fluidMult = `floatField -query -value fluidMult`;
+	
+	string $sel[] = `ls -sl`;
+	string $shape[] = `listRelatives -s -path $sel[0]`;  //grab the shape node
+	string $fluidShape = $shape[0];
+	
+	vector $fluidRes = `getAttr $fluidShape.resolution`;
+	
+	string $newResX = `trunc($fluidRes.x * $fluidMult)`;
+	string $newResY = `trunc($fluidRes.y * $fluidMult)`;
+	string $newResZ = `trunc($fluidRes.z * $fluidMult)`;
+
+	doResampleFluid 1 {$newResX, $newResY, $newResZ} ;
+}

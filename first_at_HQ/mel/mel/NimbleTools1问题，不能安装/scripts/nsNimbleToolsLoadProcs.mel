@@ -1,0 +1,61 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: Uninstancer
+''    Author:  
+''    Last Updated: Jan 15, 2009
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/plugins/dynamics/4331.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+//
+// Copyright (C) 2006 Nimble Studios Inc.
+//
+//       www.NimbleStudiosInc.com
+//
+
+global proc nsNimbleToolsLoadProcs()
+{	
+	//Commented out until the Hyperveil is ported to Python
+	//eval("source \"nsHyperVeilConnectionUtil.mel\"");
+	//eval("source \"nsHyperVeilToggleUtils.mel\"");
+
+	string $version = `about -version`;
+	string $versionSuffix = "";
+	if ( `gmatch $version "7.0*"` )
+	{
+		$versionSuffix = "70";
+	}
+	else if ( `gmatch $version "8.0*"` )
+	{
+		$versionSuffix = "80";
+	}
+	else if ( `gmatch $version "8.5*"` )
+	{
+		$versionSuffix = "85";
+	}
+	else if ( `gmatch $version "2008*"` )
+	{
+		$versionSuffix = "2008";
+	}
+
+	// Load our own procs.
+	// These statements must be enclosed in source blocks - otherwise
+	// the new procs aren't always registered.
+	//
+	if ( "" != $versionSuffix )
+	{
+		// For some reason, when loading a scripted plugin, we have to source
+		// the scripts twice.
+		eval("source \"nsDagMenuProc" + $versionSuffix + ".mel\"");
+		eval("source \"nsDagMenuProc" + $versionSuffix + ".mel\"");
+		//Commented out until the Hyperveil is ported to Python
+		//eval("source \"nsFilterUI" + $versionSuffix + ".mel\"");
+		//eval("source \"nsHyperUserInit" + $versionSuffix + ".mel\"");
+		//eval("source \"nsHyperGraphPanel" + $versionSuffix + ".mel\"");
+	}
+}

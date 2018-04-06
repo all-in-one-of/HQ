@@ -1,0 +1,6 @@
+cut type 分割的类型，面、实体
+
+#of cut #of pieces 分割的数量
+
+
+noise value 噪波

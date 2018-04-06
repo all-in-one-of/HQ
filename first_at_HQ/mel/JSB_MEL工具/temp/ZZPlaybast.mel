@@ -1,0 +1,417 @@
+//--------------------------------------------------------------//
+//更新时间：2008.5.30											//				
+//更新说明：重新设计窗口布局，朝更人性化方向靠拢				//
+//			除掉部分bug											//
+//																//
+//--------------------------------------------------------------//
+//////////////////////////////////////////////////////////////
+/*	脚本名称：相机预览                                      ||
+||	作者：李晓军											||
+||	创作时间：2008.5.22										||	
+||	联系方式：												||
+||				QQ：56464068								||
+||		   	email：jzboylxj@163.com							||
+||															||
+||	使用中有什么疑问和建议，欢迎大家一起交流探讨。			||
+||															||		
+||	使用前请先拷贝到你的maya的脚本目录里面，然后运行maya，	||
+||	在maya的命令输入行里，输入“ ZZPlaybast ”，回车即可运行  ||			
+||															||	
+||		谢谢使用，祝你工作愉快！							||		
+*/															//					
+//////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////
+///////////////		ZZPlaybast							//////////////////	
+//////////////////////////////////////////////////////////////////////////
+
+////////////////     创建窗口        /////////////////////////////////////
+
+global proc ZZPlaybast ()
+{	
+	if(`window -exists ZZPBWin`)
+		deleteUI ZZPBWin;
+	
+	
+	window -title "相机预览 1.3" 
+		-menuBar on
+		-mxb off
+		-w 210
+		-h 495
+		-sizeable on
+		ZZPBWin;
+
+////////////	创建编辑菜单   ///////////////////////////////////////
+
+	menu -label "编辑" -tearOff off;
+	
+	menuItem -label "更新说明" 
+			-c "ZZCamNew" ZZCamNew;
+	menuItem -divider on;
+
+	menuItem -label "关于" 
+			-c "ZZCamAbout" ZZCamAbout;
+	menuItem -divider on;
+	
+	menuItem -label "关闭" 
+			-c "deleteUI ZZPBWin" delWin;
+	
+//-----------	属性控制菜单	----------------------------------//
+	
+	menu -label "属性控制" -tearOff off;
+	
+	menuItem -label "No Gate" -c camDisplayNoGate;
+	setParent -m ..;	
+	
+	menuItem -label "overscan" -sm 1 -to 1;
+	menuItem -label "on" -c camDisplayResolutionOn ;
+	menuItem -label "off" -c camDisplayResolutionOff ;
+	setParent -m ..;
+	
+	menuItem -label "Safe Action" -sm 1	 -to 1;
+	menuItem -label "on" -c camDisplaySafeActionOn ;
+	menuItem -label "off" -c camDisplaySafeActionOff;
+	setParent -m ..;
+	
+	
+	menuItem -label "Safe Titile" -sm 1	-to 1;
+	menuItem -label "on" -c camDisplaySafeTitleOn ;
+	menuItem -label "off" -c camDisplaySafeTitleOff ;
+	setParent -m ..;
+	
+/////////////     窗口布局       ////////////////////	
+	
+	columnLayout -adj 1 mainCol;
+	
+		text -label "相机列表：" -align "left";
+		textScrollList -ams on -h 150 
+			-selectCommand ZZselCamInScenes 
+			-deleteKeyCommand ZZdelCamInScenes
+			camListP;
+		button -label "载入相机" -c ZZoutCam -ann "载入当前场景中的相机" getButton;
+		separator -h 10;
+		
+		rowColumnLayout -numberOfColumns 2 ZZcamExCol;
+		button -label "切换面板" -c ZZswichCamPanel -ann "切换工作窗口为你所选择的相机" zzswitchPanel;
+		button -label "待加入";
+		button -label "待加入";
+		setParent ..;
+	
+		frameLayout -label "相机控制扩展工具" -la "center" -bs "etchedOut"
+					-collapse off -cll on	ZZcamEXToolsFram ;
+			columnLayout -adj 1 ZZcamEXToolsCol;
+			text -label "请在下面的输入框里面输入一个名字:" -align "left";
+			textFieldGrp   putNameCol;
+			button -label "重命名"  -c ZZRenameCam -ann "修改你在列表中所选择的相机的名字" renameButton;
+			separator -h 10;
+			setParent ..;
+		setParent ..;
+	
+	frameLayout -label "预览相机属性设置" -la "center" -bs "etchedOut" 
+		 	 	 -collapse off -cll on PBOptionFra;
+		columnLayout -adj 1 PBOptionCol;
+			intFieldGrp 
+					-numberOfFields 2
+					-width 300
+					-label "预览尺寸"
+					-adjustableColumn2 10
+					-columnWidth3 80 50 50
+					-columnAttach3 "both" "both" "both"
+					-columnOffset3 3 0 0
+					-columnAlign3 "right" "both" "left"
+			 		-value1 400 
+					-value2 240 
+					numPBWHDivs;
+			separator -h 5;
+			
+/*			intFieldGrp 
+					-numberOfFields 2
+					-width 300
+					-label "预览时间"
+					-adjustableColumn2 10
+					-columnWidth3 80 50 50
+					-columnAttach3 "both" "both" "both"
+					-columnOffset3 3 0 0
+					-columnAlign3 "right" "both" "left"
+			 		-value1 0 
+					-value2 48 
+					numPBTimesDivs;
+*/
+		setParent ..;
+	setParent ..;
+	separator -h 10;
+	
+	
+	button -label "预览" -c ZZPlayblastCam -ann "预览你在列表中所选择的相机" playblastButton;
+	separator -h 10;
+	
+	frameLayout -labelVisible off helpFram;
+
+	helpLine;
+
+	ZZoutCam;
+
+	showWindow ZZPBWin;
+
+}
+
+
+
+
+//////////////////////////    相机列表与场景交互    /////////////////////////////
+
+//----------------	在场景中选择列表中选择的相机	---------------------------//
+
+
+global proc ZZselCamInScenes ()
+{
+	select -cl;
+	string $ZZallCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZallCam in $selCam)
+	{
+//		print ($ZZallCam + "\n");
+		select -add  $ZZallCam;
+	}
+
+}
+
+//--------------	在场景中删除列表中选择的相机	---------------//
+
+global proc ZZdelCamInScenes ()
+{
+	string $ZZallCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZallCam in $selCam)
+	{
+		delete  $ZZallCam;
+	}
+	ZZoutCam;
+}
+//---------------  列出场景中的相机,并反馈给相机列表   ------------///
+
+global proc ZZoutCam()
+{
+	string $allCam[] = `listCameras`;
+	string $eachCam;
+	
+	textScrollList -q -e -ra camListP;
+	
+	for ($eachCam in $allCam)
+	{
+		
+		textScrollList  -e -a $eachCam camListP;
+	};
+
+}
+
+//------------------- 切换面板  ------------------//
+
+global proc ZZswichCamPanel()
+{
+	string $ZZselCam[] = `textScrollList -q -si camListP`;
+	string $ZZallCam;
+	for($ZZallCam in $ZZselCam)
+	{
+		lookThru $ZZallCam;
+
+	}
+}
+//---------   重命名列表中选择的相机	  ----------////////
+global proc ZZRenameCam()
+{
+	//取得列表中选择的相机
+	string $ZZrenNameCam;
+	string $ZZNewCamName = `textFieldGrp -q -tx putNameCol`;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	
+	//执行重命名
+	for($ZZrenNameCam in $selCam)
+		{
+			rename $ZZrenNameCam $ZZNewCamName;
+		}
+		ZZoutCam;
+}
+
+////////////   预览列出列表中所选择的相机   ////////////////////////////////////
+
+global proc ZZPlayblastCam()
+{
+	//取得相机预览尺寸
+	int $ZZPlayblastW =` intFieldGrp -q -value1 numPBWHDivs `;
+	int $ZZPlayblastH =` intFieldGrp -q -value2 numPBWHDivs `;
+	
+	//取得相机预览时间
+//	int $ZZPlayblastSt =` intFieldGrp -q -value1 numPBTimesDivs `;
+//	int $ZZPlayblastEd =` intFieldGrp -q -value2 numPBTimesDivs `;
+	
+	//开始预览
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+		{
+			lookThru $ZZplayCam;
+			playblast -fmt movie 
+						-cc on
+						-filename $ZZplayCam
+						-width $ZZPlayblastW
+						-height $ZZPlayblastH
+//						-startTime $ZZPlayblastSt
+// 						-endTime  $ZZPlayblastEd
+						-fo
+						-p 100
+						-v off;
+		}
+}
+
+/////////////////    属性控制    ///////////////////////
+
+//-------------- 	打开摄相机的overscan属性 -----------//
+
+global proc camDisplayResolutionOn ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displayResolution") on ;	
+	}
+}
+
+
+//-------------- 	关闭摄相机的overscan属性 -----------//
+
+global proc camDisplayResolutionOff ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displayResolution") off ;	
+	}
+}
+
+//-------------- 	打开摄相机的Safe Action属性 -----------//
+
+global proc camDisplaySafeActionOn ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displaySafeAction") on ;	
+	}
+}
+
+
+//-------------- 	关闭摄相机的Safe Action属性 -----------//
+
+global proc camDisplaySafeActionOff ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displaySafeAction") off ;	
+	}
+}
+
+
+//-------------- 	打开摄相机的Safe Title属性 -----------//
+
+global proc camDisplaySafeTitleOn ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displaySafeTitle") on ;	
+	}
+}
+
+
+//-------------- 	关闭摄相机的Safe Title属性 -----------//
+
+global proc camDisplaySafeTitleOff ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{
+		setAttr ($ZZplayCam + ".displaySafeTitle") off ;	
+	}
+}
+
+
+//-------------- 	No Gate属性 -----------//
+
+global proc camDisplayNoGate ()
+{
+	string $ZZplayCam;
+	string $selCam[] = `textScrollList -q -si camListP`;
+	for($ZZplayCam in $selCam)
+	{	
+		setAttr ($ZZplayCam + ".displayResolution") off ;	
+		setAttr ($ZZplayCam + ".displaySafeAction") off ;	
+		setAttr ($ZZplayCam + ".displaySafeTitle") off ;	
+	}
+}
+
+////////////////-----   更新说明  -----  ///////////////////////////
+
+global proc ZZCamNew()
+{
+	//检测是否有重复窗口//
+	string $newWindow = "aboutWindow";
+	if(`window -q -exists $newWindow`)
+		deleteUI $newWindow ;
+	
+	window -w 300 -h 125 
+		-title "1.3更新说明 "
+		-sizeable off
+		-vis off
+		$newWindow;
+	
+	//布局
+        columnLayout -adjustableColumn true "About";
+        text "更新时间：2008.5.30";
+         text "更新说明：重新设计窗口布局，朝更人性化方向靠拢";
+		 text "除掉部分bug.";
+		 	
+        setParent..;
+
+
+	showWindow $newWindow;
+}
+
+
+///////////////////////-----   关于  -----  ///////////////////////////////////////
+
+global proc ZZCamAbout()
+{
+	//检测是否有重复窗口//
+	string $window = "aboutWindow";
+	if(`window -q -exists $window`)
+		deleteUI $window ;
+	
+	window -w 250 -h 150 
+		-title "关于相机预览1.3 "
+		-mxb off
+		-vis off
+		$window;
+	
+	//布局
+        columnLayout -adjustableColumn true "About";
+        text "作者:李晓军";
+         text "QQ: 56464068";
+		 text "创建时间：2008.5";
+         text "email: jzboylxj@163.com";
+         text "如果在使用中遇到有什么问题，或者bug，请通知本人";
+         text "本人会及时修正";
+		 text "谢谢使用，祝你工作愉快！";
+        setParent..;
+
+
+	showWindow $window;
+}
+

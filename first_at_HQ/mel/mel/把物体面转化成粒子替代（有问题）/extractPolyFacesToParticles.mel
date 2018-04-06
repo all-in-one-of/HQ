@@ -1,0 +1,96 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: extractPolyFacesToParticles
+''    Author: sinaseifee 
+''    Last Updated: Jun 19, 2007
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/mel_scripts/dynamics/1480.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+//created by Sina Seifee 2007 jan
+
+string $nodeTemp[];
+$nodeTemp = `ls -sl`;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 1;
+polySplitVertex;
+SeparatePolygon;
+string $node[];
+$node = `ls -sl`;
+delete -ch;
+FreezeTransformations;
+CenterPivot;
+
+
+string $prtcls ="";
+for($nod in $node)
+{
+ float $temp[] = `objectCenter $nod`;
+ $prtcls = $prtcls + " -p " +$temp[0]+" "+$temp[1]+" "+$temp[2];
+};
+
+eval ("particle " + $prtcls +" -n particlePerFace");
+string $prtcls ="";
+string $prtcl[];
+$prtcl = `ls -sl`;
+
+addAttr -ln normal0 -dt vectorArray  {$prtcl[0]+"Shape"};
+addAttr -ln normal -dt vectorArray  {$prtcl[0]+"Shape"};
+addAttr -ln rot0 -dt vectorArray  {$prtcl[0]+"Shape"};
+addAttr -ln rot -dt vectorArray  {$prtcl[0]+"Shape"};
+
+
+select -cl ;
+for($nod in $node){select -add $nod;};
+select -add $prtcl[0];
+string $pTemp = "particleInstancer  -addObject ";
+for($nod in $node){
+ $pTemp = $pTemp + " -object " + $nod;};
+$pTemp = $pTemp + " -cycle None -cycleStep 1 -cycleStepUnits Frames -levelOfDetail Geometry -rotationUnits Degrees -rotationOrder XYZ -position worldPosition -objectIndex particleId -age age ";
+$pTemp = $pTemp + $prtcl[0]+"Shape" ;
+evalEcho $pTemp;
+particleInstancer -e -name instancer1 -objectIndex particleId {$prtcl[0]+"Shape"};
+particleInstancer -e -name instancer1 -rotation rot {$prtcl[0]+"Shape"};
+
+
+$i =0;
+for($nod in $node)
+{ 
+ select -r particlePerFace.pt[$i] ;
+ vector $pPos = `particle -at position -id $i -q $prtcl[0]`;
+ select $node[$i];
+ move -r (-$pPos.x) (-$pPos.y) (-$pPos.z) {$node[$i]+".f[0]"};
+ $i++;
+};
+
+$i=0;
+for($nod in $node)
+{
+ select -r ($nod+ ".vtx[0]") ;
+ float $nrmlTmp[] = `polyNormalPerVertex -q -xyz`;
+ particle -e -or $i -at normal -vv $nrmlTmp[0] $nrmlTmp[1] $nrmlTmp[2] $prtcl[0] ;
+
+ float $tm[] = `exactWorldBoundingBox $nod`;
+ float $mass = 0.2 + 0.75*sqrt($tm[0]*$tm[0]+$tm[1]*$tm[1]+$tm[2]*$tm[2]) ;
+ particle -e -or $i -at mass -fv $mass $prtcl[0] ;
+ $i++;
+};
+
+string $temp = $prtcl[0]+"Shape.rot = <<0,0,0>>;\r\n"+$prtcl[0]+"Shape.normal = <<rand(-"+$prtcl[0]+"Shape.mass,"+$prtcl[0]+"Shape.mass)\r\n                               ,rand(-"+$prtcl[0]+"Shape.mass,"+$prtcl[0]+"Shape.mass)\r\n                               ,rand(-"+$prtcl[0]+"Shape.mass,"+$prtcl[0]+"Shape.mass)>>;" ;
+dynExpression -s $temp -c {$prtcl[0]+"Shape"};
+string $temp = "vector $tVel = "+$prtcl[0]+"Shape.velocity;\r\n"+$prtcl[0]+"Shape.rot = "+$prtcl[0]+"Shape.rot\r\n + <<pow($tVel.x , 2),pow($tVel.y , 2),pow($tVel.z , 2)>>\r\n  *"+$prtcl[0]+"Shape.normal *0.05;";
+dynExpression -s $temp -rbd {$prtcl[0]+"Shape"};
+
+select $nodeTemp[0];
+hideToggle;
+clear $node;
+$temp = "";
+
+setAttr ($prtcl[0]+".conserve") 0.95;
+select -r $prtcl[0];
+radial -pos 5 -2 -5 -m 50 -att 25 -typ 0  -mxd 50  -vsh none -vex 0 -vof 0 0 0 -vsw 360 -tsr 0.5 ;
+connectDynamic -f radialField1  $prtcl[0];

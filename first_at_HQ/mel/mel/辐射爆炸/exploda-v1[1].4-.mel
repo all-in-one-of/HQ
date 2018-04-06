@@ -1,0 +1,463 @@
+/*  This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: Exploda v1.4
+''    Author: Dev Jana
+''    Last Updated: June 6, 2005
+''    Update/Change this file at:
+''    http://www.highend3d.com/maya/mel/?section=dynamics#3603
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+
+/*****************************************************************
+Exploda.mel
+Ver 1.3
+Developed for Thesis Work at Digital Media Arts College Fall 2004 - Spring 2005
+author: Dev Jana
+This script is provided free of charge as "creditware." That is, you can use this in any of your animations as long as the line "Scripting by Dev Jana" appears at the start, end, or both of the final animation/film/episode/short/etc...
+all material copright 2005. All rights reserved.
+
+www.devjana.com - tutorials, music, animations, email list, more...
+****************************************************************/
+
+global proc web()
+{
+window;
+columnLayout;
+webBrowser -width 600 -height 400 -url "www.devjana.com";
+showWindow;
+} // end proc
+
+global proc exploda()
+{
+window -t Exploda;
+columnLayout;
+button -w 150 -l "devjana.com" -c "web()";
+button -w 150 -l "Create Explosion" -c "createExplosion($option)";
+
+int $option = 2;
+	radioCollection;
+
+ 		radioButton -label "Sparks" -onc "$option = 0";
+
+ 		radioButton -label "Shockwave" -onc "$option = 1";
+
+ 		radioButton -label "Both" -onc "$option = 2";
+
+ 		radioButton -label "Neither" -onc "$option = 3";
+
+
+	gridLayout -numberOfColumns 2 -cellWidthHeight 75 25;
+
+
+text "Start Frame";
+textField sFrame;
+text "Total Time";
+textField tTime;
+text "Blast Radius";
+textField bRad;
+
+showWindow;
+}
+
+
+global proc createExplosion(int $option)
+{
+int $fluidXZ, $fluidY, $startFrame, $totalTime;
+float $build, $apex, $BR, $breakdown, $dissipation, $termination, $negBR, $SR, $maxShockwaveScale, $maxLightIntensity, $tube1, $tube2;
+
+$BR = `textField -q -text bRad`; 
+$startFrame = `textField -q -text sFrame`; 
+$totalTime = `textField -q -text tTime`; 
+
+
+$build = $totalTime * 0.06;
+$apex = $totalTime * 0.04;
+$breakdown = $totalTime * 0.20;
+$dissipation = $totalTime * 0.20;
+$termination = $totalTime * 0.50;
+
+
+
+$build += $startFrame ;
+$apex += $build;
+$breakdown += $apex;
+$dissipation += $breakdown;
+$termination += $dissipation;
+$negBR = $BR * -1;
+$SR = $BR/3;
+$maxShockwaveScale = $BR * 35;
+$maxLightIntensity = $BR *3;
+$fluidXZ = $BR * 5;
+$fluidY = $BR * 12;
+$tube1 = $BR * 0.1;
+$tube2 = $tube1 * 2.5;
+
+// shockwave
+if($option == 1 || $option == 2)
+{
+//create shockwave
+circle -c 0 0 0 -nr 0 1 0 -sw 360 -r $SR -d 3 -ut 0 -tol 0.01 -s 8 -ch 1; objectMoveCommand;
+rename shockwaveCurve;
+
+emitter -type curve  -name "shockwaveEmit" -r 10000 -sro 0 -nuv 0 -cye none -cyi 1 -spd 1 -srn 0 -nsp 1 -tsp 1 -mxd 0 -mnd 0 -dx 1 -dy 0 -dz 0 -sp 0 ;
+particle;
+rename shockwaveParticle;
+connectDynamic -em shockwaveEmit shockwaveParticle; 
+setAttr shockwaveParticleShape.lifespanMode 3;
+dynExpression -s "shockwaveParticleShape.lifespanPP = rand (0.05, 0.15);" -c shockwaveParticleShape;
+} // end if
+
+
+
+//create light
+defaultPointLight(1, 1,1,1, 0, 0, 0,0,0, 1);
+rename explodaLight;
+
+// sparks
+if($option == 0 || $option == 2)
+{
+//create sparks
+circle -c 0 0 0 -nr 0 1 0 -sw 360 -r $SR -d 3 -ut 0 -tol 0.01 -s 26 -ch 1; objectMoveCommand;
+rename sparksCircle;
+
+emitter -type curve  -name "sparksEmit" -r 150 -sro 1 -nuv 0 -cye none -cyi 1 -spd 12 -srn 1 -nsp 2 -tsp 3 -mxd 0.071 -mnd 0 -dx 1 -dy 0 -dz 0 -sp 0 ;
+particle;
+rename sparksParticle;
+connectDynamic -em sparksEmit sparksParticle; 
+//create sparks
+
+gravity -pos 0 0 0  -name "sparksGravity" -m 9.8 -att 0 -dx 0 -dy -1 -dz 0  -mxd -1  -vsh none -vex 0 -vof 0 0 0 -vsw 360 -tsr 0.5 ;
+
+vortex -pos 0 0 0  -name "sparksVortex" -m 17.732 -att 1 -ax 0 -ay 1 -az 0  -mxd -1  -vsh none -vex 0 -vof 0 0 0 -vsw 360 -tsr 0.5 ;
+setAttr "sparksParticleShape.conserve" 0.9;
+setAttr sparksParticleShape.lifespanMode 3;
+dynExpression -s "sparksParticleShape.lifespanPP = rand (0.5, 1.2);" -c sparksParticleShape;
+
+connectDynamic -f sparksVortex sparksParticle;
+connectDynamic -f sparksGravity sparksParticle;
+} // end if
+
+
+//create fluids
+create3DFluid $fluidXZ $fluidY $fluidXZ $fluidXZ $fluidY $fluidXZ;
+rename explodaFluid;
+fluidEmitter -pos 0 0 0 -type omni  -name "explodaFluidEmit" -der 1 -her 92.2 -fer 21.28 -fdr 2 -r 100.0 -cye none -cyi 1 -mxd 1 -mnd 0 ;
+connectDynamic -em explodaFluidEmit explodaFluidShape;
+select -r explodaFluidShape;
+int $fluidMover = $fluidY * 0.45;
+move -r 0 $fluidMover 0;
+
+setAttr explodaFluidShape.colorMethod 2; 
+setAttr explodaFluidEmit.emitFluidColor 1;
+setAttr "explodaFluidShape.densityBuoyancy" 10;
+
+//explosion states
+//start
+currentTime $startFrame;
+
+// shockwave
+if($option == 1 || $option == 2)
+{
+setAttr shockwaveCurve.scaleX 0.1;
+setKeyframe shockwaveCurve.scaleX;
+setAttr shockwaveCurve.scaleZ 0.1;
+setKeyframe shockwaveCurve.scaleZ;
+setAttr shockwaveEmit.rate 0;
+setKeyframe shockwaveEmit.rate;
+} // end if
+
+
+// sparks
+if($option == 0 || $option == 2)
+{
+setAttr sparksEmit.rate 0;
+setKeyframe sparksEmit.rate;
+} //end if
+
+setAttr explodaFluidEmit.particleColorR 0.128;
+setKeyframe explodaFluidEmit.particleColorR;
+setAttr explodaFluidEmit.particleColorG 0;
+setKeyframe explodaFluidEmit.particleColorG;
+setAttr explodaFluidEmit.particleColorB 0.009;
+setKeyframe explodaFluidEmit.particleColorB;
+setAttr "explodaFluidEmit.rate" 0;
+setKeyframe explodaFluidEmit.rate;
+setAttr "explodaFluidEmit.speed" 0;
+setKeyframe explodaFluidEmit.speed;
+setAttr "explodaFluidEmit.tangentSpeed" 0;
+setKeyframe explodaFluidEmit.tangentSpeed;
+setAttr "explodaFluidEmit.turbulence" 0;
+setKeyframe explodaFluidEmit.turbulence;
+setAttr "explodaFluidEmit.randomDirection" 0;
+setKeyframe explodaFluidEmit.randomDirection;
+
+setAttr explodaLightShape.intensity 0;
+setKeyframe explodaLightShape.intensity;
+
+
+
+//build
+currentTime $build;
+
+// sparks
+if($option == 0 || $option == 2)
+{
+setAttr sparksEmit.rate 0;
+setKeyframe sparksEmit.rate;
+} //end if
+
+setAttr explodaFluidEmit.particleColorR 0.395;
+setKeyframe explodaFluidEmit.particleColorR;
+setAttr explodaFluidEmit.particleColorG 0.326;
+setKeyframe explodaFluidEmit.particleColorG;
+setAttr explodaFluidEmit.particleColorB 0.025;
+setKeyframe explodaFluidEmit.particleColorB;
+setAttr "explodaFluidEmit.rate" 10;
+setKeyframe explodaFluidEmit.rate;
+setAttr "explodaFluidEmit.speed" 0.1;
+setKeyframe explodaFluidEmit.speed;
+setAttr "explodaFluidEmit.tangentSpeed" 0;
+setKeyframe explodaFluidEmit.tangentSpeed;
+setAttr "explodaFluidEmit.turbulence" 0;
+setKeyframe explodaFluidEmit.turbulence;
+setAttr "explodaFluidEmit.randomDirection" 0;
+setKeyframe explodaFluidEmit.randomDirection;
+
+setAttr explodaLightShape.intensity 0.3;
+setKeyframe explodaLightShape.intensity;
+
+
+//apex
+currentTime $apex;
+
+// shockwave
+if($option == 1 || $option == 2)
+{
+setAttr shockwaveCurve.scaleX 0.1;
+setKeyframe shockwaveCurve.scaleX;
+setAttr shockwaveCurve.scaleZ 0.1;
+setKeyframe shockwaveCurve.scaleZ;
+setAttr shockwaveEmit.rate 0;
+setKeyframe shockwaveEmit.rate;
+} //end if
+
+
+// sparks
+if($option == 0 || $option == 2)
+{
+setAttr sparksEmit.rate 20;
+setKeyframe sparksEmit.rate;
+} //end if
+
+setAttr explodaFluidEmit.particleColorR 0.989;
+setKeyframe explodaFluidEmit.particleColorR;
+setAttr explodaFluidEmit.particleColorG 1;
+setKeyframe explodaFluidEmit.particleColorG;
+setAttr explodaFluidEmit.particleColorB 0.979;
+setKeyframe explodaFluidEmit.particleColorB;
+setAttr "explodaFluidEmit.rate" 600;
+setKeyframe explodaFluidEmit.rate;
+setAttr "explodaFluidEmit.speed" 50;
+setKeyframe explodaFluidEmit.speed;
+setAttr "explodaFluidEmit.tangentSpeed" 8;
+setKeyframe explodaFluidEmit.tangentSpeed;
+setAttr "explodaFluidEmit.turbulence" 10;
+setKeyframe explodaFluidEmit.turbulence;
+setAttr "explodaFluidEmit.randomDirection" 90;
+setKeyframe explodaFluidEmit.randomDirection;
+setAttr explodaLightShape.intensity 5;
+setKeyframe explodaLightShape.intensity;
+setKeyframe explodaFluidEmit.tx;
+setKeyframe explodaFluidEmit.tz;
+
+
+float $x, $z, $sparksRad, $intensity;
+while($apex < $breakdown)
+{
+$x = rand($negBR, $BR);
+$z = rand($negBR, $BR);
+$apex++;
+currentTime $apex;
+setAttr explodaFluidEmit.tx $x;
+setKeyframe explodaFluidEmit.tx;
+setAttr explodaFluidEmit.tz $z;
+setKeyframe explodaFluidEmit.tz;
+
+// sparks
+if($option == 0 || $option == 2)
+{
+$sparksRad = rand(0, $SR);
+setAttr sparksCircle.scaleX $sparksRad;
+setKeyframe sparksCircle.scaleX;
+setAttr sparksCircle.scaleZ $sparksRad;
+setKeyframe sparksCircle.scaleZ;
+} //end if
+
+$intensity = rand ($BR, $maxLightIntensity);
+setAttr explodaLightShape.intensity $intensity;
+setKeyframe explodaLightShape.intensity;
+}
+
+//breakdown
+currentTime $breakdown;
+
+// sparks
+if($option == 0 || $option == 2)
+{
+setAttr sparksEmit.rate 81;
+setKeyframe sparksEmit.rate;
+setAttr sparksCircle.scaleX $SR;
+setKeyframe sparksCircle.scaleX;
+setAttr sparksCircle.scaleZ $SR;
+setKeyframe sparksCircle.scaleZ;
+} //end if
+
+setAttr explodaFluidEmit.particleColorR 0.65;
+setKeyframe explodaFluidEmit.particleColorR;
+setAttr explodaFluidEmit.particleColorG 0.5;
+setKeyframe explodaFluidEmit.particleColorG;
+setAttr explodaFluidEmit.particleColorB 0.222;
+setKeyframe explodaFluidEmit.particleColorB;
+setAttr "explodaFluidEmit.rate" 200;
+setKeyframe explodaFluidEmit.rate;
+setAttr "explodaFluidEmit.speed" 10;
+setKeyframe explodaFluidEmit.speed;
+setAttr "explodaFluidEmit.tangentSpeed" 1;
+setKeyframe explodaFluidEmit.tangentSpeed;
+setAttr "explodaFluidEmit.turbulence" 120;
+setKeyframe explodaFluidEmit.turbulence;
+setAttr "explodaFluidEmit.randomDirection" 120;
+setKeyframe explodaFluidEmit.randomDirection;
+
+
+
+//dissipation
+currentTime $dissipation;
+
+// sparks
+if($option == 0 || $option == 2)
+{
+setAttr sparksEmit.rate 27;
+setKeyframe sparksEmit.rate;
+} //end if
+
+setAttr explodaFluidEmit.particleColorR 0.287;
+setKeyframe explodaFluidEmit.particleColorR;
+setAttr explodaFluidEmit.particleColorG 0.327;
+setKeyframe explodaFluidEmit.particleColorG;
+setAttr explodaFluidEmit.particleColorB 0.395;
+setKeyframe explodaFluidEmit.particleColorB;
+setAttr "explodaFluidEmit.rate" 100;
+setKeyframe explodaFluidEmit.rate;
+setAttr "explodaFluidEmit.speed" 0.2;
+setKeyframe explodaFluidEmit.speed;
+setAttr "explodaFluidEmit.tangentSpeed" 12;
+setKeyframe explodaFluidEmit.tangentSpeed;
+setAttr "explodaFluidEmit.turbulence" 20;
+setKeyframe explodaFluidEmit.turbulence;
+setAttr "explodaFluidEmit.randomDirection" 150;
+setKeyframe explodaFluidEmit.randomDirection;
+setAttr explodaLightShape.intensity 0.5;
+setKeyframe explodaLightShape.intensity;
+
+// shockwave
+if($option == 1 || $option == 2)
+{
+setAttr shockwaveEmit.rate 60000;
+setKeyframe shockwaveEmit.rate;
+} //end if
+
+
+//termination
+currentTime $termination;
+
+// sparks
+if($option == 0 || $option == 2)
+{
+setAttr sparksEmit.rate 00;
+setKeyframe sparksEmit.rate;
+}
+
+
+setAttr explodaFluidEmit.particleColorR 0.11;
+setKeyframe explodaFluidEmit.particleColorR;
+setAttr explodaFluidEmit.particleColorG 0.1;
+setKeyframe explodaFluidEmit.particleColorG;
+setAttr explodaFluidEmit.particleColorB 0.21;
+setKeyframe explodaFluidEmit.particleColorB;
+setAttr "explodaFluidEmit.rate" 0;
+setKeyframe explodaFluidEmit.rate;
+setAttr "explodaFluidEmit.speed" 0;
+setKeyframe explodaFluidEmit.speed;
+setAttr "explodaFluidEmit.tangentSpeed" 10;
+setKeyframe explodaFluidEmit.tangentSpeed;
+setAttr "explodaFluidEmit.turbulence" 30;
+setKeyframe explodaFluidEmit.turbulence;
+setAttr "explodaFluidEmit.randomDirection" 200;
+setKeyframe explodaFluidEmit.randomDirection;
+setAttr explodaLightShape.intensity 0;
+setKeyframe explodaLightShape.intensity;
+
+// shockwave
+if($option == 1 || $option == 2)
+{
+setAttr shockwaveCurve.scaleX $maxShockwaveScale;
+setKeyframe shockwaveCurve.scaleX;
+setAttr shockwaveCurve.scaleZ $maxShockwaveScale;
+setKeyframe shockwaveCurve.scaleZ;
+setAttr shockwaveEmit.rate 0;
+setKeyframe shockwaveEmit.rate;
+} //end if
+
+
+if($option == 0)
+{
+select explodaLight;
+select -tgl explodaFluidEmit;
+select -tgl explodaFluid;
+select -tgl sparksEmit;
+select -tgl sparksCircle;
+select -tgl sparksGravity;
+select -tgl sparksVortex;
+group;
+}
+
+if($option == 1)
+{
+select explodaLight;
+select -tgl explodaFluidEmit;
+select -tgl explodaFluid;
+select -tgl shockwaveCurve;
+group;
+}
+
+if($option == 2)
+{
+select explodaLight;
+select -tgl explodaFluidEmit;
+select -tgl explodaFluid;
+select -tgl sparksEmit;
+select -tgl sparksCircle;
+select -tgl sparksGravity;
+select -tgl sparksVortex;
+select -tgl shockwaveCurve;
+group;
+}
+
+if($option == 3)
+{
+select explodaLight;
+select -tgl explodaFluidEmit;
+select -tgl explodaFluid;
+group;
+}
+
+currentTime $startFrame;
+}
+
+exploda();

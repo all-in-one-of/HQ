@@ -1,0 +1,358 @@
+//
+//
+//
+//
+//
+//
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+/////////                       ///////////////////                        ///////////
+/////////                        /////////////////                        ////////////
+//////////                        ///////////////                        /////////////
+//////////                         /////////////                         /////////////
+///////////                         ///////////                         //////////////
+////////////                         //////////                        ///////////////
+////////////                         /////////                        ////////////////
+/////////////                         ///////                        /////////////////
+//////////////                         /////                        //////////////////
+///////////////                        /////                       ///////////////////
+////////////////                       ////                       ////////////////////
+//////////////////                      ///                     //////////////////////
+///////////////////                     //                    ////////////////////////
+/////////////////////                   //                  //////////////////////////
+///////////////////////                  /               /////////////////////////////
+////////////////////////                                //////////////////////////////
+///////////////////////////                           ////////////////////////////////
+/////////////////////////////                         ////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////删除YJL工具架快捷图标
+global proc YY_Del_Shelf_Q()
+{
+  string $myScriptDir = `internalVar -ush`;
+int $YY_Save_Shelf = `filetest -f ($myScriptDir + "YJL_MEL.mel")`;
+if($YY_Save_Shelf == 1)
+{
+sysFile -del ($myScriptDir + "YJL_MEL.mel");
+};
+};
+
+YY_Del_Shelf_Q;
+
+
+///////////////////////////////帮助文档
+global proc YY_help()
+{
+global string $address;
+print $address;
+$address_help = toNativePath($address);
+$YY_help = $address_help + "set\\help\\YY_MEL_Help.htm" ;
+showHelp -a $YY_help;
+};
+//////////////////////////////万年历
+global proc YY_cal()
+{
+global string $address;
+print $address;
+$address_cal = toNativePath($address);
+$YY_cal = $address_cal + "other\\calendar.htm" ;
+showHelp -a $YY_cal;
+};
+
+global proc YY_ZJ_WNL()
+{
+global string $address;
+print $address;
+$address_ZJ = toNativePath($address);
+$YY_ZJ = $address_ZJ + "other\\JD_Calendar.exe" ;
+system ("start " + $YY_ZJ);
+//showHelp -a $YY_ZJ;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+//$address_face = toNativePath($address);
+global string $YY_scriptsPath_SET;
+$YY_scriptsPath_SET = `internalVar -userScriptDir` + "userSetup.mel";
+
+
+global string $YY_end = "\"";
+global string $YY_setToMotion;//
+global string $YY_HUV_add;
+//////////////////////////////////////////////////////////////////////////////////////
+global string $teacher_snap;
+global string $teacher_mir;
+global string $teacher_ex;
+global string $teacher_im;
+global string $teacher_name;
+global string $teacher_render;
+////////////////////////////////////////////////////////////////////////////////////////
+global string $YY_BS;
+global string $YY_scan;
+global string $YY_tool;
+global string $YY_set;
+global string $YY_set_New;
+global string $YY_set_animal;
+global string $YY_smooth;
+global string $YY_set_eyes;
+global string $YY_AT_Pose;
+global string $YY_Ctrl_Create_tool;
+global string $YY_face;
+global string $YY_FFC_System;
+global string $YY_cz;
+global string $YY_UpSave;
+global string $YY_Delete_UnKnowNode;
+global string $YY_Delete_Null_Node;
+global string $YY_Smooth_Tool;
+global string $YY_ReName_Tool;
+global string $YY_ReName_Joint_Tool;
+global string $YY_Dynamic_Rigid_Body;
+global string $YY_Duplicate_Line;
+global string $YY_Rivet_New;
+global string $YY_Save_Shelf_Tool;
+global string $YY_MaToMb;
+global string $YY_syflex;
+global string $YY_rand;
+global string $YY_spiral;
+global string $YY_render;
+global string $YY_RTS ;
+global string $YY_motion;
+global string $YY_up;
+////////////////////////////////////////////////////////////////////////////////////////
+global string $CB_ex;
+global string $CB_im;
+//////////////////////////////////////////////////////////////////////////////////
+global string $other_river;
+global string $other_stone;
+global string $batchRander;
+global string $YY_Advice;
+global string $change;
+global string $YY_Ma_Change_An;
+global string $YY_Adsorb_Tool;
+global string $YY_Game;
+///////////////////////////////////////////////////////////////////////////////////////
+global string $YY_help_di;
+
+global string $address;
+
+global string $YY_Attr_Link_ANG;
+global string $YY_SMW_All;
+global string $YY_DelNameSpace;
+global string $YY_Texture_Rep;
+////////////////////////////////////////////////////////////////////////
+$YY_attr ="source \"" + $address + "set/disAttr.mel" + $YY_end ;
+eval $YY_attr;
+//////////////////////////////////////////////////////////////////////////////////////
+$teacher_snap ="source \"" + $address + "set/CL_snapPointPosition.mel" + $YY_end ;
+$teacher_mir ="source \"" +  $address + "set/CL_mirrorBlendShape.mel"+ $YY_end ;
+$teacher_ex ="source \"" +  $address + "set/CL_polyWeightExport.mel"+ $YY_end ;
+$teacher_im ="source \"" +  $address + "set/CL_polyWeightImport.mel"+ $YY_end ;
+$teacher_name ="source \"" +  $address + "set/CL_removeNameSpace.mel"+ $YY_end ;
+$teacher_render ="source \"" +  $address + "set/CL_screenRender.mel"+ $YY_end ;
+////////////////////////////////////////////////////////////////////////////////////////
+$YY_BS ="source \"" + $address + "set/BlendShape.mel" + $YY_end;
+$YY_scan = "source \"" + $address + "set/YY_Scan.mel" + $YY_end;
+$YY_tool = "source \"" + $address + "set/Ofen Tools.mel" + $YY_end;
+$YY_set = "source \"" + $address + "set/YY_Set_Joint.mel" + $YY_end;
+$YY_SetMan = "source \"" + $address + "set/YY_SetMan.mel" + $YY_end;
+$YY_set_animal = "source \"" + $address + "set/YY_Set_tail.mel" + $YY_end;
+$YY_set_finger = "source \"" + $address + "set/YY_Finger_Ctrl.mel" + $YY_end;
+$YY_smooth = "source \"" + $address + "set/YY_smooth_tool.mel" + $YY_end;
+$YY_set_eyes = "source \"" + $address + "set/YY_set_tools_eyes.mel" + $YY_end;
+$YY_AT_Pose = "source \"" + $address + "set/YY_AT_Pose.mel" + $YY_end;
+$YY_Ctrl_Create_tool = "source \"" + $address + "set/YY_Ctrl_Line_Create.mel" + $YY_end;
+$YY_setToMotion = "source \"" +  $address + "set/YY_change_motion.mel" + $YY_end;
+$YY_HUV_add = "source \"" +  $address + "set/YY_HUV.mel" + $YY_end;
+$YY_Attr_Link_ANG  = "source \"" +  $address + "set/YY_Attr_Link_ANG.mel" + $YY_end;
+$YY_face = "source \"" + $address + "set/YY_face_link.mel" + $YY_end;
+$YY_FFC_System = "source \"" + $address + "set/YY_Face_Free_Ctrl_System.mel" + $YY_end;
+$YY_cz = "source \"" +  $address + "set/YY_change_cz.mel" + $YY_end;
+$YY_UpSave = "source \"" +  $address + "set/YY_chen_UPsave.mel" + $YY_end;
+$YY_Delete_UnKnowNode = "source \"" +  $address + "set/YY_Delet_UnKnowNode.mel" + $YY_end;
+$YY_Delete_Null_Node = "source \"" +  $address + "set/YY_Delete_Null_Node.mel" + $YY_end;
+$YY_Smooth_Tool = "source \"" +  $address + "set/YY_Smooth_Scan.mel" + $YY_end;
+$YY_ReName_Tool = "source \"" +  $address + "set/YY_Rename_All.mel" + $YY_end;
+$YY_ReName_Joint_Tool = "source \"" +  $address + "set/YY_Rename_Joint.mel" + $YY_end;
+$YY_Dynamic_Rigid_Body = "source \"" +  $address + "set/YY_Rigid_Body.mel" + $YY_end;
+$YY_Adsorb_Tool = "source \"" +  $address + "set/YY_Adsorb.mel" + $YY_end;
+$YY_Duplicate_Line = "source \"" +  $address + "set/YY_Dup_Line_Ani.mel" + $YY_end;
+$YY_Rivet_New  = "source \"" +  $address + "set/YY_Rivet.mel" + $YY_end;
+$YY_Save_Shelf_Tool = "source \"" +  $address + "set/YY_Save_Shelf.mel" + $YY_end;
+/////////////////////////////////////////////////////////////////YY_chen_UPsave.mel
+$YY_syflex = "source \"" + $address + "set/syflex.mel" + $YY_end;
+$YY_rand = "source \"" + $address + "set/object rand.mel" + $YY_end;
+$YY_spiral = "source \"" + $address + "set/spiral.mel" + $YY_end;
+$YY_render = "source \"" + $address + "set/render.mel" + $YY_end;
+$YY_RTS = "source \"" + $address + "set/YY_RTS.mel" + $YY_end;
+$YY_motion = "source \"" + $address + "set/motion/" + "motion_set.mel" + $YY_end;
+$YY_up = "source \"" + $address + "set/motion/" + "upsend.mel" + $YY_end;
+////////////////////////////////////////////////////////////////////////////////////////
+$CB_ex = "source \"" + $address + "set/CBskinImport.mel" + $YY_end;
+$CB_im = "source \"" + $address + "set/CBskinExport.mel" + $YY_end;
+//////////////////////////////////////////////////////////////////////////////////
+$other_river = "source \"" +  $address + "set/rivet.mel" + $YY_end;
+$other_stone = "source \"" +  $address + "set/rockGen.mel" + $YY_end;
+$batchRander = "source \"" +  $address + "set/batchRender.mel" + $YY_end;
+$YY_Advice = "source \"" +  $address + "set/YY_Advice_back.mel" + $YY_end;
+$change = "source \"" +  $address + "motion/" + "motion_net.mel" + $YY_end;
+$YY_Game = "source \"" +  $address + "set/" + "YY_Game.mel" + $YY_end;
+
+$YY_Ma_Change_An = "source \"" +  $address + "set/YY_Ma_Change_An.mel" + $YY_end;
+
+$YY_SMW_All = "source \"" +  $address + "set/YY_SMA_All.mel" + $YY_end;
+$YY_DelNameSpace = "source \"" +  $address + "set/YY_DelNameSpace.mel" + $YY_end;
+$YY_Texture_Rep = "source \"" +  $address + "set/YY_Texture.mel" + $YY_end;
+///////////////////////////////////////////////////////////////////////////////////////
+//$YY_help_di = $address + "YY_help.mel" + $YY_end;
+
+if(`menu -q -ex yjl`)
+{
+deleteUI yjl;
+};
+global string $gMainWindow;
+setParent $gMainWindow;
+menu -l "YJL Mel 设置" -to 1 yjl;
+menuItem -to 1 -l "Teacher Mel" -sm 1 yt;
+menuItem -l "吸点工具" -c $teacher_snap;
+//menuItem -d 1;
+menuItem -l "镜像权重工具" -c $teacher_mir;
+menuItem -d 1;
+menuItem -l "导出权重工具" -c $teacher_ex;
+menuItem -l "导入权重工具" -c  $teacher_im;
+menuItem -d 1;
+menuItem -l "去除名字空间工具" -c  $teacher_name;
+menuItem -d 1;
+menuItem -l "屏幕渲染" -c  $teacher_render;
+setParent -menu..;
+
+menuItem -d 1;
+menuItem -to 1 -l "YJL Mel" -sm 1 ;
+
+menuItem -l "检查工具集" -c  $YY_scan ;
+menuItem -l "常用工具集" -c  $YY_tool;
+menuItem -d 1;
+menuItem -to 1 -l "自动设置绑定工具" -sm 1 ;
+menuItem -l "人物设置绑定工具(旧)" -c $YY_set;
+menuItem -l "人物设置绑定工具(新)" -c $YY_SetMan;
+menuItem -l "动物设置绑定工具" -sm 1 -to 1;
+menuItem -l "尾巴设置工具" -c $YY_set_animal;
+menuItem -l "关节设置工具" -c $YY_set_finger;
+setParent -menu..;
+setParent -menu..;
+menuItem -to 1 -l "设置绑定辅助工具" -sm 1 ;
+menuItem -l "Smooth工具" -c $YY_smooth;
+menuItem -l "角色眼球生成工具" -c $YY_set_eyes;
+menuItem -l "AT_Pose转换工具" -c $YY_AT_Pose;
+menuItem -l "控制器生成制作工具" -c $YY_Ctrl_Create_tool;
+setParent -menu..;
+menuItem -to 1 -l "表情工具" -sm 1 ;
+menuItem -l "表情命名连接工具" -c  $YY_face;
+menuItem -l "表情自由控制系统" -c  $YY_FFC_System;
+setParent -menu..;
+menuItem -to 1 -l "删除工具" -sm 1 ;
+menuItem -l "删除未知节点工具" -c $YY_Delete_UnKnowNode;
+menuItem -l "删除无链接节点工具" -c $YY_Delete_Null_Node;
+setParent -menu..;
+menuItem -to 1 -l "更改重名工具" -sm 1 ;
+menuItem -l "更改场景重名工具" -c $YY_ReName_Tool;
+menuItem -l "更改骨骼重名工具" -c $YY_ReName_Joint_Tool;
+setParent -menu..;
+menuItem -l "动画综合工具" -c $YY_SMW_All;
+menuItem -l "手绑→捕捉" -c $YY_setToMotion;
+menuItem -l "去除名字空间工具" -c $YY_DelNameSpace;
+menuItem -l "更改ma文件版本工具" -c $YY_Ma_Change_An;
+menuItem -l "poly点添加毛囊" -c $YY_HUV_add;
+menuItem -l "物体多属性连接工具" -c $YY_Attr_Link_ANG;
+menuItem -l "更改材质路径工具" -c $YY_cz;
+menuItem -l "检查场景Smooth工具" -c $YY_Smooth_Tool;
+menuItem -l "路径复制工具" -c $YY_Duplicate_Line;
+menuItem -l "铆钉工具（新）" -c $YY_Rivet_New;///////YY_Rigid_Body.mel
+menuItem -l "动力学刚体替代工具" -c $YY_Dynamic_Rigid_Body;///////YY_Rigid_Body.mel
+menuItem -l "物体表面吸附工具" -c $YY_Adsorb_Tool;
+menuItem -l "保存工具架工具" -c $YY_Save_Shelf_Tool;
+//menuItem -d 1;
+//menuItem -l "motion修改工具" -c $YY_motion;
+//menuItem -l "动画上传工具" -c $YY_up ;
+//menuItem -d 1;
+//menuItem -d 1;
+menuItem -to 1 -l "其他工具" -sm 1 ;
+menuItem -l "贴图替换工具" -c $YY_Texture_Rep;
+menuItem -l "查找BS点工具" -c $YY_BS;
+menuItem -l "物体随机工具" -c  $YY_rand;
+menuItem -l "制作螺旋线工具"  -c $YY_spiral;
+menuItem -l "布料蒙皮工具" -c $YY_syflex;
+menuItem -l "批量上传工具" -c $YY_UpSave;
+menuItem -l "设置渲染参数工具"  -c  $YY_render;
+menuItem -l "渲三屏工具"  -c  $YY_RTS;
+menuItem -l "轻松一下" -c  $YY_Game;
+
+menuItem -l "万年历"  -c YY_cal;
+menuItem -l "择吉万年历"  -c YY_ZJ_WNL;
+setParent -menu..;
+setParent -menu..;
+menuItem -to 1 -l "CB Mel" -sm 1 ;
+menuItem -l "CB 导入权重工具"  -c  $CB_ex;
+menuItem -l "CB 导出权重工具"  -c  $CB_im;
+
+setParent -menu..;
+menuItem -to 1 -l "Other" -sm 1;
+menuItem -l "铆钉工具"  -c  $other_river;
+menuItem -l "制作石头工具" -c  $other_stone;
+menuItem -l "批处理渲染" -c  $batchRander;
+setParent -menu..;
+menuItem -d 1;
+menuItem -l "刷新" -c ("source \"" + $YY_scriptsPath_SET + "\"");
+menuItem -l "打开自启动文件" -c  "system(\"load \" + $YY_scriptsPath_SET)";
+menuItem -l "意见建议反馈" -c  $YY_Advice;
+menuItem -d 1;
+menuItem -l "帮助(设置)" -c  "YY_help";
+menuItem -d 1;
+menuItem -l "更改为动画模块" -c $change  ;
+
+//////////////////////////////////////////////////////////////////////
+
+
+//source "$address + \"YY_EML_Shelf_Icon_local_File.mel\" + $YY_end";
+//eval ("source \"" + $address + "set/YY_EML_Shelf_Icon_local_File.mel" + $YY_end);
+
+////////////////////////////////////////////////////////////////////////
+
+//eval ("source \"" + $address + "set/YY_EML_Shelf_Icon_local_File.mel" + $YY_end);
+global string $address;
+
+optionVar -iv isShelfSave 0;
+
+if(`shelfLayout -exists ($gShelfTopLevel + "|" + "YJL_MEL")`) 
+ { 
+ deleteUI -layout ($gShelfTopLevel + "|" + "YJL_MEL");
+};
+loadNewShelf  ($address + "set/YJL_MEL.mel");
+
+
+
+
+
+	
+	
+	
+	
+	
+	//
+	//confirmDialog -t "tttt"
+	//	-m "脚本有新功能增加！欢迎使用！"
+	//	-b "OK"
+	//	;	
+	

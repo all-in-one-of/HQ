@@ -1,0 +1,29 @@
+proc remove_unused_mat()
+{
+	string $matType[] = {"anisotropic", "blinn", "hairTubeShader", "lambert", "layeredShader", "oceanShader", "phong", "phongE", "rampShader", "shadingMap", "surfaceShader", "useBackground"};
+	string $cMatType;
+	for($cMatType in $matType)
+	{
+		string $mat[];
+		string $cmd = "ls -type " + $cMatType;
+		$mat = eval($cmd);
+
+		string $cmat;
+		for($cmat in $mat)
+		{
+			hyperShade -objects $cmat;
+
+			string $matObj[];
+			$matObj = `ls -sl`;
+	
+			int $num;
+			$num = size($matObj);
+	
+			if( $num == 0 )
+			{
+				delete $cmat;
+			}
+		}
+	}
+}
+remove_unused_mat();

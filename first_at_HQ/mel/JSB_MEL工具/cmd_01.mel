@@ -1,0 +1,129 @@
+if(`window -ex mywindow`) 
+deleteUI mywindow; 
+window -t "光滑工具(Smooth assistant)" -wh 450 300 mywindow;
+scrollLayout;
+columnLayout -adj 1;
+text"                                                                                                  ";
+frameLayout -l "显示光滑效果（Show smooth）" -collapsable on -borderStyle"etchedIn" -w 400 -h 110;
+gridLayout -numberOfRowsColumns 3 4 -cellWidthHeight 85 32;
+text"                      ";
+text" 被选中对象";
+text"                      ";
+text"所有对象 ";
+text"                      ";
+iconTextButton -style"iconAndTextHorizontal" -image "polySmooth.xpm"  -c "Gsmooth( )" -w 100;
+text"                      ";
+iconTextButton -style"iconAndTextHorizontal" -image "polySmooth.xpm"  -c "smooth_all( )" -w 100;
+text"                                       ";
+text"                      ";
+text"                      ";
+text"                      ";
+setParent..;
+setParent..;
+text"                                                                                                  ";
+frameLayout -l "隐藏光滑效果（Hide smooth） " -collapsable on -borderStyle"etchedIn" -w 400 -h 110;
+gridLayout -numberOfRowsColumns 3 4 -cellWidthHeight 85 32;
+text"                                       ";
+text" 被选中对象         ";
+text"                                       ";
+text"所有对象                          ";
+text"                                       ";
+iconTextButton -style"iconAndTextHorizontal" -image "undo.xpm"  -c "Gcancel( )";
+text"                      ";
+iconTextButton -style"iconAndTextHorizontal" -image "undo.xpm"  -c "cancel_all( )";
+text"                      ";
+text"                      ";
+text"                      ";
+text"                      ";
+setParent..;
+setParent..;
+showWindow mywindow;
+
+
+
+global proc Gcancel( )
+{
+	string $sel[]=`ls -sl`;
+	string $namearray[] = `listHistory $sel`;
+	string $namearray_good[];
+	string $namearray_good_dn[];
+	int $i= 0;;
+	string $tmp;
+	for( $tmp in $namearray )
+	{
+		string $s1 = "polySmoothFace";
+		string $result = `match $s1 $tmp`;
+		if($result == "polySmoothFace")
+		{
+			$namearray_good[$i] = $tmp;
+			$namearray_good_dn[$i] =$namearray_good[$i] + ".divisions";
+			setAttr $namearray_good_dn[$i] 0;
+		}
+		$i++;
+	}
+}
+
+global proc Gsmooth( )
+{
+	string $sel1[]=`ls -sl`;
+string $namearray1[] = `listHistory $sel1`;
+string $namearray_good1[];
+string $namearray_good_dn1[];
+int $m= 0;;
+string $tmp1;
+	for( $tmp1 in $namearray1 )
+	{
+		string $s2 = "polySmoothFace";
+		string $result1 = `match $s2 $tmp1`;
+		if($result1 == "polySmoothFace")
+		{
+			$namearray_good1[$m] = $tmp1;
+			$namearray_good_dn1[$m] =$namearray_good1[$m] + ".divisions";
+			setAttr $namearray_good_dn1[$m] 1;
+		}
+		$m++;
+	}
+}
+
+global proc cancel_all( )
+{
+	int $k=0;
+	string $polysf_all[]=`ls -type polySmoothFace`;
+	string $polysf_all_div[];
+	int $num=size($polysf_all);
+	for($k=0;$k<$num;)
+	{
+		//print $polysf_all;
+		$polysf_all_div[$k]=$polysf_all[$k]+".divisions";
+		setAttr $polysf_all_div[$k] 0;
+		print $polysf_all_div[$k];
+		$k++;
+	}
+}
+
+global proc smooth_all( )
+{
+	int $k1=0;
+	string $polysf_all1[]=`ls -type polySmoothFace`;
+	string $polysf_all_div1[];
+	int $num1=size($polysf_all1);
+	for($k1=0;$k1<$num1;)
+	{
+		//print $polysf_all;
+		$polysf_all_div1[$k1]=$polysf_all1[$k1]+".divisions";
+		setAttr $polysf_all_div1[$k1] 1;
+		print $polysf_all_div1[$k1];
+		$k1++;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,830 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+/////////                       ///////////////////                        ///////////
+/////////                        /////////////////                        ////////////
+//////////                        ///////////////                        /////////////
+//////////                         /////////////                         /////////////
+///////////                         ///////////                         //////////////
+////////////                         //////////                        ///////////////
+////////////                         /////////                        ////////////////
+/////////////                         ///////                        /////////////////
+//////////////                         /////                        //////////////////
+///////////////                        /////                       ///////////////////
+////////////////                       ////                       ////////////////////
+//////////////////                      ///                     //////////////////////
+///////////////////                     //                    ////////////////////////
+/////////////////////                   //                  //////////////////////////
+///////////////////////                  /               /////////////////////////////
+////////////////////////                                //////////////////////////////
+///////////////////////////                           ////////////////////////////////
+/////////////////////////////                         ////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+if(`window -q -ex YY_setup_window6`)
+{
+deleteUI YY_setup_window6;
+};
+window 
+	-wh 240 460
+	-t "脚本安装程序"
+	-mb 1
+	-s 1
+	YY_setup_window6;
+//columnLayout -cal "both" 10 -adj 1;
+menu -l "帮助";
+menuItem -l "使用帮助A" -c YY_Setup_Help;
+menuItem -l "使用帮助B" -c YY_Setup_Help_B;
+menu -l "关于";
+menuItem -l "关于" -c YY_Setup_About;
+
+
+frameLayout  -w 350
+	         -cll 0 -cl 0 
+			 -bs "etchedIn" 
+	         -l "脚本安装程序"
+			 -mw 0
+			 -mh 0
+			 -labelAlign "top" ;
+
+columnLayout -rs 5 -cal "center" -adj 1 ;
+text -vis 1 -fn "fixedWidthFont" -l "脚本安装窗口" YY_setup_head;
+columnLayout -rs 5 -cat "both" 20 -cal "left" -adj 1 ;
+separator ;
+separator ;
+text -al "center" -fn "boldLabelFont" -l "请选择要安装的模块类型";
+radioButtonGrp -sl 1 -nrb 2 -l1 "设置模块" -l2 "动画模块" YY_setup_grp;
+separator ;
+text -al "center" -fn "boldLabelFont" -l "请选择要安装类型";
+separator ;
+separator ;
+radioCollection;
+radioButton -h 20 -l "安装地址文件及自启动文件" -onc "YY_SetUpButton_Colour\"安装( Setup )\"" YY_setup_a;
+separator ;
+radioButton -h 20 -sl -l "安装本机自启动文件" -onc "YY_SetUpButton_Colour\"安装( Setup )\"" YY_setup_b;
+separator ;
+radioButton -h 20 -l "拷贝到本机并安装" -onc "YY_SetUpButton_Colour\"拷贝到本机(CopyToSelf)\"" YY_setup_c;
+separator ;
+radioButton -h 20 -l "备份脚本到本机" -onc "YY_SetUpButton_Colour\"备份到本机(BackToSelf)\"" YY_setup_d;
+separator ;
+button -bgc 0.7 0.8 0.9 -aop 1 -al "center" -w 160 -h 35 -l "安装( Setup )" -c "YY_setup" setup_button;
+button -al "center" -w 160 -h 35 -l "卸载( Uninstall )" -c "YY_mel_uninstall";
+button -w 100 -h 35 -al "center" -l "刷新( Refresh )" -c YY_refresh;
+button -w 100 -h 35 -al "center" -l "打开自启动文件( OpenUserSetup )" -c YY_SetUp_Open_US;
+
+showWindow YY_setup_window6;
+
+window -e
+	-wh 240 490
+	YY_setup_window6;
+
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+global proc YY_setup()
+{
+int $YY_radio_a = `radioButton -q -sl YY_setup_a`;
+int $YY_radio_b = `radioButton -q -sl YY_setup_b`;
+int $YY_radio_c = `radioButton -q -sl YY_setup_c`;
+int $YY_radio_d = `radioButton -q -sl YY_setup_d`;
+if($YY_radio_a == 1)
+{
+string $YY_password_time = `about -ct`;
+$YY_password_time = `substring $YY_password_time 1 5`;
+//$YY_password_time = substituteAllString ($YY_password_time," ","");
+$YY_password_time = substituteAllString ($YY_password_time,":","");	
+//int $YY_password_time_size = size($YY_password_time);		
+////////////////////////////////////////////////	
+ 	string $YY_password;
+ 	string $result = `promptDialog 
+ 		-title "更改地址密码"
+ 		-message "请输入更改地址权限密码:"
+ 		-button "OK" -button "Cancel"
+ 		-defaultButton "OK" -cancelButton "Cancel"
+ 		-dismissString "Cancel"`;
+ 	if ($result == "OK") 
+		{
+ 		$YY_password = `promptDialog -query -text`;
+		
+		if(($YY_password == $YY_password_time)||($YY_password == "135246"))
+		{
+		All_mel_net;
+		}
+			else{
+	confirmDialog 
+		-ma "center"
+		-m "对不起密码错误！\n您没有权限更改地址文件！"
+		-b "OK";	
+radioButton -e -sl YY_setup_b;		
+	};		
+ 	    }
+	else {
+	radioButton -e -sl YY_setup_b;
+	};
+};
+
+if($YY_radio_b == 1)
+{
+All_mel_net;
+};
+if($YY_radio_c == 1)
+{
+YY_AllMel_copy_local;
+};
+if($YY_radio_d == 1)
+{
+YY_back;
+};
+};
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_mel_setup_address()
+{
+
+global string $YY_mel_setup_a;
+
+$YY_mel_setup_a = `whatIs "YY_mel_setup_address"`;
+	print ("aaa"+$YY_mel_setup_a + "\n");
+//global int $YY_size;
+	int $YY_size = size($YY_mel_setup_a) - 12;
+	int $YY_size_a = $YY_size -1;
+///////////////////////////////////////////////////////////////////////	
+global string $YY_mel_setup_b;	
+	
+$YY_mel_setup_b = `substring $YY_mel_setup_a 25 $YY_size`;
+	print ("bbb"+$YY_mel_setup_b + "\n");
+//////////////////////////////////////////////////////////////////////	
+global string $YY_mel_setup_c;	
+
+$YY_mel_setup_c = dirname( $YY_mel_setup_b );
+		print ("ccc"+$YY_mel_setup_c + "\n");
+//////////////////////////////////////////////////////////////////////////		
+global string $YY_mel_setup_d;		
+$YY_mel_setup_d = toNativePath( $YY_mel_setup_c );
+	print ("ddd"+$YY_mel_setup_d + "\n");
+////////////////////////////////////////////////////////////////////////////
+global string $YY_ScriptPath;
+$YY_ScriptPath = `internalVar -userScriptDir`;
+
+/////////////////////////////////////////////////////////////////////
+global string $YY_maya_fn;
+$YY_maya_fn = $YY_ScriptPath + "userSetup.mel";
+////////////////////////////////////////////////////////////////////
+global string $YY_mel_setup_xxx;
+
+$YY_mel_setup_xxx = `substring $YY_mel_setup_a 25 $YY_size_a`;
+};
+
+YY_mel_setup_address;	
+//////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_setup_address_file()
+{
+global string $YY_mel_setup_a;
+
+global string $YY_mel_setup_b;	
+		
+global string $YY_mel_setup_c;	
+	
+global string $YY_mel_setup_d;
+
+global string $YY_ScriptPath;
+
+$YY_fileName = $YY_mel_setup_b + "address.mel";
+$YY_fileId =`fopen $YY_fileName "w"`;
+fprint $YY_fileId "global string $address;\n";
+string $YY_adre = "$address = \"" + $YY_mel_setup_b + "\";";
+fprint $YY_fileId ($YY_adre);
+fprint $YY_fileId ("\n\n ////////" + $YY_ScriptPath);
+fprint $YY_fileId ("\n\n /*");
+string $YY_ip_address = `system ("net user")`;
+//string $YY_ip_address = `system ("ipconfig -all")`;
+/*
+string $YY_ip_address_fen[];
+string $YY_ip_space_a = "        ";
+tokenize $YY_ip_address $YY_ip_space_a $YY_ip_address_fen;
+for($nn = 0;$nn<size($YY_ip_address_fen);$nn++)
+{
+fprint $YY_fileId ("\n " + $YY_ip_address_fen[$nn] + "\n");
+};
+*/
+fprint $YY_fileId ("\n\n" + $YY_ip_address + "\n\n");
+fprint $YY_fileId ("\n\n */");
+fclose $YY_fileId;
+
+
+};
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_setup_usersetup_file()
+{
+global string $YY_mel_setup_a;
+
+global string $YY_mel_setup_b;	
+		
+global string $YY_mel_setup_c;	
+	
+global string $YY_mel_setup_d;
+
+global string $YY_ScriptPath;	
+//////////////////////////////////////////////////////////////////////////////
+//string $YY_ScriptPath = toNativePath(`internalVar -userScriptDir`);
+global string $YY_maya_fn;
+//$YY_maya_fn = $YY_ScriptPath + "userSetup.mel";
+int $YY_qus = `radioButtonGrp -q -sl YY_setup_grp`;
+//int $YY_SetUp_Filetest_Int = `filetest -f $YY_maya_fn`;
+if(!`filetest -f $YY_maya_fn`)
+{
+YY_Setup_ARW "w" $YY_qus;	
+}
+else		
+{
+string $YY_SetUp_Wr = `YY_Setup_Read`;
+$YY_SetUp_Fiel_id = `fopen $YY_maya_fn "w"`;
+fprint $YY_SetUp_Fiel_id $YY_SetUp_Wr;
+fclose $YY_SetUp_Fiel_id;
+YY_Setup_ARW "a" $YY_qus;
+};
+global string $YY_setup_modem = "";
+if($YY_qus == 1)
+{
+$YY_setup_modem = "设置";
+}
+else 
+{
+$YY_setup_modem = "动画";
+};
+};
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
+global proc All_mel_net()
+{
+global string $YY_mel_setup_a;
+
+global string $YY_mel_setup_b;	
+		
+global string $YY_mel_setup_c;	
+	
+global string $YY_mel_setup_d;
+
+global string $YY_ScriptPath;
+
+global string $YY_setup_modem;
+///////////////////////////////////////////////////////////////////////////	
+int $YY_radio_e = `radioButton -q -sl YY_setup_a`;	
+if($YY_radio_e == 1)
+{
+YY_setup_address_file;
+string $YY_type = ($YY_setup_modem + " ***手动安装***地址文件及自启动文件");
+YY_setup_user($YY_type);
+};
+
+YY_setup_usersetup_file;
+////////////////////////////////////////////////////////////////
+
+string $YY_setup_dialog = $YY_setup_modem + "安装已完成请从新启动MAYA！或点击刷新按钮！";
+
+confirmDialog -t "安装已完成" 
+	           -m $YY_setup_dialog
+			   -b "关闭";
+if($YY_radio_e == 0)
+{
+string $YY_type = ($YY_setup_modem + " ***手动安装***自启动文件");
+YY_setup_user($YY_type);
+};
+
+string $YY_Shelf_Tool_icon = `internalVar -userBitmapsDir`;
+$YY_Shelf_Tool_icon = toNativePath($YY_Shelf_Tool_icon);
+int $YY_shelf_size = size($YY_Shelf_Tool_icon) - 1;
+$YY_Shelf_Tool_icon = `substring $YY_Shelf_Tool_icon 1 $YY_shelf_size`;
+
+
+string $YY_Shelf_Tool_Dir = `internalVar -userShelfDir `;
+string $YY_setup_copy_linshi_a = $YY_mel_setup_b + "shelf_YJL_MEL.mel";
+
+string $YY_setup_copy_icon_a = $YY_mel_setup_b + "YY_setup_icon";
+$YY_setup_copy_icon_a = toNativePath($YY_setup_copy_icon_a);
+
+//sysFile -copy $YY_Shelf_Tool_Dir $YY_setup_copy_linshi_a;
+//system ("xcopy " + $YY_mel_setup_path + " " + $YY_back_address + " /e");
+system ("xcopy " + $YY_setup_copy_icon_a + " " + $YY_Shelf_Tool_icon + " /e");
+
+print "OOOOOKKKKKKK";
+print "\n";
+print $YY_setup_copy_icon_a;
+print "\n";
+print $YY_Shelf_Tool_icon;
+};
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_refresh()
+{
+global string $YY_ScriptPath;
+
+YY_Del_Shelf;
+
+ eval ("source \"" + $YY_ScriptPath + "userSetup.mel\"");
+};
+
+
+global proc YY_Setup_Help_B()
+{
+if(`window -q -ex YY_setup_help_w`)
+{
+deleteUI YY_setup_help_w;
+};
+window 
+	-wh 260 500
+	-s 0
+	YY_setup_help_w;
+columnLayout -adj 1;
+text -l "安装地址文件及自启动文件";
+scrollField 
+	        -w 240 
+			-h 90 
+			-ww 1
+			-font "fixedWidthFont" 
+             -tx "第一次在服务器上使用该脚本时需要先创建地址文件，此时会在脚本文件夹里生成address.mel的地址文件，并在本机自动生成自启动文件。"
+             YY_Help_Field_a;
+text -l "安装本机自启动文件";
+scrollField 
+	        -w 240 
+			-h 90 
+			-ww 1
+			-font "fixedWidthFont" 
+             -tx "当服务器上已安装address.mel地址文件时，并且地址指向正确时，此时网络中其他用户只要点击\"安装本机自启动文件\"就可完成自启动文件的安装。"
+             YY_Help_Field_b;
+text -l "拷贝到本机并安装";
+scrollField 
+	        -w 240 
+			-h 80 
+			-ww 1
+			-font "fixedWidthFont" 
+            -tx "把全部脚本文件拷贝到本机使用，并且自动安装地址文件和自启动文件。此时所有脚本不受网络影响，并且不接受自动更新。" 
+             YY_Help_Field_c;
+text -l "备份脚本到本机";
+scrollField 
+	        -w 240 
+			-h 50 
+			-ww 1
+			-font "fixedWidthFont" 
+             -tx "把全部脚本拷贝到本机指定地址并按日期进行备份。" 
+             YY_Help_Field_d;
+text -l "自动安装";
+scrollField 
+	        -w 240 
+			-h 100 
+			-ww 1
+			-font "fixedWidthFont" 
+             -tx "脚本会自动分析当前是否存在地址文件和自启动文件如果地址文件存在便验证地址文件是否正确，如果地址文件正确便安装自启动文件。" 
+             YY_Help_Field_e;
+
+showWindow YY_setup_help_w;
+
+};
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_AllMel_copy_local()
+{
+global string $YY_mel_setup_a;
+
+global string $YY_mel_setup_b;	
+		
+global string $YY_mel_setup_c;	
+	
+global string $YY_mel_setup_d;
+
+global string $YY_ScriptPath;
+
+global string $YY_mel_setup_xxx;
+
+global string $YY_maya_fn;
+/*
+window 
+	  -s 0
+	  -t "正在拷贝文件"
+	  -wh 200 100
+	  YY_waitab;
+columnLayout 
+	        -cal "center" 
+			-rs 20
+			-adj 1;
+text -l "正在拷贝脚本文件到本机！\n请等待！";
+showWindow YY_waitab;
+*/
+button -e -aop 1 -bgc 0.9 0.1 0.1  setup_button;
+button -e -aop 1 -l "正在拷贝到本机！请等待！" setup_button;
+
+waitCursor -state on;
+
+int $YY_copy_test = `filetest -d ("c:/All_mel")`;
+if($YY_copy_test == 0)
+{
+system ("md " + "c:\\All_mel" );
+};
+string $YY_mel_setup_path = toNativePath( $YY_mel_setup_xxx );
+//system ("xcopy \"" + $YY_mel_setup_b + "\" \"" + " c:/All_mel/" + "\"");
+system ("xcopy " + $YY_mel_setup_path + " c:\\All_mel /e" );
+
+waitCursor -state off;
+button -e -aop 1 -l "备份到本机(BackToSelf)" setup_button;
+button -e -aop 1 -bgc 0.7 0.8 0.9  setup_button;
+
+
+
+
+string $YY_local_que = `confirmDialog 
+	                   -t "安装确认" 
+	                   -m "全部脚本文件已拷贝到本机c盘下！\n      是否需要安装到本地？"
+			           -b "是"
+			           -b "否"
+			                `;
+if($YY_local_que == "是")
+{
+$YY_fileName = "c:/All_mel/address.mel";
+$YY_fileId =`fopen $YY_fileName "w"`;
+fprint $YY_fileId "global string $address;\n";
+string $YY_adre = "$address = \"" + "c:/All_mel/" + "\";";
+fprint $YY_fileId ($YY_adre);		
+fclose $YY_fileId;
+/////////////////////////////////////////////////////////////////////
+//$YY_maya_fnb = $YY_ScriptPath + "userSetup.mel";
+string $YY_SetUp_Read = `YY_Setup_Read`;
+$YY_maya_ida = `fopen $YY_maya_fn "w"`;
+fprint $YY_maya_ida $YY_SetUp_Read;
+fclose $YY_maya_ida;
+
+$YY_maya_ida = `fopen $YY_maya_fn "a"`;
+fprint $YY_maya_ida ("\n//YY_Mel_Address;\nsource \"c:/All_mel/address.mel\";\n");
+fprint $YY_maya_ida ("\n//YY_Mel_UserSetup;\n");
+int $YY_qus = `radioButtonGrp -q -sl YY_setup_grp`;
+switch($YY_qus)	
+{
+case 1:
+fprint $YY_maya_ida ("source \"c:/All_mel/All_mel_net_test.mel\";\n");
+break;
+case 2:
+fprint $YY_maya_ida ("source \"c:/All_mel/motion/motion_net.mel\";\n");
+};
+fclose $YY_maya_ida;	
+////////////////////////////////////////////
+};
+
+};
+
+
+global proc YY_back()
+{
+global string $YY_mel_setup_a;
+
+global string $YY_mel_setup_b;	
+		
+global string $YY_mel_setup_c;	
+	
+global string $YY_mel_setup_d;
+
+global string $YY_ScriptPath;
+
+global string $YY_mel_setup_xxx;
+
+button -e -aop 1 -bgc 0.9 0.1 0.1  setup_button;
+button -e -aop 1 -l "正在备份到本机！请等待！" setup_button;
+waitCursor -state on;
+
+string $YY_date = `about -cd`;
+//$YY_date = `substring $YY_date 11 20`;
+$YY_date = substituteAllString ($YY_date,"/","-");
+print $YY_date ;
+
+string $YY_time = `about -ct`;
+$YY_time = `substring $YY_time 1 5`;
+//$YY_time = substituteAllString ($YY_time," ","");
+$YY_time = substituteAllString ($YY_time,":","_");
+string $YY_back_address = "";
+system ("md E:\\YY_MEL\\bak\\" + $YY_date + "\\" + $YY_time);
+$YY_back_address = "E:\\YY_MEL\\bak\\" + $YY_date + "\\" + $YY_time;
+string $YY_mel_setup_path = toNativePath( $YY_mel_setup_xxx );
+
+system ("xcopy " + $YY_mel_setup_path + " " + $YY_back_address + " /e");
+waitCursor -state off;
+button -e  -aop 1 -l "安装(Setup)" setup_button;
+button -e -aop 1 -bgc 0.7 0.8 0.9  setup_button;
+};
+
+global proc YY_mel_uninstall()
+{
+global string $YY_ScriptPath;
+string $YY_local_mel_all = $YY_ScriptPath + "userSetup.mel";
+
+int $YY_uninstall = `filetest -w $YY_local_mel_all`;
+if($YY_uninstall == 0)
+{
+string $YY_local_uninstall = `confirmDialog 
+	                   -t "卸载脚本" 
+	                   -m "本地磁盘没有安装脚本自启动文件！无需卸载！"
+			           -b "OK"
+			          // -b "否"
+			                `;
+}else
+{
+string $YY_local_uninstall_ok = `confirmDialog 
+	                   -ma "center"
+	                   -t "卸载脚本" 
+	                   -m "卸载后Maya启动时将不能自动加载脚本文件！\n您仍确定要卸载本地自启动文件?"
+			           -b "是"
+			           -b "否"
+			                `;
+if($YY_local_uninstall_ok == "是")
+{
+global string $YY_maya_fn;
+string $YY_SetUp_Wr = `YY_Setup_Read`;
+$YY_SetUp_Fiel_id = `fopen $YY_maya_fn "w"`;
+fprint $YY_SetUp_Fiel_id $YY_SetUp_Wr;
+fclose $YY_SetUp_Fiel_id;	
+//print $YY_local_mel_all;
+//string $YY_del_all_mel = `toNativePath ($YY_local_mel_all)`;
+//system ("del " + $YY_del_all_mel + " /q");
+};
+   };
+      };
+global proc YY_setup_user(string $YY_type)
+{
+
+global string $YY_mel_setup_a;
+
+global string $YY_mel_setup_b;	
+		
+global string $YY_mel_setup_c;	
+	
+global string $YY_mel_setup_d;
+
+global string $YY_ScriptPath;
+
+$YY_fileName = $YY_mel_setup_b + "set/SetupUser/setupuser.mel";
+$YY_fileId =`fopen $YY_fileName "a"`;
+
+fprint $YY_fileId ("\n" + $YY_type);
+//fprint $YY_fileId "\n\n\n\n";
+//fprint $YY_fileId ("\n\n ////////" + $YY_ScriptPath);
+//fprint $YY_fileId ("\n\n /*");
+string $YY_ip_address = `system ("net user")`;
+$YY_ip_address = `substring $YY_ip_address 1 60`;
+//string $YY_ip_address = `system ("ipconfig -all")`;
+/*
+string $YY_ip_address_fen[];
+string $YY_ip_space_a = "        ";
+tokenize $YY_ip_address $YY_ip_space_a $YY_ip_address_fen;
+for($nn = 0;$nn<size($YY_ip_address_fen);$nn++)
+{
+fprint $YY_fileId ("\n " + $YY_ip_address_fen[$nn] + "\n");
+};
+*/
+fprint $YY_fileId ("\n" + $YY_ip_address + "\n");
+fprint $YY_fileId ("******************************************************************************************");
+//fprint $YY_fileId ("\n\n */");
+fclose $YY_fileId;
+};
+
+global proc YY_Del_Shelf()
+{
+  string $myScriptDir = `internalVar -ush`;
+int $YY_Save_Shelf = `filetest -f ($myScriptDir + "shelf_YJL_MEL.mel")`;
+if($YY_Save_Shelf == 1)
+{
+sysFile -del ($myScriptDir + "shelf_YJL_MEL.mel");
+};
+};
+
+
+global proc string YY_Setup_Read()
+{
+global string $YY_maya_fn;
+$YY_maya_id = `fopen $YY_maya_fn "r"`;
+string $YY_Setup_NL = `fgetline $YY_maya_id`;
+string $YY_SetUp_W = "";
+while(size($YY_Setup_NL)>0)
+{
+	if(size($YY_Setup_NL) != 1)
+	{
+	
+int $YY_SetUp_Int_A = `gmatch $YY_Setup_NL "//YY_Mel_Address;\n"`;
+int $YY_SetUp_Int_B = `gmatch $YY_Setup_NL "//YY_Mel_UserSetup;\n"`;
+if(($YY_SetUp_Int_A == 1)||($YY_SetUp_Int_B == 1))
+{
+$YY_Setup_NL = `fgetline $YY_maya_id`;
+}
+else
+{
+$YY_SetUp_W += $YY_Setup_NL;
+};
+//$YY_Setup_NL = `fgetline $YY_maya_id`;
+      };
+$YY_Setup_NL = `fgetline $YY_maya_id`;
+};
+fclose $YY_maya_id;	
+
+return $YY_SetUp_W;
+};
+
+//////////////////////////////////////////////////////////
+global proc YY_Setup_ARW(string $YY_Setup_ARW,int $YY_SetUp_Qus)
+{
+global string $YY_mel_setup_a;
+
+global string $YY_mel_setup_b;	
+		
+global string $YY_mel_setup_c;	
+	
+global string $YY_mel_setup_d;
+
+global string $YY_ScriptPath;
+
+global string $YY_mel_setup_xxx;
+
+global string $YY_maya_fn;
+
+$YY_maya_id = `fopen $YY_maya_fn $YY_Setup_ARW`;
+fprint $YY_maya_id ("\n//YY_Mel_Address;\nsource \"" + $YY_mel_setup_b + "address.mel\";\n");
+fprint $YY_maya_id ("\n//YY_Mel_UserSetup;\n");
+switch($YY_SetUp_Qus)	
+{
+case 1:
+fprint $YY_maya_id ("source \"" + $YY_mel_setup_b + "All_mel_net_test.mel\";\n");
+break;
+case 2:
+fprint $YY_maya_id ("source \"" + $YY_mel_setup_b + "motion/motion_net.mel\";\n");
+};
+fclose $YY_maya_id;
+};
+/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SetUp_Open_US()
+{
+global string $YY_maya_fn;
+print $YY_maya_fn;
+system ("load " + $YY_maya_fn);
+};
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_Setup_Help()
+{
+	if(`window -q -ex YY_Setup_Help_Win`)
+	{
+	deleteUI YY_Setup_Help_Win;
+	};
+	window 
+		  -wh 220 420
+		  -s 1
+		  -mb 0
+		  -t "脚本安装程序使用帮助"
+		  YY_Setup_Help_Win;
+	string $YY_Del_Node_Help_Form = `formLayout`;
+	text -al "center" -l "脚本安装程序使用帮助" YY_Node_Main_Help_Text;
+    string $YY_Del_Node_Help_Scoll = `scrollField -ed 0 -po 1 -ww 1 -fn fixedWidthFont`;	
+string $YY_Del_Node_Help_Maini_Text_A = "首先选择需要安装的模块类型“设置模块”或者“动画模块”（设置模块和动画模块在安装成功以后在MAYA里是可以相互切换的，不同的是选择安装了哪个模块在MAYA启动的时候就优先显示哪个模块，使用起来比较方便，但工具是可以相互通用的。）然后选择安装类型。";
+	  $YY_Del_Node_Help_Maini_Text_A += "\n1.“安装地址文件及自启动文件”如果您首次安装此工具或者希望此工具在指定服务器上运行则需要安装第一项的地址文件。（地址文件为一个记载ALL MEL全部脚本所在地址的MEL文件，当设置好自启动项后MAYA启动时会首先访问此地址，然后再根据此地址读取各工具信息。）然后点击“安装”按钮安装完成。再点击刷新按钮，此时MAYA工具栏上就会出现YJL Mel的工具了，并且在工具架上会有相应的图标出现。";
+	  $YY_Del_Node_Help_Maini_Text_A += "\n2.“安装本机自启动文件”如果您已经安装过地址文件，或者只是需要安装此工具的一个客户端，那么选择此项并点击安装和刷新按钮。";
+	  $YY_Del_Node_Help_Maini_Text_A += "\n3.“拷贝到本机并安装”如果希望把所有工具考本到本机使用，请选择此项并安装刷新。此项可以把所有脚本（all mel）拷贝到本机c:/盘下并且自动建立地址文件及自启动安装文件。注意：使用拷贝到本机选项时请注意，此时脚本地址文件只指向本机地址，所以并不能接受网络或服务器上的工具信息，更不能接受网络或服务器上脚本工具的更新。";
+	  $YY_Del_Node_Help_Maini_Text_A += "\n4.“备份脚本到本机”此项可以拷贝网络或服务器上的全部脚本（all mel）文件夹里的所有脚本文件到本机指定的文件夹下。但不进行地址文件及自启动文件的安装。";
+	  $YY_Del_Node_Help_Maini_Text_A += "";
+	scrollField -e -tx $YY_Del_Node_Help_Maini_Text_A $YY_Del_Node_Help_Scoll;
+	
+	formLayout -e
+		-af YY_Node_Main_Help_Text "top" 5
+		-af YY_Node_Main_Help_Text "left" 10
+		-af YY_Node_Main_Help_Text "right" 10
+		
+		-ac $YY_Del_Node_Help_Scoll "top" 5 YY_Node_Main_Help_Text 
+		-af $YY_Del_Node_Help_Scoll "left" 5
+	    -af $YY_Del_Node_Help_Scoll "right" 5
+		-af $YY_Del_Node_Help_Scoll "bottom" 5
+		$YY_Del_Node_Help_Form;
+	showWindow YY_Setup_Help_Win;
+		window -e
+		  -wh 260 500
+		  		  YY_Setup_Help_Win;
+};
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+global proc YY_Setup_About()
+{
+if(`window -q -ex YY_Setup_About_Win`)
+{
+deleteUI YY_Setup_About_Win;
+};
+window 
+	  -wh 350 180
+	  -s 1
+	  -mb 0
+	  -t "关于脚本安装程序"
+	  YY_Setup_About_Win;
+columnLayout -rs 5 -cat "both" 5 -adj 1;
+text "制作：由继亮";
+text "QQ:78915620";
+text "E-Mail yjl811028@tom.com";
+text "制作时间：2009-04-15";
+text "如使用此工具中有任何问题或漏洞请及时通知本人";
+text "华强电影技术部 由继亮";
+showWindow YY_Setup_About_Win;
+
+window -e
+	  -wh 350 180
+	  YY_Setup_About_Win;
+};
+
+
+global proc YY_SetUpButton_Colour(string $YY_SU_BN)
+{
+button -e -l $YY_SU_BN setup_button;
+
+};
+

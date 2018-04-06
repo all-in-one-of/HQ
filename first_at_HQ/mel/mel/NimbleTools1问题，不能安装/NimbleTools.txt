@@ -1,0 +1,2 @@
++ NimbleTools 1.2 C:\Program Files\Autodesk\Maya2008\bin\plug-ins
+C:\Program Files\Autodesk\Maya2008\scripts\AETemplates

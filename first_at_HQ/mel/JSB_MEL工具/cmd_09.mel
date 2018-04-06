@@ -1,0 +1,70 @@
+
+if(`window -ex KKKWindow`) 
+	deleteUI KKKWindow; 
+window -title "约束（摄像机—灯光）" -w 100 -h 200 KKKWindow;
+	//scrollLayout -hst 0;
+	columnLayout -adj 1;
+	text"    ";
+
+	text -bgc 0.76 1 1 "     请依次选择： 灯光，物体，摄像机";
+	text -bgc 0.76 1 1 "     然后单击 'Constrain' 按钮";
+	text"             ";
+	text"             ";
+	button -bgc 0.8 0.9 0.2 -l "Constrain" -c"con( )" conButton;
+showWindow KKKWindow;  
+
+global proc con( )
+{
+if(`objExists Gp_light`)
+	rename "Gp_light" "Gp_light1";
+if(`objExists Gp_light1`)
+	rename "Gp_light1" "Gp_light2";
+if(`objExists Gp_light2`)
+	rename "Gp_light2" "Gp_light3";
+if(`objExists Gp_light3`)
+	rename "Gp_light3" "Gp_light4";
+if(`objExists Gp_light4`)
+	rename "Gp_light4" "Gp_light5";
+if(`objExists Gp_light5`)
+	rename "Gp_light5" "Gp_light6";
+if(`objExists Gp_light6`)
+	rename "Gp_light6" "Gp_light7";
+if(`objExists Gp_light7`)
+	rename "Gp_light7" "Gp_light8";
+if(`objExists Gp_light8`)
+	rename "Gp_light8" "Gp_light9";
+if(`objExists Gp_light9`)
+	rename "Gp_light9" "Gp_light10";
+if(`objExists Gp_light10`)
+	rename "Gp_light10" "Gp_light11";
+	if(`objExists plane_con`)
+	delete plane_con;
+	string $sl[]=`ls -sl`;
+	string $sl_lig=$sl[0];
+	string $sl_obj=$sl[1];
+	string $sl_cam=$sl[2];
+	polyPlane -n plane_con -w 1 -h 1 -sx 2 -sy 2 -ax 0 1 0 -tx 1 -ch 1;
+	setAttr "plane_con.visibility" 0;
+	select -r $sl_obj;
+	select -add plane_con ;
+	pointConstraint -offset 0 0 0 -weight 1;
+	float $plane_con_po[]=`pointPosition plane_con.vtx[4]`;
+	//string $obj1_tx=$sl_obj+".translateX";
+	//string $obj1_ty=$sl_obj+".translateY";
+	//string $obj1_tz=$sl_obj+".translateZ";
+	//float $object_tx = `getAttr $obj1_tx`;
+	//float $object_ty = `getAttr $obj1_ty`;
+	//float $object_tz = `getAttr $obj1_tz`;
+	select -r $sl_lig;
+	group -n Gp_light;
+	move  $plane_con_po[0] $plane_con_po[1] $plane_con_po[2] Gp_light.scalePivot Gp_light.rotatePivot;
+	//xform -os -piv $object_tx $object_ty $object_tz;
+	select -r $sl_obj;
+	select -add Gp_light ;
+	pointConstraint -offset 0 0 0 -weight 1;
+
+	select -r $sl_cam;
+	select -add Gp_light;
+	aimConstraint -mo -weight 1 -aimVector 1 0 0 -upVector 0 1 0 -worldUpType "vector" -worldUpVector 0 1 0;
+
+}

@@ -1,0 +1,13 @@
+defaultSpotLight(1, 1,1,1, 0, 40, 0, 10, 1, 0,0,0, 1);
+rename "spotLight1" "keyLight";
+move -r 19.76 22.1 20.838;
+rotate -r -os -42.6 39.2 0;
+defaultSpotLight(0.5, 1,1,1, 0, 40, 0, 10 ,0, 0,0,0, 1);
+rename "spotLight1" "fillLight";
+move -r -18.034 2.571 8.113;
+rotate -r -os -3 -66.2 0;
+setAttr "fillLightShape.color" -type double3 0.58425 0.63904 0.779;
+defaultSpotLight(1, 1,1,1, 0, 60, 0, 10, 0, 0,0,0, 1);
+rename "spotLight1" "backLight";
+move -r -7.937 8.956 -11.675;
+rotate -r -os -29.4 -144.8 0;

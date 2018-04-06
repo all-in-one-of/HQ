@@ -1,0 +1,26 @@
+
+
+
+int $i;int $a; int $b;
+for ($i=2;$i<40000;$i=$i+1)
+{
+ 
+ $a=`isConnected  defaultLightSet.message lightLinker1.link[$i].llnk`;
+ $b=`isConnected  defaultObjectSet.message lightLinker1.link[$i].olnk`;
+
+ if (($a==1)&&($b==1))
+ {
+ disconnectAttr defaultLightSet.message lightLinker1.link[$i].llnk;
+ disconnectAttr defaultObjectSet.message lightLinker1.link[$i].olnk;
+print($i+"aaa377377?77377377377377"+"\n");
+ 
+}
+};
+
+
+
+
+
+
+
+

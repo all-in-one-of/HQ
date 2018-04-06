@@ -1,0 +1,2 @@
+global string $JSB_address;
+$JSB_address = "//fs1003/电影技术部/技术部工具箱/JSB_MEL工具/";

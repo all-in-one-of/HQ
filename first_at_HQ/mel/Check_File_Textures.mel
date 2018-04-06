@@ -1,0 +1,119 @@
+
+//////////////////////////////////////////////////////////////
+if(`window -q -ex YY_TextureFile`)
+{
+deleteUI YY_TextureFile;
+};
+window -wh 500 700
+	   -s 1
+	   YY_TextureFile;
+columnLayout -rs 5 -adj 1;
+separator -style "double" -h 20;
+text -l "检查材质贴图工具";
+separator;
+rowLayout -nc 2 -cw2 150 100 -cl2 "center" "center";
+text -w 150 -l "检查材质贴图";
+button -w 150 -h 50 -l "检查材质贴图路径" -c YY_Ren_Proc_FileTextures;
+setParent ..;
+separator;
+/////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+separator;
+separator -h 10;
+showWindow YY_TextureFile;
+//////////////////////////////////////////
+global proc YY_Ren_Proc_FileTextures()
+{
+
+
+if(`window -q -ex YY_Ren_Text_Check_Win`)
+{
+deleteUI YY_Ren_Text_Check_Win;
+};
+window -wh 500 680
+	   -s 1
+	   YY_Ren_Text_Check_Win;
+columnLayout -rs 5 -adj 1;
+separator ;
+text -l "贴图检查窗口";
+separator ;
+text -l "不存在的贴图文件";
+separator ;
+scrollField -w 500 -h 180 -font "fixedWidthFont" YY_Ren_Check_FileTextures_Scroll;
+separator ;
+text -l "贴图路径指向错误";
+separator ;
+scrollField -w 500 -h 180 -font "fixedWidthFont" YY_Ren_Check_FileTextures_Scroll_2;
+text -l "参考路径错误文件";
+separator ;
+scrollField -w 500 -h 150 -font "fixedWidthFont" YY_Ren_Check_FileTextures_Scroll_3;
+
+showWindow YY_Ren_Text_Check_Win;
+
+window -e
+	   -wh 500 700
+	   YY_Ren_Text_Check_Win;
+////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+string $YY_Ren_Files[];
+$YY_Ren_Files = `ls -typ file`;
+string $YY_Ren_Files_i;
+for($YY_Ren_Files_i in $YY_Ren_Files)
+{
+string $YY_Ren_TextureName = $YY_Ren_Files_i + ".fileTextureName";
+//print ($YY_Ren_TextureName + "\n")	;
+string $YY_Ren_Filepath = `getAttr $YY_Ren_TextureName`;
+print ($YY_Ren_Filepath + "\n")	;
+string $YY_Ren_tok[];
+string $YY_Ren_t = `tokenize $YY_Ren_Filepath "/" $YY_Ren_tok`;
+string $YY_Ren_Adress_H = $YY_Ren_tok[0];
+print ($YY_Ren_Adress_H + "\n")	;
+int $YY_Ren_FileTest = `filetest -r $YY_Ren_Filepath`;
+if($YY_Ren_FileTest == 0)
+{
+string $YY_Ren_FileTextures_Error = "贴图 >>> " + $YY_Ren_Filepath + " >>> 不存在\n";
+scrollField -e -it $YY_Ren_FileTextures_Error YY_Ren_Check_FileTextures_Scroll;
+
+}
+else if($YY_Ren_Adress_H != "Y:")
+     {
+string $YY_Ren_FileTextures_Error_2 = "贴图 >>> " + $YY_Ren_Filepath + " >>> 不在 Y: 盘下\n";
+scrollField -e -it $YY_Ren_FileTextures_Error_2 YY_Ren_Check_FileTextures_Scroll_2;
+
+      };
+          };
+		  
+string $YY_Ren_Error_Files[] = `file -q -r`;
+string $YY_Ren_Error_eo;
+for($YY_Ren_Error_eo in $YY_Ren_Error_Files)
+{
+string $YY_Ren_Error_to[];
+tokenize $YY_Ren_Error_eo "/" $YY_Ren_Error_to;
+string $YY_Ren_Error_Files_Re = $YY_Ren_Error_to[0];
+if($YY_Ren_Error_Files_Re != "Y:")
+{
+string $YY_Ren_FileError = "文件 >>> " + $YY_Ren_Error_eo + " >>> 不在 Y: 盘下\n";
+scrollField -e -it $YY_Ren_FileError YY_Ren_Check_FileTextures_Scroll_3;
+};	
+       };  
+              };
+window -e
+	   -wh 350 200
+	   YY_TextureFile;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

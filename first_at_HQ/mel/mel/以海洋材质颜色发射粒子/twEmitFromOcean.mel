@@ -1,0 +1,365 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: twEmitFromOcean.mel
+''    Author:  
+''    Last Updated: Jan 22, 2007
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/mel_scripts/dynamics/4459.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+//-------------------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------------------//
+//	SCRIPT:	twEmitFromOcean.mel
+//	VERSION: 1.0
+//	AUTHOR:	Thom Wickes
+//	EMAIL: thomwickes@gmail.com		
+//
+//	DATE: December 18th  2006
+//
+//
+//	DESCRIPTION:	This script creates a nurbs plane and emits particles from it.
+//
+//			These particles are given a creation position according to a selected maya ocean
+//
+//			The particles will inherit the colour of the part of the ocean they are created at and
+//			will gradually become lighter.
+//
+//			The script adds 4 attributes to the particle shape node
+//				-Minimum Height: the minimum height of the wave particles will be created at
+//				-Minimum Brightness: the minimum brightness of the wave area the particles will be created at
+//				-Maximum Height: the maximum height from the wave the particles will reach before they're pulled down
+//				-Pull Down Force: the change in velocity the particles are pulled down at when they reach max height
+//
+//
+//
+//	PROCEDURES: twEmitFromOcean is the procedure that creates the UI
+//		    twSelectOcean is the procedure that checks the current selection and loads it into the UI
+//		    twCreateEmitter creates the plane and emits the particles from them
+//		    twCreateParticles creates the particles and emits them from the surface
+//		    twCreateParticleAttributes creates the particles attributes
+//		    twCreateParticleExpressions creates the creation/runtime expressions to attach the particles to the ocean waves
+//		    twCreateFields creates the dynamic fields if the user has chosen to create them in the UI
+// 		    twEmitParticles is the main procedure that creates the particles and emits them from the surface
+//
+//
+//-----------------------------------------------------------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------------------------------------------------------
+
+//============================================================================
+// PROCEDURE twEmitFromOcean is the procedure that creates the UI
+//============================================================================
+
+global proc twEmitFromOcean()
+{
+	// Deletes UI if it already exists
+	if (`window -exists twEmitFromOceanUI`)
+		deleteUI twEmitFromOceanUI;
+	//creates the window
+	window
+		-wh 300 450
+		-t "Emit Particles from a Maya Ocean"
+		-mxb off
+		twEmitFromOceanUI;
+
+		// Creates the main column layout
+		columnLayout  -bgc .9 .9 1 -adj true -cal "left" -cat "both" 5 -cw 50 -rs 5;
+			// Select ocean button and text field
+			text -bgc .9 .9 1 -al "left" -w 50 -fn boldLabelFont -l "1. Select Ocean:" selectLabel;
+			button -label "Load Ocean" -al "center" -bgc .8 .8 1 -c "twSelectOcean" twLoadOceanButton;
+			textFieldGrp -bgc .9 .9 1  -cw 1 100 -cal 1 "left" -label " Ocean : " -text "You must select an ocean" twLoadOceanTextField;
+			separator -bgc .9 .9 1 -height 5 -style "in";
+			// Particle settings section
+			text -bgc .9 .9 1 -al "left" -w 50 -fn boldLabelFont -l "2. Particle options:" particleLabel;
+			textFieldGrp -bgc .9 .9 1  -cw 1 100 -cal 1 "left" -label " Particle Name: " -text "sprayParticle1" twParticleNameField;
+			separator -bgc .9 .9 1 -height 5 -style "in";
+			// Emitter settings section
+			text -bgc .9 .9 1 -al "left" -w 50 -fn boldLabelFont -l "3. Emitter options:" emitterLabel;
+			textFieldGrp -bgc .9 .9 1  -cw 1 100 -cal 1 "left" -label " Emitter Name: " -text "sprayEmitter1" twEmitterNameField;
+			floatFieldGrp -bgc .9 .9 1 -nf 2 -l " Emitter Scale:" -cw 1 100 -cw 2 70 -cw 3 70
+			-cl3 "left" "left" "left"  -value1 100 -value2 100 emitterScaleFloat;
+			floatFieldGrp -bgc .9 .9 1 -nf 1 -l " Emitter Rate:" -cw 1 100 -cw 2 70 -cl2 "left" "left" -value1 10000 emitterRate;
+			floatFieldGrp -bgc .9 .9 1 -nf 1 -l " Emitter Speed:" -cw 1 100 -cw 2 70 -cl2 "left" "left" -value1 5 emitterSpeed;
+			floatFieldGrp -bgc .9 .9 1 -nf 1 -l " Speed Random:" -cw 1 100 -cw 2 70 -cl2 "left" "left" -value1 1 emitterSpeedRandom;
+			separator -bgc .9 .9 1 -height 5 -style "in";
+			// Fields Section with Check Boxes
+			text -bgc .9 .9 1 -al "left" -w 50 -fn boldLabelFont -l "4. Create Fields:" fieldsLabel;
+			checkBox -bgc .9 .9 1 -label "Create Gravity " gravCheckBox;
+			checkBox -bgc .9 .9 1 -label "Create Air" airCheckBox;
+			checkBox -bgc .9 .9 1 -label "Create Turbulence" turbCheckBox;
+			separator -bgc .9 .9 1 -height 5 -style "in";
+			// Activation button
+			text -bgc .9 .9 1 -al "left" -w 50 -fn boldLabelFont -l "5. Emit Particles:" emitLabel;
+			button -label "GO!" -al "center" -bgc .6 .6 1 -c "twEmitParticles" twEmitParticlesButton;
+
+	// Shows the window
+	showWindow twEmitFromOceanUI;
+}
+
+
+//============================================================================
+// PROCEDURE twSelectOcean is the procedure that checks the current
+// selection and loads it into the UI
+//============================================================================
+
+global proc twSelectOcean()
+{
+	string $selection[0];
+
+	$selection = `ls -sl`;
+	// checks to see if anything is selected
+	if (size($selection) == 0)
+	{
+		error "You have nothing selected.";
+	}
+	$selectionShape = `listRelatives -f -c $selection[0]`;
+ 	// checks to see if selection is a nurbs surface
+	if (`nodeType $selectionShape` != "nurbsSurface")
+	{
+		error "Wrong Object Type - You must select a maya ocean.";
+	}
+	// lists the nurbs plane shader connections and places them into $shapeTextureFiles
+	string $shapeTextureFiles[] = `listConnections ($selectionShape[0]+".instObjGroups[0]")`;
+	// lists the name of the shader connected to the Nurbs Plane
+	string $twOceanShader[] = `listConnections ($shapeTextureFiles[0]+".surfaceShader")`;
+	// checks to see if selected nurbs surface has ocean shader attached
+	if (`nodeType ($twOceanShader)` != "oceanShader")
+	{
+		error "Wrong Object Type - You must select a maya ocean.";
+	}
+
+	// loads name of selected ocean into textfield
+		textFieldGrp -e -tx $selection twLoadOceanTextField;
+}
+
+
+
+
+//==============================================================================
+// PROCEDURE twCreateEmitter
+// creates the plane and emits the particles from them
+//
+// ARGUEMENTS: $emitterName, $planeScaleX, $planeScaleZ, $emitterRate
+// $emitterSpeed, $emitterSpeedRandom
+//==============================================================================
+
+global proc twCreateEmitter(string $emitterName, float $planeScaleX, float $planeScaleZ, float $emitterRate, float $emitterSpeed, float $emitterSpeedRandom)
+{
+	// Create nurbs plane named after the emitter name
+	string $nurbsPlaneName = ($emitterName + "Plane");
+	nurbsPlane -n $nurbsPlaneName -ax 0 1 0;
+
+	// Set scale attributes of emission plane
+	setAttr ($nurbsPlaneName +".scaleX") $planeScaleX;
+	setAttr ($nurbsPlaneName +".scaleZ") $planeScaleZ;
+
+	// Set drawing overrides on emission plane
+	string $nurbsPlaneShape[0] = `listRelatives -c $nurbsPlaneName`;
+	setAttr ($nurbsPlaneShape[0] + ".overrideEnabled") 1;
+	setAttr ($nurbsPlaneShape[0] + ".overrideTexturing") 0;
+	setAttr ($nurbsPlaneShape[0] + ".overrideShading") 0;
+
+	select $nurbsPlaneName;
+	emitter -typ "surf" -n $emitterName -r $emitterRate -spd $emitterSpeed -srn  $emitterSpeedRandom -sro 0 -ssz 0;
+
+}
+
+//==============================================================================
+// PROCEDURE twCreateParticles
+// creates the particles and emits them from the surface
+//==============================================================================
+
+global proc twCreateParticles (string $emitterName, string $particleName)
+{
+	//creates teh particle using the user defined name
+	particle -n ($particleName);
+
+	// connects the particle to the emitter
+	connectDynamic -em $emitterName $particleName;
+
+	// Sets the lifespan mode to 'lifespanPP'
+	setAttr ($particleName +".lifespanMode") 3;
+	setAttr ($particleName +".particleRenderType") 1;
+	//setAttr ($particleShape +".tailFade") 1;
+	//setAttr ($particleShape +".tailSize") 2;
+
+
+}
+
+//==============================================================================
+// PROCEDURE twCreateParticleAttributes
+// creates the particles attributes
+//==============================================================================
+proc twCreateParticleAttributes (string $particleShape)
+{
+	// add PP attributes
+
+	select $particleShape;
+	addAttr -ln "rgbPP" -dt vectorArray $particleShape;
+	addAttr -ln "rgbPP0" -dt vectorArray $particleShape;
+	addAttr -ln "opacityPP" -dt doubleArray $particleShape;
+	addAttr -ln "opacityPP0" -dt doubleArray $particleShape;
+
+	// add other attributes
+	addAttr -ln minimumHeight -at double  -min 1 -dv 1 $particleShape;
+	addAttr -ln minimumBrightness -at double  -min 0 -max 100 -dv 85 $particleShape;
+	addAttr -ln maximumHeight -at double  -min 1 -dv 10 $particleShape;
+	addAttr -ln pullDownForce -at double  -min 0 -dv 0.01 $particleShape;
+	setAttr -keyable on ($particleShape + ".minimumHeight");
+	setAttr -keyable on ($particleShape + ".minimumBrightness");
+	setAttr -keyable on ($particleShape + ".maximumHeight");
+	setAttr -keyable on ($particleShape + ".pullDownForce");
+}
+
+//==============================================================================
+// PROCEDURE twCreateParticleExpressions
+// creates the creation/runtime expressions to attach the particles to the
+// ocean waves
+//==============================================================================
+
+global proc twCreateParticleExpressions (string $particleShape, string $twOceanShader)
+{
+
+	// defines the creation expression
+	string $twCreationExpression =
+		"//Emits the particles from the ocean surface\n"
+		+"	vector $particlePosition = position;\n"
+		+"	float $positionU = $particlePosition.x;\n"
+		+"	float $positionV = $particlePosition.z;\n"
+		+"	//use colorAtPoint to query the RGBA at the particle X + Z (positionU and V) \n"
+		+"	float $oceanRGBA[] = `colorAtPoint -output RGBA -u $positionU -v $positionV " + $twOceanShader + "`;\n"
+		+"	//specifies 'positionY' using the alpha\n"
+		+"	float $positionY = $oceanRGBA[3];\n"
+		+"	//sets the particle creation position\n"
+		+"	position = <<$positionU, $positionY, $positionV>>;\n"
+		+ "\n"
+		+"//sets the particles colour to the colour of its creation position (from colorAtPoint)\n"
+		+"	" + $particleShape + ".rgbPP = <<$oceanRGBA[0], $oceanRGBA[1], $oceanRGBA[2]>>;\n"
+		+ "\n"
+		+"//sets the lifeSpanPP\n"
+		+"	lifespanPP = rand(0.2, 1.5);\n"
+		+ "\n"
+		+"//if the particle is born lower than the minimum height...\n"
+		+"if ($positionY < " + $particleShape + ".minimumHeight)\n"
+		+"	//kill the particle\n"
+		+"	" + $particleShape + ".lifespanPP = 0;\n"
+		+ "\n"
+		+"//if the particle is darker than the minimum brightness (multiplied by 100)\n"
+		+"else if (" + $particleShape + ".rgbPP < (" + $particleShape + ".minimumBrightness / 100))\n"
+		+"	//kill the particle\n"
+		+"	" + $particleShape + ".lifespanPP = 0;\n";
+
+	// adds the creation expression to the particles
+	dynExpression -c -s $twCreationExpression $particleShape;
+
+	// defines the runtime expression
+	string $twRuntimeExpression =
+		"//check ocean height at particle position \n"
+		+"	vector $particlePosition = position;\n"
+		+"	float $oceanPositionU = $particlePosition.x;\n"
+		+"	float $oceanPositionV = $particlePosition.z;\n"
+		+"	float $oceanAlpha[] = `colorAtPoint -output A -u $oceanPositionU -v $oceanPositionV " + $twOceanShader + "`;\n"
+		+"	float $oceanPositionY = $oceanAlpha[0];\n"
+		+ "\n"
+		+ "//if particle goes lower than the wave height...\n"
+		+ "if($particlePosition.y <= $oceanPositionY)\n"
+		+ "	{\n"
+		+ "	" + $particleShape + ".position = <<$oceanPositionU, $oceanPositionY, $oceanPositionV>>;\n"
+		+ "	}\n"
+		+ "\n"
+		+ "//if particle reaches maximum height...\n"
+		+ "else if($particlePosition.y > $oceanPositionY + " + $particleShape + ".maximumHeight)\n"
+		+ "	{\n"
+		+ "	vector $particleVelocity = " + $particleShape + ".velocity;\n"
+		+ "	" + $particleShape + ".velocity = <<$particleVelocity.x, ($particleVelocity.y - " + $particleShape + ".pullDownForce), $particleVelocity.z>>;\n"
+		+ "	}\n"
+		+ "//lighten rgbPP every frame\n"
+		+ "" + $particleShape + ".rgbPP += 0.005;\n";
+
+	dynExpression -rbd -s $twRuntimeExpression $particleShape;
+}
+//============================================================================
+// PROCEDURE twCreateFields creates the dynamic fields if the user has
+// chosen to create them in the UI
+//============================================================================
+
+global proc twCreateFields (string $airOn, string $turbOn, string $gravOn, string $particleShape)
+{
+	if ($airOn == true)
+		{
+		select -cl;
+		air -n oceanSprayAirField;
+		connectDynamic -f oceanSprayAirField $particleShape;
+			}
+	if ($turbOn == true)
+		{
+		select -cl;
+		turbulence -n oceanSprayTurbField;
+		connectDynamic -f oceanSprayTurbField $particleShape;
+		}
+	if ($gravOn == true)
+		{
+		select -cl;
+		gravity -n oceanSprayGravField;
+		connectDynamic -f oceanSprayGravField $particleShape;
+
+		}
+
+}
+
+//============================================================================
+// PROCEDURE twEmitParticles is the main procedure that creates the
+// particles and emits them from the surface
+//============================================================================
+
+global proc twEmitParticles()
+{
+	// Retrieve information from user interface
+	string $airOn = `checkBox -q -value airCheckBox`;
+	string $turbOn = `checkBox -q -value turbCheckBox`;
+	string $gravOn = `checkBox -q -value gravCheckBox`;
+	string $emitterName = `textFieldGrp -q -tx twEmitterNameField`;
+	float $planeScaleX = `floatFieldGrp -q -v1 emitterScaleFloat`;
+	float $planeScaleZ = `floatFieldGrp -q -v2 emitterScaleFloat`;
+	float $emitterRate = `floatFieldGrp -q -v1 emitterRate`;
+	float $emitterSpeed = `floatFieldGrp -q -v1 emitterSpeed`;
+	float $emitterSpeedRandom = `floatFieldGrp -q -v1 emitterSpeedRandom`;
+	string $particleName = `textFieldGrp -q -tx twParticleNameField`;
+	string $twOceanTranslate = `textFieldGrp -q -tx twLoadOceanTextField`;
+	string $twOcean[0] = `listRelatives -f -c $twOceanTranslate`;
+
+	// check and see if text field is a nurbs surface
+	if (`nodeType ($twOcean)` != "nurbsSurface")
+		{
+		error "Wrong Object Type - You must select a maya ocean.";
+		}
+
+ 	// Lists the nurbs plane shader connections and places them into $shapeTextureFiles
+	string $shapeTextureFiles[0] = `listConnections ($twOcean[0]+".instObjGroups[0]")`;
+	// Lists the name of the shader connected to the Nurbs Plane
+	string $twOceanShader[0] = `listConnections ($shapeTextureFiles[0]+".surfaceShader")`;
+	if (`nodeType ($twOceanShader)` != "oceanShader")
+	{
+		error "Wrong Object Type - You must select a maya ocean.";
+	}
+	//continues with main procedure
+
+	//runs twCreateEmitter to create emitter
+	twCreateEmitter $emitterName $planeScaleX $planeScaleZ $emitterRate $emitterSpeed $emitterSpeedRandom;
+
+	twCreateParticles $emitterName $particleName;
+
+	// Declares the particle shape node and runs the create particle attributes procedure
+	string $particleShape[0] = `listRelatives -c $particleName`;
+	print (`checkBoxGrp -q -ex airCheckBox`);
+	twCreateParticleAttributes $particleShape[0];
+	twCreateParticleExpressions $particleShape[0] $twOceanShader[0];
+	twCreateFields $airOn $turbOn $gravOn $particleShape[0];
+
+
+	deleteUI twEmitFromOceanUI;
+}

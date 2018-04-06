@@ -1,0 +1,1211 @@
+/*  This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: sboTwister v0.1
+''    Author: Sebastien Blaineau-Ortega
+''    Last Updated: April 3, 2005
+''    Update/Change this file at:
+''    http://www.highend3d.com/maya/mel/?section=dynamics#3468
+''  
+''  History:
+''    sboTwister v0.0 on March 14, 2005 by Sebastien Blaineau
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+
+
+
+//This script creates a Tornado System
+//If you check the Extra Attributes of object "Twister"
+//you will be able to create a large variety of Tornadoes,
+// including Twisters following a Curve, and Complex Shape Tornadoes.
+// The instancer options are included in the script, so that you can easily 
+//replace the particles by an instanced object.
+
+
+
+//Place this script in your scripts directory, or
+
+//source this script, then type "sboTwister" in the command line. 
+
+
+
+//Copyright 2005 by Sebastien Blaineau-Ortega
+//sebastien_ortega@hotmail.com
+//sbo-works@hotmail.fr
+
+//Anyone can use and modify this script, as long as credit is given to the author for the original script.
+
+//Last Modified 13/03/05
+
+//Use and modify at your own risk.
+
+
+
+global proc sboTwister()
+{
+global string $objname;
+global int $ind;
+$ind=1;
+string $name1;
+string $name2;
+string $name3;
+$objname="twister";
+if(`objExists twister`){$ind=2;$objname="twister2";
+while(`objExists $objname`){
+$ind=$ind+1;
+$objname="twister"+$ind;
+}
+}
+
+
+
+
+circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -name $objname;
+scale 5 5 5;
+
+$name1="circles1";
+if($ind>1){$name1="circles1_"+$ind;};
+
+
+
+circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -name $name1;
+scale 5 5 5;
+move 0 10 0;
+select -tgl $objname;
+parent;
+
+
+
+$name1="start";
+if($ind>1){$name1="start"+$ind;};
+
+$name2="twisterParticle";
+if($ind>1){$name2="twisterParticle"+$ind;};
+
+
+
+emitter -pos 0 0 0 -type direction  -name ($name1) -r 40 -sro 0 -nuv 0 -cye none -cyi 1 -spd 10 -srn 3 -nsp 1 -tsp 0 -mxd 0 -mnd 0 -dx 1 -dy 0 -dz 0 -sp 0 ;
+
+particle -name $name2;
+connectDynamic -em ($name1) ($name2);
+defaultNavigation -dtv -d initialParticleSE.surfaceShader;
+defaultNavigation -dtv -d initialParticleSE.volumeShader;
+
+select -r $name1;
+move -r 0 0 5;
+select -tgl $objname;
+parent;
+
+select -r $objname;
+addAttr -ln start -at byte -dv 1 ($objname);
+addAttr -ln rate -at double  -min 0 -max 200 -dv 40 -k 1 ($objname);
+addAttr -ln frequency -at double  -min 0 -max 2 -dv 1 -k 1 ($objname);
+addAttr -ln frequency_random -at double  -min 0 -max 1 -k 1 -dv 0.6 ($objname);
+addAttr -ln velocity -at double  -min 0 -max 10 -dv 3 -k 1 ($objname);
+addAttr -ln spread -at double  -min 0 -max 100 -dv 100 -k 1 ($objname);
+
+addAttr -ln thickness -at double  -min 0 -max 1 -dv 0 -k 1 ($objname);
+
+addAttr -ln noise_percent -at double  -min 0 -max 100 -k 1 -dv 5 ($objname);
+addAttr -ln noise_factor -at double  -min 1 -max 4 -dv 2 -k 1 ($objname);
+addAttr -ln diagonal_percent -at double  -min 0 -max 100 -k 1 -dv 0 ($objname);
+addAttr -ln diagonal_amplitude -at double  -min 0 -max 10 -k 1 -dv 2 ($objname);
+addAttr -ln linearity_1 -at double  -min 0 -max 10 -dv 1 -k 1 ($objname);
+addAttr -ln upper_limit -at "enum" -en "Vanish:Infinite" -k 1  ($objname);
+
+addAttr -ln reverse -at bool -k 1 ($objname);
+addAttr -ln instanced -h 1 -dt "string"  -k 1 ($objname);
+addAttr -ln totCircle -h 1 -at byte -dv 1 -k 1 ($objname);
+
+
+	
+	$name1="setAttr "+$name2+"Shape.lifespanMode 3";
+	eval($name1);
+	
+	
+		addAttr -ln rotationType -at "enum" -en "Random:Flux:Freeze:" -k 1 ($objname);
+	
+		addAttr -ln random_speed -at double -defaultValue 0.005 -k 1 ($objname);
+	
+	addAttr -ln scale_factor -at double -defaultValue 1 -k 1 ($objname);
+	addAttr -ln scale_variations -at double -minValue 0 -maxValue 2 -defaultValue 0 -k 1 ($objname);
+	
+	
+
+$name2=$name2+"Shape";
+
+	
+		
+	
+	
+		addAttr -ln rotationPP -dt vectorArray $name2;
+	
+		addAttr -ln scalePP -dt vectorArray $name2;
+	
+		addAttr -ln rotationSpeedPP -dt vectorArray $name2;
+	
+
+
+
+addAttr -ln freqPP -dt doubleArray  $name2;
+addAttr -ln rayonPP -dt doubleArray  $name2;
+addAttr -ln rayon_factorPP -dt doubleArray  $name2;
+addAttr -ln velPP -dt doubleArray $name2;
+$name1=$objname+"Shape";
+
+addAttr -ln rot -at long -dv 0 -h 1 $name1;
+addAttr -ln diagonalPP  -dt doubleArray $name2;
+addAttr -ln clevelPP  -dt doubleArray $name2;
+
+
+if($ind==1){expression -s " global float $realscal[];global int $ind; global string $objname; int $ttot=twister.totCircle;string $name1;if(frame<twister.start){start.rate=0;}else{start.rate=twister.rate;};  int $test = 1; $realscal[0]=twister.scaleX;   while ($test <= $ttot) {$name1=\"getAttr circles\"+$test+\".scaleX\";$realscal[($test)]=$realscal[($test-1)]* (`eval($name1)`);$test=$test+1;} ;         int $a=`objExists instanceNode`;string $ade=`getAttr twister.instanced`;if($a==1){if((twister.rotationType==0)&&(twisterShape.rot==1)){print twisterShape.rot; delete instanceNode;string $name1=\"particleInstancer -name instanceNode -addObject -object \" + ($ade) + \" -position worldPosition -r rotationPP -scale scalePP twisterParticleShape\" ;eval($name1); twisterShape.rot=0;    };if((twister.rotationType!=0)&&(twisterShape.rot == 0)){delete instanceNode;string $name1=\"particleInstancer -name instanceNode -addObject -object \" + ($ade)+ \" -position worldPosition  -ad rotationPP -scale scalePP twisterParticleShape\" ;eval($name1);twisterShape.rot=1;};}";
+dynExpression -s "global int $ind;global string $objname;clevelPP=0;$i=particleId;  float $test=rand(100);   if($test<twister.noise_percent) { rayonPP=rand(twister.scaleX,(twister.scaleX)*(twister.noise_factor));  }else{ rayonPP=twister.scaleX- sqrt(4*acos(0)*twister.scaleX*twister.frequency)/10; rayonPP=rayonPP- (twister.thickness)*abs(noise(2318*particleId))*rayonPP  ;}; rayon_factorPP=(twister.scaleX)/(rayonPP)      ; freqPP=4*acos(0)*rayonPP*(rand((twister.frequency-((twister.frequency_random)/2)), (twister.frequency+((twister.frequency_random)/2)))) ; velPP=twister.velocity-0.01*(twister.spread)*twister.velocity*abs(noise(318*particleId));if(`objExists instanceNode`){ \nfloat $sscale	 = rand((1 - twister.scale_variations / 2),(1 + twister.scale_variations / 2)) * twister.scale_factor;scalePP = <<$sscale,$sscale,$sscale>>; rotationPP = sphrand(1);\n rotationSpeedPP = sphrand(twister.random_speed);\n}; diagonalPP=0; $test=rand(100);if($test<twister.diagonal_percent){diagonalPP=1;};                 " -c twisterParticleShape; 
+dynExpression -s "global int $ind; global float $realscal[];global string $objname;  string $up=\"circles\"+ (clevelPP+1);string $down;if(clevelPP==0){ $down=\"twister\";}else{ $down=\"circles\"+ clevelPP;}; $i=particleId;float $dda[]=`xform -q -t -ws ($down)`; vector $pos1=<<$dda[0],$dda[1],$dda[2]>>;$dda=`xform -q -t -ws ($up)`; vector $pos2=<<$dda[0],$dda[1],$dda[2]>>;              $abc=worldVelocity-velocity;$aaa=worldPosition-$pos1;vector $diff=unit($pos2-$pos1);float $az=(($aaa.x)*($diff.x))+   (($aaa.y)*($diff.y)) +(($aaa.z)*($diff.z)) ;int $lev=clevelPP; float $scaldown =$realscal[$lev];   float $scalup =$realscal[($lev+1)];     $name1=\"getAttr twister.linearity_\"+($lev+1);float $linear=`eval($name1)`;             $tmpa=((($scalup)-($scaldown))/(pow(mag($pos2-$pos1),$linear)));   rayonPP=($scaldown + $tmpa*pow(abs($az),$linear))/rayon_factorPP;   $aaa=$aaa-$az*$diff;   float $bcg=mag($aaa)-rayonPP; float $ab=acos(0);  $vvel=freqPP*unit(rot($aaa,$diff,$ab));if(twister.reverse){$vvel=-$vvel;} ;velocity=$vvel-$abc - (freqPP/rayonPP)*($bcg)*unit($aaa) +velPP*$diff; if(diagonalPP==1){velocity=velocity+(twister.diagonal_amplitude)*cos(5*time+356*$i)*$diff;} ; if(`objExists instanceNode`){ if(twister.rotationType==0){rotationPP += rotationSpeedPP;}else if(twister.rotationType==2){rotationPP=<<0,1,0>>;}else{ rotationPP =$aaa ; };};  if(($az>mag($pos2-$pos1))){$name1=\"circles\" + (clevelPP+2);if(`objExists ($name1)`){clevelPP=clevelPP+1;}else{ if(twister.upper_limit==0) {  lifespanPP=age; };};}; " -rbd twisterParticleShape;
+}else{
+
+
+
+
+$name3="global float $realscal"+$ind+"[]; global int $ind;int $ttot=twister"+$ind+".totCircle;string $name1;if(frame<twister"+$ind+".start){start"+$ind+".rate=0;}else{start"+$ind+".rate=twister"+$ind+".rate;};  int $test = 1; $realscal"+$ind+"[0]=twister"+$ind+".scaleX;   while ($test <= $ttot) {$name1=\"getAttr circles\"+$test+\"_"+$ind+".scaleX\"; $realscal"+$ind+"[($test)]=$realscal"+$ind+"[($test-1)]* (`eval($name1)`);$test=$test+1;} ;               int $a=`objExists instanceNode"+$ind+"`;string $ade=`getAttr twister"+$ind+".instanced`;if($a==1){if((twister"+$ind+".rotationType==0)&&(twister"+$ind+"Shape.rot==1)){ delete instanceNode"+$ind+";string $name1=\"particleInstancer -name instanceNode"+$ind+" -addObject -object \" + ($ade) + \" -position worldPosition -r rotationPP -scale scalePP twisterParticle"+$ind+"Shape\" ;eval($name1); twister"+$ind+"Shape.rot=0;    };if((twister"+$ind+".rotationType!=0)&&(twister"+$ind+"Shape.rot == 0)){delete instanceNode"+$ind+";string $name1=\"particleInstancer -name instanceNode"+$ind+" -addObject -object \" + ($ade)+ \" -position worldPosition  -ad rotationPP -scale scalePP twisterParticle"+$ind+"Shape\" ;eval($name1);twister"+$ind+"Shape.rot=1;};}";
+expression -s ($name3);
+
+$name3="global int $ind;clevelPP=0;$i=particleId;  float $test=rand(100);   if($test<twister"+$ind+".noise_percent) { rayonPP=rand(twister"+$ind+".scaleX,(twister"+$ind+".scaleX)*(twister"+$ind+".noise_factor));  }else{ rayonPP=twister"+$ind+".scaleX- sqrt(4*acos(0)*twister"+$ind+".scaleX*twister"+$ind+".frequency)/10; rayonPP=rayonPP- (twister"+$ind+".thickness)*abs(noise(2318*particleId))*rayonPP  ;}; rayon_factorPP=(twister"+$ind+".scaleX)/(rayonPP)      ; freqPP=4*acos(0)*rayonPP*(rand((twister"+$ind+".frequency-((twister"+$ind+".frequency_random)/2)), (twister"+$ind+".frequency+((twister"+$ind+".frequency_random)/2)))) ; velPP=twister"+$ind+".velocity-0.01*(twister"+$ind+".spread)*twister"+$ind+".velocity*abs(noise(318*particleId));if(`objExists instanceNode"+$ind+"`){  \nfloat $sscale = rand((1 - twister"+$ind+".scale_variations / 2),(1 + twister"+$ind+".scale_variations / 2)) * twister"+$ind+".scale_factor; scalePP = <<$sscale,$sscale,$sscale>>;rotationPP  = sphrand(1);rotationSpeedPP = sphrand(twister"+$ind+".random_speed);\n}; diagonalPP=0; $test=rand(100);if($test<twister"+$ind+".diagonal_percent){diagonalPP=1;};                 ";
+
+dynExpression -s ($name3) -c ($name2);
+
+
+$name3="global float $realscal"+$ind+"[];string $up=\"circles\"+ (clevelPP+1)+\"_"+$ind+"\";string $down;if(clevelPP==0){ $down=\"twister"+$ind+"\";}else{ $down=\"circles\"+ clevelPP+\"_"+$ind+"\";}; $i=particleId;float $dda[]=`xform -q -t -ws ($down)`; vector $pos1=<<$dda[0],$dda[1],$dda[2]>>;$dda=`xform -q -t -ws ($up)`; vector $pos2=<<$dda[0],$dda[1],$dda[2]>>;              $abc=worldVelocity-velocity;$aaa=worldPosition-$pos1;vector $diff=unit($pos2-$pos1);float $az=(($aaa.x)*($diff.x))+   (($aaa.y)*($diff.y)) +(($aaa.z)*($diff.z)) ;int $lev=clevelPP; float $scaldown =$realscal"+$ind+"[$lev];   float $scalup =$realscal"+$ind+"[($lev+1)];     $name1=\"getAttr twister"+$ind+".linearity_\"+($lev+1);float $linear=`eval($name1)`;             $tmpa=((($scalup)-($scaldown))/(pow(mag($pos2-$pos1),$linear)));   rayonPP=($scaldown + $tmpa*pow(abs($az),$linear))/rayon_factorPP;   $aaa=$aaa-$az*$diff;   float $bcg=mag($aaa)-rayonPP; float $ab=acos(0);  $vvel=freqPP*unit(rot($aaa,$diff,$ab));if(twister"+$ind+".reverse){$vvel=-$vvel;} ;velocity=$vvel-$abc - (freqPP/rayonPP)*($bcg)*unit($aaa) +velPP*$diff; if(diagonalPP==1){velocity=velocity+(twister"+$ind+".diagonal_amplitude)*cos(5*time+356*$i)*$diff;} ; if(`objExists instanceNode"+$ind+"`){ if(twister"+$ind+".rotationType==0){rotationPP += rotationSpeedPP;}else if(twister"+$ind+".rotationType==2){rotationPP=<<0,1,0>>;}else{ rotationPP =$aaa ; };};  if(($az>mag($pos2-$pos1))){$name1=\"circles\" + (clevelPP+2)+\"_"+$ind+"\";if(`objExists ($name1)`){clevelPP=clevelPP+1;}else{ if(twister"+$ind+".upper_limit==0) {  lifespanPP=age; };};}; " ;
+
+
+dynExpression -s ($name3) -rbd ($name2);
+
+}
+
+string $winname;
+$winname="sboTwister";
+if($ind>1){$winname="sboTwister"+$ind;};
+
+if(`window -exists $winname`)
+{deleteUI ($winname);};
+
+$name1="TWISTER";
+if($ind>1){$name1="TWISTER "+$ind;};
+
+
+
+window -title $name1 -mxb false -w 230 -h 360 ($winname);
+columnLayout -adj true -columnAlign "center" -cat "both" 10;
+
+
+
+separator -st none -h 12 ;
+
+
+
+text -fn "boldLabelFont" -label "All the parameters are in the";
+text -fn "boldLabelFont" -label "EXTRA ATTRIBUTES of object";
+text -fn "boldLabelFont" -label "TWISTER";
+
+text -label " ";
+text -label " " ;
+text -label "Here are some additional options :";
+
+
+
+
+
+columnLayout
+
+	-columnAttach "both" 5
+
+	-rowSpacing 10
+
+	-columnWidth 200
+
+columnLayout;
+
+
+
+separator -w 1000;
+
+
+
+button
+
+	-label "Instancer"
+
+	-ann "Replace the Twister particles by an object"
+	
+	-width 60
+
+	-command "instancing ();" 
+
+viewUButton;
+
+
+
+separator -w 1000;
+
+
+
+button
+
+	-label "Add 1 Circle"
+
+	-width 60
+	-ann "Add 1 circle to your Twister to create complex shapes"
+
+	-command "addcircle ();" 
+
+viewVButton;
+
+
+
+separator -w 1000;
+
+button
+
+	-label "Curve Path"
+
+	-width 60
+	-ann "Make your Twister follow a curve"
+	-command "courbe ();" 
+
+viewWButton;
+
+
+
+columnLayout
+
+	-columnAttach "both" 5
+
+	-rowSpacing 10
+
+	-columnWidth 200
+
+columnLayout;
+
+
+separator -w 1000;
+
+
+button
+
+	-label "Help"
+	-ann "Need some Help?"
+	-width 60
+
+	 
+
+	-command "sboHelp();" 
+
+viewXButton;
+
+
+
+separator -w 1000;
+
+
+
+
+
+	setParent ..;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+showWindow ($winname);
+
+
+select -r $objname;
+}
+proc instancing ()
+{
+
+if(`window -exists "instance"`)
+{deleteUI "instance";};
+//window -title " INSTANCE" -wh  200 100 "instance";
+window
+		-title "Instance"
+		-rtf true
+		-width 200
+		-height 130
+		-mnb false
+		-mxb false
+		"instance";
+
+columnLayout -adj true -columnAlign "center" -cat "both" 10;
+text -label "  ";
+text -fn "boldLabelFont" -label "Select the Object to instance";
+text -fn "boldLabelFont" -label "and press Ok";
+text -label " ";
+rowLayout
+			-adjustableColumn2 2
+			-numberOfColumns 2
+			-columnWidth2 85 85 
+			-columnAttach2 "both" "both" 
+			-columnAlign2 "center" "center" 
+			buttons
+		;
+			
+			button
+				-label "Ok"
+				-command "do_instancing();"
+			;
+			
+			button
+				-label "Cancel"
+				-command "deleteUI instance"
+			;
+setParent ..;
+
+
+
+
+
+
+
+
+showWindow "instance";
+}
+proc do_instancing ()
+{ 	
+
+deleteUI "instance";
+global int $ind;
+global string $objname;
+string $name1;	
+currentTime -e `playbackOptions -query -min`;
+string $name2;
+
+		string $select[];
+		$select= `ls -sl`;
+		
+		if((size($select)==0)||($select[0]==$objname))
+		{
+		
+		if($ind==1){
+		$name1="instanceNode";}else{$name1=("instanceNode"+$ind);}
+		if(`objExists $name1`){delete $name1;};
+		$name1="twisterParticleShape";
+if($ind>1){$name1="twisterParticle"+$ind+"Shape";};
+			
+		$name2="setAttr "+$name1+".visibility 1";
+		eval($name2);
+
+		 confirmDialog -t "No Instance" -m "Nothing Selected" -b "Continue";
+ 
+		
+		
+		
+		
+		}else{
+		
+		print $select;
+	
+
+	
+	
+	
+//	string $shape;
+		 string $xxform;
+		 $xxform=$select[0];
+//		$shapes[0] = $xform;
+		
+		   if ( "transform" != `nodeType $xxform` )
+		   {print "Please select a transform object";};
+
+	
+	
+$name1=	"setAttr -type \"string\" "+$objname+".instanced "+$select[0];
+eval($name1);
+
+$name1="twisterParticleShape";
+if($ind>1){$name1="twisterParticle"+$ind+"Shape";};
+
+string $name3="instanceNode";
+if($ind>1){$name3="instanceNode"+$ind;};
+
+if(`objExists ($name3)`){select -r ($name3);delete;};
+$name2="particleInstancer -addObject -name "+$name3+" -object "+$select[0]+ " -position worldPosition -r rotationPP -scale scalePP "+$name1;
+eval($name2);
+	
+$name2="setAttr "+$name1+".visibility 0";
+eval($name2);
+
+ confirmDialog -t ($select[0]) -m "Object Instanced" -b "Continue";
+ 
+select -r $objname;
+
+}
+
+}
+
+
+proc courbe()
+{
+
+
+if(`window -exists "curvePath"`)
+{deleteUI "curvePath";};
+
+
+window
+		-title "Curve Path"
+		-rtf true
+		-width 200
+		-height 130
+		-mnb false
+		-mxb false
+		"curvePath";
+
+columnLayout -adj true -columnAlign "center" -cat "both" 10;
+text -label " ";
+text -fn "boldLabelFont" -label "Select the Curve to follow";
+text -fn "boldLabelFont" -label "and press Ok";
+text -label "  ";
+rowLayout
+			-adjustableColumn2 2
+			-numberOfColumns 2
+			-columnWidth2 85 85 
+			-columnAttach2 "both" "both" 
+			-columnAlign2 "center" "center" 
+			buttons
+		;
+			
+			button
+				-label "Ok"
+				-command "do_courbe();"
+			;
+			
+			button
+				-label "Cancel"
+				-command "deleteUI curvePath"
+			;
+setParent ..;
+
+
+
+
+
+
+showWindow "curvePath";
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+proc do_courbe()
+
+{
+global int $ind;
+global string $objname;
+string $name1;
+string $name2;
+string $name3;
+float $longtot;
+string $selection[]= `ls -sl`;
+string $shape;
+string $xform;
+ $xform=$selection[0];
+$shapes[0] = $xform;
+int $error=0;
+   if ( `nodeType $xform`=="transform" )
+   {
+      $shapes = `listRelatives -fullPath -shapes $xform`;
+      $shape=$shapes[0];
+      
+      if ( "nurbsCurve" != `nodeType $shape`)
+      {$error=1;};
+      
+   }else if ( "nurbsCurve" == `nodeType $xform`)
+   {$shape=$xform; }
+   else{$error=1;}
+   ;
+   
+   if($error==1){
+   
+   confirmDialog -t "Oops..." -m "Please select a Curve Object" -b "Continue";
+ return;   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   }else{
+   
+deleteUI "curvePath";
+    int $size;
+   $size= `getAttr ($shape + ".spans" )`;
+   print $size;
+   
+   
+   if($ind==1){
+$name3=("twisterCurve");}else{$name3=("twisterCurve"+$ind);};
+   rebuildCurve -ch 1 -rpo 1 -rt 0 -end 1 -kr 2 -kcp 1 -kep 0 -kt 0 -s 0 -d 3 -tol 0.01 $xform;
+rename ($xform) ($name3);
+
+if($ind==1){
+$name1=("twisterParticleShape");}else{$name1=("twisterParticle"+$ind+"Shape");};
+dynExpression -s "" -c ($name1);
+
+dynExpression -s "" -rbd ($name1);
+
+delete ($objname);print "  "; delete ($name1);
+print " ";
+
+
+string $temp="pointPosition "+ ($name3) + ".u[0]";
+vector $vec1=`eval($temp)`;
+
+
+$temp="pointPosition "+ ($name3) + ".u[0.1]";
+vector $vec2=`eval($temp)`;
+
+
+vector $vec3=unit($vec2-$vec1);
+string $name1="circle -c  0 0 0   -nr "+ $vec3+     " -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -name "+$objname; 
+eval($name1);
+move -r ($vec1.x) ($vec1.y) ($vec1.z);
+select -tgl $name3;
+parent;
+
+
+$name1="pointPosition "+$objname+".u[0]";
+$vec2=`eval($name1)`;
+vector $vec4=unit(rot($vec3,($vec1-$vec2),acos(0)));
+if($ind==1){
+$name1="emitter -pos "+$vec2+" -type direction  -name \"start\" -r 40 -sro 0 -nuv 0 -cye none -cyi 1 -spd 10 -srn 3 -nsp 1 -tsp 0 -mxd 0 -mnd 0 -dx "+($vec4.x)+" -dy "+($vec4.y)+" -dz " +($vec4.z);
+}else{
+$name1="emitter -pos "+$vec2+" -type direction  -name \"start"+$ind+"\" -r 40 -sro 0 -nuv 0 -cye none -cyi 1 -spd 10 -srn 3 -nsp 1 -tsp 0 -mxd 0 -mnd 0 -dx "+($vec4.x)+" -dy "+($vec4.y)+" -dz " +($vec4.z);
+
+}
+eval($name1);
+
+if($ind==1){
+$name2=("twisterParticle");}else{$name2=("twisterParticle"+$ind);}
+particle -n ($name2);
+$name2=($name2+"Shape");
+if($ind==1){$name1="start";}else{$name1="start"+$ind;};
+connectDynamic -em ($name1) ($name2);
+defaultNavigation -dtv -d initialParticleSE.surfaceShader;
+defaultNavigation -dtv -d initialParticleSE.volumeShader;
+
+
+int $calc=(5*$size)+1;
+float $size2=$size;
+
+ $temp="pointPosition "+ ($name3) + ".u[" +($size2-0.02)+"]";
+ $vec2=`eval($temp)`;
+
+
+$temp="pointPosition "+ ($name3) + ".u["+ ($size2-0.12)+"]";
+$vec1=`eval($temp)`;
+
+
+
+$vec3=unit($vec2-$vec1);
+
+if($ind==1){
+$name1="circle -c  0 0 0 -nr "+ $vec3+     " -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -name circles1;"; }
+else{$name1="circle -c  0 0 0 -nr "+ $vec3+     " -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -name circles1_"+$ind;}
+eval($name1);
+move -r ($vec2.x) ($vec2.y) ($vec2.z);
+select -tgl $name3;
+parent;
+
+
+
+$name1="arclen "+ ($name3);
+$longtot=eval($name1);
+
+
+select -r ($objname);
+
+addAttr -ln start -at byte -dv 1 ($objname);
+addAttr -ln rate -at double  -min 0 -max 200 -dv 40 ($objname);
+addAttr -ln frequency -at double  -min 0 -max 2 -dv 1 ($objname);
+addAttr -ln frequency_random -at double  -min 0 -max 1 -dv 0.6 ($objname);
+addAttr -ln velocity -at double  -min 0 -max 10 -dv 3 ($objname);
+addAttr -ln spread -at double  -min 0 -max 100 -dv 100 ($objname);
+
+addAttr -ln thickness -at double  -min 0 -max 1 -dv 0 ($objname);
+
+addAttr -ln noise_percent -at double  -min 0 -max 100 -dv 5 ($objname);
+addAttr -ln noise_factor -at double  -min 1 -max 5 -dv 2 ($objname);
+addAttr -ln diagonal_percent -at double  -min 0 -max 100 -dv 0 ($objname);
+addAttr -ln diagonal_amplitude -at double  -min 0 -max 10 -dv 2 ($objname);
+addAttr -ln linearity_1 -at double  -min 0 -max 10 -dv 1 ($objname);
+
+
+addAttr -ln reverse -at bool ($objname);
+addAttr -ln instanced -h 1 -dt "string"  ($objname);
+
+
+addAttr -ln longtot -h 1 -at double ($objname);
+$name3="setAttr "+$objname+".longtot "+$longtot;
+eval($name3);
+
+addAttr -ln size -h 1 -at double  ($objname);
+
+$name3="setAttr "+$objname+".size "+$size2;
+eval($name3);	
+
+	
+		addAttr -ln rotationType -at "enum" -en "Random:Flux:Freeze:"  ($objname);
+	
+		addAttr -ln random_speed -at double -defaultValue 0.005 -k 1 ($objname);
+	
+		
+//	addAttr -ln freeze_flux_rotation_axis -at double3  |twister;
+//	addAttr -ln freeze_flux_rotation_axisX -at double -p freeze_flux_rotation_axis  |twister;
+//	addAttr -ln freeze_flux_rotation_axisY -at double -p freeze_flux_rotation_axis  |twister;
+//	addAttr -ln freeze_flux_rotation_axisZ -at double -p freeze_flux_rotation_axis  |twister;
+//	setAttr -type double3 |twister.freeze_flux_rotation_axis  0 0 0;
+	
+//	addAttr -ln freeze_flux_rotation_speed -at double  |twister;
+	
+	addAttr -ln scale_factor -at double -defaultValue 1 -k 1 ($objname);
+	addAttr -ln scale_variations -at double -hasMinValue 1 -minValue 0 -hasMaxValue 1 -maxValue 2 -defaultValue 0 -k 1 ($objname);
+	
+	
+
+
+
+	
+		addAttr -ln rotationPP -dt vectorArray ($name2);
+	
+		addAttr -ln scalePP -dt vectorArray ($name2);
+	
+		addAttr -ln rotationSpeedPP -dt vectorArray ($name2);
+	
+		
+
+
+
+addAttr -ln freqPP -dt doubleArray  ($name2);
+addAttr -ln rayonPP -dt doubleArray  ($name2);
+addAttr -ln rayon_factorPP -dt doubleArray ($name2);
+addAttr -ln velPP -dt doubleArray  ($name2);
+
+addAttr -ln diagonalPP  -dt doubleArray ($name2);
+
+addAttr -ln longePP -dt doubleArray ($name2);
+
+
+$name2="setAttr "+$name2+".lifespanMode 3";
+eval($name2);
+
+$name2=($objname+"Shape");
+addAttr -ln rot -at long -dv 0 -h 1 ($name2);
+
+
+if($ind==1){
+expression -s "if(frame<twister.start){start.rate=0;}else{start.rate=twister.rate;}; int $a=`objExists instanceNode`;string $ade=`getAttr twister.instanced`;if($a==1){if((twister.rotationType==0)&&(twisterShape.rot==1)){delete instanceNode;string $name1=\"particleInstancer -name instanceNode -addObject -object \" + ($ade) + \" -position worldPosition  -r rotationPP -scale scalePP twisterParticleShape\" ;eval($name1); twisterShape.rot=0;    };if((twister.rotationType!=0)&&(twisterShape.rot == 0)){delete instanceNode;string $name1=\"particleInstancer -name instanceNode -addObject -object \" + ($ade)+ \" -position worldPosition  -ad rotationSpeedPP -scale scalePP twisterParticleShape\" ;eval($name1);twisterShape.rot=1;};}";
+
+
+
+
+dynExpression -s "$i=particleId;float $test=rand(100); if($test<twister.noise_percent) { rayonPP=rand(twister.scaleX,(twister.scaleX)*(twister.noise_factor));  }else{rayonPP=twister.scaleX- sqrt(4*acos(0)*twister.scaleX*twister.frequency)/10; rayonPP=rayonPP- (twister.thickness)*abs(noise(2318*particleId))*rayonPP  ; }; longePP=0;  rayon_factorPP=(twister.scaleX)/(rayonPP)      ; freqPP=4*acos(0)*rayonPP*(rand((twister.frequency-((twister.frequency_random)/2)), (twister.frequency+((twister.frequency_random)/2)))) ; velPP=twister.velocity-0.01*(twister.spread)*twister.velocity*abs(noise(318*particleId));if(`objExists instanceNode`){  float $sscale = rand((1 - twister.scale_variations / 2),(1 + twister.scale_variations / 2)) * twister.scale_factor; scalePP = <<$sscale,$sscale,$sscale>>;rotationPP = sphrand(1);rotationSpeedPP = sphrand(twister.random_speed);\n           }    diagonalPP=0; $test=rand(100);if($test<twister.diagonal_percent){diagonalPP=1;};           " -c twisterParticleShape; 
+
+
+
+dynExpression -s " $i=particleId;vector $point1=`pointPosition (\"twisterCurve.u[\"+longePP+\"]\")`;vector $point2=`pointPosition (\"twisterCurve.u[\"+(longePP+0.1)+\"]\")`;vector $vec1=$point2-$point1;float $delt=velPP/(240*(mag($vec1)));vector $vec2=$point1-worldPosition;vector $vec3=unit(rot(unit($vec1),$vec2,acos(0)));  float $tmpa=(((circles1.scaleX)-(twister.scaleX))/(pow(twister.size,twister.linearity_1)));   rayonPP=(twister.scaleX + $tmpa*pow(longePP,twister.linearity_1))/rayon_factorPP; float $bcg=mag($vec2)-rayonPP;if(twister.reverse){$vec3=-$vec3;};    velocity=freqPP*$vec3   + velPP*$vec1 + (freqPP/rayonPP)*($bcg)*unit($vec2)+ ((($vec2.x)*($vec1.x))+ (($vec2.y)*($vec1.y))+  (($vec2.z)*($vec1.z) ))*$vec1 ;          longePP=longePP+$delt;if(diagonalPP==1){velocity=velocity+(twister.diagonal_amplitude)*cos(5*time+356*$i)*$vec1;} ;{ if(twister.rotationType==0){rotationPP += rotationSpeedPP;}else if(twister.rotationType==2){rotationPP=<<0,1,0>>;}else{rotationPP =$vec2 ; };}; vector $dda=`xform -q -t -ws circles1`; if(longePP>(twister.size-0.1)){lifespanPP=age; };  "-rbd twisterParticleShape;
+ }else{
+ 
+ $name2=("twisterParticle"+$ind+"Shape");
+ 
+$name1=  "if(frame<twister"+$ind+".start){start"+$ind+".rate=0;}else{start"+$ind+".rate=twister"+$ind+".rate;}; int $a=`objExists instanceNode"+$ind+"`;string $ade=`getAttr twister"+$ind+".instanced`;if($a==1){if((twister"+$ind+".rotationType==0)&&(twister"+$ind+"Shape.rot==1)){delete instanceNode"+$ind+";string $name1=\"particleInstancer -name instanceNode"+$ind+" -addObject -object \" + ($ade) + \" -position worldPosition -r rotationPP -scale scalePP twisterParticle"+$ind+"Shape\" ;eval($name1); twister"+$ind+"Shape.rot=0;    };if((twister"+$ind+".rotationType!=0)&&(twister"+$ind+"Shape.rot == 0)){delete instanceNode"+$ind+";string $name1=\"particleInstancer -name instanceNode"+$ind+" -addObject -object \" + ($ade)+ \" -position worldPosition -ad rotationPP -scale scalePP twisterParticle"+$ind+"Shape\" ;eval($name1);twister"+$ind+"Shape.rot=1;};}";
+ expression -s ($name1);
+ 
+ $name1="$i=particleId;float $test=rand(100); if($test<twister"+$ind+".noise_percent) { rayonPP=rand(twister"+$ind+".scaleX,(twister"+$ind+".scaleX)*(twister"+$ind+".noise_factor));  }else{rayonPP=twister"+$ind+".scaleX- sqrt(4*acos(0)*twister"+$ind+".scaleX*twister"+$ind+".frequency)/10; rayonPP=rayonPP- (twister"+$ind+".thickness)*abs(noise(2318*particleId))*rayonPP  ; }; longePP=0;  rayon_factorPP=(twister"+$ind+".scaleX)/(rayonPP)      ; freqPP=4*acos(0)*rayonPP*(rand((twister"+$ind+".frequency-((twister"+$ind+".frequency_random)/2)), (twister"+$ind+".frequency+((twister"+$ind+".frequency_random)/2)))) ; velPP=twister"+$ind+".velocity-0.01*(twister"+$ind+".spread)*twister"+$ind+".velocity*abs(noise(318*particleId));if(`objExists instanceNode"+$ind+"`){   float $sscale = rand((1 - twister"+$ind+".scale_variations / 2),(1 + twister"+$ind+".scale_variations / 2)) * twister"+$ind+".scale_factor; scalePP = <<$sscale,$sscale,$sscale>>;rotationPP = sphrand(1);rotationSpeedPP = sphrand(twister"+$ind+".random_speed);           }    diagonalPP=0; $test=rand(100);if($test<twister"+$ind+".diagonal_percent){diagonalPP=1;};           " ; 
+ 
+ dynExpression -s ($name1) -c ($name2); 
+ 
+$name1="$i=particleId;vector $point1=`pointPosition (\"twisterCurve"+$ind+".u[\"+longePP+\"]\")`;vector $point2=`pointPosition (\"twisterCurve"+$ind+".u[\"+(longePP+0.1)+\"]\")`;vector $vec1=$point2-$point1;float $delt=velPP/(240*(mag($vec1)));vector $vec2=$point1-worldPosition;vector $vec3=unit(rot(unit($vec1),$vec2,acos(0)));  float $tmpa=(((circles1_"+$ind+".scaleX)-(twister"+$ind+".scaleX))/(pow(twister"+$ind+".longtot,twister"+$ind+".linearity_1)));   rayonPP=(twister"+$ind+".scaleX + $tmpa*pow(longePP,twister"+$ind+".linearity_1))/rayon_factorPP; float $bcg=mag($vec2)-rayonPP;if(twister"+$ind+".reverse){$vec3=-$vec3;};    velocity=freqPP*$vec3   + velPP*$vec1 + (freqPP/rayonPP)*($bcg)*unit($vec2)+ ((($vec2.x)*($vec1.x))+ (($vec2.y)*($vec1.y))+  (($vec2.z)*($vec1.z) ))*$vec1 ;          longePP=longePP+$delt;if(diagonalPP==1){velocity=velocity+(twister"+$ind+".diagonal_amplitude)*cos(5*time+356*$i)*$vec1;} ;{ if(twister"+$ind+".rotationType==0){rotationPP += rotationSpeedPP;}else if(twister"+$ind+".rotationType==2){rotationPP=<<0,1,0>>;}else{ rotationPP =$vec2 ; };}; vector $dda=`xform -q -t -ws circles1_"+$ind+"`; if(longePP>(twister"+$ind+".size-0.1)){lifespanPP=age; };  ";
+ dynExpression -s ($name1) -rbd ($name2);
+ 
+
+ 
+ }
+
+
+
+string $winname;
+
+$winname="sboTwister";
+if($ind>1){$winname="sboTwister"+$ind;};
+
+if(`window -exists $winname`)
+{deleteUI ($winname);};
+
+
+$winname="sboCurveTwister";
+if($ind>1){$winname="sboCurveTwister"+$ind;};
+
+if(`window -exists $winname`)
+{deleteUI ($winname);};
+
+$name1="TWISTER";
+if($ind>1){$name1="TWISTER "+$ind;};
+
+
+
+window -title $name1 -mxb false -w 230 -h 280 ($winname);
+columnLayout -adj true -columnAlign "center" -cat "both" 10;
+
+
+
+separator -st none -h 12 ;
+
+
+
+text -fn "boldLabelFont" -label "All the parameters are in the";
+text -fn "boldLabelFont" -label "EXTRA ATTRIBUTES of object";
+text -fn "boldLabelFont" -label "TWISTER";
+
+text -label " ";
+text -label " " ;
+text -label "Here are some additional options :";
+
+
+
+
+
+columnLayout
+
+	-columnAttach "both" 5
+
+	-rowSpacing 10
+
+	-columnWidth 200
+
+columnLayout;
+
+
+
+separator -w 1000;
+
+
+
+button
+
+	-label "Instancer"
+
+	-ann "Replace the Twister particles by an object"
+	
+	-width 60
+
+	-command "instancing ();" 
+
+viewUButton;
+
+
+
+
+columnLayout
+
+	-columnAttach "both" 5
+
+	-rowSpacing 10
+
+	-columnWidth 200
+
+columnLayout;
+
+
+separator -w 1000;
+
+
+button
+
+	-label "Help"
+	-ann "Need some Help?"
+	-width 60
+
+	 
+
+	-command "sboHelp();" 
+
+viewVButton;
+
+
+
+separator -w 1000;
+
+
+
+
+
+	setParent ..;
+
+
+showWindow ($winname);
+
+
+select -r $objname;
+
+
+
+
+
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+proc addcircle()
+
+{
+
+global string $objname;
+global int $ind;
+string $name1;
+
+int $totCircle;
+
+$name1="getAttr "+$objname+".totCircle";
+$totCircle=`eval($name1)`;
+
+string $name2;
+if($ind==1){
+$name2="circles"+$totCircle;}
+else{$name2="circles"+$totCircle+"_"+$ind;};
+
+float $test1[];float $test2[];
+
+$totCircle =$totCircle+1;
+
+$name1="setAttr "+$objname+".totCircle "+$totCircle;
+eval($name1);
+
+
+if($ind==1){
+$name1="circles"+$totCircle;}else{$name1="circles"+$totCircle+"_"+$ind;};
+vector $vvec;
+string $name3;
+if($totCircle==2){
+$name3=$objname;
+}else
+{ 
+if($ind==1){
+$name3="circles"+($totCircle-2);}else{$name3="circles"+($totCircle-2)+"_"+$ind;};
+;
+}
+
+
+
+
+$test1=`xform -q -t -ws ($name2)`;
+$test2=`xform -q -t -ws ($name3)`;
+
+
+
+$vvec=2*<<$test1[0],$test1[1],$test1[2]>>-<<$test2[0],$test2[1],$test2[2]>>;
+
+
+circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -name ($name1);
+scale 5 5 5;
+move -r ($vvec.x) ($vvec.y) ($vvec.z);
+select -tgl ($name2);
+parent;
+
+$name2="linearity_"+$totCircle;
+addAttr -ln ($name2) -at double  -min 0 -max 10 -dv 1 ($objname);
+
+   confirmDialog -t ($name1) -m "New Circle added" -b "Continue";
+ return;   
+   
+
+
+
+}
+
+proc sboHelp ()
+{
+
+
+if(`window -exists "sboHelp"`)
+{deleteUI "sboHelp";};
+
+
+
+
+window -title "Help" -mxb false -w 400 -h 510 "sboHelp";
+columnLayout -adj true -columnAlign "center" -cat "both" 10;
+text -label " ";
+text -label "You need first to select the transform Node of your Object \"Twister\".";
+text -label "Open the Extra attributes in the Attribute Editor";
+text -label "All the parameters you need are listed there, even the emitter attributes";
+text -label " " ;
+
+
+button
+
+	-label "Description of the attributes"
+	-ann "See the meaning of each attribute"
+	-width 160
+	-command "sboHelpAttr();" 
+
+viewYButton;
+text -label " " ;
+separator -w 1000;
+
+
+text -label " ";
+text -label "Your Twister is made of 2 circles, which represent the lower and ";
+text -label "upper limit of the tornado. You can scale them to fit the wanted size";
+text -label "If you need to create complex shapes, you can \"Add Circles\" to your twister.";
+text -label "The tornado will then follow the path you created from circle to circle";
+text -label "taking into account the size of each circle.";
+text -label " ";
+
+separator -w 1000;
+
+text -label " ";
+text -label "To replace the Twister particles by an object, click on \"Instance Object\" ";
+text -label "on the main window. Select then the object to instance and press \"Ok\" ";
+text -label "If no object is selected, the current instance (if any) will be removed";
+text -label " ";
+
+separator -w 1000;
+text -label " ";
+text -label "You can also make the tornado follow a Curve. Click on \"Curve Path\" on the";
+text -label "Main Window, select the curve and press \"Ok\". The current Twister will then";
+text -label "be removed and replaced by the Curve Twister."; 
+text -label " ";
+separator -w 1000;
+text -label " ";
+
+button
+
+	-label "Close"
+	-width 60
+	-command "deleteUI \"sboHelp\";" 
+
+viewZButton;
+showWindow "sboHelp";
+}
+proc sboHelpAttr()
+{
+
+
+
+if(`window -exists "sboHelpAttr"`)
+{deleteUI "sboHelpAttr";};
+
+
+window -title "Help" -w 530 -h 825 "sboHelpAttrh";
+columnLayout -adj true -columnAlign "center" -cat "left" 10;
+
+
+text -label " " ;
+text  -fn "boldLabelFont" -label "LIST OF THE TWISTER ATTRIBUTES";
+text -label "(in the extra attributes of the AE)";
+text -label " ";
+
+separator -w 1000;
+columnLayout -adj true -columnAlign "left" ;
+
+text -label " ";
+text -label "START :                             The frame at which the emitter will start to flow";
+text -label "RATE :                               The rate of the emitter ";
+text -label "FREQUENCY :                   The circular speed (frequency) of your twister";
+text -label "FREQUENCY_RANDOM : Variation of the \"Frequency\" for each particle";
+text -label "VELOCITY :                       \"Vertical\" velocity of the tornado";
+text -label "SPREAD :                           Variation (%) of the \"Velocity\" for each particle";
+text -label "THICKNESS :                      From 0 (hollow) to 1 (full), the thickness of the tornado"; 
+text -label " ";
+separator -w 1000;
+text -label " " ;
+
+
+text -label "The Noise particles have a different radius fron the rest of the tornado:";
+text -label " ";
+
+
+text -label "NOISE_PERCENT :   Amount of \"Noise\" particles (%)";
+text -label "NOISE_FACTOR  :    Maximum Radius of the \"Noise\" particles ( * Twister Radius)";
+text -label " ";
+separator -w 1000;
+text -label " ";
+
+text -label "The Diagonal particles do not move in a \"horizontal\" plane";
+
+text -label " ";
+text -label "DIAGONAL_PERCENT :          Amount of \"Diagonal\" particles (%)";
+text -label "DIAGONAL_AMPLITUDE :       Amplitude of the \"up and douwn\" oscillations";
+text -label " ";
+separator -w 1000;
+text -label " ";
+text -label "LINEARITY_1 :       Increasing factor of the Tornado between the 2 circles :";
+text -label "                                     ( <1 -> Logarithmic)  ( >1 -> Exponential) (=1 -> Linear)";
+text -label " ";
+
+
+text -label "Each Time you Add 1 Circle, a new factor (linearity_2, linearity_3, etc...)";
+text  -label "     is created, so that this factor can change along the Twister";
+text -label " ";
+separator -w 1000;
+text -label " ";
+ 
+text -label "UPPER_LIMIT :      Determines wether the twister \"vanish\" after the last circle or not (infinite)";
+text -label "REVERSE :             Reverse the flow of the Twister";
+text -label " ";
+separator -w 1000;
+
+
+text  -label "The followong attributes concern exclusively the INSTANCING OPTIONS";
+
+text -label " ";
+text -label "ROTATION_TYPE :           Random -> each particles rotates randomly";
+text -label "                                               Flux   -> all the particles face the center of the tornado"  ;
+text -label "                                               Freeze -> the particles do not rotate";
+text -label "RANDOM_SPEED :            If the \"Rotation_type\" is random, determines the rotation speed of each particle";
+text -label "SCALE_FACTOR :              Multiply the scale of the instanced objed by a factor inside the Twister";
+text -label "SCALE_VARIATIONS  :      Variations of the object's sizes  inside the Twister";
+text -label " ";
+
+separator -w 1000;
+text -label " ";
+
+
+columnLayout -adj true -columnAlign "center" -cat "both" 100 ;
+button
+
+	-label "Close"
+	-width 60
+	-command "deleteUI \"sboHelpAttr\";" 
+
+viewCButton;
+showWindow "sboHelpAttrh";
+
+
+
+
+
+
+
+}
+
+//  TYPE sboTwister    to run the script

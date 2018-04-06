@@ -1,0 +1,40 @@
+if(`window -ex JSB_setup_window`)
+	deleteUI JSB_setup_window;
+
+window -width 50 -h 40 -t"JSB_mel小工具" JSB_setup_window;
+ columnLayout -adjustableColumn true ;
+
+text" ";
+		button -bgc 1 1 0.65 -al "center" -l "安装_Setup" -c "JSB_setup";
+  	showWindow JSB_setup_window;
+
+global proc JSB_setup()
+{
+	string $mel_dir = `whatIs "JSB_setup"`;
+//print ($mel_dir );
+	int $name_size = size($mel_dir) - 13;
+	string $JSB_mel_path = `substring $mel_dir 25 $name_size`;
+	string $userSetup_file = ( `internalVar -userScriptDir` + "userSetup.mel" );
+	string $JSB_address_file = ($JSB_mel_path + "\JSB_address.mel");
+
+	$fileId = `fopen $JSB_address_file "w"`;
+	fprint $fileId ("global string $JSB_address;\n");
+	fprint $fileId ("$JSB_address = \"" + $JSB_mel_path + "\"" + ";\n");
+ 	fclose $fileId;
+
+	$fileId = `fopen $userSetup_file "a"`;
+	fprint $fileId ("\nsource \"" + $JSB_mel_path + "JSB_address.mel\";\n");
+ 	fprint $fileId ("source \"" + $JSB_mel_path + "JSB_mel_list.mel\";\n\n");
+ 	fclose $fileId;
+ 	
+	confirmDialog -ma "center" -m "安装完成！" -b "OK";
+	eval("source \"" + `internalVar -userScriptDir` + "userSetup.mel\"");
+
+};
+
+
+
+
+
+
+

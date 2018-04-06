@@ -1,0 +1,51 @@
+Feather Light Faller
+© 2008 Max Boughen
+www.maxtextures.com
+--------------------------------------------------------------
+This tool allows the user to generate falling particles with control over height, speed, banking, spin and much more. The tool actually places expressions on the objects in question. To use, place the objects where you wish them to end up, then apply the settings. This can be done to many multiple objects at the same time.
+
+To Use:
+
+Execute in script editor.
+
+Place the objects where you intend them to end up with any rotation etc.
+Select them all and press 'Add Falling Leaf Effect' considering the following settings.
+
+- Leaf Fall Properties
+
+-	Frequency
+	The speed in which leaves execute one bank movement.
+-	Amplitude
+	Amplitude of the banking movement.
+-	Bank
+	The actual banking amount (rotation ratio) of the
+	objects.
+-	Spin
+	Speed of the spinning movement.
+-	Rotation Offset
+	Sets the offset of a secondary rotation on the objects.
+-	Rotation Speed
+	Sets the speed of the secondary rotation.
+
+- Leaf Fall Randomization
+
+This determines the randomization of each of the objects.
+
+- Frames, Duration and Origin Randomization
+
+-	Origin Height
+	Sets the height for the objects the start falling.
+-	Start Frame
+	Dictates when to start the falling.
+-	Fall Duration
+	How long the falling should last for.
+-	End Frame
+	What frame the falling should end on.
+
+- Frames, Duration and Origin Randomization
+
+This determines the randomization of each of the objects.
+
+Result:
+
+Upon pressing play the user will see the falling leaf result.

@@ -1,0 +1,277 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: dg Copy Keys
+''    Author:  
+''    Last Updated: Jan 12, 2008
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/mel_scripts/animation/4920.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+//////////////////////////////////////////////////////////////////
+// dgcopyKeys v1.0 - script file
+// Creation Date - 30.08.2007
+//
+//Author:   Denislav Georgiev
+//web:	    www.denisg.com
+//e-mail:	denis@denisg.com
+//
+// Description:
+//	 With this script you can copy keys from one object to all next opbjects in the selection
+//		with offset..
+//		
+//
+// 	
+//***************************************************************
+// source and call the script with "dgAddAttrs"
+//***************************************************************
+///////////////////////////////////////////////////////////////////
+global proc dgCopyKeys()
+{
+	if (`window -ex copyOfsKeyUI`)
+		deleteUI copyOfsKeyUI;
+	
+	window -t "dgCopyKeys (copy Keys With offset)"
+		   -s 0
+		   -toolbox 1
+		   -wh 250 425
+			copyOfsKeyUI;
+	
+	menuBarLayout menuBar;
+	menu -l "Help" helpMenu;
+		menuItem -l "About" -c "aboutWin()";
+	
+	columnLayout -adj 1;
+	
+	
+	//// Copy Translate Keys......
+		separator -style "double" -h 15 sep1;
+		text -l "Copy Translate Keys" copyTransText;
+		checkBox -l "Translate X" -align "left"  transXCheckBox;
+		checkBox -l "Translate Y" -align "left"  transYCheckBox;
+		checkBox -l "Translate Z" -align "left"  transZCheckBox;
+		floatFieldGrp -numberOfFields 1
+	 		-label "Offset" -extraLabel "Frames"
+			-cw 2 40
+	 		-value1 1
+			copyTranslateFFG;
+		button -l "Copy Translate" -c "copyTransP()" copyTransButton;
+	
+	
+	
+		//// Copy Rotate Keys......
+		separator -style "in" -h 15 sep2;
+		text -l "Copy Rotate Keys" copyRotText;
+		checkBox -l "Rotate X" -align "left" RotXCheckBox;
+		checkBox -l "Rotate Y" -align "left" RotYCheckBox;
+		checkBox -l "Rotate Z" -align "left" RotZCheckBox;
+		floatFieldGrp -numberOfFields 1
+	 		-label "Offset" -extraLabel "Frames"
+			-cw 2 40
+	 		-value1 1
+			copyRotateFFG;
+		button -l "Copy Rotate" -c "copyRotsP()" copyRotButton;
+		
+		
+			//// Copy Scale Keys......
+		separator -style "in" -h 15 sep3;
+		text -l "Copy Rotate Keys" copySclText;
+		checkBox -l "Scale X" -align "left" ScaleXCheckBox;
+		checkBox -l "Scale Y" -align "left" ScaleYCheckBox;
+		checkBox -l "Scale Z" -align "left" ScaleZCheckBox;
+		floatFieldGrp -numberOfFields 1
+	 		-label "Offset" -extraLabel "Frames"
+			-cw 2 40
+	 		-value1 1
+			copyScaleFFG;
+		button -l "Copy Scale" -c "copySclP()" copySclButton;
+		separator -style "double" -h 15 sep4;
+		
+	showWindow copyOfsKeyUI;
+}
+
+global proc copyTransP()
+{
+	string $sels[] = `ls -sl`;
+	int $transXCheckB = `checkBox -q -v transXCheckBox`;
+	int $transYCheckB = `checkBox -q -v transYCheckBox`;
+	int $transZCheckB = `checkBox -q -v transZCheckBox`;
+	
+	float $offsetTrans = `floatFieldGrp -q -v1 copyTranslateFFG`;
+	
+	float $key[] = `keyframe -q $sels[0]`;
+////////////////////////////////////////////////////////////////////////////	
+//// Translate Copy Procedures
+////////////////////////////////////////////////////////////////////////////
+	
+	if ($transXCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "translateX" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetTrans);
+			pasteKey -option "replaceCompletely" -at "translateX" -time $fallOff $sels[$i];
+		}
+	}
+	
+	
+	if ($transYCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "translateY" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetTrans);
+			pasteKey -option "replaceCompletely" -at "translateY" -time $fallOff $sels[$i];
+		}
+	}
+	
+	
+	if ($transZCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "translateZ" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetTrans);
+			pasteKey -option "replaceCompletely" -at "translateZ" -time $fallOff $sels[$i];
+		}
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////	
+//// Rotate Copy Procedures
+////////////////////////////////////////////////////////////////////////////
+global proc copyRotsP()
+{	
+	
+	string $sels[] = `ls -sl`;
+	
+	float $offsetRot = `floatFieldGrp -q -v1 copyRotateFFG`;
+	
+	int $rotsXCheckB = `checkBox -q -v RotXCheckBox`;
+	int $rotsYCheckB = `checkBox -q -v RotYCheckBox`;
+	int $rotsZCheckB = `checkBox -q -v RotZCheckBox`;	
+
+	if ($rotsXCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "rotateX" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetRot);
+			pasteKey -option "replaceCompletely" -at "rotateX" -time $fallOff $sels[$i];
+		}
+	}
+	
+	
+		if ($rotsYCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "rotateY" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetRot);
+			pasteKey -option "replaceCompletely" -at "rotateY" -time $fallOff $sels[$i];
+		}
+	}
+	
+	
+		if ($rotsZCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "rotateZ" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetRot);
+			pasteKey -option "replaceCompletely" -at "rotateZ" -time $fallOff $sels[$i];
+		}
+	}
+}
+
+
+global proc copySclP()
+{
+	string $sels[] = `ls -sl`;
+	
+	int $sclsXCheckB = `checkBox -q -v ScaleXCheckBox`;
+	int $sclsYCheckB = `checkBox -q -v ScaleYCheckBox`;
+	int $sclsZCheckB = `checkBox -q -v ScaleZCheckBox`;
+	
+	float $offsetScale = `floatFieldGrp -q -v1 copyScaleFFG`;
+
+	if ($sclsXCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "scaleX" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetScale);
+			pasteKey -option "replaceCompletely" -at "scaleX" -time $fallOff $sels[$i];
+		}
+	}
+	
+	
+	if ($sclsYCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "scaleY" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetScale);
+			pasteKey -option "replaceCompletely" -at "scaleY" -time $fallOff $sels[$i];
+		}
+	}
+	
+	
+	if ($sclsZCheckB == 1)
+	{
+		for ($i = 1; $i<size($sels); $i++)
+		{
+			$lastKey = $i - 1;
+			$key = `keyframe -q $sels[$lastKey]`;
+			copyKey -at "scaleZ" $sels[$lastKey];
+			int $fallOff = ($key[0] + $offsetScale);
+			pasteKey -option "replaceCompletely" -at "scaleZ" -time $fallOff $sels[$i];
+		}
+	}
+}
+
+
+///////////////////////////////
+//// About stuff
+
+///// About UI ////////////////////////////////////////////////////
+global proc aboutWin()
+{
+		if (`window -exists aboutUI`)
+		deleteUI aboutUI;
+	
+	window -t "About"
+		-wh 220	170
+		-s 0
+		aboutUI;
+	
+	columnLayout -adj 1 helpColumn;
+		
+		text -l "\ndgCopyKeys  version 1.0";
+		text -l "\n\n\n Author:       Denislav Georgiev" -align "left";
+		text -l "\n Web:          www.puppetTD.com" -align "left";
+		text -l " E-mail:        denis@puppetTD.com" -align "left";
+		
+	showWindow aboutUI;
+}

@@ -1,0 +1,451 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: texture2Particles
+''    Author:  
+''    Last Updated: Mar 17, 2009
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/mel_scripts/dynamics/4138.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+// Texture to Particles - version: 2.0.0
+//
+// written by Boris Bruchhaus
+// boris@ambientfx.de
+//
+// This script creates particles accordingly to the luminance of a file-texture
+//
+// Start by setting the desired samples and open or assign a file-texture.
+// The script scans the texture in x and y.
+// If the luminance of the texture at a sample-point is greater then 0.5, a particle is created at that position.
+//
+// Useful for words made of particles etc.
+//
+// V2 - Update
+// ===========
+//
+// if a nurbs-surface is selected, particles are drawn accordingly to the corresponding goal-values
+
+
+
+// =============== scan the texture and create particles ================
+// ======================================================================
+
+
+global proc scanTexture()
+{
+
+global string $textureName;
+global string $surfaceName;
+global string $particleName;
+global float $flipUV;
+global float $createNormalPP;
+global vector $upVector;
+global int $resolution;
+global float $xCoord[];
+global float $yCoord[];
+global int $particleCount;
+global float $scanX;
+global float $scanY;
+global vector $scanOutput;
+global float $scanSum;
+global int $imageResX;
+global int $imageResY;
+global float $imageRatio;
+global int $resolutionX;
+global int $resolutionY;
+global float $stepX;
+global float $stepY;
+global float $aspectRatio;
+
+$tempName = $surfaceName + "particles";
+
+$imageResX = `getAttr ($textureName + ".outSizeX")`;
+$imageResY = `getAttr ($textureName + ".outSizeY")`;
+
+$imageRatio = $imageResX/$imageResY;
+$resolutionX = trunc($resolution * $imageRatio * $aspectRatio);
+$resolutionY = $resolution;
+
+if ($resolutionX != 0) {$stepX = $resolutionX;} else {$stepX = 1;}
+if ($resolutionY != 0) {$stepY = $resolutionY;} else {$stepY = 1;}
+
+
+// scan the texture ----------------------
+
+for ($i=0 ; $i<=$resolutionY; $i++)
+{
+	for ($j=0 ; $j<=$resolutionX; $j++)
+	{
+	$scanOutput = `colorAtPoint -o RGB -u (1-$scanX) -v $scanY $textureName`;
+	$scanSum = ($scanOutput.x + $scanOutput.y + $scanOutput.z) * 0.3333;
+	if ($scanSum > .5)
+		{
+		$xCoord[$particleCount] = $scanX;
+		$yCoord[$particleCount] = $scanY;
+		$particleCount += 1;
+		}
+	$scanX += (1/$stepX);
+	}
+$scanX = 0;
+$scanY += (1/$stepY);
+}
+
+// draw particles ----------------------
+
+global string $particleCoordinates;
+
+for ($i=0 ; $i<$particleCount ; $i++)
+{
+
+
+if ($surfaceName != "")
+{
+
+if ($flipUV != 1)
+{
+vector $surfaceCoord = `pointOnSurface -u ($yCoord[$i]) -v ($xCoord[$i]) -position $surfaceName`;
+$particleCoordinates += ("-p " + $surfaceCoord + " ");
+}
+else {
+vector $surfaceCoord = `pointOnSurface -u ($xCoord[$i]) -v ($yCoord[$i]) -position $surfaceName`;
+$particleCoordinates += ("-p " + $surfaceCoord + " ");
+}
+
+
+} else {
+$particleCoordinates += ("-p " + ($xCoord[$i]*$imageRatio) + " 0 " + $yCoord[$i] + " ");
+}
+
+
+}
+
+
+string $particleCommand = "particle " + $particleCoordinates + " -c 1";
+eval $particleCommand;
+rename $tempName;
+$particleNameArr = `ls -sl`;
+$particleName = $particleNameArr[0];
+pickWalkDown;
+$particleShapeNameArr = `ls -sl`;
+$particleShapeName = $particleShapeNameArr[0];
+pickWalkUp;
+
+
+
+if ($surfaceName != "")
+{
+
+
+	goal -w 1 -utr 0   -g $surfaceName  $particleName;
+	addAttr -ln goalU -dt doubleArray $particleShapeName;
+	addAttr -ln goalU0 -dt doubleArray $particleShapeName;
+	addAttr -ln goalV -dt doubleArray $particleShapeName;
+	addAttr -ln goalV0 -dt doubleArray $particleShapeName;
+	addAttr -ln upVector -dt vectorArray $particleShapeName;
+
+if ($createNormalPP == 1){
+	if(!`exists addPerParticleGoalPointAttr`){source "AEdynObjectGoalWeightNew.mel";}
+	addPerParticleGoalPointAttr ($particleName + "Shape") 0 WorldNormal vectorArray;
+}
+	$upVectorX = $upVector.x;
+	$upVectorY = $upVector.y;
+	$upVectorZ = $upVector.z;
+
+	for ($i=0 ; $i<$particleCount ; $i++)
+	{
+
+	$goalU = $xCoord[$i];
+	$goalV = $yCoord[$i];
+	
+
+	if ($flipUV == 1)
+	{
+	particle -e -attribute goalU -id $i -floatValue $goalU $particleName;
+	particle -e -attribute goalV -id $i -floatValue $goalV $particleName;
+	particle -e -attribute upVector -id $i -vectorValue $upVectorX $upVectorY $upVectorZ $particleName;
+	} else {
+	particle -e -attribute goalU -id $i -floatValue $goalV $particleName;
+	particle -e -attribute goalV -id $i -floatValue $goalU $particleName;
+	particle -e -attribute upVector -id $i -vectorValue $upVectorX $upVectorY $upVectorZ $particleName;
+	}
+	
+	}
+	saveInitialState $particleName;
+
+
+}
+
+
+
+
+deleteUI Texture2Particles;
+}
+
+// ======================== UI commands =================================
+// ======================================================================
+
+
+// change Resolution ----------------------
+
+global proc ChangeResolution()
+{
+global int $resolution;
+$resolution = `intSliderGrp -query -value sResolution`;
+
+UpdateValues;
+
+}
+
+// change Aspect Ratio ----------------------
+
+global proc ChangeAspectRatio()
+{
+global float $aspectRatio;
+$aspectRatio = `floatSliderGrp -query -value sAspectRatio`;
+
+UpdateValues;
+
+}
+
+// Open Texture ----------------------
+
+global proc OpenTexture()
+{
+global int $size;
+global string $textureName;
+source AEfileTemplate.mel;
+$textureName = `shadingNode -asTexture file`;
+$workspace = `workspace -q -fn`;
+setWorkingDirectory $workspace "image" "sourceImages";
+fileBrowser (("AEassignTextureCB  "+$textureName+".fileTextureName"), "Open", "image", 0);
+
+UpdateValues;
+
+}
+
+// Assign Texture ----------------------
+
+global proc AssignTexture()
+{
+global string $textureName;
+$sel = `ls -sl`;
+string $textureName = $sel[0];
+UpdateValues;
+
+}
+
+// Assign Surface ----------------------
+
+global proc AssignSurface()
+{
+global string $surfaceName;
+$sel = `ls -sl`;
+string $surfaceName = $sel[0];
+UpdateValues;
+}
+
+global proc DeleteSurface()
+{
+global string $surfaceName;
+string $surfaceName = "";
+UpdateValues;
+}
+
+global proc flipUVon()
+{
+global float $flipUV;
+$flipUV = 1;
+}
+
+global proc flipUVoff()
+{
+global float $flipUV;
+$flipUV = 0;
+}
+
+global proc createNormalPPOn()
+{
+global float $createNormalPP;
+$createNormalPP = 1;
+}
+
+global proc createNormalPPOff()
+{
+global float $createNormalPP;
+$createNormalPP = 0;
+}
+
+global proc setUpVectorX()
+{
+global vector $upVector;
+$upVector = <<1,0,0>>;
+}
+
+global proc setUpVectorY()
+{
+global vector $upVector;
+$upVector = <<0,1,0>>;
+}
+
+global proc setUpVectorZ()
+{
+global vector $upVector;
+$upVector = <<0,0,1>>;
+}
+
+
+// Update Values ----------------------
+
+
+global proc UpdateValues()
+{
+
+global string $textureName;
+global string $surfaceName;
+global int $imageResX;
+global int $imageResY;
+global float $imageRatio;
+global int $resolutionX;
+global int $resolutionY;
+global int $resolution;
+global int $particleMax;
+global float $aspectRatio;
+
+if ($textureName != "")
+{
+$imageResX = `getAttr ($textureName + ".outSizeX")`;
+$imageResY = `getAttr ($textureName + ".outSizeY")`;
+$imageRatio = $imageResX/$imageResY;
+$resolutionX = trunc($resolution * $imageRatio * $aspectRatio);
+$resolutionY = $resolution;
+$particleMax = $resolutionX * $resolutionY;
+}
+
+textFieldGrp -edit -text $textureName sTextureName;
+textFieldGrp -edit -text $surfaceName sSurfaceName;
+textFieldGrp -edit -text $imageResX simageResX;
+textFieldGrp -edit -text $imageResY simageResY;
+textFieldGrp -edit -text $resolutionX sresolutionX;
+textFieldGrp -edit -text $resolutionY sresolutionY;
+textFieldGrp -edit -text $particleMax sparticleMax;
+
+}
+
+// ================== Start / Initializing ==============================
+// ======================================================================
+
+
+global proc texture2Particles()
+{
+
+// initalizing ----------------------
+
+global string $textureName;
+global string $surfaceName;
+global float $flipUV;
+global float $createNormalPP;
+global vector $upVector;
+global int $resolution;
+global float $xCoord[];
+global float $yCoord[];
+global int $particleCount;
+global int $particleMax;
+global float $scanX;
+global float $scanY;
+global vector $scanOutput;
+global int $imageResX;
+global int $imageResY;
+global float $imageRatio;
+global int $resolutionX;
+global int $resolutionY;
+global string $particleCoordinates;
+
+global float $aspectRatio;
+float $aspectRatioMin = .1;
+float $aspectRatioMax = 10;
+
+
+if ($resolution == 0)
+{
+$resolution = 20;
+$aspectRatio = 1;
+}
+
+
+$resolutionMin = 2;
+$resolutionMax = 1000;
+int $i=0;
+int $j=0;
+$particleCount = 0;
+$scanX = 0;
+$scanY = 0;
+$scanOutput = 0;
+$imageResX = 0;
+$imageResY = 0;
+$imageRatio = 0;
+$resolutionX = 0;
+$resolutionY = 0;
+$particleCoordinates = "";
+//$textureName = "";
+//$surfaceName = "";
+//UpdateValues;
+$flipUV = 0;
+$xCoord[0] = 0;
+$yCoord[0] = 0;
+$createNormalPP = 0;
+$upVector = <<0,1,0>>;
+$particleMax = 0;
+
+
+// UI ----------------------
+
+if (`window -exists Texture2Particles`) deleteUI Texture2Particles;
+
+window -widthHeight 200 200 -rtf 1 -s 0 -title "Texture2Particles" Texture2Particles;
+columnLayout -adjustableColumn true;
+
+intSliderGrp -field true -label "Samples in Y" -min $resolutionMin -max $resolutionMax
+		-en true -value $resolution
+		-cc ChangeResolution sResolution;
+floatSliderGrp -field true -label "Aspect Ratio" -min $aspectRatioMin -max $aspectRatioMax
+		-en true -value $aspectRatio
+		-cc ChangeAspectRatio sAspectRatio;
+
+text " ";
+button -label "Assign New File-Texture" -w 200 -align center -c OpenTexture -bgc .5 .8 .5;
+button -label "Assign Selected File-Texture" -w 200 -align center -c AssignTexture -bgc .5 .8 .5;
+textFieldGrp -label "Texture Name" -ed false -text $textureName sTextureName;
+text " ";
+button -label "Assign Selected Surface" -w 200 -align center -c AssignSurface -bgc .5 .8 .5;
+button -label "Deselect Surface" -w 200 -align center -c DeleteSurface -bgc .5 .8 .5;
+
+textFieldGrp -label "Surface Name" -ed false -text $surfaceName sSurfaceName;
+text "works with NURBS surfaces";
+text "surface should be in the 0-1 parameter range and facing upwards (Y)";
+text "if no surface is selected particle-grid will be the result";
+text " ";
+checkBox -label "Flip UV" -onCommand flipUVon -offCommand flipUVoff -align "left";
+text " ";
+textFieldGrp -label "Image Resolution X" -ed false -text $imageResX simageResX;
+textFieldGrp -label "Image Resolution Y" -ed false -text $imageResY simageResY;
+textFieldGrp -label "Max Particles X" -ed false -text $resolutionX sresolutionX;
+textFieldGrp -label "Max Particles Y" -ed false -text $resolutionY sresolutionY;
+textFieldGrp -label "Maximum Particles" -ed false -text $particleMax sparticleMax;
+text " ";
+checkBox -label "Create WorldNormalPP   (for use as AimDirection with instanced objects)" -onCommand createNormalPPOn -offCommand createNormalPPOff -align "left";
+separator;
+radioButtonGrp -numberOfRadioButtons 3
+	-label "Up Vector" -labelArray3 "X" "Y" "Z" -sl 2
+	-cc1 setUpVectorX -cc2 setUpVectorY -cc3 setUpVectorZ;
+text "     (for use as AimWorldUp with instanced objects)";
+separator;
+text " ";
+button -label "Create Particles" -align center -command "scanTexture" -bgc 1 .5 .2;
+showWindow Texture2Particles;
+UpdateValues;
+}

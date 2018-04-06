@@ -1,0 +1,9 @@
+//deletePanel modelPanel1;
+//deleteUI gxywindow;
+window -width 700 -height 500 gxywindow;
+paneLayout -configuration "vertical2";
+outlinerPanel;
+setParent..;
+modelPanel;
+showWindow gxywindow;
+
