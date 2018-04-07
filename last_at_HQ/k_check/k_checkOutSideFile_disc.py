@@ -132,6 +132,11 @@ class k_cachefinder():
 		####################################################	
 
 
+	def k_checkRef(self):
+		kreflists = cc.file(q=True,reference=1)
+		for kreflist in kreflists:
+			krefNode = cc.file (kreflist,q=1,referenceNode=1)
+			self.k_Nodedate('kReference',krefNode,'loadReference',kreflist)
 
 
 	def k_checkYeticache(self):
