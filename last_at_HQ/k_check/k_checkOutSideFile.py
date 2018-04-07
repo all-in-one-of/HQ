@@ -29,6 +29,7 @@ class k_cachefinder():
 		self.kYeticache=[]
 		self.kYetitex  =[]
 		self.kshave_cache=[]
+		self.kWorkspace=[]
 		self.mayaplugin_version={}
 		self.kNodedate={}
 		self.klocal={}
@@ -45,7 +46,7 @@ class k_cachefinder():
 		self.k_checkShaveCache()
 		self.k_checkMRmeshfiles()
 		self.k_checkDiskPcache()
-
+		self.k_worksp()
 
 		self.k_dirt(self.kassfiles,'Arnold')
 		self.k_dirt(self.kabcmeshfiles,'Abc')
@@ -56,7 +57,7 @@ class k_cachefinder():
 		self.k_dirt(self.kshave_cache,'Shave')		
 		self.k_dirt(self.kmrcacheFiles,'mentalray')
 		self.k_dirt(self.kparcache,'Particle')
-
+		self.k_dirt(self.kWorkspace,'workspace')
 		return self.outside_file
 
 	def k_dirt(self,ksets,name):
@@ -90,7 +91,10 @@ class k_cachefinder():
 		####################################################	
 
 
-
+	def k_worksp(self):
+		k_workspace=self.projectDir+'workspace.mel'
+		if os.path.exists(k_workspace):
+			self.kWorkspace.append(k_workspace)
 
 	def k_checkYeticache(self):
 		self.kexpo3  = r'(.*?)([\.]?)([%][0-9]*d)(\.fur)$'

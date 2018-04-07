@@ -52,11 +52,17 @@ class k_cachefinder():
 
 		#shave毛发缓存
 		self.kshave_cache=[]
+
+		#workspace文件
+		self.kWorkspace=[]
+
 		#插件版本
 		self.mayaplugin_version={}
 
+
 		#节点数据
 		self.kNodedate={}
+
 
 		#使用本地路径的节点
 		self.klocal={}
@@ -79,6 +85,7 @@ class k_cachefinder():
 		self.k_checkShaveCache()
 		self.k_checkMRmeshfiles()
 		self.k_checkDiskPcache()
+		self.k_worksp()
 
 		#整理得出的外部数据
 		self.k_dirt(self.kassfiles,'Arnold')
@@ -90,10 +97,11 @@ class k_cachefinder():
 		self.k_dirt(self.kshave_cache,'Shave')		
 		self.k_dirt(self.kmrcacheFiles,'mentalray')
 		self.k_dirt(self.kparcache,'Particle')
-
+		self.k_dirt(self.kWorkspace,'workspace')
 		#print self.outside_file
 
 		return self.outside_file
+
 
 
 	#根据外部文件地址 获取外部文件的大小、修改时间
@@ -131,13 +139,19 @@ class k_cachefinder():
 		else:self.kNodedate[plugin]={node:[ktemp]}
 		####################################################	
 
-
+'''
 	def k_checkRef(self):
 		kreflists = cc.file(q=True,reference=1)
 		for kreflist in kreflists:
 			krefNode = cc.file (kreflist,q=1,referenceNode=1)
 			self.k_Nodedate('kReference',krefNode,'loadReference',kreflist)
+'''			
 
+	#获取workspace文件
+	def k_worksp(self):
+		k_workspace=self.projectDir+'workspace.mel'
+		if os.path.exists(k_workspace):
+			self.kWorkspace.append(k_workspace)
 
 	def k_checkYeticache(self):
 		#缓存匹配公式

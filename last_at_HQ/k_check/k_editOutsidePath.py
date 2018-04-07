@@ -15,11 +15,12 @@ kpost = db['check']
 
 
 class k_editPath():
-	def __init__(self,j,o,op,data):
+	def __init__(self,j,o,op,oimage,data):
 		self.data = data
 		self.j = j
 		self.o = o
 		self.op= op
+		self.oimage= oimage
 		self.kupdate={}
 
 	def k_checkPath(self):
@@ -29,7 +30,7 @@ class k_editPath():
 		outsidefile = self.data
 
 		for plug in outsidefile:
-			if outsidefile[plug]:
+			if outsidefile[plug] and plug!='Texture':
 				for knode in outsidefile[plug]:
 					self.kname = knode[0]
 					self.ksize = knode[1]
@@ -41,15 +42,31 @@ class k_editPath():
 							self.kmatch(plug,oname,self.kname)
 						else:
 							kname_name=os.path.basename(self.kname)
+
 							oname = self.op+'/'+kname_name
 							self.kmatch(plug,oname,self.kname)
+
+			elif outsidefile[plug] and plug=='Texture':
+				for knode in outsidefile[plug]:
+					self.kname = knode[0]
+					self.ksize = knode[1]
+					self.ktime = knode[2]
+
+					if not re.search(kexp,self.kname):
+						if re.search(kexpb,self.kname):
+							oname = self.kname.replace(self.j,self.o)
+							self.kmatch(plug,oname,self.kname)
+						else:
+							kname_name=os.path.basename(self.kname)
+
+							oname = self.oimage+'/'+kname_name
+							self.kmatch(plug,oname,self.kname)
+
 
 	def kmatch(self,plug,oname,kname):
 		if os.path.exists(oname):
 			osize = os.path.getsize(oname)
-			otime  = time.localtime(os.stat(oname).st_mtime)
-			otimeg = time.strftime("%Y-%m-%d %H:%M:%S",otime)
-			if not self.ksize==osize or not self.ktime==otime:
+			if not self.ksize==osize:
 				if self.kupdate.has_key(plug):
 					self.kupdate[plug].append([kname,oname])
 				else:self.kupdate.update({plug:[[kname,oname]]})

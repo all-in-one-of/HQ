@@ -15,18 +15,18 @@ import socket
 import re
 from bson.objectid import ObjectId
 
-#p=maya文件路径，j=maya工程文件路径，o=网络工程地址，n=预设按钮编号，s=maya脚本内容
-def k_check(p,j,o,n,s):
+#p=maya文件路径，j=maya工程文件路径，o=网络工程地址，n=预设按钮编号，r=检查人，s=maya脚本内容
+def k_check(p,j,o,n,r,s):
 	#maya脚本地址
 	k_fantabox  = '//10.99.1.13/hq_tool/Maya/hq_maya/scripts'
 	k_json      = k_fantabox+'/fantabox'
-
+	departments=['CAM','LAY','CHR','MOD','MOD_rig','ANI','RIG','RIG_clu','RIG_moc','FX','FX_ani','REN']
+	n=int(n)
 	if not o[-1]=='/':
 		o = o+'/'
-	#特殊文件夹路径
-	op = o+'ftbox_otherfile'
+
 	#联接mongoDB
-	client=pymongo.MongoClient('10.99.40.10',27017)
+	client=pymongo.MongoClient('10.99.40.240',27017)
 	db = client['hqft_film']
 	kpost = db['check']
 	#联接TCP
@@ -43,17 +43,36 @@ def k_check(p,j,o,n,s):
 	import fantabox  
 
 	#解析json文件
-	k_enablefiles=ss.loads(open(r'%s/FantaBox_mayacheck.json' %k_json).read(),encoding='gbk')
+	k_enablefiles=ss.loads(open(r'%s/FantaBox_mayacheck_ftp.json' %k_json).read(),encoding='gbk')
 	k_enables=ss.loads(s,encoding='gbk') 
 	#maya后台打开文件      
 	cc.file(p,f=1,op="v=0;",esn=0,ignoreVersion=1,typ="mayaBinary",o=1)
 	#maya设置工程目录
+
+
+
 
 	kproj = j
 	if kproj[-1]=='/':
 		kproj = os.path.dirname(kproj)
 
 	mm.eval('setProject "%s";'%kproj) 
+
+	#获取 实际的自定义 名称
+	k_mayaname=os.path.basename(p)
+
+	k_customname=[]
+
+	for department in departments:
+		if ('_'+department+'_') in k_mayaname:
+			k_customname = k_mayaname.split('_'+department+'_')[-1]
+			k_customname=os.path.splitext(k_customname)[0]
+
+	#目标特殊 贴图 路径
+	oimage = o+'sourceimages/'+k_customname
+
+	#特殊文件夹路径
+	op = o+'ftbox_otherfile/'+k_customname
 
 	#定义威猛先生检查出来的内容
 	k_Treturn={}
@@ -79,22 +98,24 @@ def k_check(p,j,o,n,s):
 			#特殊模块需要给参数 参数为模块的数字代码
 			k_return2='fantabox.%s(%d)' %(k_enable,n)
 			try:
-			    k_returna=eval(k_return2)
+				k_returna=eval(k_return2)
 			except:
-			    k_returna=eval(k_return)
+				k_returna=eval(k_return)
 			#如果检查出有问题 type改变为不通过状态
 			if k_returna:
-			    kType=2
+				kType=2
 			#k_update={k_enable:k_returna}
-
+				#打印不通过检查的模块，将字符串转成UTF8
+				modzw=k_enablefiles[k_mod][k_py][0]
+				print '***  '+modzw.encode('utf-8')+'  *** 检查不通过'
 
 			k_update={k_enablefiles[k_mod][k_py][0]:k_returna}
 			k_Treturn.update(k_update)
 
 			kprogres=kprogres+kpercent
 			if kprogres >= 99.9:
-			    kprogres=100
-		    #发送进度条数值 及 检查通过状态
+				kprogres=100
+			#发送进度条数值 及 检查通过状态
 			ksend={kprogres:kType}
 			#包装成json
 			ksend=ss.dumps(ksend)
@@ -114,7 +135,7 @@ def k_check(p,j,o,n,s):
 
 	#执行 修改外部文件路径 脚本 （本地匹配o盘）
 	import k_editOutsidePath
-	k_updata = k_editOutsidePath.k_editPath(j,o,op,outsidefile)
+	k_updata = k_editOutsidePath.k_editPath(j,o,op,oimage,outsidefile)
 	k_updata.k_checkPath()
 	k_pathUpdate = k_updata.kupdate
 
@@ -122,7 +143,7 @@ def k_check(p,j,o,n,s):
 	mayaplugin_version=check_outsidefile.mayaplugin_version
 
 	#上传数据到数据库
-	check_post={u"检查人":"k",u"上传时间":datetime.datetime.now(),"maya_check":k_Treturn,"Nodedate":kNodedate,"outsidefile":outsidefile,"update":k_pathUpdate,u'插件版本':mayaplugin_version,'mayaPath':p,'mayaProject':j,'Opath':o}
+	check_post={u"检查人":r,u"上传时间":datetime.datetime.now(),"maya_check":k_Treturn,"Nodedate":kNodedate,"outsidefile":outsidefile,"update":k_pathUpdate,u'插件版本':mayaplugin_version,'mayaPath':p,'mayaProject':j,'Opath':o,'customname':k_customname}
 	kpost_id=kpost.insert(check_post)
 	#print kpost_id
 	#发送数据库 新增表格的id
@@ -146,7 +167,7 @@ def k_eMayaPath(k_id):
 	ksocket.connect(checkIP)
 
 	#联接数据库
-	client=pymongo.MongoClient('10.99.40.10',27017)
+	client=pymongo.MongoClient('10.99.40.240',27017)
 	db = client['hqft_film']
 	kpost = db['check']
 
@@ -165,8 +186,18 @@ def k_eMayaPath(k_id):
 	for o in o:
 		o=o['Opath']
 
+	#获取自定义名
+	k_customname=kpost.find({"_id":ObjectId(k_id)},{'customname':1})
+	for k_customname in k_customname:
+		k_customname=k_customname['customname']
+
+
 	#目标特殊文件夹路径
-	op = o+'ftbox_otherfile'
+	op = o+'ftbox_otherfile/'+k_customname
+
+	#目标特殊 贴图 路径
+	oimage = o+'sourceimages/'+k_customname
+
 
 	#数据内容
 	data = kpost.find({"_id":ObjectId(k_id)},{'Nodedate':1})
@@ -175,10 +206,11 @@ def k_eMayaPath(k_id):
 		data=data['Nodedate']
 
 
+
 	#创建临时上传文件夹路径
 	p_dir =os.path.dirname(p)
 	p_basename =os.path.basename(p)
-	p_savedir = p_dir+'/ft_update'
+	p_savedir = p_dir+'/ftp_updata'
 
 
 	#匹配数据  O盘路径开头的匹配  本地工程目录开头的匹配
@@ -204,7 +236,7 @@ def k_eMayaPath(k_id):
 							cc.pgYetiGraph(nodes,node=port,param='file_name',setParamValueString=opath)
 						else:
 							path_name =os.path.basename(path)
-							oppath = op+'/'+path_name
+							oppath = oimage+'/'+path_name
 							cc.pgYetiGraph(nodes,node=port,param='file_name',setParamValueString=oppath)
 
 		elif plug == 'kmayaTex_userTex' and  data['kmayaTex_userTex']:
@@ -219,15 +251,32 @@ def k_eMayaPath(k_id):
 							cc.setAttr(nodes+port,opath,type='string')
 						else:
 							path_name =os.path.basename(path)
-							oppath = op+'/'+path_name
+							oppath = oimage+'/'+path_name
 							cc.setAttr(nodes+port,oppath,type='string')
+
+
+		elif plug=='kaiTex' or plug=='kmayaTex_default':
+			for node in data[plug]:
+				path = data[plug][node][0]['path']
+				port = data[plug][node][0]['port']
+
+				if not re.search(kexp,path):
+					if re.search(kexpb,path):
+						opath = path.replace(j,o)
+						cc.setAttr(node+port,opath,type='string')
+					else:
+						path_name =os.path.basename(path)
+						oppath = oimage+'/'+path_name
+						cc.setAttr(node+port,oppath,type='string')
 
 		#elif plug == 'kcacheFiles':
 			#pass	
 
+
+
 		else:
 			if data[plug]:
-				print plug
+				#print plug
 				for node in data[plug]:
 					path = data[plug][node][0]['path']
 					port = data[plug][node][0]['port']
@@ -255,15 +304,11 @@ def k_eMayaPath(k_id):
 	#修改文件名 并 保存
 	cc.file(rename=tempfile)
 	cc.file(f=1,op="v=0;",typ="mayaBinary",save=True)
-
+	#清空maya
+	cc.file(f=1,new=1)
 	#保存maya文件后 发送TCP信号 
 	ksocket.send('saved')
 
-'''    for k_Treturns in k_Treturn:
-        if k_Treturn[k_Treturns]:
-            print ('---------'+k_enablefiles[k_Treturns][2]+'--------------')
-            for k_Treturnss in k_Treturn[k_Treturns]:
-                print (k_Treturnss) '''
 
 
 
