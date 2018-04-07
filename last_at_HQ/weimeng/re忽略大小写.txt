@@ -1,0 +1,4 @@
+e='(.*?)([\.]?)([%][0-9]*d)(\.fur)$'
+r='E:/work/7_0314_wenti/Yeticache/caodi/%1ddd.%04d.fuR'
+
+t=re.search(e,r, re.IGNORECASE)
