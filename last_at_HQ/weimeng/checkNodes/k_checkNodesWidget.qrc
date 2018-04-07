@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>icon/kopen.png</file>
+    <file>icon/kclose.png</file>
+  </qresource>
+</RCC>

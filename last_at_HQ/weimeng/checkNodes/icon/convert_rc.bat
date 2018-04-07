@@ -1,0 +1,1 @@
+C:\Python27\Lib\site-packages\PySide\pyside-rcc.exe -o E:\k\shuai\checkNodes\checkNodes\icon\k_checkNodesWidget_rc.py E:\k\shuai\checkNodes\checkNodes\k_checkNodesWidget.qrc
