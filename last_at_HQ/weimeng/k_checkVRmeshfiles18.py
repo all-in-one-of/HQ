@@ -61,7 +61,7 @@ class k_cachefinder():
 	mentalray={}
 	Particle={}
 
-
+	outside_file={}
 
 	projectDir = cc.workspace(query=True,rootDirectory=True)    
 
@@ -76,33 +76,44 @@ class k_cachefinder():
 		self.k_checkMRmeshfiles()
 		self.k_checkDiskPcache()
 
-		self.k_dirt(self.kassfiles,'Arnold',self.Arnold)
-		self.k_dirt(self.kabcmeshfiles,'Abc',self.Abc)
-		self.k_dirt(self.kvrayfiles,'Vray',self.Vray)		
-		self.k_dirt(self.kcacheFiles,'nCache',self.nCache)
-		self.k_dirt(self.kTexture,'Texture',self.Texture)	
-		self.k_dirt(self.kYeti,'Yeti',self.Yeti)	
-		self.k_dirt(self.kshave_cache,'Shave',self.Shave)		
-		self.k_dirt(self.kmrcacheFiles,'mentalray',self.mentalray)
-		self.k_dirt(self.kparcache,'Particle',self.Particle)
+		#self.k_dirt(self.kassfiles,'Arnold',self.Arnold)
+		#self.k_dirt(self.kabcmeshfiles,'Abc',self.Abc)
+		#self.k_dirt(self.kvrayfiles,'Vray',self.Vray)		
+		#self.k_dirt(self.kcacheFiles,'nCache',self.nCache)
+		#self.k_dirt(self.kTexture,'Texture',self.Texture)	
+		#self.k_dirt(self.kYeti,'Yeti',self.Yeti)
+		#self.k_dirt(self.kshave_cache,'Shave',self.Shave)		
+		#self.k_dirt(self.kmrcacheFiles,'mentalray',self.mentalray)
+		#self.k_dirt(self.kparcache,'Particle',self.Particle)
+		#print self.Arnold
+		#print self.Abc
+		#print self.Vray
+		#print self.nCache
+		#print self.Texture
+		#print self.Yeti
+		#print self.Shave
+		#print self.mentalray
+		#print self.Particle
 
-		print self.Arnold
-		print self.Abc
-		print self.Vray
-		print self.nCache
-		print self.Texture
-		print self.Yeti
-		print self.Shave
-		print self.mentalray
-		print self.Particle
+		self.k_dirt(self.kassfiles,'Arnold')
+		self.k_dirt(self.kabcmeshfiles,'Abc')
+		self.k_dirt(self.kvrayfiles,'Vray')		
+		self.k_dirt(self.kcacheFiles,'nCache')
+		self.k_dirt(self.kTexture,'Texture')	
+		self.k_dirt(self.kYeti,'Yeti')
+		self.k_dirt(self.kshave_cache,'Shave')		
+		self.k_dirt(self.kmrcacheFiles,'mentalray')
+		self.k_dirt(self.kparcache,'Particle')
+
+		#print self.outside_file
 
 
 
-	def k_dirt(self,ksets,name,Hset):
+	def k_dirt(self,ksets,name):
 		temp=[]
 		for kset in ksets:
 			temp.append(self.k_findes(kset))
-		Hset.update({name:temp})
+		self.outside_file.update({name:temp})
 
 
 

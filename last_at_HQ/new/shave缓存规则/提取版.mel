@@ -1,0 +1,71 @@
+proc string[] getStatFiles(string $shaveHairShape)
+{
+	string	$statFiles[];
+	string	$statDir = shaveGetStatDir();
+
+	//
+	// If the Shave temporary directory for this scene hasn't been defined
+	// yet, or doesn't exist, then there can't be any stat files either.
+	//
+	if (($statDir != "") && `file -q -exists $statDir`)
+	{
+		//
+		// Get a list of the files in the directory.
+		//
+		string	$files[] = `workspace -q -l $statDir`;
+		int		$numFiles = size($files);
+
+		//
+		// The node name may have colons in it due to namespaces.  Those
+		// won't work in filenames, so convert them to underscores.
+		//
+		$shaveHairShape = strReplaceAll($shaveHairShape, ":", "_");
+
+		//
+		// Record any .stat files which are for this node.
+		//
+		string	$file;
+
+		for ($file in $files)
+		{
+			string $match = match($shaveHairShape + "[.][-0-9]+[.]stat$", $file);
+
+			if (size($match) > 0)
+				$statFiles[size($statFiles)] = $statDir + $file;
+		}
+	}
+
+	return $statFiles;
+}
+
+
+proc cleanupTmpDir(string $dir)
+{
+	if (($dir != "") && `file -q -exists $dir`)
+	{
+		//
+		// Get rid of any shaveHair node object files.
+		//
+		string	$files[] = `getFileList -fld $dir -fs "shaveObjFile_*.obj"`;
+		string	$file;
+
+		for ($file in $files)
+			sysFile -del ($dir + $file);
+
+		//
+		// Get rid of any instance object files.
+		//
+		$files = `getFileList -fld $dir -fs "shaveInstance_*.obj"`;
+
+		for ($file in $files)
+			sysFile -del ($dir + $file);
+
+		//
+		// Get rid of any stat files.
+		//
+		$files = `getFileList -fld $dir -fs "shaveStatFile_*.stat"`;
+
+		for ($file in $files)
+			sysFile -del ($dir + $file);
+	}
+}
