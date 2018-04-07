@@ -1,0 +1,645 @@
+#! /usr/local/Nuke7.0v6/Nuke7.0 -nx
+version 7.0 v6
+Gizmo {
+ inputs 7
+ tile_color 0x2845e0ff
+ addUserKnob {20 User}
+ addUserKnob {22 turnoninput +INVISIBLE T "node = nuke.thisNode()\nif node.name() == 'VIEWER_INPUT':\n    node\['name'].setValue('H_Maskingwide')\n    \nelse:\n    node\['name'].setValue('VIEWER_INPUT')" +STARTLINE}
+ addUserKnob {3 input_width t 每个素材的宽度（像素）}
+ input_width 480
+ addUserKnob {3 input_height t 每个素材的高度（像素）}
+ input_height 352
+ addUserKnob {3 ScreenNumber t 需要几个素材进行横向拼接？（最多10个）}
+ ScreenNumber 6
+ addUserKnob {6 cut l Cut t 将要切分的屏排列在最两端，例如：5612345，结果是将第5屏切分开，一半在最左，一半在最右。 +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {1 artist l Artist t 作者}
+ addUserKnob {1 Shotname t 镜头名称}
+ addUserKnob {1 note l Note t 备注}
+ note " "
+}
+ Text {
+  inputs 0
+  cliptype none
+  opacity 0.5
+  message 6
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{(input_width*ScreenNumber/2)} 0}
+  center {1372 580}
+  name acock_six
+  xpos 1710
+  ypos -122
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 6
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{-(input_width*ScreenNumber/2)} 0}
+  center {1372 580}
+  name acock_six01
+  xpos 1710
+  ypos -81
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 12
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{curve} 0}
+  center {1372 580}
+  name aclock_twelve
+  xpos 1710
+  ypos -8
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 9
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{-(input_width*ScreenNumber)/12*3} 0}
+  center {1372 580}
+  name aclock_nine
+  xpos 1710
+  ypos 37
+  cached true
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 3
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{(input_width*ScreenNumber)/12*3} 0}
+  center {1372 580}
+  name aclock_three
+  xpos 1710
+  ypos 78
+  cached true
+ }
+ Grade {
+  multiply {0.3 1 0.3 1}
+  name Grade1
+  xpos 1710
+  ypos 161
+ }
+ Text {
+  inputs 0
+  cliptype none
+  opacity 0.5
+  message Cam06
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{-(input_width*ScreenNumber/12)*4} 0}
+  center {1372 580}
+  name cam06
+  xpos 1529
+  ypos -233
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam01
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{-(input_width*ScreenNumber/12)*2} 0}
+  center {1372 580}
+  name cam01
+  xpos 1529
+  ypos -172
+  cached true
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam03
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{(input_width*ScreenNumber/12)*2} 0}
+  center {1372 580}
+  name cam03
+  xpos 1529
+  ypos -116
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam04
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{(input_width*ScreenNumber/12)*4} 0}
+  center {1372 580}
+  name cam04
+  xpos 1529
+  ypos -60
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message /Cam02
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{"((input_height/(input_width*ScreenNumber))<0.25 ?(input_height*0.1*0.7*2.8) : (input_height*0.1*0.4)*2.8)  "} 0}
+  center {1372 580}
+  name cam02
+  xpos 1529
+  ypos 37
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message /Cam05
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{"-(input_width*ScreenNumber/2)+((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7*2.5) : (input_height*0.1*0.4)*2.5)  "} 0}
+  center {1372 580}
+  name cam05
+  xpos 1529
+  ypos 85
+ }
+ Merge2 {
+  inputs 2
+  name Merge3
+  xpos 1529
+  ypos 161
+ }
+ Input {
+  inputs 0
+  name Input7
+  xpos 1327
+  ypos -1238
+  number 6
+ }
+ Transform {
+  translate {{input_width*6-(input_width/2)} 0}
+  center {240 176}
+  name Transform15
+  xpos 1712
+  ypos -740
+ }
+ Input {
+  inputs 0
+  name Input6
+  xpos 1213
+  ypos -1239
+  number 5
+ }
+set Ne02ebc0 [stack 0]
+ Transform {
+  translate {{input_width*5-(input_width/2)} 0}
+  center {240 176}
+  name Transform9
+  xpos 1600
+  ypos -740
+ }
+ Input {
+  inputs 0
+  name Input5
+  xpos 1098
+  ypos -1240
+  number 4
+ }
+set Ne0b4cf0 [stack 0]
+ Transform {
+  translate {{input_width*4-(input_width/2)} 0}
+  center {240 176}
+  name Transform10
+  xpos 1490
+  ypos -739
+ }
+ Input {
+  inputs 0
+  name Input4
+  xpos 993
+  ypos -1242
+  number 3
+ }
+set Nde70c60 [stack 0]
+ Transform {
+  translate {{input_width*3-(input_width/2)} 0}
+  center {240 176}
+  name Transform11
+  xpos 1385
+  ypos -740
+ }
+ Input {
+  inputs 0
+  name Input3
+  xpos 893
+  ypos -1242
+  number 2
+ }
+set Ndf6ecb0 [stack 0]
+ Transform {
+  translate {{input_width*2-(input_width/2)} 0}
+  center {240 176}
+  name Transform13
+  xpos 1285
+  ypos -741
+ }
+push 0
+ Input {
+  inputs 0
+  name Input2
+  xpos 783
+  ypos -1243
+  number 1
+ }
+set Ne109090 [stack 0]
+ Transform {
+  translate {{(input_width/2)} 0}
+  center {240 176}
+  name Transform14
+  xpos 1175
+  ypos -742
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos 667
+  ypos -1243
+ }
+set Ndfa2500 [stack 0]
+ Transform {
+  translate {{-(input_width/2)} 0}
+  center {240 176}
+  name Transform12
+  xpos 1058
+  ypos -742
+ }
+ Merge2 {
+  inputs 7+1
+  also_merge all
+  name Merge5
+  xpos 1309
+  ypos -538
+ }
+ Transform {
+  translate {0 {input_height*0.1}}
+  center {1440 176}
+  name Transform25
+  xpos 1309
+  ypos -429
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge1
+  xpos 1309
+  ypos 161
+ }
+ Text {
+  inputs 0
+  cliptype none
+  opacity 0.5
+  message 6
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{(input_width/2)*5} 0}
+  center {1372 580}
+  name a6cock2
+  xpos 256
+  ypos -65
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 12
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{-(input_width/2)} 0}
+  center {1372 580}
+  name a12clock1
+  xpos 256
+  ypos -4
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 9
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{-(input_width)/2*4} 0}
+  center {1372 580}
+  name nine_aclock
+  xpos 256
+  ypos 41
+  cached true
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 3
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{(input_width)/2*2} 0}
+  center {1372 580}
+  name three_aclock
+  xpos 256
+  ypos 82
+  cached true
+ }
+ Grade {
+  multiply {0.3 1 0.3 1}
+  name Grade2
+  xpos 256
+  ypos 165
+ }
+ Text {
+  inputs 0
+  cliptype none
+  opacity 0.5
+  message Cam06
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{-(input_width/2)*5} 0}
+  center {1372 580}
+  name cam_six
+  xpos 442
+  ypos -231
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam01
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{-(input_width/2)*3} 0}
+  center {1372 580}
+  name cam_one
+  xpos 442
+  ypos -170
+  cached true
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam03
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{(input_width/2)*1} 0}
+  center {1372 580}
+  name cam_three
+  xpos 442
+  ypos -114
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam04
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{(input_width/2)*3} 0}
+  center {1372 580}
+  name cam_four
+  xpos 442
+  ypos -58
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message /Cam02
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{"(-input_width/2)+(((input_height/(input_width*ScreenNumber))<0.25 ?(input_height*0.1*0.7*2.8) : (input_height*0.1*0.4)*2.8))  "} 0}
+  center {1372 580}
+  name cam_two
+  xpos 442
+  ypos 40
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message /Cam05
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7) : (input_height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*ScreenNumber} {"input_height+input_height*0.2-((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.3))" x490 0}}
+  translate {{"(input_width/2*5)+((input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.7*2.5) : (input_height*0.1*0.4)*2.5)  "} 0}
+  center {1372 580}
+  name cam_five
+  xpos 442
+  ypos 86
+ }
+ Merge2 {
+  inputs 2
+  name Merge4
+  xpos 442
+  ypos 165
+ }
+push $Ne02ebc0
+ Transform {
+  translate {{input_width*5} 0}
+  center {240 176}
+  name Transform1
+  xpos 833
+  ypos -728
+ }
+push $Ne0b4cf0
+ Transform {
+  translate {{input_width*4} 0}
+  center {240 176}
+  name Transform2
+  xpos 723
+  ypos -727
+ }
+push $Nde70c60
+ Transform {
+  translate {{input_width*3} 0}
+  center {240 176}
+  name Transform3
+  xpos 618
+  ypos -728
+ }
+push $Ndf6ecb0
+ Transform {
+  translate {{input_width*2} 0}
+  center {240 176}
+  name Transform4
+  xpos 518
+  ypos -729
+ }
+push 0
+push $Ne109090
+ Transform {
+  translate {{(input_width)} 0}
+  center {240 176}
+  name Transform5
+  xpos 410
+  ypos -729
+ }
+push $Ndfa2500
+ Transform {
+  center {240 176}
+  name Transform6
+  xpos 289
+  ypos -730
+ }
+ Merge2 {
+  inputs 6+1
+  also_merge all
+  name Merge2
+  xpos 618
+  ypos -555
+ }
+ Transform {
+  translate {0 {input_height*0.1}}
+  center {1440 176}
+  name Transform7
+  xpos 618
+  ypos -445
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge7
+  xpos 618
+  ypos 165
+ }
+ Switch {
+  inputs 2
+  which {{cut}}
+  name Switch1
+  xpos 963
+  ypos 515
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message "Artist: \[value parent.artist]          \[date %Y/%m/%d]         Shotname: \[value parent.Shotname]          Note: \[value parent.note]          Currect Frame: \[frame]          Currect Time: \[python int(int((\[frame]-\[value first_frame])/24)/3600/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/3600)%10]:\[python int(int((\[frame]-\[value first_frame])/24)/60/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/60)%10]:\[python int((int(\[frame]-\[value first_frame])/24)/10)%6]\[python int((\[frame]-\[value first_frame])/24)%10]:\[python int(((\[frame]-\[value first_frame])%24+1)/10)]\[python ((\[frame]-\[value first_frame])%24+1)%10]           AllFrames:  \[python \[value last_frame]-\[value first_frame]+1]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*ScreenNumber))<0.24 ? (input_height*0.1*0.7) : (input_width*ScreenNumber/70)   "}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {0 0 {input_width*ScreenNumber x1555 2880} {input_height x1555 352}}
+  translate {0 {"(input_height/(input_width*ScreenNumber))<0.25 ? (input_height*0.1*0.15) : (input_height*0.1*0.3)"}}
+  center {1372 580}
+  name message1
+  xpos 963
+  ypos 683
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  color 0.007
+  format "60000 60000 0 0 60000 60000 1 aa_1"
+  name Constant2
+  xpos 737
+  ypos 813
+ }
+ Crop {
+  box {0 0 {input_width*ScreenNumber} {input_height+input_height*0.2}}
+  reformat true
+  crop false
+  name Crop2
+  xpos 737
+  ypos 916
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge6
+  xpos 963
+  ypos 916
+ }
+set Nd71e490 [stack 0]
+ Output {
+  name Output1
+  xpos 963
+  ypos 1162
+ }
+push $Nd71e490
+ Viewer {
+  input_process false
+  name Viewer1
+  xpos 229
+  ypos 1476
+ }
+end_group

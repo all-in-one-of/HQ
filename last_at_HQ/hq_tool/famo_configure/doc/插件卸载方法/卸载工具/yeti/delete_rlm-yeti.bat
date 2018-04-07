@@ -1,0 +1,1 @@
+C:\rlm\YETI\rlm.exe   -delete_service -service_name rlm-yeti -dlog C:\rlm\YETI\yeti.log  -c C:\rlm\YETI\yeti.lic -ws 5056

@@ -1,0 +1,105 @@
+global proc int measuredistance()
+{
+    string $selectObj[]=`ls -sl`;
+    if(`size($selectObj)`!=2)
+        {error "请不要选择大于或者少于2个物体！";}
+    string $buffer1[],$buffer2[],$buffer3[],$buffer4[];
+    float $getDistance1[3],$getDistance2[3],$vertexPosition1[3],$vertexPosition2[6];
+    float $distanceX1,$distanceX2,$distanceY1,$distanceY2,$distanceZ1,$distanceZ2;
+    string $vertexId1[],$vertexId2[];
+    int $i,$j,$numVertex;
+    $numTokens1 = `tokenize $selectObj[0] "." $buffer1`;
+    $numTokens2 = `tokenize $selectObj[1] "." $buffer2`;
+    if($numTokens1==1)
+        {$getDistance1=`xform -q -rp -ws $selectObj[0]`;}
+    if($numTokens2==1)
+        {$getDistance2=`xform -q -rp -ws $selectObj[1]`;}
+    if($numTokens1==2)
+    {
+        tokenize $buffer1[1] "[]" $buffer3;
+        if($buffer3[0]!="f"&&$buffer3[0]!="e")
+            {$getDistance1=`xform -q -t -ws $selectObj[0]`;}
+        if($buffer3[0]=="f")
+        {
+            $vertexId1=dGetFaceVertex($selectObj[0]);
+            $numVertex=size($vertexId1);
+            for($i=0;$i<$numVertex;$i++)
+            {
+                $vertexPosition1=dGetVertexPosition($vertexId1[$i]);
+                $distanceX1+=$vertexPosition1[0];
+                $distanceY1+=$vertexPosition1[1];
+                $distanceZ1+=$vertexPosition1[2];
+                }
+            $distanceX1=$distanceX1/float($numVertex);
+            $distanceY1=$distanceY1/float($numVertex);
+            $distanceZ1=$distanceZ1/float($numVertex);
+            $getDistance1={$distanceX1,$distanceY1,$distanceZ1};
+        }
+        if($buffer3[0]=="e")
+        {
+            $vertexPosition2=`xform -q -ws -bb $selectObj[0]`;
+            $distanceX1=($vertexPosition2[0]+$vertexPosition2[3])/2.0;
+            $distanceY1=($vertexPosition2[1]+$vertexPosition2[4])/2.0;
+            $distanceZ1=($vertexPosition2[2]+$vertexPosition2[5])/2.0;
+            $getDistance1={$distanceX1,$distanceY1,$distanceZ1};
+            }
+        }
+    if($numTokens2==2)
+        {
+        tokenize $buffer2[1] "[]" $buffer4;
+        if($buffer4[0]!="f"&&$buffer4[0]!="e")
+            {$getDistance2=`xform -q -t -ws $selectObj[1]`;}
+        if($buffer4[0]=="f")
+        {
+            $vertexId2=dGetFaceVertex($selectObj[1]);
+            $numVertex=size($vertexId2);
+            for($i=0;$i<$numVertex;$i++)
+            {
+                $vertexPosition1=dGetVertexPosition($vertexId2[$i]);
+                $distanceX2+=$vertexPosition1[0];
+                $distanceY2+=$vertexPosition1[1];
+                $distanceZ2+=$vertexPosition1[2];
+                }
+            $distanceX2=$distanceX2/float($numVertex);
+            $distanceY2=$distanceY2/float($numVertex);
+            $distanceZ2=$distanceZ2/float($numVertex);
+            $getDistance2={$distanceX2,$distanceY2,$distanceZ2};
+        }
+        if($buffer3[0]=="e")
+        {
+            $vertexPosition2=`xform -q -ws -bb $selectObj[1]`;
+            $distanceX2=($vertexPosition2[0]+$vertexPosition2[3])/2.0;
+            $distanceY2=($vertexPosition2[1]+$vertexPosition2[4])/2.0;
+            $distanceZ2=($vertexPosition2[2]+$vertexPosition2[5])/2.0;
+            $getDistance2={$distanceX2,$distanceY2,$distanceZ2};
+            }
+        }
+    distanceDimension -sp $getDistance1[0] $getDistance1[1] $getDistance1[2] -ep $getDistance2[0] $getDistance2[1] $getDistance2[2] ;
+    return 1;
+    }
+
+global proc string[] dGetFaceVertex(string $inputFace)
+{
+   // string $allVertex[]=`polyListComponentConversion -tv $inputFace`;
+    string $allVertex[]=`polyInfo -fv $inputFace`;
+    string $outPutVertex[];
+    string $buffer1[],$buffer2[];
+    int $i,$numTokens1,$numTokens2,$j=0,$allNum=size($allVertex),$m,$VertexId;
+    $numTokens1 = `tokenize $allVertex[0] " " $buffer1`;
+    $numTokens2 = `tokenize $inputFace "." $buffer2`;
+    int $numVertex=$numTokens1-3;
+
+    for($m=0;$m<$numVertex;$m++)
+        {
+            $VertexId=int($buffer1[2+$m]);
+            $outPutVertex[$j]=$buffer2[0]+".vtx["+$VertexId+"]";
+            ++$j;
+            }
+    return $outPutVertex;
+    }
+global proc float[] dGetVertexPosition(string $selectVertex)
+{
+    float $getPosition[]=`xform -q -t -ws $selectVertex`;
+    return $getPosition;
+    }
+measuredistance;

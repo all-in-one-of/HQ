@@ -1,0 +1,51 @@
+//取得虚拟物体中心$x,$y,$z
+global proc geoAnimateseq()
+{
+string $boxname[1]=`ls -sl`;
+float $x=`getAttr ($boxname[0]+".tx")`;
+float $y=`getAttr ($boxname[0]+".ty")`;
+float $z=`getAttr ($boxname[0]+".tz")`;
+//=======================================
+
+//=======================================
+
+{
+float $startFrame =`playbackOptions -q -minTime`; 
+float $endFrame=`playbackOptions -q -maxTime`;
+float $frameSpeed = 1; // play back by ? frame ,by defult ,it is by 1 frame
+
+//*********************************************
+currentTime -e $startFrame;
+playbackOptions -by $frameSpeed;
+string $a[] = `ls -sl`;
+int $i;
+for($i=$startFrame;$i<$endFrame;$i++)
+{
+select $a;
+duplicate -rr;
+
+
+string $n[] = `ls -sl`;
+string $bb;
+for($bb in $n)
+{
+setAttr -l 0  ($bb+".tx");
+setAttr -l 0  ($bb+".ty");
+setAttr -l 0  ($bb+".tz");
+setAttr -l 0  ($bb+".rx");
+setAttr -l 0  ($bb+".ry");
+setAttr -l 0  ($bb+".rz");
+setAttr -l 0  ($bb+".sx");
+setAttr -l 0  ($bb+".sy");
+setAttr -l 0  ($bb+".sz");
+setAttr -l 0  ($bb+".v" );
+}
+
+group;
+xform -ws -piv $x $y $z;
+if($i>$startFrame){HideSelectedObjects;}
+playButtonStepForward;
+}
+}
+};
+geoAnimateseq;

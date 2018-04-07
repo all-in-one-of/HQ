@@ -1,0 +1,40 @@
+global proc inputAnim02()
+{
+string $buffer[];
+$allpath=`textField -q -tx "dzlj"`;
+$Animfile=`optionMenuGrp -q -v "aniname"`;
+  string $tokenizedList[];
+  tokenizeList($Animfile, $tokenizedList);
+$num=`tokenize $tokenizedList[0] "." $buffer`;
+string $name=$buffer[0];
+$allpathfile=$allpath+$Animfile;
+string $selbosscn[]=`ls -sl`;
+    if(size($selbosscn)==0)
+    {
+        if(`window -ex "show"`)
+            deleteUI -window "show";
+        window -t "提示!" "show";
+        columnLayout -adj 1;
+        text -l "请选择你想添加动画的总控制器！\n谢谢！";
+        button -l "知道了！" -command ("deleteUI -window " + "show");
+        showWindow show;    
+        window -e -wh 170 50 "show";
+    }
+    else
+    {
+        for($i=0;$i<size($selbosscn);$i++)
+        {
+            select ($selbosscn[$i]);
+            file -import -type "animImport" -ra true 
+            -mergeNamespacesOnClash false -namespace $name
+            -options ";targetTime=4;copies=1;option=replace;pictures=0;connect=0;"
+            -pr -loadReferenceDepth "all" $allpathfile;
+        }
+    }
+}
+
+
+
+
+
+  

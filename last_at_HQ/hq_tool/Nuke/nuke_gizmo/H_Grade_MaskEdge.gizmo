@@ -1,0 +1,455 @@
+#! C:/Program Files/Nuke6.3v4/Nuke6.3.exe -nx
+version 6.3 v4
+Gizmo {
+ inputs 2
+ tile_color 0x79a9ffff
+ note_font "Verdana Bold Bold Bold"
+ note_font_size 10
+ addUserKnob {20 Grade}
+ addUserKnob {6 MaskOption l INVISIBLE +INVISIBLE +STARTLINE}
+ addUserKnob {41 channels T Grade1.channels}
+ addUserKnob {41 blackpoint T Grade1.blackpoint}
+ addUserKnob {41 whitepoint T Grade1.whitepoint}
+ addUserKnob {41 black l lift T Grade1.black}
+ addUserKnob {41 white l gain T Grade1.white}
+ addUserKnob {41 multiply T Grade1.multiply}
+ addUserKnob {41 add l offset T Grade1.add}
+ addUserKnob {41 gamma T Grade1.gamma}
+ addUserKnob {41 saturation T ColorCorrect1.saturation}
+ addUserKnob {41 contrast T ColorCorrect1.contrast}
+ addUserKnob {41 black_clamp l "black clamp" T Grade1.black_clamp}
+ addUserKnob {41 white_clamp l "white clamp" T Grade1.white_clamp}
+ addUserKnob {26 "" l "  "}
+ addUserKnob {41 from0 l "Mask channel" T Copy1.from0}
+ addUserKnob {20 Grade_undermatte l Edge}
+ addUserKnob {41 gamma_2 l "gamma mask" T Grade3.gamma}
+ addUserKnob {26 ""}
+ addUserKnob {41 blackpoint_1 l blackpoint T Grade2.blackpoint}
+ addUserKnob {41 whitepoint_1 l whitepoint T Grade2.whitepoint}
+ addUserKnob {41 black_1 l lift T Grade2.black}
+ addUserKnob {41 white_1 l gain T Grade2.white}
+ addUserKnob {41 multiply_1 l multiply T Grade2.multiply}
+ addUserKnob {41 add_1 l offset T Grade2.add}
+ addUserKnob {41 gamma_1 l gamma T Grade2.gamma}
+ addUserKnob {26 "" l "  "}
+ addUserKnob {41 black_clamp_1 l "black clamp" T Grade2.black_clamp}
+ addUserKnob {41 white_clamp_1 l "white clamp" T Grade2.white_clamp}
+}
+ Input {
+  inputs 0
+  name Source
+  xpos -2
+  ypos -547
+  addUserKnob {20 User}
+  addUserKnob {6 connectedsource l connected +STARTLINE}
+  connectedsource {{"\[exists parent.input0.label]" i}}
+ }
+set N1a3355f0 [stack 0]
+ Dot {
+  name Dot17
+  xpos 32
+  ypos -448
+ }
+set N1a3362b0 [stack 0]
+ Dot {
+  name Dot8
+  xpos 30
+  ypos -306
+ }
+set N1a3365e0 [stack 0]
+ Dot {
+  name Dot7
+  xpos 30
+  ypos -38
+ }
+set N1a336910 [stack 0]
+ Dot {
+  name Dot5
+  xpos 30
+  ypos 347
+ }
+set N1a336c40 [stack 0]
+ Dot {
+  name Dot3
+  xpos 30
+  ypos 499
+ }
+ Input {
+  inputs 0
+  name Mask
+  xpos -214
+  ypos -548
+  number 1
+ }
+push $N1a3362b0
+ Copy {
+  inputs 2
+  to0 rgba.alpha
+  maskChannelMask none
+  name Copy1
+  xpos -214
+  ypos -335
+ }
+ Grade {
+  channels alpha
+  maskChannelMask none
+  name Grade3
+  xpos -214
+  ypos -234
+ }
+set N1a48dfe0 [stack 0]
+ ColorCorrect {
+  channels {{{parent.Grade1.channels}}}
+  maskChannelMask none
+  unpremult -rgba.alpha
+  name ColorCorrect1
+  xpos -214
+  ypos 360
+ }
+ Grade {
+  maskChannelMask rgba.red
+  unpremult -rgba.alpha
+  name Grade1
+  xpos -214
+  ypos 422
+ }
+push $N1a336c40
+push $N1a3365e0
+ Dot {
+  name Dot9
+  xpos 785
+  ypos -306
+ }
+ Dot {
+  name Dot10
+  xpos 787
+  ypos -38
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle4
+  xpos 753
+  ypos -13
+ }
+ Dot {
+  name Dot11
+  xpos 787
+  ypos 114
+ }
+push $N1a48dfe0
+ Invert {
+  channels alpha
+  maskChannelMask none
+  name Invert1
+  xpos 327
+  ypos -152
+ }
+set N1a48f630 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  xpos 557
+  ypos -145
+ }
+set N1a48f960 [stack 0]
+ Dilate {
+  size -1
+  maskChannelMask none
+  name Dilate1
+  xpos 557
+  ypos -108
+ }
+ Invert {
+  maskChannelMask none
+  name Invert2
+  xpos 557
+  ypos -66
+ }
+push $N1a48f960
+ Dilate {
+  size 1
+  maskChannelMask none
+  name Dilate2
+  xpos 661
+  ypos -152
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  maskChannelMask none
+  name Merge2
+  xpos 661
+  ypos -59
+ }
+push $N1a48dfe0
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle3
+  xpos 59
+  ypos -146
+ }
+ Dot {
+  name Dot12
+  xpos 93
+  ypos -84
+ }
+ Dot {
+  name Dot18
+  xpos 251
+  ypos -84
+ }
+push $N1a336910
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle2
+  xpos 76
+  ypos -43
+ }
+set N1a4912e0 [stack 0]
+ Merge2 {
+  inputs 2
+  operation from
+  maskChannelMask none
+  name Merge5
+  xpos 217
+  ypos -43
+ }
+push $N1a48f630
+ Premult {
+  name Premult2
+  xpos 437
+  ypos -116
+ }
+ Clamp {
+  maskChannelMask none
+  name Clamp1
+  xpos 437
+  ypos -88
+ }
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 rgba.alpha
+  maskChannelMask none
+  name Copy5
+  xpos 437
+  ypos -49
+ }
+ Dilate {
+  size -1
+  maskChannelMask none
+  name Dilate4
+  xpos 437
+  ypos -1
+ }
+ Dilate {
+  size 1
+  maskChannelMask none
+  name Dilate5
+  xpos 437
+  ypos 70
+ }
+set N1a56e640 [stack 0]
+ Dot {
+  name Dot19
+  xpos 471
+  ypos 160
+ }
+ Dilate {
+  size 2
+  maskChannelMask none
+  name Dilate6
+  xpos 551
+  ypos 151
+ }
+push $N1a56e640
+ Merge2 {
+  inputs 2
+  operation under
+  maskChannelMask none
+  name Merge4
+  xpos 551
+  ypos 76
+ }
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 rgba.alpha
+  maskChannelMask none
+  name Copy3
+  xpos 661
+  ypos 69
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  maskChannelMask none
+  name Merge6
+  xpos 661
+  ypos 111
+ }
+ Premult {
+  name Premult3
+  xpos 661
+  ypos 155
+ }
+ Grade {
+  maskChannelMask none
+  unpremult rgba.alpha
+  name Grade2
+  xpos 661
+  ypos 213
+ }
+ Dot {
+  name Dot6
+  xpos 695
+  ypos 273
+ }
+push $N1a48f630
+ Dot {
+  name Dot14
+  xpos 361
+  ypos 3
+ }
+set N1a5702f0 [stack 0]
+ Dot {
+  name Dot13
+  xpos 361
+  ypos 91
+ }
+set N1a570620 [stack 0]
+ Shuffle {
+  in alpha
+  name Shuffle5
+  xpos 242
+  ypos 86
+ }
+push $N1a4912e0
+ Dilate {
+  size -1
+  maskChannelMask none
+  name Dilate7
+  xpos 76
+  ypos 32
+ }
+push $N1a5702f0
+ Dilate {
+  size -1
+  maskChannelMask none
+  name Dilate3
+  xpos 239
+  ypos -9
+ }
+ Merge2 {
+  inputs 2
+  maskChannelMask none
+  name Merge7
+  xpos 239
+  ypos 39
+ }
+ Dot {
+  name Dot15
+  xpos 106
+  ypos 86
+ }
+ Dot {
+  name Dot16
+  xpos 106
+  ypos 159
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  maskChannelMask none
+  name Merge9
+  xpos 242
+  ypos 156
+ }
+push $N1a570620
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  maskChannelMask none
+  name Copy6
+  xpos 327
+  ypos 149
+ }
+ Premult {
+  name Premult4
+  xpos 327
+  ypos 221
+ }
+ Merge2 {
+  inputs 2
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  maskChannelMask none
+  name Merge3
+  xpos 327
+  ypos 270
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  maskChannelMask none
+  name Copy4
+  xpos 327
+  ypos 338
+ }
+ Merge2 {
+  inputs 2
+  operation matte
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  maskChannelMask none
+  name Merge1
+  xpos 327
+  ypos 422
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  maskChannelMask none
+  name Copy2
+  xpos 327
+  ypos 490
+ }
+ Dot {
+  name Dot4
+  xpos 361
+  ypos 554
+ }
+ Dot {
+  name Dot2
+  xpos 30
+  ypos 554
+ }
+push $N1a3355f0
+ Dot {
+  name Dot1
+  xpos -696
+  ypos -5
+ }
+ Switch {
+  inputs 2
+  which {{parent.Source.connectedsource i}}
+  name Switch1
+  xpos -4
+  ypos 699
+ }
+ Output {
+  name Output1
+  selected true
+  xpos -4
+  ypos 806
+ }
+end_group

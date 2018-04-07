@@ -1,0 +1,175 @@
+global proc AnimateusefulTool()
+{
+ if(`window -exists wkusefulWindow`)
+   deleteUI wkusefulWindow;
+window -title "动画部快捷操作" -widthHeight 450 450 wkusefulWindow;
+columnLayout;
+frameLayout -label "常用命令" -w 400-h 280 -borderStyle "etchedIn" -collapsable true;
+columnLayout;
+      separator -w 450;
+gridLayout -numberOfRowsColumns 2 4 -cwh 100 50;
+iconTextButton -style "iconAndTextVertical" -label "创建polygon球"
+        -image1     "polySphere.xpm"
+        -command    ("CreatePolygonSphere")
+        -doubleClickCommand ("CreatePolygonSphereOptions");
+iconTextButton -style "iconAndTextVertical" -label "创建polygon立方体"
+        -image1     "polyCube.xpm"
+        -command    ("CreatePolygonCube")
+        -doubleClickCommand ("CreatePolygonCubeOptions");
+iconTextButton -style "iconAndTextVertical" -label "创建polygon圆柱体"
+        -image1     "polyCylinder.xpm"
+        -command    ("CreatePolygonCylinder")
+        -doubleClickCommand ("CreatePolygonCylinderOptions");
+iconTextButton -style "iconAndTextVertical" -label "创建polygon平面"
+        -image1     "polyMesh.xpm"
+        -command    ("CreatePolygonPlane")
+        -doubleClickCommand ("CreatePolygonPlaneOptions");
+iconTextButton -style "iconAndTextVertical" -label "创建NURBS球"
+			-image1     "sphere.xpm"
+			-command    ("CreateNURBSSphere")
+			-doubleClickCommand ("CreateNURBSSphereOptions");
+iconTextButton -style "iconAndTextVertical" -label "创建NURBS立方体"
+			-image1     "cube.xpm"
+			-command    ("CreateNURBSCube")
+			-doubleClickCommand ("CreateNURBSCubeOptions");
+iconTextButton -style "iconAndTextVertical" -label "创建NURBS圆柱体"
+			-image1     "cylinder.xpm"
+			-command    ("CreateNURBSCylinder")
+			-doubleClickCommand ("CreateNURBSCylinderOptions");
+iconTextButton -style "iconAndTextVertical" -label "创建NURBS平面"
+			-image1     "plane.xpm"
+			-command    ("CreateNURBSPlane")
+			-doubleClickCommand ("CreateNURBSPlaneOptions");
+setParent..;
+separator -w 450;
+gridLayout -numberOfRowsColumns 1 4 -cwh 100 50;
+iconTextButton -style "iconAndTextVertical" -label "创建CV曲线"
+        -image1     "curveCV.xpm"
+        -command    ("CVCurveTool")
+        -doubleClickCommand ("CVCurveToolOptions");
+ iconTextButton -style "iconAndTextVertical" -label "创建EP曲线"
+        -image1     "curveEP.xpm"
+        -command    ("EPCurveTool")
+        -doubleClickCommand ("EPCurveToolOptions");
+iconTextButton -style "iconAndTextVertical" -label "曲线上插入点"
+        -image1     "insertKnot.xpm"
+        -command    ("InsertKnot")
+        -doubleClickCommand ("InsertKnotOptions");
+iconTextButton -style "iconAndTextVertical" -label "延长曲线"
+        -image1     "extend.xpm"
+        -command    ("ExtendCurve")
+        -doubleClickCommand ("ExtendCurveOptions");
+setParent..;
+separator -w 450;
+gridLayout -numberOfRowsColumns 1 4 -cwh 100 50;
+
+iconTextButton -style "iconAndTextVertical" -label "父子约束"
+        -image1     "parentConstraint.xpm"
+        -command    ("ParentConstraint")
+        -doubleClickCommand ("ParentConstraintOptions");
+iconTextButton -style "iconAndTextVertical" -label "运动路径"
+        -image1     "motionTrail.xpm"
+        -command    ("CreateMotionTrail")
+        -doubleClickCommand ("CreateMotionTrailOptions");
+iconTextButton -style "iconAndTextVertical" -label "拾取路径"
+        -image1     "motionPath.xpm"
+        -command    ("AttachToPath")
+        -doubleClickCommand ("AttachToPathOptions");
+iconTextButton -style "iconAndTextVertical" -label "创建Locator"
+        -image1     "locator.xpm"
+        -command    ("CreateLocator");
+setParent..;
+separator -w 450;
+ rowLayout -nc 3  -cat 1 "left" 5 -cat 2 "left" 30 -cat 3 "left" 55  -rat 1 "top" 3 -rat 2 "top" 3 -rat 3 "top" 3   -cl3 "center" "center" "center";
+  button -l "创建Redirect" -command "AddAnimationOffset" -w 120;
+ button -l "referenceEditor" -command "ReferenceEditor" -w 120;
+ button -l "打开动画文件夹" -w 120;
+
+setParent..;
+setParent..;
+setParent..;
+frameLayout -label "视图显示" -w 400-h 200  -borderStyle "etchedIn" -collapsable true;
+columnLayout;
+text -h 25 -l "视图显示预设:" projectObjTxt ;
+      textScrollList -w 390 -h 100   -allowMultiSelection true displaySetList ;
+        popupMenu -parent displaySetList;
+        menuItem -label "添加显示预设" -command "addDisplaySet()";
+        menuItem -divider true ;
+        menuItem -label "清除预设列表" -command "clearSetList()" ;
+ rowLayout -nc 4  -cat 1 "left" 5 -cat 2 "left" 5 -cat 3 "left" 5 -cat 4 "left" 5 -rat 1 "top" 3 -rat 2 "top" 3 -rat 3 "top" 3 -rat 4 "top" 3  -cl4 "center" "center" "center" "center";	
+ button -l "添加显示预设" -command "addDisplaySet()" -w 80;button -l "清空预设列表" -command "clearSetList()" -w 80;
+ button -l "保存当前预设" -command "keepSetShow()" -w 80; button -l "显示当前预设" -command " displaySetShow()" -w 80;
+
+
+showWindow;
+global int $numAdd=1;
+global int $keepedIndexNum=0;
+global int $keepedIndex[];
+clear $keepedIndex;
+}
+
+global proc addDisplaySet()
+{
+ global int $numAdd;
+string $numItem[]=`textScrollList -q -allItems  displaySetList`;
+if(!size($numItem))
+{$numAdd=1;}
+    string $selItems = "显示预设"+string($numAdd);	
+     textScrollList -e -a $selItems displaySetList;
+$numAdd++;
+
+}
+global proc clearSetList()
+{
+global int $keepedIndexNum;
+textScrollList -e -removeAll displaySetList ;
+$keepedIndexNum=0;
+}
+global proc displaySetShow()
+{
+global int $keepedIndex[];
+global int $keepedIndexNum;
+global matrix $wkkeepResult[10][30];
+string $modelPanel = `getPanel -withFocus`;
+string $objType[30]={"-nurbsCurves","-nurbsSurfaces","-polymeshes","-subdivSurfaces","-planes","-lights","-cameras","-joints",
+                     "-ikHandles","-deformers","-dynamics","-fluids","-hairSystems","-follicles","-nCloths","-nParticles","-nRigids",
+                     "-dynamicConstraints","-locators","-dimensions","-pivots","-handles","-textures","-strokes","-manipulators",
+                      "-cv","-hulls","-grid","-hud","-sel"};
+int $i;
+int $j,$k,$m=0;
+int $getIndex[]=`textScrollList -q -sii displaySetList`;
+if(!size($getIndex))
+{error "请选中一个需要显示的预设！";}
+for($i=0;$i<$keepedIndexNum;$i++)
+{if($keepedIndex[$i]==$getIndex[0])
+ $m=$m+1;}
+if($m==0)
+{error "并没有为当前选中项保存过预设，请先为选中项保存一份预设！";}
+$j=$getIndex[0]-1;
+for($i=0;$i<30;$i++)
+{modelEditor -e $objType[$i] $wkkeepResult[$j][$i] $modelPanel;}
+}
+global proc keepSetShow()
+{
+global int $keepedIndexNum;
+global matrix $wkkeepResult[10][30];
+global int $keepedIndex[];
+string $modelPanel = `getPanel -withFocus`;
+string $objType[30]={"-nurbsCurves","-nurbsSurfaces","-polymeshes","-subdivSurfaces","-planes","-lights","-cameras","-joints",
+                     "-ikHandles","-deformers","-dynamics","-fluids","-hairSystems","-follicles","-nCloths","-nParticles","-nRigids",
+                     "-dynamicConstraints","-locators","-dimensions","-pivots","-handles","-textures","-strokes","-manipulators",
+                      "-cv","-hulls","-grid","-hud","-sel"};
+int $i;
+int $j,$k;
+int $getIndex[]=`textScrollList -q -sii displaySetList`;
+if(!size($getIndex))
+{error "请选中一个显示预设用于保存方案！";}
+$keepedIndex[$keepedIndexNum]=$getIndex[0];
+$j=$getIndex[0]-1;
+for($i=0;$i<30;$i++)
+{$k=`modelEditor -q $objType[$i]  $modelPanel`;
+$wkkeepResult[$j][$i]=$k;}
+$keepedIndexNum++;
+}
+AnimateusefulTool();
+

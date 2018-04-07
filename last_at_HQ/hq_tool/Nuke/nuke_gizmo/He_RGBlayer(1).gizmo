@@ -1,0 +1,138 @@
+#! /Applications/Nuke6.0v1-32/Nuke6.0v1.app/Contents/MacOS/Nuke6.0v1 -nx
+version 6.0 v1
+Gizmo {
+ note_font_color 0xff
+ addUserKnob {20 He_RGBlayer}
+ addUserKnob {41 Merge T Merge1.operation}
+ addUserKnob {26 Global}
+ addUserKnob {41 white_3 l gain T GradeGlobal.white}
+ addUserKnob {41 gamma_3 l gamma T GradeGlobal.gamma}
+ addUserKnob {41 multiply l color T Grade4.multiply}
+ addUserKnob {41 value_1 l Fade T Multiply1.value}
+ addUserKnob {26 R}
+ addUserKnob {41 white l gain T GradeR.white}
+ addUserKnob {41 gamma T GradeR.gamma}
+ addUserKnob {41 multiply_1 l color T Grade1.multiply}
+ addUserKnob {41 value l Fade T MultiplyR.value}
+ addUserKnob {26 G}
+ addUserKnob {41 white_g l gain T GradeG.white}
+ addUserKnob {41 gamma_1 l gamma T GradeG.gamma}
+ addUserKnob {41 multiply_g l color T Grade2.multiply}
+ addUserKnob {41 Fade_g l Fade T MultiplyG.value}
+ addUserKnob {26 B}
+ addUserKnob {41 white_1 l gain T GradeB.white}
+ addUserKnob {41 gamma_2 l gamma T GradeB.gamma}
+ addUserKnob {41 multiply_b l color T Grade3.multiply}
+ addUserKnob {41 Fade_b l Fade T MultiplyB.value}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 22
+  ypos 244
+ }
+ Dot {
+  name Dot1
+  xpos 56
+  ypos 289
+ }
+set N2da4420 [stack 0]
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name ShuffleB
+  xpos 159
+  ypos 341
+ }
+ Grade {
+  name GradeB
+  xpos 159
+  ypos 367
+ }
+ Grade {
+  name Grade3
+  xpos 159
+  ypos 393
+ }
+ Multiply {
+  name MultiplyB
+  xpos 159
+  ypos 427
+ }
+push 0
+push $N2da4420
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name ShuffleR
+  xpos -113
+  ypos 343
+ }
+ Grade {
+  name GradeR
+  xpos -113
+  ypos 373
+ }
+ Grade {
+  name Grade1
+  xpos -113
+  ypos 399
+ }
+ Multiply {
+  name MultiplyR
+  xpos -113
+  ypos 427
+ }
+push $N2da4420
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name ShuffleG
+  xpos 22
+  ypos 341
+ }
+ Grade {
+  name GradeG
+  xpos 22
+  ypos 373
+ }
+ Grade {
+  name Grade2
+  xpos 22
+  ypos 399
+ }
+ Multiply {
+  name MultiplyG
+  xpos 22
+  ypos 430
+ }
+ Merge2 {
+  inputs 3+1
+  name Merge1
+  xpos 22
+  ypos 504
+ }
+ Grade {
+  name GradeGlobal
+  xpos 22
+  ypos 536
+ }
+ Grade {
+  name Grade4
+  xpos 22
+  ypos 566
+ }
+ Multiply {
+  name Multiply1
+  xpos 22
+  ypos 590
+ }
+ Output {
+  name Output1
+  xpos 22
+  ypos 633
+ }
+end_group

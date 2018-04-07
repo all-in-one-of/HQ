@@ -1,0 +1,50 @@
+global proc loadcameraplanelTool()
+{
+	string $YY_Cam_Sel[] = `ls -sl`;
+	if(size($YY_Cam_Sel) == 1)
+	{
+	string $YY_Cam_Types[] = `listRelatives -s $YY_Cam_Sel[0]`;	
+	string $YY_Cam_Type = `nodeType $YY_Cam_Types[0]`;
+	if($YY_Cam_Type == "camera")
+	{
+	select -cl;
+	string $YY_Poly_Came[] = `polyPlane -n "YY_Camera_Plane_#" -w 0.397131 -h 0.296166 -sx 1 -sy 1 -ax 0 0 0 -tx 1 -ch 0`;
+	xform -ws -t 0 0 0.3 ($YY_Poly_Came[0] + ".scalePivot") ($YY_Poly_Came[0] + ".rotatePivot");
+	//delete`parentConstraint -weight 1 $YY_Cam_Sel[0] $YY_Poly_Came[0]`;
+	parentConstraint -n "YY_Camera_Plane_ParentCons_#" -weight 1 ($YY_Cam_Sel[0]) ($YY_Poly_Came[0]);
+	/*
+	float $YY_nm = 0.6*tand(33.5);
+	w = 0.397131
+	h = 0.296166	
+	float $YY_mn = 220.0/295.0 * 0.6 * tand(33.5);	
+	*/
+	}
+	else
+	{
+	confirmDialog 
+		         -t "请选择摄影机"
+				 -m "请选择摄影机物体，然后运行脚本。"
+				 -b "OK"
+				 ;
+		
+	};
+	}
+	else if(size($YY_Cam_Sel) == 0)
+	{
+	confirmDialog 
+		         -t "请选择摄影机"
+				 -m "请选择摄影机，然后运行脚本。"
+				 -b "OK"
+				 ;
+	};
+
+};
+loadcameraplanelTool;
+
+
+
+
+
+
+
+

@@ -1,0 +1,37 @@
+#! /All/Oxygen/APP/L/gcc4.1/nuke/6.3v4/Nuke6.3v4 -nx
+version 6.3 v4
+Gizmo {
+ tile_color 0xff
+ postage_stamp true
+ addUserKnob {20 H_LayerContactSheet}
+ addUserKnob {41 first_frame l "Hold Frame" T FrameHold1.first_frame}
+ addUserKnob {22 CurrentFrame -STARTLINE T nuke.thisNode().knob('first_frame').setValue(nuke.frame())}
+ addUserKnob {41 disable_1 l "Disable Hold" T FrameHold1.disable}
+ addUserKnob {26 "" +STARTLINE}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -50
+  ypos 148
+ }
+ LayerContactSheet {
+  gap 5
+  center true
+  showLayerNames true
+  name LayerContactSheet1
+  xpos -50
+  ypos 174
+ }
+ FrameHold {
+  first_frame 300
+  name FrameHold1
+  xpos -50
+  ypos 200
+ }
+ Output {
+  name Output1
+  xpos -50
+  ypos 238
+ }
+end_group

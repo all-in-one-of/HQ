@@ -1,0 +1,452 @@
+//脚本名称：CopySkinWeightJoints
+//作者：lsy
+//编写时间：2015.4
+//版本：v1.0
+//备注：程序SkinJoints由小丸子编写
+//脚本说明：脚本主要用于已蒙皮的model，对还没蒙皮的model传递蒙皮model的joint和weight
+//*****************************************
+//*********************************************************
+//*************************************************************************
+
+
+
+
+////CopySkinWeightJoints的UI
+/////////////////////
+/////////////////////////////////////
+global proc CopySkinWeightJoints(){
+	        
+	        if(`window -exists CopySkinWeightJointsWin`) deleteUI CopySkinWeightJointsWin;
+	        
+	        window -title "Copy Skin Weight Joints"  CopySkinWeightJointsWin;
+	        string $startLayout=`columnLayout -h 120 -w 20 -adj 1 `;
+	             separator;//单划线
+	            
+	          
+	           
+	                setParent  $startLayout;//跳上 $startLayout布局 
+	             
+	             frameLayout -label "CopySkinWeight" -borderStyle "etchedIn" -h 250 CopySkinWeightLayout1 ;
+	               
+	                rowColumnLayout  -height 10 -columnWidth 1 50 -numberOfColumns 3 ;
+	                   radioCollection  radioCollection_1;
+                       text -label "";  text  -label "Surface Assocition:" text_1;      radioButton -select -label "Close point on surface" radioButton_1;
+                       text -label "";  text -label "";      radioButton -label "Ray cast" radioButton_2;
+                       text -label "";  text -label "";      radioButton -label "Closest component" radioButton_3;
+                       text -label "";  text -label "";      radioButton -label "UV space" radioButton_4;
+                  
+                    setParent ..;
+                     
+                    columnLayout  -adj 1  ;
+                      separator -style "in";
+                       
+                    setParent ..;
+                    rowColumnLayout  -height 20 -columnWidth 1 20 -numberOfColumns 2 ;
+                      text -label ""; optionMenuGrp -label "Influence Association 1:"  -columnWidth 1 120 optionMenuGrp_1;
+                                                                                        menuItem -label "Closest joint"  I1_menuItem_1;
+                                                                                        menuItem -label "Closest bone"   I1_menuItem_2;
+                                                                                        menuItem -label "One to one"     I1_menuItem_3;
+                                                                                        menuItem -label "Label"          I1_menuItem_4;                                                                                        
+                                                                                        menuItem -label "Name"           I1_menuItem_5;
+                                      
+                      text -label "";optionMenuGrp -label "Influence Association 2:"  -columnWidth 1 120 optionMenuGrp_2;
+                                                                                        menuItem -label "None"           I2_menuItem_1;
+                                                                                        menuItem -label "Closest joint"  I2_menuItem_2;
+                                                                                        menuItem -label "Closest bone"   I2_menuItem_3;
+                                                                                        menuItem -label "One to one"     I2_menuItem_4;
+                                                                                        menuItem -label "Label"          I2_menuItem_5;
+                                                                                        menuItem -label "Name"           I2_menuItem_6;
+                                                                                        
+                      text -label "";optionMenuGrp -label "Influence Association 3:"   -columnWidth 1 120 optionMenuGrp_3;
+                                                                                        menuItem -label "None"           I3_menuItem_1;
+                                                                                        menuItem -label "Closest joint"  I3_menuItem_2;
+                                                                                        menuItem -label "Closest bone"   I3_menuItem_3;
+                                                                                        menuItem -label "One to one"     I3_menuItem_4;
+                                                                                        menuItem -label "Label"          I3_menuItem_5;
+                                                                                        menuItem -label "Name"           I2_menuItem_6;
+
+                    
+                       
+                   setParent ..;
+                     
+                   columnLayout  -adj 1  ;
+                     separator -style "in"; 
+                     
+                   setParent ..;
+                   rowColumnLayout   -columnWidth 1 145 -numberOfColumns 2 ;
+	                  text -label "";  checkBox -width 300 -label "Normalize"  NormalizeChe;
+                   
+                   
+	            setParent  $startLayout;//跳上 $startLayout布局 
+	                  text -label "先选择源模型，之后选择需要传递的模型，可实现源模型对N个模型的传递";
+	                  text -label ""; 
+	                  button -command "resetSettings" -label "Reset settings" -height 30 -width 10 button_1;
+	                  
+	                  button -command "N_CopySkinWeightJoints" -label "copy" -height 30 -width 10 button_2;
+	
+	
+showWindow  CopySkinWeightJointsWin;
+}
+
+
+
+///恢复UI的初始设置
+/////////////////////////////////////
+////////////////////////////////////////////////////
+
+global proc resetSettings(){
+	
+	radioButton -e -select  radioButton_1;
+	optionMenuGrp -e -select 1 optionMenuGrp_1;
+	optionMenuGrp -e -select 1 optionMenuGrp_2;
+	optionMenuGrp -e -select 1 optionMenuGrp_3;
+	checkBox -e -value 0 NormalizeChe;
+                   
+	
+}
+
+
+
+
+
+////传递源模型的joint和skin到目标模型上
+/////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+global proc SkinJoints(){
+             
+            string $select[] = `ls -sl`;
+            string $Skin = `findRelatedSkinCluster $select[0]`;
+            string $SkinJoints[]=`skinCluster -q  -inf $Skin`;
+            /////获取蒙皮模型的影响物
+            select -cl  ;
+            
+            joint -p 0 0 0 -n "Skin_joint_del";
+            int $M_size=`size $select`;
+            for($i=1;$i<$M_size;$i++){
+            	 
+            	 skinCluster -dr 4.0 "Skin_joint_del" $select[$i];
+            	 select -r $SkinJoints;
+            	 select -add $select[$i] ;
+                 skinClusterInfluence 1 " -dr 4";
+               
+            }
+           delete "Skin_joint_del";
+           select -cl  ;   
+          
+        
+           ////蒙皮模型和需要蒙皮模型的骨骼蒙皮一致
+         
+}
+
+
+
+
+
+
+
+////传递源模型的skinWeight到目标模型上
+/////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+global proc N_copySkinWeights(){
+	
+	
+	        string $select[] =`ls -sl`;
+	        int $M_size=`size $select`;
+	        for($i=1;$i<$M_size;$i++){	
+	        
+	           int $radioButton_1_true=`radioButton -q  -select radioButton_1`;
+	           int $radioButton_2_true=`radioButton -q  -select radioButton_2`;
+	           int $radioButton_3_true=`radioButton -q  -select radioButton_3`;
+	           
+	           string $surfaceAssociation_name;
+	              
+	           if($radioButton_1_true==1)
+	       	       $surfaceAssociation_name="closestPoint";    
+	           else if($radioButton_2_true==1)
+	               $surfaceAssociation_name="rayCast";
+	           else if($radioButton_3_true==1)
+	               $surfaceAssociation_name="closestComponent"; 
+	    
+	                
+      //获取$surfaceAssociation的字符
+          
+          
+          
+               int $influenceAssociation_1=`optionMenuGrp -query -select   optionMenuGrp_1`;
+	           int $influenceAssociation_2=`optionMenuGrp -query -select   optionMenuGrp_2`;
+	           int $influenceAssociation_3=`optionMenuGrp -query -select   optionMenuGrp_3`;
+	           string $influenceAssociation_string1;
+	           string $influenceAssociation_string2;
+	           string $influenceAssociation_string3;
+      
+
+      
+	           if($influenceAssociation_1==1)
+	                 $influenceAssociation_string1 ="closestJoint";
+	           else if($influenceAssociation_1==2)
+	                 $influenceAssociation_string1 ="closestBone";
+	           else if($influenceAssociation_1==3)
+	                 $influenceAssociation_string1 ="oneToOne";
+	           else if($influenceAssociation_1==4)
+	                 $influenceAssociation_string1 ="label";
+	           else if($influenceAssociation_1==5)
+	                 $influenceAssociation_string1 ="name";
+	                 
+
+	           if($influenceAssociation_2==2)
+	                 $influenceAssociation_string2 ="closestJoint";
+	           else if($influenceAssociation_2==3)	                 
+	                 $influenceAssociation_string2 ="closestBone";
+	           else if($influenceAssociation_2==4)	                 
+	                 $influenceAssociation_string2 ="oneToOne";
+	           else if($influenceAssociation_2==5)	                 
+	                 $influenceAssociation_string2 ="label";
+	           else if($influenceAssociation_2==6)	                 
+	                 $influenceAssociation_string2 ="name";
+	                  
+
+	         if($influenceAssociation_3==2)
+	                 $influenceAssociation_string3 ="closestJoint";
+	         else if($influenceAssociation_3==3)	                 
+	                 $influenceAssociation_string3 ="closestBone";
+	         else if($influenceAssociation_3==4)	                 
+	                 $influenceAssociation_string3 ="oneToOne";
+	         else if($influenceAssociation_3==5)	                 
+	                 $influenceAssociation_string3 ="label";
+	         else if($influenceAssociation_3==6)	                 
+	                 $influenceAssociation_string3 ="name";
+        //获取$influenceAssociation的字符
+        
+            int $normalize=`checkBox -q -value NormalizeChe`;
+	        string $normalize_string;
+	      
+	        int $radioButton_4_true=`radioButton -q  -select radioButton_4`;
+	        int $influenceAssociation_2i=`optionMenuGrp -query -select   optionMenuGrp_2`;
+	        int $influenceAssociation_3i=`optionMenuGrp -query -select   optionMenuGrp_3`;
+	    //获取UI的设置之后进行判断 
+	      
+	      
+	        if($normalize==0){      
+	             if($radioButton_4_true==1){            
+	                if($influenceAssociation_2i==1 && $influenceAssociation_3i==1){
+	             
+	   /* in_1 */    copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       $select[0] $select[$i];
+	        	                       
+	        	          print("copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1 -influenceAssociation  " + $influenceAssociation_string1+ "  "+ $select[0]+"  " + $select[$i]+"\n");
+	        	                                                   };
+	        	                                                       
+	        	    if($influenceAssociation_2i!=1 && $influenceAssociation_3i==1){
+	        	      
+	  /* in_2 */     copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string2
+	        	                       $select[0] $select[$i]; 
+	        	                        
+	        	          print("copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1 -influenceAssociation  " + $influenceAssociation_string1 +"  " +"-influenceAssociation  " +  $influenceAssociation_string2 + "  "+$select[0]+" "+ $select[$i]+"\n");      
+	                                                                  };
+	                                                                  
+	               if($influenceAssociation_2i==1 && $influenceAssociation_3i!=1){
+	        	      
+	 /* in_3 */     copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string3
+	        	                       $select[0] $select[$i]; 
+	        	                       
+	        	         print("copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1 -influenceAssociation  " + $influenceAssociation_string1 +"  " +"-influenceAssociation  " +  $influenceAssociation_string3 + "  "+$select[0]+" "+ $select[$i]+"\n");      
+	        	                                                     };
+	        	   
+	        	   if($influenceAssociation_2i!=1 && $influenceAssociation_3i!=1){
+	        	      
+	 /* in_4 */     copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string2
+	        	                       -influenceAssociation   $influenceAssociation_string3
+	        	                       $select[0] $select[$i]; 
+	        	                       
+	        	         print("copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1 -influenceAssociation  " + $influenceAssociation_string1  +" -influenceAssociation  " +  $influenceAssociation_string2  +" -influenceAssociation  " +  $influenceAssociation_string3 + "  "+$select[0]+" "+ $select[$i]+"\n");      
+	        	                                                     };
+	       
+	           }else {
+	           		                if($influenceAssociation_2i==1 && $influenceAssociation_3i==1){
+	             
+	   /* ra_1 */    copySkinWeights  -noMirror -surfaceAssociation $surfaceAssociation_name
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       $select[0] $select[$i];
+	        	                       
+	        	          print("copySkinWeights  -noMirror -surfaceAssociation "+$surfaceAssociation_name+" -influenceAssociation  " + $influenceAssociation_string1+ "  "+ $select[0]+"  " + $select[$i]+"\n");
+	        	                                                   };
+	        	                                                       
+	        	    if($influenceAssociation_2i!=1 && $influenceAssociation_3i==1){
+	        	      
+	  /* ra_2 */     copySkinWeights  -noMirror -surfaceAssociation $surfaceAssociation_name
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string2
+	        	                       $select[0] $select[$i]; 
+	        	                        
+	        	          print("copySkinWeights  -noMirror -surfaceAssociation "+$surfaceAssociation_name+" -influenceAssociation  "  + $influenceAssociation_string1 +"  " +"-influenceAssociation  " +  $influenceAssociation_string2 + "  "+$select[0]+" "+ $select[$i]+"\n");      
+	                                                                  };
+	                                                                  
+	               if($influenceAssociation_2i==1 && $influenceAssociation_3i!=1){
+	        	      
+	 /* ra_3 */     copySkinWeights  -noMirror -surfaceAssociation $surfaceAssociation_name
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string3
+	        	                       $select[0] $select[$i]; 
+	        	                       
+	        	         print("copySkinWeights  -noMirror -surfaceAssociation "+$surfaceAssociation_name+" -influenceAssociation  "  + $influenceAssociation_string1 +"  " +"-influenceAssociation  " +  $influenceAssociation_string3 + "  "+$select[0]+" "+ $select[$i]+"\n");      
+	        	                                                     };
+	        	   
+	        	   if($influenceAssociation_2i!=1 && $influenceAssociation_3i!=1){
+	        	      
+	 /* ra_4 */     copySkinWeights  -noMirror -surfaceAssociation $surfaceAssociation_name
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string2
+	        	                       -influenceAssociation   $influenceAssociation_string3
+	        	                       $select[0] $select[$i]; 
+	        	                       
+	        	         print("copySkinWeights  -noMirror -surfaceAssociation "+$surfaceAssociation_name+" -influenceAssociation  "  + $influenceAssociation_string1  +" -influenceAssociation  " +  $influenceAssociation_string2  +" -influenceAssociation  " +  $influenceAssociation_string3 + "  "+$select[0]+" "+ $select[$i]+"\n");      
+	        	                                                     };
+	           }
+	        	                 
+       }else {
+	             if($radioButton_4_true==1){            
+	                if($influenceAssociation_2i==1 && $influenceAssociation_3i==1){
+	             
+	   /* no_1 */    copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -normalize
+	        	                       $select[0] $select[$i];
+	        	                       
+	        	          print("copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1 -influenceAssociation  " + $influenceAssociation_string1+ " -normalize "+ $select[0]+" -normalize " + $select[$i]+"\n");
+	        	                                                   };
+	        	                                                       
+	        	    if($influenceAssociation_2i!=1 && $influenceAssociation_3i==1){
+	        	      
+	  /* no_2 */     copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string2
+	        	                       -normalize
+	        	                       $select[0] $select[$i]; 
+	        	                        
+	        	          print("copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1 -influenceAssociation  " + $influenceAssociation_string1 +"  " +"-influenceAssociation  " +  $influenceAssociation_string2 + " -normalize "+$select[0]+" "+ $select[$i]+"\n");      
+	                                                                  };
+	                                                                  
+	               if($influenceAssociation_2i==1 && $influenceAssociation_3i!=1){
+	        	      
+	 /* no_3 */     copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string3
+	        	                       -normalize
+	        	                       $select[0] $select[$i]; 
+	        	                       
+	        	         print("copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1 -influenceAssociation  " + $influenceAssociation_string1 +"  " +"-influenceAssociation  " +  $influenceAssociation_string3 + " -normalize "+$select[0]+" "+ $select[$i]+"\n");      
+	        	                                                     };
+	        	   
+	        	   if($influenceAssociation_2i!=1 && $influenceAssociation_3i!=1){
+	        	      
+	 /* no_4 */     copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string2
+	        	                       -influenceAssociation   $influenceAssociation_string3
+	        	                       -normalize
+	        	                       $select[0] $select[$i]; 
+	        	                       
+	        	         print("copySkinWeights  -noMirror -surfaceAssociation closestPoint -uvSpace map1 map1 -influenceAssociation  " + $influenceAssociation_string1  +" -influenceAssociation  " +  $influenceAssociation_string2  +" -influenceAssociation  " +  $influenceAssociation_string3 + " -normalize "+$select[0]+" "+ $select[$i]+"\n");      
+	        	                                                     };
+	       
+	           }else {
+	           		                if($influenceAssociation_2i==1 && $influenceAssociation_3i==1){
+	             
+	   /* no_5 */    copySkinWeights  -noMirror -surfaceAssociation $surfaceAssociation_name
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -normalize
+	        	                       $select[0] $select[$i];
+	        	                       
+	        	          print("copySkinWeights  -noMirror -surfaceAssociation "+$surfaceAssociation_name+" -influenceAssociation  " + $influenceAssociation_string1+ " -normalize "+ $select[0]+"  " + $select[$i]+"\n");
+	        	                                                   };
+	        	                                                       
+	        	    if($influenceAssociation_2i!=1 && $influenceAssociation_3i==1){
+	        	      
+	  /* no_6 */     copySkinWeights  -noMirror -surfaceAssociation $surfaceAssociation_name
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string2
+	        	                       -normalize
+	        	                       $select[0] $select[$i]; 
+	        	                        
+	        	          print("copySkinWeights  -noMirror -surfaceAssociation "+$surfaceAssociation_name+" -influenceAssociation  "  + $influenceAssociation_string1 +"  " +"-influenceAssociation  " +  $influenceAssociation_string2 + " -normalize "+$select[0]+" "+ $select[$i]+"\n");      
+	                                                                  };
+	                                                                  
+	               if($influenceAssociation_2i==1 && $influenceAssociation_3i!=1){
+	        	      
+	 /* no_7 */     copySkinWeights  -noMirror -surfaceAssociation $surfaceAssociation_name
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string3
+	        	                       -normalize
+	        	                       $select[0] $select[$i]; 
+	        	                       
+	        	         print("copySkinWeights  -noMirror -surfaceAssociation "+$surfaceAssociation_name+" -influenceAssociation  "  + $influenceAssociation_string1 +"  " +"-influenceAssociation  " +  $influenceAssociation_string3 + " -normalize "+$select[0]+" "+ $select[$i]+"\n");      
+	        	                                                     };
+	        	   
+	        	   if($influenceAssociation_2i!=1 && $influenceAssociation_3i!=1){
+	        	      
+	 /* no_8 */     copySkinWeights  -noMirror -surfaceAssociation $surfaceAssociation_name
+	        	                       -influenceAssociation   $influenceAssociation_string1
+	        	                       -influenceAssociation   $influenceAssociation_string2
+	        	                       -influenceAssociation   $influenceAssociation_string3
+	        	                       -normalize
+	        	                       $select[0] $select[$i]; 
+	        	                       
+	        	         print("copySkinWeights  -noMirror -surfaceAssociation "+$surfaceAssociation_name+" -influenceAssociation  "  + $influenceAssociation_string1  +" -influenceAssociation  " +  $influenceAssociation_string2  +" -influenceAssociation  " +  $influenceAssociation_string3 + " -normalize "+$select[0]+" "+ $select[$i]+"\n");      
+	        	                                                     };
+	           }
+       
+       	
+       }     	                 
+
+	}        
+
+}
+
+
+
+////程序SkinJoints和程序N_copySkinWeights合并
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+                 
+
+global proc N_CopySkinWeightJoints(){
+	
+	        string $select_n[] = `ls -sl`;
+	        int $int =`size($select_n)`;
+	        for($i=1;$i<$int;$i++){
+	        
+	        	
+	        	string $Skin=`findRelatedSkinCluster $select_n[$i]`;
+                int $int_n=`size($Skin)`;
+                string $select_tow[]={$select_n[0],$select_n[$i]};
+                select $select_tow;
+                if($int_n==0){
+                	SkinJoints;
+                	select $select_tow;
+                	N_copySkinWeights;}
+                if($int_n>0){
+                	N_copySkinWeights;}
+                if($int_n<0){
+                    print("The is false");}
+        
+              }
+   select -clear; 
+   print("//////////执行拷贝完毕   perform finished copy");
+	
+}
+CopySkinWeightJoints;

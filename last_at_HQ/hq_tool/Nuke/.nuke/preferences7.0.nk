@@ -1,0 +1,7 @@
+Preferences {
+ inputs 0
+ name Preferences
+ selectedGPUDeviceName "Quadro 4000"
+ platformPathRemaps ""
+ maxPanels 2
+}

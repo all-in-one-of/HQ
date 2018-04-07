@@ -1,0 +1,109 @@
+
+
+global proc fixmissingshader()
+{
+    if(`window -exists wkprojectObjDisplayWindow`)
+    deleteUI wkprojectObjDisplayWindow;
+    window -t "修复丢失材质网络" -widthHeight  450 250 wkprojectObjDisplayWindow;
+    
+    columnLayout -cal "center" -co "left" 3;
+    
+      separator -w 450;
+      textFieldButtonGrp -w 450 -rat 2 "bottom" 8 -rat 3 "bottom" 8 -h 40 -cw 1 100 -cw 2 280 -cat 1 "left" 0  -label "选取有材质的面片: " -ed 0 -text "点选具有正确的材质网络的模型面片" -buttonLabel "拾取面片" -buttonCommand "inputMeshBrowser" textButton;
+        separator -w 450;
+       text -h 25 -l "选取丢失材质的面片:" projectObjTxt ;
+      textScrollList -w 425 -h 100 -append "点选一个或者多个丢失材质的模型面片"  -allowMultiSelection true projectionObjList ;
+        popupMenu -parent projectionObjList;
+        menuItem -label "添加面片" -command "getSelectObj()";
+        menuItem -divider true ;
+        menuItem -label "清除列表" -command "clearSelectionList()" ;
+    rowLayout -nc 2  -cat 1 "left" 65 -cat 2 "left" 95 -rat 1 "top" 3 -rat 2 "top" 3 -cl2 "center" "center";	
+        button -l "添加面片" -command "getSelectObj()" -w 100;
+        button -l "清空列表" -command "clearSelectionList()" -w 100;
+  setParent..;
+    
+   separator -w 450;
+    rowLayout -nc 2  -cat 1 "left" 20  -cat 2 "left" 30 -rat 1 "top" 3 -rat 2 "top" 3  -cl1 "center";
+  button -h 30  -w 180 -l "修复一般情况下的材质丢失" -c "resolve"  doallObjMoveButton; 
+  button -h 30  -w 180 -l "修复因几何体缓存引起的材质丢失" -c "resolve2"  doallObjMoveButton2;  
+  showWindow;
+}
+
+global proc inputMeshBrowser()
+{
+	string $objs[] = `ls -sl -fl` ;
+	string $base = $objs[0] ;
+    
+	textFieldButtonGrp -e -tx $base textButton;
+	
+	if ($base == "" || objExists($base) != true)
+		return ;
+}
+
+global proc getSelectObj()
+{
+    string $selItems[] = `ls -sl`;	
+    textScrollList -e -removeAll projectionObjList ;
+    for ($i = 0; $i<size($selItems);$i++)
+    {
+      textScrollList -e -a $selItems[$i] projectionObjList ;
+    }
+}
+
+global proc clearSelectionList()
+{
+    textScrollList -e -removeAll projectionObjList ;
+}
+
+global proc resolve()
+{
+string $inputMesh = `textFieldButtonGrp -q -tx textButton`;
+string $selectobject[] = `textScrollList -q -allItems  projectionObjList`;
+
+for($eachItem in $selectobject)
+{
+$badMesh = $eachItem;
+$goodMesh = $inputMesh;
+
+$badShapeGroup = `listRelatives -c  -shapes  $badMesh`;
+string $theBadShape = $badShapeGroup[0];
+
+$goodShapeGroup = `listRelatives -c  -shapes  $goodMesh`;
+string $theGoodShape = $goodShapeGroup[0];
+
+$shadingEngineGroup = `listConnections  -t shadingEngine $theGoodShape`;
+$theShadingEngine = $shadingEngineGroup[0];
+
+connectAttr  -na ($theBadShape + ".instObjGroups[0]")  ($theShadingEngine + ".dagSetMembers");
+}
+}
+
+
+global proc resolve2()
+{
+string $inputMesh = `textFieldButtonGrp -q -tx textButton`;
+string $selectobject[] = `textScrollList -q -allItems  projectionObjList`;
+
+for($eachItem in $selectobject)
+{
+$badMesh = $eachItem;
+$goodMesh = $inputMesh;
+
+$badShapeGroup = `listRelatives -c  -shapes  $badMesh`;
+string $theBadShape = $badShapeGroup[0];
+
+$goodShapeGroup = `listRelatives -c  -shapes  $goodMesh`;
+string $theGoodShape = $goodShapeGroup[0];
+    
+if(`objExists ( $theBadShape + "Deformed")`)
+{
+$theBadShape = $theBadShape + "Deformed";
+
+$shadingEngineGroup = `listConnections  -t shadingEngine $theGoodShape`;
+$theShadingEngine = $shadingEngineGroup[0];
+
+connectAttr  -na ($theBadShape + ".instObjGroups[0]")  ($theShadingEngine + ".dagSetMembers");
+}
+}
+}
+fixmissingshader;

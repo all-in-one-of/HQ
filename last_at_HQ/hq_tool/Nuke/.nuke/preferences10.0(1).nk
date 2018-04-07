@@ -1,0 +1,9 @@
+Preferences {
+ inputs 0
+ name Preferences
+ selectedGPUDeviceName "Quadro K4000"
+ platformPathRemaps ""
+ maxPanels 2
+ Viewer3DControlEmulation Maya
+ echoAllCommands true
+}

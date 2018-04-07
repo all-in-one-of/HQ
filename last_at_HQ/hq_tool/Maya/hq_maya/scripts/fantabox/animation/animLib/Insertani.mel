@@ -1,0 +1,32 @@
+global proc Insertani()
+{
+    int $hunheKG=`checkBoxGrp -q -v1 "KG"`;
+    int $shijianxuanxiang=`radioButtonGrp -q -sl "SJFW"`;
+    $qishizhen1=`floatFieldGrp -q -v "QSZ"`;
+    $jieshuzhen1=`floatFieldGrp -q -v "JSZ"`;
+    float $qishizhen1int[]=$qishizhen1;
+    float $jieshuzhen1int[]=$jieshuzhen1;
+    $niantiexuanxiang=`radioButtonGrp -q -sl "NTFS"`;
+    $qudaiquyuvis=`radioButtonGrp -q -vis "QDQY"`;
+    $qudaiquyu=`radioButtonGrp -q -sl "QDQY"`;    
+    if($hunheKG==1&&$shijianxuanxiang==1&&$jieshuzhen1int[0]==0&&$niantiexuanxiang==3&&$qudaiquyuvis==0)
+        {
+            Insertani_xianjiedian;
+        }
+    if($hunheKG==1&&$shijianxuanxiang==3&&$niantiexuanxiang==1&&$qudaiquyuvis==1&&$qudaiquyu==2)
+        {
+            Insertani_quanbuqudaiquanbu;
+        }
+    if($hunheKG==1&&$shijianxuanxiang==3&&$niantiexuanxiang==2&&$qudaiquyuvis==1&&$qudaiquyu==2)
+        {
+            Insertani_quanbuhebingquanbu;
+        }
+    if($hunheKG==1&&$shijianxuanxiang==2&&$niantiexuanxiang==1&&$qudaiquyuvis==1&&$qudaiquyu==1)
+        {
+            Insertani_qishijieshuqudaitime;
+        }
+    else
+    {
+        print "没有符合条件";
+    }    
+}

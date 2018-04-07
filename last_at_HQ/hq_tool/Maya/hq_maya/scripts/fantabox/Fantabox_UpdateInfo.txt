@@ -1,0 +1,15 @@
+20170518(徐思健):通用配置本地版新增Maya2017插件配置；
+修复yeti假记载导致打开yeti文件崩溃问题；
+新增wbDeltaMushDeformer插件到服务器；
+优化Fantabox刷新功能；合并整合参考工具；
+移植模型钉点功能到通用模块；
+20170519（邓滔）：将通用--绝对路径转相对路径工具的arnold代理缓存存放文件夹变为ass
+20170607(徐思健)：SJ_abcFurCache_Tool工具1.7更新说明：优化复原abc材质功能，增加复原后不输出mb文件选项。
+20170608（徐思健）：fantabox-common增加sublime功能
+20170609(徐思健):SJ_texTools2.6更新说明：修复贴图及yeti节点路径不存在时，无法获取节点路径到列表中的问题;
+SJ_charcleanuptool更新说明：同步贴图工具版本为2.6
+20170621(徐思健):SJ_abcFurCache_Tool工具:1.8更新说明：增加Arnold缓存批量指定及拷贝功能。
+20170626(徐思健):SJ_RiggingTool：增加ID与贴图切换显示;
+SJ_charcleanuptool：2.7更新说明：增加pfxHair规范命名；修改groom组为不隐藏；增加删除多余显示层功能"
+
+20170627(徐思健)：整合Miarmy插件到服务器

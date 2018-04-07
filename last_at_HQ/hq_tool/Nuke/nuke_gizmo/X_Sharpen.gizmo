@@ -1,0 +1,63 @@
+#! C:/Program Files/Nuke7.0v6/Nuke7.0.exe -nx
+version 7.0 v6
+Gizmo {
+ addUserKnob {20 X_Sharpen}
+ addUserKnob {41 sharpen_intensity t intensity T Laplacian2.size}
+ addUserKnob {41 gamma T Grade1.gamma}
+ addUserKnob {41 white l gain T Grade1.white}
+ addUserKnob {41 saturation T Saturation1.saturation}
+ addUserKnob {41 operation T Merge2.operation}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -194
+  ypos 12
+ }
+ Dot {
+  name Dot1
+  xpos -160
+  ypos 52
+ }
+set N20d77a10 [stack 0]
+ Grade {
+  name Grade1
+  xpos -194
+  ypos 72
+ }
+ Laplacian {
+  channels rgba
+  name Laplacian2
+  xpos -194
+  ypos 96
+ }
+ Shuffle {
+  alpha black
+  name Shuffle2
+  xpos -194
+  ypos 120
+ }
+ Saturation {
+  name Saturation1
+  xpos -194
+  ypos 143
+ }
+push $N20d77a10
+ Dot {
+  name Dot2
+  xpos -274
+  ypos 52
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos -308
+  ypos 143
+ }
+ Output {
+  name Output1
+  selected true
+  xpos -308
+  ypos 191
+ }
+end_group

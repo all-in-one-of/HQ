@@ -1,0 +1,95 @@
+#! C:/Program Files/Nuke7.0v9/Nuke7.0.exe -nx
+version 7.0 v9
+Gizmo {
+ inputs 2
+ addUserKnob {20 User}
+ addUserKnob {41 channels T SplineWarp3_1.channels}
+ addUserKnob {41 premultiply l "premultiply input" T SplineWarp3_1.premultiply}
+ addUserKnob {41 outputMask l "output mask" T SplineWarp3_1.outputMask}
+ addUserKnob {41 crop_to_format l "crop to format" T SplineWarp3_1.crop_to_format}
+ addUserKnob {41 boundary_bbox l "bbox boundary curve" T SplineWarp3_1.boundary_bbox}
+ addUserKnob {41 output_enum l output T SplineWarp3_1.output_enum}
+ addUserKnob {41 mix T SplineWarp3_1.mix}
+ addUserKnob {41 view T SplineWarp3_1.view}
+ addUserKnob {41 root_warp l "root warp" T SplineWarp3_1.root_warp}
+ addUserKnob {26 ""}
+ addUserKnob {41 layer_warp l "layer warp" T SplineWarp3_1.layer_warp}
+ addUserKnob {41 pair_warp l "pair warp" T SplineWarp3_1.pair_warp}
+ addUserKnob {20 "" n -4}
+ addUserKnob {41 curves l "" -STARTLINE T SplineWarp3_1.curves}
+ addUserKnob {20 "" n -5}
+ addUserKnob {20 tools l Tools n 1}
+ addUserKnob {41 toolbox l "" -STARTLINE T SplineWarp3_1.toolbox}
+ addUserKnob {20 "" n -1}
+ addUserKnob {20 rototools l "" -STARTLINE n 1}
+ addUserKnob {41 toolbar_autokey l @Roto/AutoKey T SplineWarp3_1.toolbar_autokey}
+ addUserKnob {41 toolbar_label_points l @Roto/LabelPoints T SplineWarp3_1.toolbar_label_points}
+ addUserKnob {41 toolbar_hide_curve_lines_type l @Roto/HideCurve T SplineWarp3_1.toolbar_hide_curve_lines_type}
+ addUserKnob {41 toolbar_hide_points_type l @Roto/HidePoints T SplineWarp3_1.toolbar_hide_points_type}
+ addUserKnob {41 toolbar_hide_transform_type l @Roto/HideTransformHandles T SplineWarp3_1.toolbar_hide_transform_type}
+ addUserKnob {41 toolbar_hide_transform_on_move_type l @Roto/HideTransformHandlesOnMove T SplineWarp3_1.toolbar_hide_transform_on_move_type}
+ addUserKnob {41 toolbar_constant_selection l @Roto/ConstantSelection T SplineWarp3_1.toolbar_constant_selection}
+ addUserKnob {41 toolbar_ripple l @Roto/RippleEdit T SplineWarp3_1.toolbar_ripple}
+ addUserKnob {41 toolbar_ripple_range_type l "" -STARTLINE T SplineWarp3_1.toolbar_ripple_range_type}
+ addUserKnob {41 toolbar_ripple_range_from l from T SplineWarp3_1.toolbar_ripple_range_from}
+ addUserKnob {41 toolbar_ripple_range_to l to T SplineWarp3_1.toolbar_ripple_range_to}
+ addUserKnob {41 toolbar_key l "" -STARTLINE T SplineWarp3_1.toolbar_key}
+ addUserKnob {26 ""}
+ addUserKnob {20 "" n -1}
+ addUserKnob {20 splineTools l "Spline Warper Tools" n 1}
+ addUserKnob {41 toolbar_output_a l @SplineWarp/A T SplineWarp3_1.toolbar_output_a}
+ addUserKnob {41 toolbar_output_a_warped l @SplineWarp/A_warped T SplineWarp3_1.toolbar_output_a_warped}
+ addUserKnob {41 toolbar_output_ab l @SplineWarp/AB T SplineWarp3_1.toolbar_output_ab}
+ addUserKnob {41 toolbar_output_b l @SplineWarp/B T SplineWarp3_1.toolbar_output_b}
+ addUserKnob {41 toolbar_output_b_warped l @SplineWarp/B_warped T SplineWarp3_1.toolbar_output_b_warped}
+ addUserKnob {26 ""}
+ addUserKnob {20 vis n -4}
+ addUserKnob {41 toolbar_visibility_src l "@SplineWarp/show_source;" T SplineWarp3_1.toolbar_visibility_src}
+ addUserKnob {41 toolbar_visibility_dst l "@SplineWarp/show_dest;" T SplineWarp3_1.toolbar_visibility_dst}
+ addUserKnob {20 "" n -5}
+ addUserKnob {41 toolbar_visibility_correspondence l "@SplineWarp/Correspondence;" T SplineWarp3_1.toolbar_visibility_correspondence}
+ addUserKnob {41 toolbar_visibility_boundary l "@SplineWarp/Boundary;" T SplineWarp3_1.toolbar_visibility_boundary}
+ addUserKnob {41 toolbar_visibility_hardboundary l @SplineWarp/hard_boundary T SplineWarp3_1.toolbar_visibility_hardboundary}
+ addUserKnob {26 ""}
+ addUserKnob {41 toolbar_visibility l "@Roto/Visible;" T SplineWarp3_1.toolbar_visibility}
+ addUserKnob {41 toolbar_locked l "@Roto/RotoLock;" T SplineWarp3_1.toolbar_locked}
+ addUserKnob {41 toolbar_boundary l "@SplineWarp/set_as_boundary;" T SplineWarp3_1.toolbar_boundary}
+ addUserKnob {26 ""}
+ addUserKnob {41 toolbar_preview_mode T SplineWarp3_1.toolbar_preview_mode}
+ addUserKnob {26 ""}
+ addUserKnob {20 "" n -1}
+ addUserKnob {41 key l "spline key" T SplineWarp3_1.key}
+}
+ Input {
+  inputs 0
+  name B
+  xpos -1
+  ypos -228
+  number 1
+ }
+ Input {
+  inputs 0
+  name A
+  xpos -132
+  ypos -229
+ }
+ SplineWarp3 {
+  inputs 2
+  curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44800000 x44428000}
+    {a}}}}}
+  toolbar_preview_mode "persistent preview"
+  name SplineWarp3_1
+  xpos -61
+  ypos -157
+ }
+ Output {
+  name Output1
+  xpos -61
+  ypos -85
+ }
+end_group

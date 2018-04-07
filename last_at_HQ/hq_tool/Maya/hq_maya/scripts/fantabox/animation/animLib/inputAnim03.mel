@@ -1,0 +1,60 @@
+//根据选项导入预备融合的动画
+global proc inputAnim03()
+{
+global int $qishizhen;
+global int $jieshuzhen;
+global string $selbosscn[];
+string $selbosscn[]=`ls -sl`;
+$qishizhen=`intField -q -v "startTime"`;
+$jieshuzhen=`intField -q -v "endTime"`;
+string $selObjectroles[]=`textScrollList -q -si "listObjectRole"`;
+if(size($selObjectroles)==1)
+{
+//动画信息1
+string $buffer[];
+string $but[];
+$numTokens = `tokenize $selObjectroles[0] "::" $buffer`;
+$Path=$buffer[$numTokens-2]+":"+$buffer[$numTokens-1]+$buffer[$numTokens-$numTokens];
+$numname=`tokenize $buffer[$numTokens-$numTokens] "." $but`;
+    if(size($selbosscn)==0)
+    {
+        if(`window -ex "show"`)
+            deleteUI -window "show";
+        window -t "提示!" "show";
+        columnLayout -adj 1;
+        text -l "请选择你想添加动画的总控制器！\n谢谢！";
+        button -l "知道了！" -command ("deleteUI -window " + "show");
+        showWindow show;    
+        window -e -wh 170 50 "show";
+    }
+    else
+    {
+        for($i=0;$i<size($selbosscn);$i++)
+        {
+            select ($selbosscn[$i]);
+            file -import -type "animImport" -ra true 
+            -mergeNamespacesOnClash false -namespace $but[$numname-2]
+            -options ";targetTime=4;copies=1;option=replace;pictures=0;connect=0;"
+            -pr -loadReferenceDepth "all" $Path;
+        }
+       
+           }
+    }
+    else
+    {
+        print "请选择一个动画信息";
+    }
+    select $selbosscn[0];
+    python("import makeAnimCurCycle01");
+    python("makeAnimCurCycle01.createBakeAni()");
+////创建新动画！    
+    if (!`file -q -exists "D:/AniTxt"`)
+    sysFile -makeDir "D:/AniTxt";
+    else 
+    print "存在！";
+    select $selbosscn[0];
+    file -force -options "precision=17;intValue=17;nodeNames=1;verboseUnits=0;whichRange=1;range=0:10;options=keys;hierarchy=below;controlPoints=0;shapes=1;helpPictures=0;useChannelBox=0;copyKeyCmd=-animation objects -option keys -hierarchy below -controlPoints 0 -shape 1 "
+    -typ "animExport" -pr -es "D:/AniTxt/Ani_01.anim";
+
+
+}

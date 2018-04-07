@@ -1,0 +1,237 @@
+#! C:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ inputs 7
+ tile_color 0x28ffff
+ addUserKnob {20 seven_viewer}
+ addUserKnob {68 inputstyle l input M {m zm}}
+ addUserKnob {41 format l "each viewer" T Ref_cam5.format}
+ addUserKnob {41 translate l tran_offset T Tran_Offset.translate}
+ addUserKnob {41 format_1 l format T constant_format.format}
+ addUserKnob {41 color T constant_format.color}
+ addUserKnob {41 channels T constant_format.channels}
+ addUserKnob {20 translate_each_viewer}
+ addUserKnob {41 translate_1 l tran_cam5_1 T Tran_cam5_1.translate}
+ addUserKnob {41 translate_3 l tran_cam6 T Tran_cam6.translate}
+ addUserKnob {41 translate_2 l tran_cam1 T Tran_cam1.translate}
+ addUserKnob {41 translate_7 l tran_cam2 T Tran_cam2.translate}
+ addUserKnob {41 translate_4 l tran_cam3 T Tran_cam3.translate}
+ addUserKnob {41 translate_5 l tran_cam4 T Tran_cam4.translate}
+ addUserKnob {41 translate_6 l tran_cam5_2 T Tran_cam5_2.translate}
+}
+ Input {
+  inputs 0
+  name cam5_2
+  label cam5
+  xpos -311
+  ypos 210
+ }
+ Reformat {
+  format "1960 1200 0 0 1960 1200 1 qqq"
+  name Ref_cam5
+  xpos -311
+  ypos 258
+ }
+ set C98dc21f0 [stack 0]
+ Transform {
+  translate {10780 0}
+  center {490 300}
+  filter Impulse
+  name Tran_cam5_2
+  xpos -311
+  ypos 302
+ }
+set N98dc1e80 [stack 0]
+ Input {
+  inputs 0
+  name cam4
+  label cam4
+  xpos -416
+  ypos 211
+  number 1
+ }
+clone $C98dc21f0 {
+  xpos -411
+  ypos 257
+  selected false
+ }
+ Transform {
+  translate {8820 0}
+  center {490 300}
+  filter Impulse
+  name Tran_cam4
+  xpos -415
+  ypos 301
+ }
+set N98dbfc20 [stack 0]
+ Input {
+  inputs 0
+  name cam3
+  label cam3
+  xpos -525
+  ypos 210
+  number 2
+ }
+clone $C98dc21f0 {
+  xpos -522
+  ypos 255
+  selected false
+ }
+ Transform {
+  translate {6860 0}
+  center {490 300}
+  filter Impulse
+  name Tran_cam3
+  xpos -525
+  ypos 300
+ }
+set N98dc5580 [stack 0]
+ Input {
+  inputs 0
+  name cam2
+  label cam2
+  xpos -636
+  ypos 210
+  number 3
+ }
+clone $C98dc21f0 {
+  xpos -631
+  ypos 255
+  selected false
+ }
+ Transform {
+  translate {4900 0}
+  center {490 300}
+  filter Impulse
+  name Tran_cam2
+  xpos -636
+  ypos 301
+ }
+set N98dc4ea0 [stack 0]
+ Input {
+  inputs 0
+  name cam1
+  label "cam1\n"
+  xpos -746
+  ypos 211
+  number 4
+ }
+clone $C98dc21f0 {
+  xpos -742
+  ypos 252
+  selected false
+ }
+ Transform {
+  translate {2940 0}
+  center {490 300}
+  filter Impulse
+  name Tran_cam1
+  xpos -742
+  ypos 301
+ }
+set N98dc5fd0 [stack 0]
+ Input {
+  inputs 0
+  name cam6
+  label "cam6\n"
+  xpos -856
+  ypos 212
+  number 5
+ }
+clone $C98dc21f0 {
+  xpos -856
+  ypos 253
+  selected false
+ }
+ Transform {
+  translate {980 0}
+  center {490 300}
+  filter Impulse
+  name Tran_cam6
+  xpos -856
+  ypos 302
+ }
+set N98dc6a20 [stack 0]
+ Input {
+  inputs 0
+  name cam5_1
+  label cam5
+  xpos -966
+  ypos 210
+  number 6
+ }
+clone $C98dc21f0 {
+  xpos -966
+  ypos 251
+  selected false
+ }
+ Transform {
+  translate {-980 0}
+  center {490 300}
+  filter Impulse
+  name Tran_cam5_1
+  xpos -966
+  ypos 301
+ }
+set N98dc7470 [stack 0]
+ Constant {
+  inputs 0
+  channels rgb
+  name constant_format
+  xpos -777
+  ypos 378
+ }
+set N98dc77e0 [stack 0]
+ ZMerge {
+  inputs 8
+  name ZMerge1
+  xpos -525
+  ypos 398
+ }
+set N98dc7b50 [stack 0]
+push $N98dc1e80
+push $N98dbfc20
+push $N98dc5580
+push $N98dc4ea0
+push $N98dc5fd0
+push $N98dc6a20
+push 0
+push $N98dc7470
+push $N98dc77e0
+ Merge2 {
+  inputs 8+1
+  name Merge51
+  xpos -635
+  ypos 419
+ }
+ Transform {
+  center {5880 600}
+  name Tran_Offset
+  xpos -635
+  ypos 456
+ }
+ Switch {
+  inputs 2
+  which {{inputstyle}}
+  name Switch1
+  xpos -525
+  ypos 456
+ }
+set Nec0b6610 [stack 0]
+ Output {
+  name Output1
+  xpos -525
+  ypos 535
+ }
+push $N98dc7b50
+push $Nec0b6610
+add_layer {direct_diffuse direct_diffuse.red direct_diffuse.green direct_diffuse.blue}
+ Viewer {
+  inputs 2
+  channels direct_diffuse
+  input_process false
+  name Viewer3
+  xpos -812
+  ypos 585
+ }
+end_group

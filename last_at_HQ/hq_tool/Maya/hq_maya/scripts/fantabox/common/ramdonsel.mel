@@ -1,0 +1,484 @@
+
+global proc ramdonsel()
+{
+
+if (`window -exists randPickWindow`)
+    deleteUI randPickWindow;
+
+windowPref -w 580 -h 470 randPickWindow;
+
+window
+
+    -w 580 -h 160
+    -t "随机选取物体工具"
+    -rtf 0
+
+randPickWindow;
+
+columnLayout -adjustableColumn true;
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout k_importFile0;
+
+         $k_text01 = `text -label " 随机选择物体                                                       选取范围内的物体"`;
+
+         formLayout -edit
+
+           -af $k_text01 "top" 30
+	       -af $k_text01 "left" 10
+	       -af $k_text01 "bottom" 10
+
+         k_importFile0;
+
+       setParent ..;
+setParent ..;
+
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile1;
+
+         $text1 = `text -label "按百分比选取。填入要随机选取物体的百分比数：     \n(单位 %)"`;
+
+         global string $textField1;
+         $textField1 = `intSliderGrp -w 200 -h 21 -f 1 -maxValue 100 -minValue 0`;
+
+		 $button6 = `button -label "开始选取" -w 80 -command "pickSelects"`;
+
+         formLayout -edit
+
+           -af $text1 "top" 10
+	       -af $text1 "left" 10
+
+           -af $textField1 "top" 6
+	       -ac $textField1 "left" 10  $text1
+
+	       -ac $button6 "top" 10  $text1
+	       -af $button6 "left" 470
+           -af $button6 "bottom" 10
+
+         importFile1;
+
+       setParent ..;
+setParent ..;
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile2;
+
+         $text2 = `text -label "按个数选取。填入要随机选取物体的个数:"`;
+
+         global string $textField2;
+         $textField2 = `textField -w 50 -h 21 -ed true -text "" `;
+
+		 $button7 = `button -label "开始选取" -w 80 -command "pickSelects2"`;
+
+         formLayout -edit
+
+           -af $text2 "top" 10
+	       -af $text2 "left" 10
+
+           -af $textField2 "top" 6
+	       -ac $textField2 "left" 10  $text2
+
+	       -ac $button7 "top" 10  $text2
+	       -af $button7 "left" 470
+           -af $button7 "bottom" 10
+
+         importFile2;
+
+       setParent ..;
+setParent ..;
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+columnLayout -adjustableColumn true;
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile0;
+
+         $k_text0 = `text -label " 随机选择面                                             请先将物体调到面模式，然后选取物体的所有面。"`;
+
+         formLayout -edit
+
+           -af $k_text0 "top" 30
+	       -af $k_text0 "left" 10
+	       -af $k_text0 "bottom" 10
+
+         importFile0;
+
+       setParent ..;
+setParent ..;
+
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout k_importFile1;
+
+         $k_text1 = `text -label "按百分比选取。填入要随机选取物体的百分比数：    \n(单位 %)"`;
+
+         global string $k_textField1;
+         $k_textField1 = `intSliderGrp -w 200 -h 21 -f 1 -maxValue 100 -minValue 0`;
+
+		 $k_button6 = `button -label "开始选取" -w 80 -command "k_pickSelects"`;
+
+         formLayout -edit
+
+           -af $k_text1 "top" 10
+	       -af $k_text1 "left" 10
+
+           -af $k_textField1 "top" 6
+	       -ac $k_textField1 "left" 10  $k_text1
+
+	       -ac $k_button6 "top" 10  $k_text1
+	       -af $k_button6 "left" 470
+           -af $k_button6 "bottom" 10
+
+         k_importFile1;
+
+       setParent ..;
+setParent ..;
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout k_importFile2;
+
+         $k_text2 = `text -label "按个数选取。选择待选取的物体。填入要随机选取物体的个数:"`;
+
+         global string $k_textField2;
+         $k_textField2 = `textField -w 50 -h 21 -ed true -text "" `;
+
+		 $k_button7 = `button -label "开始选取" -w 80 -command "k_pickSelects2"`;
+
+         formLayout -edit
+
+           -af $k_text2 "top" 10
+	       -af $k_text2 "left" 10
+
+           -af $k_textField2 "top" 6
+	       -ac $k_textField2 "left" 10  $k_text2
+
+	       -ac $k_button7 "top" 10  $k_text2
+	       -af $k_button7 "left" 470
+           -af $k_button7 "bottom" 10
+
+         k_importFile2;
+
+       setParent ..;
+setParent ..;
+
+
+
+
+
+
+
+
+
+
+
+
+
+showWindow randPickWindow;
+
+};
+////////////////////////////////////////////////////////////////
+
+global proc pickSelects()
+{
+    global string $textField1;
+    int $pickPercent = `intSliderGrp -q -v $textField1`;
+    pickSelectViaPercent($pickPercent);
+}
+
+global proc pickSelects2()
+{
+    global string $textField2;
+    string $pickNums = `textField -q -text $textField2`;
+    int $pickNum = (int) $pickNums;
+    pickSelectViaNum($pickNum);
+}
+
+global proc pickSelectViaPercent ( int $pickPercent)
+{
+string $selects[];
+$selects = `ls -sl`;
+
+int $sizeSele = size($selects);
+int $pickArray[]={};
+
+int $i;
+int $loopNum = 0;
+
+select -cl;
+
+int $pickNum = ($sizeSele * $pickPercent)/100;
+    
+for($i=0; $i<$pickNum; $i++)
+{
+$loopNum++;
+    
+    if($loopNum>100000)
+        break;
+    
+float $randNumf = `rand 1`;
+int $randNum;
+$randNum = $randNumf * ($sizeSele-1);
+
+if($pickArray[$randNum]==1)
+{
+    $i--;
+    continue;
+}
+
+else
+{
+print ($randNumf + "  " + $randNum + "\n");
+select -add $selects[$randNum];
+$pickArray[$randNum]=1;
+}
+}
+}
+
+
+global proc pickSelectViaNum ( int $pickNum)
+{
+string $selects[];
+$selects = `ls -sl`;
+
+int $sizeSele = size($selects);
+int $pickArray[]={};
+
+int $i;
+int $loopNum = 0;
+
+select -cl;
+
+for($i=0; $i<$pickNum; $i++)
+{
+$loopNum++;
+    
+    if($loopNum>100000)
+        break;
+    
+float $randNumf = `rand 1`;
+int $randNum;
+$randNum = $randNumf * ($sizeSele-1);
+
+if($pickArray[$randNum]==1)
+{
+    $i--;
+    continue;
+}
+
+else
+{
+print ($randNumf + "  " + $randNum + "\n");
+select -add $selects[$randNum];
+$pickArray[$randNum]=1;
+}
+}
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////
+
+
+
+global proc k_pickSelects()
+{   
+global string $k_textField1;
+
+    global string $k_textField1;
+    int $k_pickPercent = `intSliderGrp -q -v $k_textField1`;
+
+    k_pickSelectViaPercent($k_pickPercent);
+    
+}
+
+global proc k_pickSelects2()
+{
+    global string $k_textField2;
+    string $k_pickNums = `textField -q -text $k_textField2`;
+    int $k_pickNum = (int) $k_pickNums;
+    k_pickSelectViaNum($k_pickNum);
+}
+
+global proc k_pickSelectViaPercent ( int $k_pickPercent)
+{
+string $select[];
+$select = `ls -sl`;
+
+string $faces = $select[0];
+
+string $array1[];
+tokenize $faces "[" $array1;
+
+string $array2[];
+tokenize $array1[1] "]" $array2;
+
+string $numFaces = $array2[0];
+
+string $array3[];
+tokenize $numFaces ":" $array3;
+
+int $startNum = int ($array3[0]);
+int $endNum = int ($array3[1]);
+
+
+string $selects[];
+
+for($i=$startNum; $i<=$endNum; $i++)
+$selects[$i] = $array1[0] + "[" + (string)($i) + "]";
+
+////////////////////////////////////////
+
+int $sizeSele = size($selects);
+int $pickArray[]={};
+
+int $i;
+int $loopNum = 0;
+    
+waitCursor -state on;
+
+select -cl;
+
+int $k_pickNum = ($sizeSele * $k_pickPercent)/100;
+    
+for($i=0; $i<$k_pickNum; $i++)
+{
+$loopNum++;
+    
+    if($loopNum>100000)
+        break;
+    
+float $randNumf = `rand 1`;
+int $randNum;
+$randNum = $randNumf * ($sizeSele-1);
+
+if($pickArray[$randNum]==1)
+{
+    $i--;
+    continue;
+}
+
+else
+{
+print ($randNumf + "  " + $randNum + "\n");
+select -add $selects[$randNum];
+$pickArray[$randNum]=1;
+}
+}
+
+waitCursor -state off;
+
+}
+
+
+global proc k_pickSelectViaNum ( int $k_pickNum)
+{
+string $select[];
+$select = `ls -sl`;
+
+string $faces = $select[0];
+
+string $array1[];
+tokenize $faces "[" $array1;
+
+string $array2[];
+tokenize $array1[1] "]" $array2;
+
+string $numFaces = $array2[0];
+
+string $array3[];
+tokenize $numFaces ":" $array3;
+
+int $startNum = int ($array3[0]);
+int $endNum = int ($array3[1]);
+
+string $selects[];
+
+for($i=$startNum; $i<=$endNum; $i++)
+$selects[$i] = $array1[0] + "[" + (string)($i) + "]";
+
+////////////////////////////////////////
+
+int $sizeSele = size($selects);
+int $pickArray[]={};
+
+int $i;
+int $loopNum = 0;
+
+waitCursor -state on;
+
+select -cl;
+
+for($i=0; $i<$k_pickNum; $i++)
+{
+$loopNum++;
+    
+    if($loopNum>100000)
+        break;
+    
+float $randNumf = `rand 1`;
+int $randNum;
+$randNum = $randNumf * ($sizeSele-1);
+
+if($pickArray[$randNum]==1)
+{
+    $i--;
+    continue;
+}
+
+else
+{
+print ($randNumf + "  " + $randNum + "\n");
+select -add $selects[$randNum];
+$pickArray[$randNum]=1;
+}
+}
+
+waitCursor -state off;
+
+}
+
+ramdonsel;

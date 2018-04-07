@@ -1,0 +1,588 @@
+
+
+///The UI proc//////
+
+global proc absolutepathbat()
+
+{
+
+if (`window -exists toRelativeWindow`)
+    deleteUI toRelativeWindow;
+
+windowPref -w 420 -h 540 toRelativeWindow;
+
+window
+
+    -w 350 -h 323
+    -t "绝对路径转相对路径工具"
+    -rtf 0
+
+toRelativeWindow;
+
+columnLayout -adjustableColumn true;
+
+//////////////////////////
+
+       frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile0;
+
+         $text0 = `text -label "警告：该操作不可逆。一旦修改绝对路径为相对路径后，不可退回。"`;
+         $text01 = `text -label "请在转换前确保工程中存放有相关的文件夹及文件，以免造成文件路径丢失！"`;
+
+         formLayout -edit
+
+           -af $text0 "top" 10
+	       -af $text0 "left" 10
+
+           -ac $text01 "top" 10 $text0
+           -af $text01 "left" 10
+           -af $text01 "bottom" 10
+
+         importFile0;
+
+       setParent ..;
+setParent ..;
+
+////////////////////////
+
+       frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile1;
+
+         $text1 = `text -label "工程中存放Vray代理文件的文件夹："`;
+
+         global string $textField1;
+         $textField1 = `textField -w 150 -h 21 -ed true -text "vrmesh"`;
+
+		 $button1 = `button -label "绝对路径转相对路径" -w 178 -command "vrayEditPathUI"`;
+
+         formLayout -edit
+
+           -af $text1 "top" 10
+	       -af $text1 "left" 10
+
+           -af $textField1 "top" 6
+	       -af $textField1 "left" 250
+
+	       -ac $button1 "top" 10  $text1
+	       -af $button1 "left" 10
+           -af $button1 "bottom" 10
+
+         importFile1;
+
+       setParent ..;
+setParent ..;
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+       frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile2;
+
+          $text2 = `text -label "工程中存放布料及几何体缓存文件的文件夹："`;
+
+         global string $textField2;
+         $textField2 = `textField -w 150 -h 21 -ed true -text "data"`;
+
+		 $button2 = `button -label "绝对路径转相对路径" -w 178 -command "cacheEditPathUI"`;
+
+         formLayout -edit
+
+           -af $text2 "top" 10
+	       -af $text2 "left" 10
+
+           -af $textField2 "top" 6
+	       -af $textField2 "left" 250
+
+	       -ac $button2 "top" 10  $text2
+	       -af $button2 "left" 10
+           -af $button2 "bottom" 10
+
+         importFile2;
+
+       setParent ..;
+setParent ..;
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile3;
+
+         $text3 = `text -label "工程中存放Alembic文件的文件夹："`;
+
+         global string $textField3;
+         $textField3 = `textField -w 150 -h 21 -ed true -text "cache\\alembic"`;
+
+		 $button3 = `button -label "绝对路径转相对路径" -w 178 -command "alembicEditPathUI"`;
+
+         formLayout -edit
+
+           -af $text3 "top" 10
+	       -af $text3 "left" 10
+
+           -af $textField3 "top" 6
+	       -af $textField3 "left" 250
+
+	       -ac $button3 "top" 10  $text3
+	       -af $button3 "left" 10
+           -af $button3 "bottom" 10
+
+         importFile3;
+
+       setParent ..;
+setParent ..;
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile4;
+
+         $text4 = `text -label "工程中存放阿诺德代理文件的文件夹："`;
+
+         global string $textField4;
+         $textField4 = `textField -w 150 -h 21 -ed true -text "ass"`;
+
+		 $button4 = `button -label "绝对路径转相对路径" -w 178 -command "arnoldEditPathUI"`;
+
+         formLayout -edit
+
+           -af $text4 "top" 10
+	       -af $text4 "left" 10
+
+           -af $textField4 "top" 6
+	       -af $textField4 "left" 250
+
+	       -ac $button4 "top" 10  $text4
+	       -af $button4 "left" 10
+           -af $button4 "bottom" 10
+
+         importFile4;
+
+       setParent ..;
+setParent ..;
+
+
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile5;
+
+         $text5 = `text -label "工程中存放材质贴图的文件夹："`;
+
+         global string $textField5;
+         $textField5 = `textField -w 150 -h 21 -ed true -text "sourceimages"`;
+
+		 $button5 = `button -label "绝对路径转相对路径" -w 178 -command "fh_toRelativeUI"`;
+
+         formLayout -edit
+
+           -af $text5 "top" 10
+	       -af $text5 "left" 10
+
+           -af $textField5 "top" 6
+	       -af $textField5 "left" 250
+
+	       -ac $button5 "top" 10  $text5
+	       -af $button5 "left" 10
+           -af $button5 "bottom" 10
+
+         importFile5;
+
+       setParent ..;
+setParent ..;
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+
+
+frameLayout   -lv 0
+                     -borderStyle "etchedIn"
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile6;
+
+         $text6 = `text -label "工程中存放阿诺德gz代理（压缩版）文件的文件夹："`;
+
+         global string $textField6;
+         $textField6 = `textField -w 150 -h 21 -ed true -text "ass"`;
+
+		 $button6 = `button -label "绝对路径转相对路径" -w 178 -command "arnoldEditPathUI_gz"`;
+
+         formLayout -edit
+
+           -af $text6 "top" 10
+	       -af $text6 "left" 10
+
+           -af $textField6 "top" 6
+	       -af $textField6 "left" 250
+
+	       -ac $button6 "top" 10  $text6
+	       -af $button6 "left" 10
+           -af $button6 "bottom" 10
+
+         importFile6;
+
+       setParent ..;
+setParent ..;
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+showWindow toRelativeWindow;
+
+};
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+global proc vrayEditPathUI ()
+{
+   global string $textField1;
+   string $folderName;
+   $folderName = `textField -q -text $textField1`;
+
+   vrayEditPath ($folderName);
+}
+
+global proc cacheEditPathUI ()
+{
+   global string $textField2;
+   string $folderName;
+   $folderName = `textField -q -text $textField2`;
+
+   cacheEditPath ($folderName);
+}
+
+global proc alembicEditPathUI ()
+{
+   global string $textField3;
+   string $folderName;
+   $folderName = `textField -q -text $textField3`;
+
+   alembicEditPath ($folderName);
+}
+
+global proc arnoldEditPathUI ()
+{
+   global string $textField4;
+   string $folderName;
+   $folderName = `textField -q -text $textField4`;
+
+   arnoldEditPath ($folderName);
+}
+
+global proc fh_toRelativeUI ()
+{
+  global string $textField5;
+  string $folderName;
+
+  $folderName = `textField -q -text $textField5`;
+
+  fh_toRelative ($folderName);
+}
+
+//////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+///Vray路径
+global proc vrayEditPath (string $folderName)
+{
+string $VRayMeshNodes[] =  `ls -type VRayMesh`;
+for($VRayMesh in $VRayMeshNodes)
+{
+    string $attrName = $VRayMesh + ".fileName";
+    string $path = `getAttr $attrName`;
+    string $basename = `basenameEx $path`;
+
+     string $rightPath;
+    $rightPath = fromNativePath($folderName);
+
+    string $newPath = $rightPath + "\\" + $basename + ".vrmesh"; //vrmesh
+    setAttr -type "string" $attrName $newPath;
+}
+}
+
+//布料、几何体缓存解算路径
+global proc cacheEditPath (string $folderName)
+{
+string $clothCacheNodes[] =  `ls -type cacheFile`;
+for($clothCacheNode in $clothCacheNodes)
+{
+    string $attrName = $clothCacheNode + ".cachePath";
+    string $path = `getAttr $attrName`;
+    string $basename = `basenameEx $path`;
+
+    string $rightPath;
+    $rightPath = fromNativePath($folderName);
+
+    string $newPath = $rightPath + "/" + $basename + "/";  //data
+    setAttr -type "string" $attrName $newPath;
+}
+}
+
+//破碎解算路径
+global proc alembicEditPath (string $folderName)
+{
+string $expCacheNodes[] =  `ls -type AlembicNode`;
+
+for($expCacheNode in $expCacheNodes)
+{
+    string $attrName = $expCacheNode + ".abc_File";
+    string $path = `getAttr $attrName`;
+    string $basename = `basenameEx $path`;
+
+    string $rightPath;
+    $rightPath = fromNativePath($folderName);
+
+    string $newPath = $rightPath + "\\" + $basename + ".abc" ;  //cache\\alembic
+    setAttr -type "string" $attrName $newPath;
+}
+}
+
+//阿诺德代理路径
+
+global proc arnoldEditPath (string $folderName)
+{
+string $arnoldNodes[] = `ls -type "aiStandIn"`;
+
+for($arnoldNode in $arnoldNodes)
+{
+    string $attrName = $arnoldNode + ".dso";
+    string $path = `getAttr $attrName`;
+    string $basename = `basenameEx $path`;
+
+    string $rightPath;
+    $rightPath = fromNativePath($folderName);
+
+    string $newPath = $rightPath + "\\" + $basename + ".ass" ;
+    setAttr -type "string" $attrName $newPath;
+ }
+}
+
+///////////////////////////////////////////////////
+//阿诺德代理gz路径
+global proc arnoldEditPathUI_gz ()
+{
+   global string $textField6;
+   string $folderName;
+   $folderName = `textField -q -text $textField6`;
+
+   arnoldEditPath_gz ($folderName);
+}
+
+////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////
+
+//材质贴图路径
+
+global proc fh_toRelative(string $folderName)
+{
+
+  string $newDir;
+  string $newDir2;
+  string $newPath2;
+
+string $allTextureNodes[] = fh_getTextureNodes();
+
+for ($textureNode in $allTextureNodes)
+{
+   $oldPath = getTextureFullPath2($textureNode);
+    int $i,$j;
+    string $newRelativePath="";
+
+    if ($oldPath != "" )
+    {
+        string $tempArray[] = stringToStringArray($oldPath, "/");
+        int $ifExistSource = 0;
+
+        for($i=0; $i<size($tempArray); $i++)
+        {
+          if($tempArray[$i]==$folderName)
+          {
+            $ifExistSource = 1;
+            for($j=$i; $j<(size($tempArray)-1); $j++)
+            {
+              $newRelativePath = $newRelativePath + $tempArray[$j] + "/";
+            }
+              $newRelativePath = $newRelativePath + $tempArray[size($tempArray)-1] ;
+
+            string $currentPro = currentProject();
+
+            if (`filetest -f ( $currentPro + $newRelativePath)`)
+            {
+            setAttr ($textureNode + ".fileTextureName") -type "string" $newRelativePath;
+            }
+
+            else
+            {
+              $newPath2 = $currentPro + $newRelativePath;
+
+              $newDir2 = dirname($newPath2);
+
+              if (!`filetest -d $newDir2`)
+                { // check if new path exists, if not, create it
+                sysFile -md $newDir2;
+                 }
+
+              sysFile -copy $newPath2 $oldPath;
+              setAttr ($textureNode + ".fileTextureName") -type "string" $newRelativePath;
+            }
+
+            break;
+          }
+
+      }
+          if($ifExistSource == 0)
+          {
+            string $otherRelative = toRelativePath($oldPath,$folderName);
+            $noProPath = currentProject() + $otherRelative;
+
+            $newDir = dirname($noProPath);
+              if (!`filetest -d $newDir`) { // check if new path exists, if not, create it
+                 sysFile -md $newDir;
+                }
+          sysFile -copy $noProPath $oldPath;
+          setAttr ($textureNode + ".fileTextureName") -type "string" $otherRelative;
+          }
+    }
+}
+}
+
+
+global proc string[] fh_getTextureNodes() {
+  string $allTextureNodes[];
+  string $mayaTextures[] = `ls -type "file" -type "psdFileTex"`;
+  string $mentalrayTextures[] = fh_getMentalrayTextureNodes();
+  return $allTextureNodes = stringArrayCatenate ($mayaTextures, $mentalrayTextures);
+}
+
+// find mentalray texture nodes
+global proc string[] fh_getMentalrayTextureNodes() {
+  string $mentalrayTextures[];
+  if (`pluginInfo -q -loaded Mayatomr` == 0) {
+    loadPlugin "Mayatomr";
+  }
+  $mentalrayTextures = `ls -type "mentalrayTexture" -type "mentalrayIblShape"`;
+  return $mentalrayTextures;
+}
+
+
+// change file texture into relative path
+global proc string toRelativePath(string $path,string $folderName) {
+  string $relativePath;
+  string $dirs[] = stringToStringArray($path, "/");
+  int $len = size($dirs);
+  int $i = $len;
+  if ($len == 0) {
+    return "";
+  }
+  do {
+    $i--;
+    if ($i == $len-1) {
+      $relativePath = $dirs[$i];
+    } else if ($i > 0) {
+      $relativePath = $dirs[$i] + "/" + $relativePath;
+    } else if ($i == 0) {
+      $relativePath = $folderName + "/otherTextures/"+$dirs[$len-1];
+      break;
+    }
+  } while ($dirs[$i] != $folderName);
+  return $relativePath;
+}
+
+//获取材质贴图的绝对路径
+global proc string getTextureFullPath2(string $texNode) {
+  string $fullPath;
+  if (`nodeType $texNode` == "mentalrayIblShape") {
+    $fullPath = `getAttr ($texNode + ".texture")`;
+  } else {
+    $fullPath = `getAttr ($texNode + ".fileTextureName")`;
+  }
+ return $fullPath;
+}
+
+//得到工程所存放的路径和工程名字
+global proc string currentProject ()
+{
+    $currentDir = `file -q -exn`;
+    $sceneFolder = "scenes";
+
+    int $i,$j;
+    string $projectPath = "";
+
+    string $dirs[] = stringToStringArray($currentDir, "/");
+
+    for($i=(size($dirs)-1);$i>=0;$i--)
+    {
+        if($dirs[$i]==$sceneFolder)
+        {
+            for($j=0;$j<$i;$j++)
+            {
+              $projectPath = $projectPath + $dirs[$j] + "/";
+            }
+        return $projectPath;
+        }
+    }
+      return -1;
+}
+
+//阿诺德代gz理路径
+
+global proc arnoldEditPath_gz (string $folderName)
+{
+string $arnoldNodes[] = `ls -type "aiStandIn"`;
+
+for($arnoldNode in $arnoldNodes)
+{
+    string $attrName = $arnoldNode + ".dso";
+    string $path = `getAttr $attrName`;
+    string $basename = `basenameEx $path`;
+
+    string $rightPath;
+    $rightPath = fromNativePath($folderName);
+
+    string $newPath = $rightPath + "\\" + $basename + ".gz" ;
+    setAttr -type "string" $attrName $newPath;
+ };
+};
+
+
+///run the UI proc////
+absolutepathbat;
+
+absolutepathbat;

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="lzk_1" label="lzk_tools">
+    <memberTool name="tool_Cache_Manager"/>
+    <memberTool name="tool_set_cam_attr"/>
+    <memberTool name="tool_1"/>
+    <memberTool name="tool_4"/>
+    <memberTool name="tool_5"/>
+  </toolshelf>
+
+  <tool name="tool_Cache_Manager" label="Cache_Manager" icon="famuma_pure">
+    <helpText><![CDATA[search the path of all the file,filecache,alembic below the selection geo nodes,and show it ]]></helpText>
+    <script scriptType="python"><![CDATA[import Cache_Manager_pro
+reload(Cache_Manager_pro)
+Cache_Manager_pro.show_win()]]></script>
+  </tool>
+
+  <tool name="tool_set_cam_attr" label="set_cam_attr" icon="OBJ_camera">
+    <script scriptType="python"><![CDATA[import hou_changed_cam
+reload(hou_changed_cam)
+
+hou_changed_cam.show_ui()]]></script>
+  </tool>
+</shelfDocument>

@@ -1,0 +1,146 @@
+#! /usr/local/Nuke7.0v6/Nuke7.0 -nx
+version 7.0 v6
+Gizmo {
+ inputs 2
+ help 标记小工具
+ tile_color 0x70c170ff
+ addUserKnob {20 Roto}
+ addUserKnob {20 Editor n 1}
+ addUserKnob {7 Size l size R 0 20}
+ Size 1
+ addUserKnob {41 color T Constant2.color}
+ addUserKnob {41 key l "spline key" T Roto1.key}
+ addUserKnob {20 tools l Tools n 1}
+ addUserKnob {41 toolbox l "" -STARTLINE T Roto1.toolbox}
+ addUserKnob {41 curves l "" -STARTLINE T Roto1.curves}
+ addUserKnob {20 Transform}
+ addUserKnob {41 transform T Roto1.transform}
+ addUserKnob {41 translate T Roto1.translate}
+ addUserKnob {41 rotate T Roto1.rotate}
+ addUserKnob {41 scale T Roto1.scale}
+ addUserKnob {41 skewX l "skew X" T Roto1.skewX}
+ addUserKnob {41 skewY l "skew Y" T Roto1.skewY}
+ addUserKnob {41 skew_order l "skew order" T Roto1.skew_order}
+ addUserKnob {41 center T Roto1.center}
+ addUserKnob {20 "extra matrix" n 2}
+ addUserKnob {41 transform_matrix l "" -STARTLINE T Roto1.transform_matrix}
+ addUserKnob {20 "" n -1}
+}
+ Input {
+  inputs 0
+  name bg
+  xpos -364
+  ypos -86
+  number 1
+ }
+ Roto {
+  curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44700000 x44070000 0 1 0 0 0 0 0 1 1 1 0 0 0 0 0 0 1}
+    {a}}}}}
+  toolbox {selectAll {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier ro 0 go 0 bo 0 ao 0 str 1 ssx 1 ssy 1 sf 1 sb 1 tt 4 }
+  { createBezierCusped ro 0 go 0 bo 0 ao 0 str 1 ssx 1 ssy 1 sf 1 sb 1 tt 5 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse ro 0 go 0 bo 0 ao 0 str 1 ssx 1 ssy 1 sf 1 sb 1 tt 7 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { addPoints str 1 ssx 1 ssy 1 sf 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+  toolbar_brush_hardness 0.200000003
+  toolbar_source_transform_scale {1 1}
+  toolbar_source_transform_center {960 540}
+  colorOverlay {0 0 0 0}
+  lifetime_type "all frames"
+  lifetime_start 97
+  lifetime_end 97
+  view {}
+  motionblur_on true
+  motionblur_shutter_offset_type centred
+  source_black_outside true
+  createNewTrack {{-1} "-1\t(none)\t-1" "1000\tNew Track Layer\t1000"}
+  name Roto1
+  xpos -364
+  ypos -6
+ }
+set N311224c0 [stack 0]
+ Blur {
+  size {{parent.Size}}
+  name Blur1
+  xpos -440
+  ypos 47
+ }
+push $N311224c0
+ Blur {
+  size {{parent.Blur1.size}}
+  name Blur2
+  xpos -283
+  ypos 42
+ }
+ Merge2 {
+  inputs 2
+  operation out
+  name Merge1
+  xpos -354
+  ypos 116
+ }
+ Grade {
+  channels alpha
+  whitepoint 0.0025
+  name Grade1
+  xpos -354
+  ypos 168
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  color {1 0 0 0}
+  format "1280 720 0 0 1280 720 1 "
+  name Constant2
+  xpos -168
+  ypos 9
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos -168
+  ypos 168
+ }
+ Premult {
+  name Premult1
+  xpos -168
+  ypos 221
+ }
+ Input {
+  inputs 0
+  name input
+  xpos 47
+  ypos -48
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 58
+  ypos 221
+ }
+ Output {
+  name Output1
+  xpos 58
+  ypos 307
+ }
+end_group

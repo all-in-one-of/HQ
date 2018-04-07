@@ -1,0 +1,301 @@
+#! /Applications/Nuke6.3v4/Nuke6.3v4.app/Contents/MacOS/Nuke6.3v4 -nx
+version 6.3 v4
+Gizmo {
+ note_font Verdana
+ mapsize {0.15 0.15}
+ addUserKnob {20 Add_logo l X_waterMark}
+ addUserKnob {6 small_fonts l "Small Fonts" +STARTLINE}
+ addUserKnob {4 input_style l "Input Style" M {"From Input" "From .nk" "" "" "" ""}}
+ addUserKnob {4 status l "Shot Status" M {"In Progress" L-Approved C-Approved D-Approved "" "" "" ""}}
+ addUserKnob {1 shotname l INVISIBLE +INVISIBLE}
+ shotname "\[python \{nuke.knob('input.file').split('/').pop().split('.').pop(0)\}]     \[frame]"
+ addUserKnob {1 artist_name l INVISIBLE +INVISIBLE}
+ artist_name "\[python \{nuke.knob('input.file').split('/').pop().split('_').pop(2)\}] (\[date %d/%m])"
+ addUserKnob {1 shotname2 l INVISIBLE +INVISIBLE}
+ shotname2 "\[python \{nuke.knob('root.name').split('/').pop().split('.').pop(0)\}]     \[frame]"
+ addUserKnob {1 artist_name2 l INVISIBLE +INVISIBLE}
+ artist_name2 "\[python \{nuke.knob('root.name').split('/').pop().split('_').pop(2)\}] (\[date %d/%m])"
+ addUserKnob {41 mix l Multiply T Multiply1.mix}
+ addUserKnob {6 defineArtist l Artist +STARTLINE}
+ addUserKnob {1 artist_input l "" -STARTLINE}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 1091
+  ypos 430
+ }
+set Ndc392c0 [stack 0]
+ Dot {
+  name Dot2
+  xpos 1254
+  ypos 571
+ }
+set Ndc26b90 [stack 0]
+ Text {
+  cliptype none
+  opacity {{parent.Constant1.color i}}
+  message "\[value shotname2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 20 {"\[value input.width]-20" i} {"\[value input.height]" i}}
+  center {1024 778}
+  name shotname1_small
+  xpos 1154
+  ypos 612
+ }
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message "Artist: \[value artist_name2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  yjustify bottom
+  Transform 1
+  box {20 20 1440 810}
+  center {960 540}
+  name Artist1_small
+  xpos 1154
+  ypos 669
+ }
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message " \[value status]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {"\[value input.width]" i} {"\[value input.height]-20" i}}
+  center {960 540}
+  name Status3_small
+  xpos 1154
+  ypos 705
+ }
+push $Ndc26b90
+ Text {
+  cliptype none
+  opacity {{parent.Constant1.color i}}
+  message "\[value shotname2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 50 {"\[value input.width]-80" i} {"\[value input.height]" i}}
+  center {1024 778}
+  name shotname2
+  xpos 1281
+  ypos 585
+ }
+set Ndc58260 [stack 0]
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message "Artist: \[value artist_input] (\[date %d/%m])"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  yjustify bottom
+  Transform 1
+  box {50 50 1440 810}
+  center {960 540}
+  name Artist1
+  xpos 1398
+  ypos 622
+ }
+ set Cdc2a4a0 [stack 0]
+push $Ndc58260
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message "Artist: \[value artist_name2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  yjustify bottom
+  Transform 1
+  box {50 50 1440 810}
+  center {960 540}
+  name Artist2
+  xpos 1281
+  ypos 634
+ }
+ Switch {
+  inputs 2
+  which {{defineArtist i}}
+  name Switch4
+  xpos 1347
+  ypos 683
+ }
+ set Cdc7def0 [stack 0]
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message " \[value status]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 30
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {"\[value input.width]" i} {"\[value input.height]-30" i}}
+  center {960 540}
+  name Status1
+  xpos 1285
+  ypos 721
+ }
+ Switch {
+  inputs 2
+  which {{small_fonts i}}
+  name Switch3
+  xpos 1227
+  ypos 765
+ }
+push $Ndc392c0
+ Dot {
+  name Dot1
+  xpos 1006
+  ypos 569
+ }
+set Ndc910b0 [stack 0]
+ Text {
+  cliptype none
+  opacity {{parent.Constant1.color i}}
+  message "\[value shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 20 {"\[value input.width]-20" i} {"\[value input.height]" i}}
+  center {1024 778}
+  name shotname_small
+  xpos 903
+  ypos 596
+ }
+set Ndc93db0 [stack 0]
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message "Artist: \[value artist_name]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  yjustify bottom
+  Transform 1
+  box {20 20 1440 810}
+  center {960 540}
+  name Artist_small
+  xpos 903
+  ypos 655
+ }
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message "\[value status]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {"\[value input.width]" i} {"\[value input.height]-20" i}}
+  center {960 540}
+  name Status_small
+  xpos 903
+  ypos 694
+ }
+push $Ndc910b0
+ Text {
+  cliptype none
+  opacity {{parent.Constant1.color i}}
+  message "\[value shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 50 {"\[value input.width]-80" i} {"\[value input.height]" i}}
+  center {1024 778}
+  name shotname
+  xpos 1045
+  ypos 586
+ }
+set Ndcb3320 [stack 0]
+clone $Cdc2a4a0 {
+  xpos 1074
+  ypos 636
+  selected false
+ }
+push $Ndcb3320
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message "Artist: \[value artist_name]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  yjustify bottom
+  Transform 1
+  box {50 50 1440 810}
+  center {960 540}
+  name Artist
+  xpos 990
+  ypos 635
+ }
+clone $Cdc7def0 {
+  inputs 2
+  xpos 1043
+  ypos 685
+  selected false
+ }
+ Text {
+  opacity {{parent.Constant1.color i}}
+  message "\[value status]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 30
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {"\[value input.width]" i} {"\[value input.height]-30" i}}
+  center {960 540}
+  name Status2
+  xpos 1043
+  ypos 736
+ }
+ Switch {
+  inputs 2
+  which {{small_fonts i}}
+  name Switch2
+  xpos 976
+  ypos 758
+ }
+ Switch {
+  inputs 2
+  which {{input_style i}}
+  name Switch1
+  xpos 1073
+  ypos 852
+ }
+ Output {
+  name Output1
+  xpos 1073
+  ypos 954
+ }
+ Multiply {
+  inputs 0
+  value 0
+  mix 0.5
+  name Multiply1
+  xpos 774
+  ypos 569
+ }
+push $Ndc93db0
+ Viewer {
+  inputs 2
+  frame 1001
+  input_number 1
+  input_process false
+  name Viewer1
+  xpos 693
+  ypos 635
+ }
+ Constant {
+  inputs 0
+  color {{parent.Multiply1.mix i}}
+  name Constant1
+  xpos 777
+  ypos 430
+ }
+end_group

@@ -1,0 +1,67 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ addUserKnob {20 stereo_camera}
+ addUserKnob {41 translate T Axis.translate}
+ addUserKnob {41 rotate T Axis.rotate}
+ addUserKnob {26 ""}
+ addUserKnob {7 PD R 30 150}
+ PD 65
+ addUserKnob {7 focus R 0 90}
+ addUserKnob {7 foca_lemgth R 5 100}
+ foca_lemgth 50
+ addUserKnob {41 haperture l "horiz aperture" T CameraL.haperture}
+ addUserKnob {41 vaperture l "vert aperture" T CameraL.vaperture}
+}
+ Input {
+  inputs 0
+  name tra_cam
+  xpos -901
+  ypos 122
+ }
+ Axis2 {
+  name Axis
+  xpos -881
+  ypos 233
+ }
+set N2b1c1000 [stack 0]
+ Camera2 {
+  translate {{parent.PD.left/1000} {curve} {curve}}
+  rotate {0 {parent.focus.left} 0}
+  focal {{parent.foca_lemgth.left}}
+  haperture {{parent.CameraL.haperture.left}}
+  vaperture {{parent.CameraL.vaperture.left}}
+  name CameraR
+  xpos -774
+  ypos 316
+ }
+push $N2b1c1000
+ Camera2 {
+  rotate {0 {-parent.focus.left} 0}
+  focal {{parent.foca_lemgth.left}}
+  vaperture {18.672}
+  name CameraL
+  xpos -990
+  ypos 323
+ }
+ JoinViews {
+  inputs 2
+  name JoinViews1
+  xpos -882
+  ypos 446
+  viewassoc "left\nright"
+ }
+set N2b1c0000 [stack 0]
+ Viewer {
+  frame_range 1-259
+  name Viewer1
+  xpos -743
+  ypos 474
+ }
+push $N2b1c0000
+ Output {
+  name Output1
+  xpos -882
+  ypos 529
+ }
+end_group

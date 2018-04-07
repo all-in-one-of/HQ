@@ -1,0 +1,2 @@
+鉴于许多人会误操作，导致maya还没卸载就执行，所以改为手动删除。
+强调:在卸载maya以后，把C:\Program Files\Autodesk\Maya2015这个文件夹删除。

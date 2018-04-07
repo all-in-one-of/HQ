@@ -1,0 +1,729 @@
+#! /All/Oxygen/APP/L/gcc4.1/nuke/6.3v4/Nuke6.3v4 -nx
+version 6.3 v4
+Gizmo {
+ note_font "DejaVu Sans"
+ mapsize {0.15 0.15}
+ addUserKnob {20 H_Slate t "Slate from input file"}
+ addUserKnob {1 prd_read l INVISIBLE +INVISIBLE}
+ prd_read ReadPrd
+ addUserKnob {1 handles_first l Handles_first}
+ handles_first 1
+ addUserKnob {26 ""}
+ addUserKnob {1 r3d l Source_name}
+ r3d Test
+ addUserKnob {1 key_handles l Key_Handles}
+ key_handles 4+4
+ addUserKnob {1 frames l INVISIBLE +INVISIBLE}
+ frames "\[python \[value input.last_frame] - \[value input.first_frame]+1]"
+ addUserKnob {1 date l INVISIBLE +INVISIBLE}
+ date "\[date %Y/%m/%d]"
+ addUserKnob {20 input_group l INVISIBLE +INVISIBLE n 1}
+ addUserKnob {1 prodname l INVISIBLE +INVISIBLE}
+ prodname "\[python nuke.knob('input.file').split('/').pop().split('.').pop(0).lower()]"
+ addUserKnob {1 shot l INVISIBLE t "Enter shot name here." +INVISIBLE}
+ shot "\[python nuke.knob('input.file').split('/').pop().split('_').pop(0).upper()]"
+ addUserKnob {1 shotNum l INVISIBLE +INVISIBLE}
+ addUserKnob {1 version l INVISIBLE +INVISIBLE}
+ version "\[python nuke.knob('input.file').split('/').pop().split('.').pop(0).split('_').pop()]"
+ addUserKnob {1 inputSize l INVISIBLE +INVISIBLE}
+ inputSize "\[value input.width] x \[value input.height]"
+ addUserKnob {20 endGroup l INVISIBLE +INVISIBLE n -1}
+ addUserKnob {20 script_group l INVISIBLE +INVISIBLE n 1}
+ addUserKnob {1 prodname2 l INVISIBLE +INVISIBLE}
+ prodname2 "\[python nuke.thisNode().input(0).knob('file').value().split('/').pop().split('.').pop(0)]"
+ addUserKnob {1 shot2 l INVISIBLE +INVISIBLE}
+ shot2 "\[python \{nuke.thisNode().input(0).knob('file').value().split('/').pop().split('.').pop(0).split('_').pop(0)\[0:3].upper() + \" \" +nuke.thisNode().input(0).knob('file').value().split('/').pop().split('.').pop(0).split('_').pop(0)\[3:8]\}]"
+ addUserKnob {1 version2 l INVISIBLE +INVISIBLE}
+ version2 "\[python nuke.thisNode().input(0).knob('file').value().split('/').pop().split('.').pop(0).split('_').pop()]"
+ addUserKnob {1 inputSize2 l INVISIBLE +INVISIBLE}
+ inputSize2 "\[value input.width] x \[value input.height]"
+ addUserKnob {20 endGroup_1 l INVISIBLE +INVISIBLE n -1}
+ addUserKnob {3 Retime1_output.last l INVISIBLE -STARTLINE +INVISIBLE R 0 100}
+ Retime1_output.last {{input.first_frame-1}}
+}
+ Constant {
+  inputs 0
+  channels rgb
+  name Constant3
+  xpos 252
+  ypos 979
+  disable true
+ }
+ Read {
+  inputs 0
+  file /All/Oxygen/util/nuke/6.3/nuke.ICONS/fantaLogo_HalfWhite.tga
+  format "1360 280 0 0 1360 280 1 "
+  origset true
+  version 1
+  name Read3
+  tile_color 0x602be2ff
+  label "<html><br><font color=#808080>Modified:</font> <font color=#F8F8FF><small>2012-12-27 21:36:09</small> </font><br>SourcePlatesPath:<small>/All/Oxygen/util/nuke/6.3/nuke.ICONS</small><br><font color=#808080>Artist: </font><font color=#F8F8FF><small>zhangkh</small></font><br>FrameRange:<small>1-1</small><br><font color=#808080>Format: </font><font color=#F8F8FF><small>1360 280</small></font><br>ReadMode: <small><font color=violet>NETWORK</font></small><br></html>"
+  xpos 1140
+  ypos 14
+  addUserKnob {20 Info}
+  addUserKnob {1 modified +DISABLED}
+  modified "2012-12-27 21:36:09"
+  addUserKnob {1 sourceplatespath +DISABLED}
+  sourceplatespath /All/Oxygen/util/nuke/6.3/nuke.ICONS
+  addUserKnob {1 artist +DISABLED}
+  artist zhangkh
+  addUserKnob {1 readmode +DISABLED}
+  readmode "<font color=violet>NETWORK</font>"
+  addUserKnob {22 showinfo l ShowInfo T "\nnode = nuke.thisNode()\n#\nfirst_frame = node\['first'].value()\nlast_frame = node\['last'].value()\nframe_range = str(first_frame) + '-' + str(last_frame)\n#\nread_format = str(node\['format'].value().width()) + ' ' + str(node\['format'].value().height())\nif '<html>' not in node\['label'].value():\n    node\['label'].setValue(\"<html><br><font color=#808080>Modified:</font> <font color=#F8F8FF><small>%s</small> </font><br>SourcePlatesPath:<small>%s</small><br><font color=#808080>Artist: </font><font color=#F8F8FF><small>%s</small></font><br>FrameRange:<small>%s</small><br><font color=#808080>Format: </font><font color=#F8F8FF><small>%s</small></font><br>ReadMode: <small>%s</small><br></html>\" % (node\['modified'].value(),node\['sourceplatespath'].value(),node\['artist'].value(), frame_range, read_format ,node\['readmode'].value()) )\n    node\['label'].setEnabled(False)\nelse:\n    node\['label'].setValue('')\n    node\['label'].setEnabled(True)\n" +STARTLINE}
+  addUserKnob {22 refresh l ReFresh T "\nimport nuke\nimport os\nimport pwd\nimport time\n\ndef thisReadNodeRefresh():\n    \n    readnode = nuke.thisNode()                                  \n    # value #\n    \n    filename = readnode\['file'].value()\n    filenamepath = opd(filename)\n    \n    #\n    first_frame = readnode\['first'].value()\n    last_frame = readnode\['last'].value()\n    frame_range = str(first_frame) + '-' + str(last_frame)\n    #\n    read_format = str(readnode\['format'].value().width()) + ' ' + str(readnode\['format'].value().height())\n    \n    try:\n        if \"%v\" in filenamepath:\n            filenamepath = filenamepath.replace('%v', 'L')\n\n        st = os.stat(filenamepath)\n        ownername = pwd.getpwuid(st.st_uid).pw_name\n    except:\n        ownername = ''\n    #pipelinename = opb(readnode\['file'].value()).split('_')\[1]\n    replacevalue = opd(filename)\n    \n    Info_knob = readnode\['Info']\n    string_knob_modified = readnode\['modified']\n    string_knob_sourceplatespath = readnode\['sourceplatespath']\n    string_knob_artist = readnode\['artist']\n    string_knob_readmode = readnode\['readmode']\n    \n    if 'NETWORK' not in string_knob_readmode.value():\n        nuke.tprint('diskcache mode not support')\n        return\n    \n        # set knobs #\n    try:\n        string_knob_modified.setValue(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(os.stat('/'.join(readnode\['file'].value().split('/')\[:-2])).st_mtime)))\n    except:\n        string_knob_modified.setValue('')\n    string_knob_sourceplatespath.setValue(replacevalue)\n    string_knob_artist.setValue('%s' % (ownername))\n    \n    ### preferences ###\n    try:\n        stampEnabled = nuke.toNode('preferences')\['pref_show_stamp'].getValue()\n        if stampEnabled:\n            readnode\['postage_stamp'].setValue(True)\n        else:\n            readnode\['postage_stamp'].setValue(False)\n            \n        infoEnabled = nuke.toNode('preferences')\['pref_show_info'].getValue()\n        if infoEnabled:\n            readnode\['label'].setValue(\"<html><br><font color=#808080>Modified:</font> <font color=#F8F8FF><small>%s</small> </font><br>SourcePlatesPath:<small>%s</small><br><font color=#808080>Artist: </font><font color=#F8F8FF><small>%s</small></font><br>FrameRange:<small>%s</small><br><font color=#808080>Format: </font><font color=#F8F8FF><small>%s</small></font><br>ReadMode: <small>%s</small><br></html>\" % (readnode\['modified'].value(),readnode\['sourceplatespath'].value(),readnode\['artist'].value(), frame_range, read_format ,readnode\['readmode'].value()) )\n            readnode\['label'].setEnabled(False)\n    except:\n        pass\n\nif __name__ == '__main__':\n    thisReadNodeRefresh()\n" +STARTLINE}
+ }
+ Multiply {
+  value 0.18
+  name Multiply2
+  xpos 1140
+  ypos 271
+ }
+ Dot {
+  name Dot7
+  xpos 1174
+  ypos 424
+ }
+set N5f70e40 [stack 0]
+ Transform {
+  translate {-19 9}
+  scale 0.6
+  center {680 140}
+  name Transform6
+  xpos 1140
+  ypos 789
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 214
+  ypos -1072
+ }
+ Dot {
+  name Dot4
+  xpos 248
+  ypos -792
+ }
+set N71e8640 [stack 0]
+ FrameHold {
+  first_frame {{"\[value first_frame]" i}}
+  name FrameHold1
+  xpos 214
+  ypos 316
+ }
+ Reformat {
+  type "to box"
+  format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+  box_width {{"\[value Reformat3.width]" i}}
+  box_height {{"\[value Reformat3.height]" i}}
+  resize fit
+  name Reformat2
+  xpos 214
+  ypos 368
+  disable true
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+  name Constant1
+  xpos 65
+  ypos 433
+ }
+ Merge2 {
+  inputs 2
+  bbox A
+  name Merge7
+  xpos 214
+  ypos 456
+ }
+ Transform {
+  translate {632 -44}
+  scale 0.3
+  center {960 540}
+  name Transform3
+  xpos 214
+  ypos 510
+ }
+push $N5f70e40
+ Transform {
+  translate {307 0}
+  scale 0.648
+  center {680 140}
+  name Transform16
+  xpos 921
+  ypos 420
+ }
+ Dot {
+  name Dot2
+  xpos 955
+  ypos 687
+ }
+ Rectangle {
+  inputs 0
+  cliptype none
+  area {108.8000031 1033.199951 1930.800003 1040.399963}
+  name Rectangle1
+  xpos 764
+  ypos 104
+ }
+ Rectangle {
+  cliptype none
+  area {108.4000015 264.2000122 1922.400002 271.4000244}
+  name Rectangle2
+  xpos 764
+  ypos 128
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  color 1
+  format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+  name Constant2
+  xpos 617
+  ypos -580
+ }
+ Dot {
+  name Dot1
+  xpos 651
+  ypos -467
+ }
+set N789cec0 [stack 0]
+ Bezier {
+  points {{
+{-1 1251 0 -0.16}
+{2047.9 1249.8 0 0.18}
+{2048 1394}
+{0 1394}
+}}
+  shape {}
+  center {960 540}
+  name Bezier7
+  xpos 796
+  ypos -369
+ }
+push $N789cec0
+ Bezier {
+  points {{
+{278.5 1220.5 0 1.73}
+{466.5 1411.5 0 0.5}
+{673.5 1424 0 -1.41}
+{464.5 1217.5 0 -2.65}
+}}
+  shape {}
+  center {960 540}
+  name Bezier8
+  xpos 694
+  ypos -383
+ }
+ Bezier {
+  points {{
+{668.5 1221.5}
+{856.5 1412.5}
+{1063.5 1425}
+{854.5 1218.5}
+}}
+  shape {}
+  center {960 540}
+  name Bezier9
+  xpos 694
+  ypos -359
+ }
+ Bezier {
+  points {{
+{1054.5 1219.5}
+{1242.5 1410.5}
+{1449.5 1423}
+{1240.5 1216.5}
+}}
+  shape {}
+  center {960 540}
+  name Bezier11
+  xpos 694
+  ypos -311
+ }
+ Bezier {
+  points {{
+{1442.5 1215.5}
+{1630.5 1406.5}
+{1837.5 1419}
+{1628.5 1212.5}
+}}
+  shape {}
+  center {960 540}
+  name Bezier12
+  xpos 694
+  ypos -287
+ }
+ Merge2 {
+  inputs 2
+  operation in
+  name In1
+  xpos 730
+  ypos -161
+ }
+ Mirror {
+  Horizontal true
+  name Mirror1
+  xpos 730
+  ypos -137
+ }
+ Transform {
+  translate {71 171}
+  center {1024 778}
+  name Transform1
+  xpos 730
+  ypos -113
+ }
+push $N789cec0
+ Bezier {
+  points {{
+{-1 1251 0 -0.16}
+{2047.9 1249.8 0 0.18}
+{2048 1394}
+{0 1394}
+}}
+  shape {}
+  center {960 540}
+  name Bezier1
+  xpos 587
+  ypos -358
+ }
+push $N789cec0
+ Bezier {
+  points {{
+{278.5 1220.5 0 1.73}
+{466.5 1411.5 0 0.5}
+{673.5 1424 0 -1.41}
+{464.5 1217.5 0 -2.65}
+}}
+  shape {}
+  center {960 540}
+  name Bezier2
+  xpos 482
+  ypos -383
+ }
+ Bezier {
+  points {{
+{668.5 1221.5}
+{856.5 1412.5}
+{1063.5 1425}
+{854.5 1218.5}
+}}
+  shape {}
+  center {960 540}
+  name Bezier3
+  xpos 482
+  ypos -359
+ }
+ Bezier {
+  points {{
+{1054.5 1219.5}
+{1242.5 1410.5}
+{1449.5 1423}
+{1240.5 1216.5}
+}}
+  shape {}
+  center {960 540}
+  name Bezier5
+  xpos 482
+  ypos -311
+ }
+ Bezier {
+  points {{
+{1442.5 1215.5}
+{1630.5 1406.5}
+{1837.5 1419}
+{1628.5 1212.5}
+}}
+  shape {}
+  center {960 540}
+  name Bezier6
+  xpos 482
+  ypos -287
+ }
+ Merge2 {
+  inputs 2
+  operation in
+  name In
+  xpos 521
+  ypos -150
+ }
+ Merge2 {
+  inputs 2
+  bbox B
+  name Merge1
+  xpos 570
+  ypos -58
+ }
+ Transform {
+  translate {-452 142}
+  scale {0.75 0.8}
+  center {1024 778}
+  name Transform2
+  xpos 570
+  ypos -14
+ }
+set N81bff10 [stack 0]
+ Transform {
+  translate {1173 0}
+  center {1024 778}
+  name Transform4
+  xpos 680
+  ypos -14
+ }
+push $N81bff10
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 570
+  ypos 37
+ }
+ Crop {
+  box {0 0 2048 1556}
+  reformat true
+  crop false
+  name Crop1
+  xpos 570
+  ypos 61
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  xpos 570
+  ypos 85
+ }
+ Merge2 {
+  inputs 2
+  name Merge3
+  xpos 570
+  ypos 128
+ }
+set N84ea0a0 [stack 0]
+ Text {
+  message "\[value parent.shot2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 80
+  xjustify center
+  yjustify center
+  Transform 1
+  box {66 400 1936 810}
+  translate {14 608}
+  center {960 540}
+  name Text20
+  label shotName
+  xpos 677
+  ypos 227
+ }
+ Text {
+  message "Source name: \[value parent.r3d]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  xjustify center
+  yjustify center
+  Transform 1
+  box {66 270 1936 810}
+  translate {14 578}
+  center {960 540}
+  name Text1
+  label r3dName
+  xpos 677
+  ypos 285
+ }
+ Text {
+  message "\[value parent.prodname2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  Transform 1
+  box {66 270 1572 810}
+  translate {364 408}
+  center {960 540}
+  name Text14
+  label Name
+  xpos 677
+  ypos 351
+ }
+ Text {
+  message "\[value parent.version2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  Transform 1
+  box {804 270 1568 810}
+  translate {-370 286}
+  center {960 540}
+  name Text15
+  label version
+  xpos 677
+  ypos 416
+ }
+ Text {
+  message "\[value parent.frames]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  Transform 1
+  box {804 126 1568 666}
+  translate {-372 310}
+  center {960 540}
+  name Text16
+  label frames
+  xpos 677
+  ypos 460
+ }
+ Text {
+  message "\[value parent.key_handles]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  Transform 1
+  box {808 54 1540 594}
+  translate {-374 264}
+  center {960 540}
+  name Text17
+  label handles
+  xpos 677
+  ypos 509
+ }
+ Text {
+  message "\[value parent.inputSize2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  Transform 1
+  box {812 -84 2226 456}
+  translate {-380 278}
+  center {960 540}
+  name Text18
+  label size
+  selected true
+  xpos 677
+  ypos 557
+ }
+ Text {
+  message "\[value parent.date]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  Transform 1
+  box {802 -196 2216 344}
+  translate {-369 278}
+  center {960 540}
+  name Text19
+  label date
+  xpos 677
+  ypos 601
+ }
+push $N84ea0a0
+ Text {
+  message Shot:
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  Transform 1
+  box {66 270 1936 810}
+  translate {68 408}
+  center {960 540}
+  name Text11
+  label Name
+  xpos 454
+  ypos 210
+ }
+ Text {
+  message Version:
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  Transform 1
+  box {480 270 1440 810}
+  translate {-348 290}
+  center {960 540}
+  name Text2
+  label version
+  xpos 454
+  ypos 319
+ }
+ Text {
+  message Frames:
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  box {480 270 1440 810}
+  translate {-348 172}
+  center {960 540}
+  name Text3
+  label frame
+  xpos 454
+  ypos 365
+ }
+ Text {
+  message Handles:
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  box {480 270 1440 810}
+  translate {-354 50}
+  center {960 540}
+  name Text4
+  label handle
+  xpos 454
+  ypos 411
+ }
+ Text {
+  message Size:
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  box {480 270 1440 810}
+  translate {-350 -70}
+  center {960 540}
+  name Text10
+  label size
+  xpos 454
+  ypos 460
+ }
+ Text {
+  message Date:
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 60
+  yjustify center
+  box {480 270 1440 810}
+  translate {-352 -182}
+  center {960 540}
+  name Text5
+  label date
+  xpos 454
+  ypos 504
+ }
+ Merge2 {
+  inputs 2
+  name Merge5
+  xpos 454
+  ypos 607
+ }
+ Merge2 {
+  inputs 2
+  bbox B
+  name Merge4
+  xpos 454
+  ypos 683
+ }
+ Merge2 {
+  inputs 2
+  name Merge6
+  xpos 331
+  ypos 736
+ }
+ Switch {
+  inputs 2
+  which {{slateSelect i}}
+  name Switch1
+  xpos 421
+  ypos 789
+ }
+ Reformat {
+  type "to box"
+  box_width {{"\[value Reformat3.width]" i}}
+  box_height {{"\[value Reformat3.height]" i}}
+  box_fixed true
+  resize fit
+  name Reformat1
+  xpos 421
+  ypos 893
+ }
+ CopyBBox {
+  inputs 2
+  name CopyBBox1
+  xpos 421
+  ypos 1002
+  disable true
+ }
+ Shuffle {
+  alpha white
+  name Shuffle2
+  xpos 421
+  ypos 1205
+ }
+ FrameRange {
+  first_frame {{"Reformat3.first_frame - handles_first" i}}
+  last_frame {{"Reformat3.first_frame - 1" i}}
+  name FrameRange1
+  xpos 421
+  ypos 1360
+ }
+ Retime {
+  input.first 1015
+  input.last 1015
+  output.first 1015
+  output.last {{parent.Retime1_output.last i x1015 1015 x1017 1015}}
+  after black
+  name Retime1
+  xpos 421
+  ypos 1414
+ }
+push $N71e8640
+ Dot {
+  name Dot5
+  xpos -450
+  ypos -627
+ }
+ Reformat {
+  type "to box"
+  box_width {{"\[value input.width]" i}}
+  box_height {{"\[value input.height]" i}}
+  box_fixed true
+  resize fit
+  black_outside true
+  name Reformat3
+  xpos -484
+  ypos 1238
+  disable true
+ }
+set N6047fe0 [stack 0]
+ Merge2 {
+  inputs 2
+  name Merge8
+  xpos 421
+  ypos 1471
+ }
+ FrameRange {
+  first_frame {{"Reformat3.first_frame - handles_first" i}}
+  last_frame {{Reformat3.last_frame i}}
+  name FrameRange2
+  xpos 421
+  ypos 1567
+ }
+set N626d920 [stack 0]
+ Output {
+  name Output
+  xpos 421
+  ypos 1842
+ }
+push $N6047fe0
+ Retime {
+  input.first {{parent.Retime2_input.first i}}
+  input.first_lock true
+  input.last {{parent.Retime2_input.last i}}
+  input.last_lock true
+  output.first {{parent.Retime2_output.first i}}
+  output.first_lock true
+  output.last {{parent.Retime2_output.last i}}
+  output.last_lock true
+  before black
+  after black
+  name Retime2
+  xpos -484
+  ypos 1345
+  disable true
+ }
+push $N626d920
+ Viewer {
+  frame 1000
+  input_process false
+  name Viewer1
+  xpos 700
+  ypos 1163
+ }
+end_group

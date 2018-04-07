@@ -1,0 +1,453 @@
+/*
+本脚本用于编辑及替换引用文件，与maya的引用编辑器结合使用。
+华强数码电影技术部  李晓斌 骆立思
+2017.05.18徐思健整理合并参考工具
+*/
+//////////////////
+global proc editRefPathBat()
+{
+if (`window -exists fmWindow`)
+    deleteUI fmWindow;
+
+window 
+    -w 200 -h 400 
+    -t "参考工具集" 
+    -rtf 0
+fmWindow;
+
+/////////////////////
+columnLayout -adjustableColumn true;
+
+frameLayout -label "参考高亮显示" -labelAlign "center" 
+            -borderStyle "etchedIn"  
+            -marginHeight 5  -marginWidth 5  ;
+
+
+            formLayout importFile1;
+            
+            $button1 = `button -label "Reference Editor --> Outliner" -command "FindObjectFile"`;
+            $button2 = `button -label "Outliner --> Reference Editor" -command "FindReferenceFile"`;
+            
+            formLayout -edit
+            
+            -af $button1 "top" 10
+            -af $button1 "left" 20
+            
+            -af $button2 "top" 10  
+            -ac $button2 "left" 20  $button1
+            
+            importFile1;
+            
+            setParent ..;
+            setParent ..;
+//////////////////////
+
+//columnLayout -adjustableColumn true;
+
+frameLayout -label "批量替换参考" -labelAlign "center" 
+            -borderStyle "etchedIn"    
+            -marginHeight 5  -marginWidth 5  ;
+
+
+            formLayout importFile;
+            textFieldGrp -columnWidth 1 120 -adjustableColumn 2 -l "请选择替换后的文件" -editable false -text"" reloadReferencePath;
+            $button3 = `button -l "文件路径..."  -c ("browseBVH " + "reloadReferencePath")`  ;
+            $text1 = `text -label "请在参考编辑器中选择被替换的文件，支持加选。"`;
+            $button4 = `button -l "批量替换" -w 80  -align "center"  -c "importBVH"`;
+    
+    
+            formLayout -edit
+            -af reloadReferencePath "top" 10
+            -af reloadReferencePath "left" 5
+            -ap reloadReferencePath "right" 0 75
+            -af $button3 "top" 10
+            -ac $button3 "left" 5  reloadReferencePath
+            -ac $text1 "top" 5  $button3
+            -af $text1 "left" 8 
+            -ac $button4 "top" 5  $text1
+            -af $button4 "left" 20 
+            importFile;
+            setParent ..;
+            setParent ..;
+
+//////////////////////
+//////////////////////
+
+//columnLayout -adjustableColumn true;
+
+frameLayout -label "批量复制参考" -labelAlign "center" 
+            -borderStyle "etchedIn"    
+            -marginHeight 5  -marginWidth 5  ;
+
+
+            formLayout importFile;
+    
+            $text2 = `text -label "请先在参考编辑器中选择需要被复制的参考文件。"`;
+            $text3 = `text -label "复制"`;
+            global string $textfield1;
+            $textfield1 = `textField -w 40 -h 18 -ed true`;
+            $text4 = `text -label "个参考物体"`;
+            $button5 = `button -l "批量复制" -w 80  -align "center"  -c "duplicateRef"`;
+    
+            formLayout -edit
+                     
+            -af $text2 "top" 5  
+            -af $text2 "left" 8 
+                       
+            -ac $text3 "top" 5  $text2 
+            -af $text3 "left" 8 
+                       
+            -ac $textfield1 "top" 5  $text2
+            -ac $textfield1 "left" 8  $text3
+                       
+            -ac $text4 "top" 5  $text2 
+            -ac $text4 "left" 8  $textfield1
+                       
+            -ac $button5 "top" 5  $textfield1
+            -af $button5 "left" 20 
+            
+               
+            importFile;
+             
+            setParent ..;
+            setParent ..;
+frameLayout -label "批量替换参考路径" -labelAlign "center" 
+            -borderStyle "etchedIn"    
+            -marginHeight 5  -marginWidth 5  ;
+              
+            formLayout importFile;
+            $text1_k = `text -label "需要替换的路径关键字："`;
+            global string $textField1;
+            $textField1 = `textField -w 600 -h 21 -ed true -text "//10.99.1.6/数码电影/Film Project/"`;
+            $text2_k = `text -label "替换后的路径关键字："`;
+            global string $textField2;
+            $textField2 = `textField -w 600 -h 21 -ed true -text "O:/"`;
+            $button6 = `button -label "开始替换" -w 178 -command "editRef"`;
+            setParent ..;
+            setParent ..;
+            
+            //////////////
+            
+            formLayout -edit
+            -af $text1_k "top" 10
+            -af $text1_k "left" 10
+            -af $textField1 "top" 6
+            -ac $textField1 "left" 10  $text2_k
+            -ac $text2_k "top" 10  $text1_k
+            -af $text2_k "left" 10
+            -ac $textField2 "top" 6  $text1_k
+            -ac $textField2 "left" 10  $text2_k
+            -ac $button6 "top" 10  $text2_k
+            -af $button6 "left" 10
+            importFile;
+            setParent ..;
+            setParent ..;
+
+frameLayout -label "输出参考路径到txt" -labelAlign "center" 
+              -borderStyle "etchedIn"    
+              -marginHeight 5  -marginWidth 5  ;
+        formLayout importFile3;
+        $text3 = `text -label "输出参考路径到txt"`;
+        //$k_box1= `checkBox -l "输出完整路径" -v 0 check1` ;
+        $k_box2= `checkBox -l "去除重复路径" -v 1 check2` ;    
+        //global string $textField1;
+        //$k_textField1 = `textField -w 200 -h 21 -ed true -text ""`;
+        $k_button1 = `button -label "选择或新建txt文件路径" -w 178 -command "output"`;
+        
+        setParent ..;
+        setParent ..;
+
+            //////////////
+
+        formLayout -edit
+        -af $text3 "top" 20
+        -af $text3 "left" 110
+        //-ac   $k_box1 "top" 6  $text3
+        //-af   $k_box1 "left" 10
+        -ac   $k_box2 "top" 6  $text3
+        -af   $k_box2 "left" 10
+        //-ac   $k_textField1 "top" 6  $k_box2
+        //-af   $k_textField1 "right" 10
+        //-af   $k_textField1 "left" 10
+        -ac   $k_button1 "top" 6  $k_box2
+        -af   $k_button1 "left" 10
+        importFile3;
+        setParent ..;
+        setParent ..;
+
+
+        
+//////////////////////
+
+showWindow fmWindow;
+
+}
+////////////////////////////////////////
+////////////////////////////////////////
+
+global proc browseBVH(string $control)
+{
+  fileBrowserDialog -mode 0  -fileCommand ("browseBVHProc " + $control) -actionName "Browse" -operationMode "Import";
+}
+
+global proc int browseBVHProc(string $control, string $filename, string $fileType)
+{
+  textFieldGrp -e -text $filename $control;
+  return true;
+}
+
+
+global proc importBVH()
+{
+    string $impname = `textFieldGrp -q -text reloadReferencePath`;
+    
+    global string $gReferenceEditorPanel;
+    $selectReference = `sceneEditor  -q  -selectReference $gReferenceEditorPanel`;
+    
+    for ($selection in $selectReference)
+    {
+    file -loadReference $selection -type "mayaBinary" $impname;
+    }
+}
+
+
+global proc FindObjectFile() 
+{
+        global string $gReferenceEditorPanel;
+
+        string $selFileReal[] = `sceneEditor -q -selectItem -onlyParents
+                             $gReferenceEditorPanel`;
+                             
+        int $numFiles = size($selFileReal); 
+        
+        if ( $numFiles <= 0 ) 
+        {
+            error ("Error!you have not select any object yet!");
+        } 
+        else 
+        { 
+            int $i;
+            select -cl;
+            for( $i=0; $i<$numFiles; $i++)
+            {
+              file -selectAll -add  $selFileReal[$i];
+            }
+        } 
+}   
+    
+global proc FindReferenceFile() 
+{
+    $sele = `ls -sl`;
+    if(size($sele)==0)
+        error "You have not selected any objects in the outliner!";
+    
+    else
+    {      
+    string $obj = $sele[ `size $sele` - 1 ];
+    if ( !`referenceQuery -inr $obj` ) {
+        print ( "// '" + $obj + "' is not a referenced node. //\n" );
+        return;
+    }
+
+    string $ref = `referenceQuery -f $obj`;
+    string $refs[] = `file -q -r`;
+    for ( $i = 0; $i <`size $refs`; $i++ ) {
+        if ( $refs[ $i ] == $ref ) {
+            ReferenceEditor;
+            global string $gReferenceEditorPanel;
+            sceneEditor -e -si $i $gReferenceEditorPanel;
+            return;
+        }
+    }
+    }
+}
+
+global proc duplicateRef()
+{
+    global string $textfield1;
+    global string $gReferenceEditorPanel;
+    
+    string $dupNum;
+    $dupNum= `textField -q -text $textfield1`;
+    int $theDupNum = (int) $dupNum;
+    
+    for($i=0;$i<$theDupNum;$i++)
+    {
+      duplicateReference 1 $gReferenceEditorPanel;
+    }
+}
+global proc editRef()
+{
+    global string $textField1;
+    string $formerPathTemp;
+    $formerPathTemp = `textField -q -text $textField1`;
+    string $formerPath;
+    $formerPath = fromNativePath($formerPathTemp);
+
+
+    global string $textField2;
+    string $afterPathTemp;
+    $afterPathTemp = `textField -q -text $textField2`;
+    string $afterPath;
+    $afterPath = fromNativePath($afterPathTemp);
+
+$refNodes = `file -q -r`;
+
+for($eachRefs in $refNodes)
+{
+string $eachRefArrray[];
+$eachRefArrray = stringToStringArray($eachRefs,"{");
+string $eachRef = $eachRefArrray[0];
+
+int $ifExist = 0;
+int $startNum = 0;
+string $wholePath;
+
+int $wholeSize = size($eachRef);
+int $formerSize = size($formerPath);
+int $afterSize = size($afterPath);
+
+int $i;
+int $j;
+
+for($i=0;$i<($wholeSize-$formerSize+1);$i++)
+{
+    string $testString = `substring $eachRef ($i+1) ($i+$formerSize)`;
+    if($testString == $formerPath)
+    {
+    $ifExist=1;
+    $startNum=$i;
+    break;
+    }
+}
+
+if($ifExist == 1)
+{
+    string $temp[];
+    if($startNum==0)
+    $temp[0]="";
+    else
+    $temp[0]= `substring $eachRef 1 $startNum`;
+    $temp[1]= $afterPath;
+    $temp[2]= `substring $eachRef ($startNum+$formerSize+1) $wholeSize`;
+    $wholePath = stringArrayToString($temp, "");
+
+    /////////////////////////////////////
+    $eachFile = `referenceQuery -rfn  $eachRefs`;
+    $ifLoaded = `referenceQuery  -il  $eachFile`;
+    print ($eachRef +"\n");
+    print ("set the ref node  " + $eachFile + "  to the path  " + $wholePath + "\n");
+    if(`filetest -f $wholePath`)
+    {
+        file -loadReference  $eachFile  -type "mayaBinary" $wholePath;
+        if($ifLoaded==0)
+        file -unloadReference $eachFile;
+    }
+    else
+    print ("fail! can not find the file in the new path!\n");
+}
+
+}
+}
+//////////
+global proc output()
+{
+int $ifFullPath = 0;
+if(`checkBox -q -v check1`) 
+$ifFullPath = 1;
+
+int $ifDelRep = 0;
+if(`checkBox -q -v check2`) 
+$ifDelRep = 1;
+
+////////////////////////////////////////////
+
+string $theFileName;
+$fileNames = `fileDialog2 -fm 0`;
+
+$theFileName = $fileNames[0];
+
+//global string $textField1;
+//textField -e -tx $theFileName $textField1;
+
+$fileId=`fopen $theFileName "w"`;
+
+$refNodes = `file -q -r`;
+
+string $allRefPath[]={};
+int $numRef = 0;
+    
+for($eachRefs in $refNodes)
+{
+string $eachRefArrray[];
+$eachRefArrray = stringToStringArray($eachRefs,"{");
+string $eachRef = $eachRefArrray[0];
+
+int $ifconclude = 0;
+$ifconclude = ifConclude ($eachRef,"scenes");
+  
+string $partPath = "";
+    
+if($ifconclude == 1)
+{
+    string $splitArray[];
+    $splitArray = stringToStringArray ($eachRef,"/");
+    int $count = stringArrayFind ("scenes",0,$splitArray);
+    
+    int $i;
+    for($i=$count;$i<(size($splitArray)+2);$i++) 
+    {stringArrayRemoveAtIndex($count,$splitArray);}
+    
+     $partPath = stringArrayToString($splitArray,"/");
+   
+     $partPath = ($partPath+"/");
+    
+    //print ($partPath + "\n");
+}
+
+else
+   $partPath = $eachRef;
+
+   //print ($partPath + "\n");
+
+if($ifFullPath == 1)
+    $allRefPath[$numRef] = $eachRef;
+else if ($ifFullPath == 0)
+    $allRefPath[$numRef] = $partPath;
+
+$numRef++;
+}
+
+if($ifDelRep==1)
+    $allRefPath = stringArrayRemoveDuplicates($allRefPath);
+
+for($eachPath in $allRefPath)
+    fprint $fileId ($eachPath + "\r\n");
+
+fclose $fileId;
+}
+
+global proc int ifConclude ( string $wholePath, string $formerPath)
+{
+int $wholeSize = size($wholePath);
+int $formerSize = size($formerPath);
+
+int $ifExist = 0;
+    
+int $i;
+int $j;
+
+for($i=0;$i<($wholeSize-$formerSize+1);$i++)
+{
+    string $testString = `substring $wholePath ($i+1) ($i+$formerSize)`;
+    if($testString == $formerPath)
+    {
+    $ifExist=1;
+    break;
+    }
+}
+
+return $ifExist;
+}
+
+editRefPathBat;

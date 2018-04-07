@@ -1,0 +1,866 @@
+ /*
+本脚本为动画物体绘制可编辑的运动曲线。
+用法：在脚本编辑器中运行此脚本即可。
+本脚本支持多物体切换、支持负数帧和小数帧，支持运动曲线的显示和隐藏、运动点的大小调整。
+华强数码电影技术部  骆立思
+Copyleft (c) 2012 Lisi Luo. Life is wonderful, have fun together^_^
+*/
+
+/* 
+Create the locator to change the size of the control locators.
+*/
+global proc editableMotionTrail()
+{
+        if(!(`objExists lls_locatorSize`))
+        {
+         spaceLocator -p 0 0 0  -n "lls_locatorSize"; 
+         setAttr lls_locatorSize.visibility false;
+        }
+        
+        cycleCheck -e off;
+       
+/* 
+The UI of the script
+*/        
+        
+    string $title;
+    $title = "Editable Motion Trail";
+	int $width = 200;
+	int $height = 100;
+	
+    //create window
+	if(`window -q -exists motionTrailUIWin`){
+    	deleteUI motionTrailUIWin;
+    }
+    
+    string $win = `window -title $title -widthHeight $width $height`;
+    
+    ////////////////////////////
+    /////////////////////////////
+  columnLayout -adj true; 
+
+   frameLayout -l "Create Motion Trail" -labelAlign "top" -cll true -borderStyle "etchedOut" frameLauout1;
+   
+	   formLayout createMotionTrailUI;
+
+       string $textUI = `text -label "Increment"`;
+       textField -w 60 -h 21 -text "2"  lls_textFieldUI;
+
+       string $button1UI =`button -w 125 -h 30 -label "Create Motion Trail" -ann "Create the motion trail of the selections" -c selectionMotionTrail` ;
+	   string $button2UI =`button -w 125 -h 30 -label "Update Motion Trail" -ann "Update the motion trail of the selections" -c updateMotionTrail` ;
+
+         formLayout -edit
+    
+           -af $textUI "top" 5
+	       -af $textUI "left" 17
+           
+           -af lls_textFieldUI "top" 5
+	       -ac lls_textFieldUI "left" 10  $textUI
+
+	       -af $button1UI "top" 35
+	       -af $button1UI "left" 15
+           -af $button1UI "bottom" 15
+    
+	       -af $button2UI "top" 35
+	       -ac $button2UI "left" 15  $button1UI
+           -af $button2UI "bottom" 15
+           
+         createMotionTrailUI;
+         
+         
+       setParent ..; 
+  setParent ..;
+  
+  ///////////////////////////////////////
+  
+    //columnLayout -adj true; 
+
+   frameLayout -l "Change Locator Size" -labelAlign "top" -cll true -borderStyle "etchedOut" frameLauout2;
+   
+	   formLayout changeLocatorSizeUI;
+        
+        attrFieldSliderGrp -min 0.1 -max 3.0  -l "Locator Size" -at ("lls_locatorSize.scaleX")  slider1;
+      
+         formLayout -edit
+
+	       -af slider1 "top" 10
+	       -af slider1 "left" -60
+           -af slider1 "bottom" 10
+           
+         changeLocatorSizeUI;
+         
+        setParent ..;
+        
+  setParent ..;
+        
+        /////////////////////////////////////////
+
+      //columnLayout -adj true; 
+
+   frameLayout -l "Deal Motion Trail" -labelAlign "top" -cll true -borderStyle "etchedOut" frameLauout3;
+   
+	   formLayout dealMotionTrailUI;
+
+       string $button3UI =`button -w 110 -h 20 -label "Hide Motion Trail" -ann "Hide the motion trail of the selections" -c hideMotionTrail` ;
+       string $button4UI =`button -w 110 -h 20 -label "Show Motion Trail" -ann "Show the motion trail of the selections" -c displayMotionTrail` ;
+       string $button5UI =`button -w 110 -h 20 -label "Delete Motion Trail" -ann "Delete the motion trail of the selections" -c deleteMotionTrail` ;
+       string $button6UI =`button -w 110 -h 20 -label "Delete All" -ann "Delete all the motion trail of the selections" -c deleteAll` ;
+    
+         formLayout -edit
+
+       -af $button3UI "top" 10
+       -af $button3UI "left" 10
+       
+       -af $button5UI "top" 10
+       -ac $button5UI "left" 30 $button3UI
+       
+       -af $button4UI "top" 35
+       -af $button4UI "left" 10
+       -af $button4UI "bottom" 10
+       
+       -af $button6UI "top" 35
+       -ac $button6UI "left" 30 $button4UI
+       -af $button6UI "bottom" 10
+           
+         dealMotionTrailUI;
+         
+        setParent ..;
+    setParent ..;
+  setParent ..;
+    
+    //////////////
+    showWindow $win;
+  }
+///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+
+/* 
+The procedure to draw motion tral and control locators for the selected objects
+*/
+
+global proc selectionMotionTrail()
+{
+  $selections = `ls -sl`;
+  for ($selection in $selections)
+  {
+   // repairKeyframe($selection);
+    createMotionCurve ($selection);
+  }
+}
+
+/* 
+The procedure to update motion tral and control locators for the selected objects 
+*/
+
+global proc updateMotionTrail()
+{
+   $selections = `ls -sl`;
+  for ($selection in $selections)
+  {
+   // repairKeyframe($selection);
+    createMotionCurve ($selection);
+  }
+}
+
+/* 
+The procedure to delete the motion tral and control locators of the selected objects 
+*/
+
+global proc deleteMotionTrail()
+{
+   $selections = `ls -sl`;
+  for ($selection in $selections)
+  {
+      int $j;
+  
+      string $keyObj = "";
+      string $tempName[];
+     
+      string $temp = $selection;
+      tokenize $temp  ":"  $tempName;
+      $sizeName = size($tempName);
+  
+/* 
+When the objects are referenced,create the useful names for the objects without string ":".
+*/
+      for($j=0;$j<$sizeName;$j++)
+       {
+        $keyObj = $keyObj +  $tempName[$j];
+       }
+  
+      string $groupName = "lls_" + $keyObj + "_motionPath";
+  
+      delete $groupName;
+  
+  }
+}
+
+/* 
+Delete all the motion trails and control locators,before that reserve the locator to change size.
+*/
+
+global proc deleteAll()
+{
+  parent -world lls_locatorSize ;
+  delete lls_motionPath;
+}
+
+/* 
+The procedure to create the motion trail and editable locators for an object.
+*/
+
+global proc createMotionCurve (string $objName2)
+
+{
+  
+/* 
+record the current time,so that after the procedure is finished,set the time back.
+*/
+  $currentFrame = `currentTime -q`;
+  
+  int $j;
+  
+  string $objName = "";
+  string $tempName[];
+  tokenize $objName2  ":"  $tempName;
+  $sizeName = size($tempName);
+  
+  for($j=0;$j<$sizeName;$j++)
+  {
+    $objName = $objName +  $tempName[$j];
+  }
+  
+/* 
+Check the keyframes on the tx,ty,tz axises respectively
+*/
+   float $keyNumX[];
+   $keyNumX = `keyframe -at translateX -query -timeChange $objName2`;
+  
+   float $keyNumY[];
+   $keyNumY = `keyframe -at translateY -query -timeChange $objName2`;
+  
+   float $keyNumZ[];
+   $keyNumZ = `keyframe -at translateZ -query -timeChange $objName2`;
+  
+/* 
+Combine the 3 keyframe arrays together,delete the duplicated keyframes,and sort them again.
+*/
+  
+   float $keyNum[];
+   $keyNum = combineArrays ($keyNumX,$keyNumY,$keyNumZ);
+
+/* 
+Create the group to contain all the created objects
+*/
+
+  if(!(`objExists lls_motionPath`))
+   group -em -w -n "lls_motionPath"; 
+  
+/* 
+Put the size locator to the created group.
+*/
+  
+  if(!(isParentOf("lls_motionPath", "lls_locatorSize")))
+   parent "lls_locatorSize" "lls_motionPath";
+  
+   //setAttr lls_locatorSize.visibility 0;
+  
+  string $groupName = "lls_" + $objName + "_motionPath";
+  string $locatorGroupName = "lls_" + $objName + "_locators";
+  
+   if(`objExists $groupName`)
+     delete $groupName;
+   
+   group -em -w -n $groupName; 
+   parent $groupName "lls_motionPath";
+   
+   
+   if(`objExists $locatorGroupName`)
+     delete $locatorGroupName;
+   
+   group -em -w -n $locatorGroupName; 
+   parent $locatorGroupName $groupName;
+   
+/* 
+For each keyframe,create a locator to control
+*/
+   
+for($eachKey in $keyNum)
+{
+/* 
+set the current time to the selected time
+*/
+  currentTime $eachKey;
+/* 
+Check the workspace translate value of the object
+*/
+  $trans = `xform -q -ws -t $objName2`;
+
+  $dealLocatorName = dealLocatorName($eachKey);
+  $locatorName = "lls_"+ $objName + "_locator_" + $dealLocatorName;
+  
+  if(`objExists $locatorName`)
+    delete $locatorName;
+  
+/* 
+create a locator with a name tell object name and the keyframe.
+*/
+  spaceLocator -p 0 0 0  -n  $locatorName;
+  
+/* 
+Connect the scale value of the control locators to the size locator
+*/
+  connectAttr lls_locatorSize.scaleX  ($locatorName + ".scaleX") ;
+  connectAttr lls_locatorSize.scaleX  ($locatorName + ".scaleY") ;
+  connectAttr lls_locatorSize.scaleX  ($locatorName + ".scaleZ") ;
+
+/* 
+move the locators to the location of the object and center pivot
+*/
+  xform -ws -a -t $trans[0] $trans[1] $trans[2] $locatorName;
+  xform -cp $locatorName;
+/* 
+parent the locators to the groups
+*/
+  parent  $locatorName  $locatorGroupName;
+  
+/* 
+Create scriptjobs so that each time the locations of the locators changed,the KeyViaFrame procedure will be run.
+*/
+  string $command = ("keyViaFrame(\""+ $objName2 + "\"," + $eachKey + ")");
+
+   $jobNumber = `scriptJob -attributeChange ($locatorName + ".translateX") $command`;  
+   $jobNumber = `scriptJob -attributeChange ($locatorName + ".translateY") $command`; 
+   $jobNumber = `scriptJob -attributeChange ($locatorName + ".translateZ") $command`; 
+ 
+}
+/* 
+Create the motion trail for the objects.
+*/
+     createCurve($objName2);
+/* 
+Set the time back and select the object again.
+*/
+    currentTime $currentFrame;
+    select -r $objName2;
+}
+
+/* 
+The procedure to finish the scriptjob that each time the locators changed,the keyframs are also changed accordingly.
+*/
+global proc keyViaFrame(string $keyObj2,float $frameNum)
+{
+/* 
+set the current time to the given frame.
+*/
+  currentTime $frameNum;
+/* 
+get the useful name for the object
+*/
+  int $j;
+  
+  string $keyObj = "";
+  string $tempName[];
+  tokenize $keyObj2  ":"  $tempName;
+  $sizeName = size($tempName);
+  
+  for($j=0;$j<$sizeName;$j++)
+  {
+    $keyObj = $keyObj +  $tempName[$j];
+  }
+  
+  //$transObj = `xform  -ws -q -t $keyObj2`;
+
+/* 
+Get the useful name of the frame number.
+*/
+   $dealLocatorName = dealLocatorName($frameNum);
+/* 
+Check the translate value of the locators.
+*/
+  $locatorName = "lls_"+ $keyObj + "_locator_" + $dealLocatorName;
+  $transLocator = `xform  -ws -a -q -t $locatorName`;
+  
+/* 
+Move the object to the position of the control locator and set keyframe on the current time.
+*/
+  xform -ws -a -t  $transLocator[0] $transLocator[1] $transLocator[2] $keyObj2;
+  setKeyframe  -itt spline -ott spline  -t $frameNum $keyObj2;
+  //move -ws -a $transObj[0] $transObj[1] $transObj[2] $keyObj2;
+  
+}
+
+/* 
+The procedure to create the motion trail for the object
+*/
+global proc createCurve(string $objName2)
+{
+  
+        if(!(`objExists lls_locatorSize`))
+        {
+         spaceLocator -p 0 0 0  -n "lls_locatorSize"; 
+         setAttr lls_locatorSize.visibility false;
+        }
+  
+  int $j;
+  
+  string $objName = "";
+  string $tempName[];
+  tokenize $objName2  ":"  $tempName;
+  $sizeName = size($tempName);
+  
+  for($j=0;$j<$sizeName;$j++)
+  {
+    $objName = $objName +  $tempName[$j];
+  }
+  
+/* 
+Check the time range of the keyframes of the object
+*/
+  $frameRange = checkFrameRange($objName2);
+  
+  ///////
+/* 
+Create a locator which is constraint by the object,accordingly to which the motion trail is created.
+*/
+  $locatorConstranName = "lls_" + $objName + "_Locator_constrant";
+  
+  
+   if(`objExists $locatorConstranName`)
+     delete $locatorConstranName;
+  
+         spaceLocator -p 0 0 0  -n  $locatorConstranName; 
+         setAttr ($locatorConstranName + ".visibility") false;
+       
+         $locatorGroupName = "lls_" + $objName + "_motionPath";
+   
+         if(!(isParentOf($locatorGroupName, $locatorConstranName)))
+         parent $locatorConstranName  $locatorGroupName;
+        
+         pointConstraint -offset 0 0 0 -weight 1  $objName2  $locatorConstranName ;
+
+  //////
+/* 
+Create the motion trail
+*/
+
+         string $incrementNum = `textField -q -text lls_textFieldUI`;
+         
+  select  -r  $locatorConstranName;
+
+  $snapshots = "snapshot  -motionTrail 1  -increment " + $incrementNum + " -startTime " + $frameRange[0] + " -endTime " + $frameRange[1];
+  doMotionTrail 1 { $snapshots, "line", "0", "animCurve"};
+
+  
+   $curveName = "lls_"+ $objName + "_motionCurve";
+       
+       if (`objExists $curveName`)
+       delete $curveName; 
+       
+/* 
+select the latest created motion trail,change its name,and put it into a group.
+*/
+       select -r ("motionTrail" + "*" + "Handle");
+       $selections = `ls -sl`;
+       $selection = $selections[size($selections)-1];
+       rename $selection $curveName;
+  
+       if (`objExists $locatorGroupName`)
+       parent  $curveName  $locatorGroupName;
+ 
+}
+
+/* 
+The procedure to check the time range of the frames,return the first and the last keyframes
+*/
+global proc float[] checkFrameRange(string $objName)
+{
+   $keyTransX = `keyframe -at translateX -query -timeChange $objName`;
+   $keyTransY = `keyframe -at translateY -query -timeChange $objName`;
+   $keyTransZ = `keyframe -at translateZ -query -timeChange $objName`;
+  
+  float $frameRange[];
+  float $temp;
+  
+  if($keyTransX[0]>$keyTransY[0])
+    $temp = $keyTransY[0];
+  else 
+    $temp = $keyTransX[0];
+  
+  if($temp>$keyTransZ[0])
+    $temp = $keyTransZ[0];
+  else 
+    $temp = $temp;
+  
+  $frameRange[0] = $temp;
+  
+  
+   if($keyTransX[size($keyTransX)-1]>$keyTransY[size($keyTransY)-1])
+    $temp = $keyTransX[size($keyTransX)-1];
+  else 
+    $temp = $keyTransY[size($keyTransY)-1];
+  
+  if($temp<$keyTransZ[size($keyTransZ)-1])
+    $temp = $keyTransZ[size($keyTransZ)-1];
+  else 
+    $temp = $temp;
+  
+  $frameRange[1] = $temp;
+  
+  return $frameRange;
+  
+  }
+
+/* 
+The procedure to deal with the frame numbers,which can be usefully named.change "-" to "m","." to "d".
+*/
+global proc string dealLocatorName(float $frameNum)
+  {
+    string $nameString;
+    
+    if($frameNum>=0)
+    {
+      $trunk = trunc($frameNum);
+      
+      if(($frameNum-$trunk)!=0)
+      {
+        string $assNum = abs($frameNum-$trunk);
+        string $temp[];
+        
+        tokenize  $assNum "." $temp;
+        
+        $nameString = $trunk + "d" + $temp[1];
+      }
+      
+      else
+        $nameString = $frameNum;
+    }
+    
+    if($frameNum<0)
+    {
+      $trunk = trunc($frameNum);
+      
+      if(($frameNum-$trunk)!=0)
+      {
+        string $assNum = abs($frameNum-$trunk);
+        string $temp[];
+        
+        tokenize  $assNum "." $temp;
+        
+        $nameString = "m" + abs($trunk) + "d" + $temp[1];
+      }
+      
+      else
+        $nameString = "m" + abs($frameNum);
+    }
+      
+    return  $nameString;
+  }
+
+/* 
+The procedure combine three arrays together,with the duplicated numbers deleted,and resort.
+*/  
+global proc float[] combineArrays(float $arrayX[],float $arrayY[],float $arrayZ[])
+  {
+    $array1 = $arrayX;
+    $array2 = $arrayY;
+    $array3 = $arrayZ;
+
+    $arraySize1 = size($array1);
+    $arraySize2 = size($array2);
+    $arraySize3 = size($array3);
+
+/* 
+combine the three arrays and resort
+*/    
+    for ($i=0;$i< $arraySize2;$i++)
+      {
+        $array1[$arraySize1 + $i] = $array2[$i];
+      }
+      
+    $arraySize1 = size($array1);
+      
+     for ($i=0;$i< $arraySize3;$i++)
+      {
+        $array1[$arraySize1 + $i] = $array3[$i];
+      } 
+      
+      $array4 = `sort $array1`;
+
+/* 
+Delete the duplicated numbers. Check from the last number to the first.
+*/
+      float  $combimedArray[];
+      int $num = 0;
+      
+      for($i = (size($array4)-1); $i>0;$i--)
+        {
+          if(($array4[$i]-$array4[$i-1])!=0)
+          {
+            $combimedArray[$num] = $array4[$i];
+            $num++;
+          }
+        }
+    
+        $combimedArray[$num] = $array4[0];
+
+/* 
+Resort the whole array.
+*/
+        $combimedArray2 = sort ($combimedArray);
+        return $combimedArray2;
+  }
+
+/* 
+The procedure to draw motion curve (by self,not maya) for selected objects.
+*/
+global proc createCurves(string $keyObj2)
+{
+   int $j;
+  
+  string $keyObj = "";
+  string $tempName[];
+  tokenize $keyObj2  ":"  $tempName;
+  $sizeName = size($tempName);
+  
+  for($j=0;$j<$sizeName;$j++)
+  {
+    $keyObj = $keyObj +  $tempName[$j];
+  }
+  
+/* 
+Check the keyframes on the tx,ty,tz axises respectively
+*/
+   float $keyNumX[];
+   $keyNumX = `keyframe -at translateX -query -timeChange $keyObj2`;
+  
+   float $keyNumY[];
+   $keyNumY = `keyframe -at translateY -query -timeChange $keyObj2`;
+  
+   float $keyNumZ[];
+   $keyNumZ = `keyframe -at translateZ -query -timeChange $keyObj2`;
+  
+/* 
+Combine the 3 keyframe arrays together,delete the duplicated keyframes,and sort them again.
+*/
+  
+   float $keyNum[];
+   $keyNum = combineArrays ($keyNumX,$keyNumY,$keyNumZ);
+  
+  string $locatorList[];
+  int $num = 0;
+  
+/*
+  Put all the locators which stand for keyframes of the object into an array.
+*/ 
+  for ($eachFrame in $keyNum)
+  {
+    $dealLocatorName = dealLocatorName($eachFrame);
+    $locatorName = "lls_"+ $keyObj + "_locator_" + $dealLocatorName;
+    $locatorList[$num] = $locatorName;
+    $num++;
+  }
+
+/*
+  draw EP curves passing through the given locators.
+*/  
+  drawCurveBetweenPoints ($locatorList);
+  
+/*
+  Put the new curve under a group.
+*/ 
+   string $locatorGroupName = "lls_" + $keyObj + "_motionPath";
+  
+   $curveName = "lls_"+ $keyObj + "_motionCurve";
+  
+   if (`objExists $locatorGroupName`)
+   parent  $curveName  $locatorGroupName;
+  
+}
+
+/*
+  The procedure draw EP curves passing through the given locators.
+*/ 
+global proc drawCurveBetweenPoints (string $point[])
+{
+       string $getObjNames[];
+       $firstLocator = $point[0];
+       tokenize  $firstLocator  "_" $getObjNames;
+       $objName = $getObjNames[1];
+  
+       $curveName = "lls_"+ $objName + "_motionCurve";
+       
+       if (`objExists $curveName`)
+       delete $curveName;    
+
+        $sizeCurve = size($point);
+ 
+/*
+  Draw EP curve according to the given locators.
+*/        
+          float $trans[];
+          for ($i=0;$i<$sizeCurve;$i++)
+          {
+          $transTemp = `xform  -q -ws -a -t $point[$i]`;
+          $trans[3*$i] = $transTemp[0];
+          $trans[3*$i+1] = $transTemp[1];
+          $trans[3*$i+2] = $transTemp[2];
+          }
+          
+         string $cmd = "curve -d 5 ";
+          
+          for ($i=0;$i<$sizeCurve;$i++)
+          {
+          $cmd = $cmd + ("-ep " + " " + string ($trans[3*$i])+ " ");
+          $cmd = $cmd +  (string ($trans[3*$i+1]) + " ");
+          $cmd = $cmd +  (string ($trans[3*$i+2]) + " ");
+          }
+          $cmd = $cmd +  (";");
+          
+          eval ($cmd);
+      
+/*
+  Rename the curves.
+*/ 
+          $selections = `ls -sl`;
+          $attachedCurve = $selections[0];
+          rename $attachedCurve $curveName;
+                     
+}
+
+/*
+  The procrdure hide all the motion trail and locators of the selected objects.
+*/ 
+global proc hideMotionTrail()
+{
+    $selections = `ls -sl`;
+
+    if (size($selections)==0)
+    error "You have not selected any object!";
+
+   for ($selection in $selections)
+   {
+      int $j;
+  
+      string $keyObj = "";
+      string $tempName[];
+     
+      string $temp = $selection;
+      tokenize $temp  ":"  $tempName;
+      $sizeName = size($tempName);
+  
+      for($j=0;$j<$sizeName;$j++)
+       {
+        $keyObj = $keyObj +  $tempName[$j];
+       }
+  
+      string $groupName = "lls_" + $keyObj + "_motionPath";
+      
+      if(`objExists $groupName`)
+        setAttr ($groupName +".visibility") 0;
+      
+      if(!(`objExists $groupName`))
+        error "The object have not motion trail yet!";
+    }
+}
+
+/*
+  The procrdure show all the motion trail and locators of the selected objects.
+*/ 
+global proc displayMotionTrail()
+{
+    $sele = `ls -sl`;
+
+    if (size($sele)==0)
+    error "You have not selected any object!";
+
+   for ($selection in $sele)
+   {
+      int $j;
+  
+     string $keyObj = "";
+     string $tempName[];
+     
+     string $temp = $selection;
+      tokenize $temp  ":"  $tempName;
+     
+     $sizeName = size($tempName);
+  
+     for($j=0;$j<$sizeName;$j++)
+      {
+       $keyObj = $keyObj +  $tempName[$j];
+      }
+      
+      string $groupName = "lls_" + $keyObj + "_motionPath";
+      
+      if(`objExists $groupName`)
+        setAttr ($groupName +".visibility") 1;
+      
+      if(!(`objExists $groupName`))
+        error "The object have not motion trail yet!";
+      
+   }
+}
+
+/*
+  The procrdure repair the keyframes of an object when the 3 axis keyframes is not completed.The procedure is not used here.
+*/ 
+global proc repairKeyframe(string $objName)
+{
+
+$keyContainX =`keyframe -at translateX -query -timeChange $objName`;
+
+for ($eachKey in $keyContainX)
+{    
+$x = `getAttr -t $eachKey ($objName+".translateX")`;
+  setAttr ($objName+".translateX") $x;
+setKeyframe -t $eachKey ($objName+".translateX");
+  
+$y = `getAttr -t $eachKey ($objName+".translateY")`;
+  setAttr ($objName+".translateY") $y;
+setKeyframe -t $eachKey  ($objName+".translateY");
+  
+$z = `getAttr -t $eachKey ($objName+".translateZ")`;
+  setAttr ($objName+".translateZ") $z;
+setKeyframe -t $eachKey   ($objName+".translateZ");
+}
+
+$keyContainY =`keyframe -at translateY -query -timeChange $objName`;
+
+for ($eachKey in $keyContainY)
+{    
+$x = `getAttr -t $eachKey ($objName+".translateX")`;
+  setAttr ($objName+".translateX") $x;
+setKeyframe -t $eachKey ($objName+".translateX");
+  
+$y = `getAttr -t $eachKey ($objName+".translateY")`;
+  setAttr ($objName+".translateY") $y;
+setKeyframe -t $eachKey  ($objName+".translateY");
+  
+$z = `getAttr -t $eachKey ($objName+".translateZ")`;
+  setAttr ($objName+".translateZ") $z;
+setKeyframe -t $eachKey   ($objName+".translateZ");
+}
+
+$keyContainZ =`keyframe -at translateZ -query -timeChange $objName`;
+
+for ($eachKey in $keyContainZ)
+{    
+$x = `getAttr -t $eachKey ($objName+".translateX")`;
+  setAttr ($objName+".translateX") $x;
+setKeyframe -t $eachKey ($objName+".translateX");
+  
+$y = `getAttr -t $eachKey ($objName+".translateY")`;
+  setAttr ($objName+".translateY") $y;
+setKeyframe -t $eachKey  ($objName+".translateY");
+  
+$z = `getAttr -t $eachKey ($objName+".translateZ")`;
+  setAttr ($objName+".translateZ") $z;
+setKeyframe -t $eachKey   ($objName+".translateZ");
+}
+
+}
+
+ 
+editableMotionTrail;

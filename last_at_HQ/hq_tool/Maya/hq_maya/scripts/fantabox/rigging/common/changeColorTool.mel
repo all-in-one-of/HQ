@@ -1,0 +1,305 @@
+//////////////////////////////////////////////(¿ØÖÆÆ÷ÑÕÉ«)
+global proc CtrlColorWindow()
+{
+    if (`window -ex CtrlColorWin`)
+        deleteUI CtrlColorWin;
+    window -title "... Color for Ctrl ..." CtrlColorWin;
+    columnLayout  -rowSpacing 8  ;
+ 		rowColumnLayout -numberOfColumns 4 
+ 			-columnWidth 1 1
+ 			-columnWidth 2 100
+ 			-columnWidth 3 15
+ 			-columnWidth 4 100;
+ 			text -l "";
+            text -l "color for YUJING~";
+ 			text -l "";
+ 			text -l "Welcome to color";
+ 			//checkBox -label "transform" -v 0 -cc "wxIIOptimize4PrechkBoxSwitch(\"wiiPreChkBox1\",\"wiiPreChkBox2\")"	wiiPreChkBox1;
+ 			//checkBox -label "shape" -v 1 -cc "wxIIOptimize4PrechkBoxSwitch(\"wiiPreChkBox2\",\"wiiPreChkBox1\")"	wiiPreChkBox2;
+ 			setParent ..;
+ 			setParent ..;
+    string $AboutColayout = `columnLayout -adjustableColumn true`;//ÊúÐÍ²¼¾Ö
+        menuBarLayout;//²Ëµ¥À¸
+//	    menu -label "color for transform ";
+//            menuItem -label "¸øtransform¼ÓÑÕÉ«" -command "transformColorWindow" ;
+            setParent ..;
+    string $HbAutoTools = `frameLayout -label "                 _____Select Color_____" -labelAlign "top" -cl 0 -cc "" -borderStyle "etchedIn" `;
+    gridLayout  -numberOfColumns 6 -cellWidthHeight 40 40 ;
+        string $button01=`button -height 30 -width 90 -bgc 1 0 0 -label "color" -c "CreateControlColorRed"`;
+        string $button01=`button -height 30 -width 90 -bgc 0.608 0 0.157 -label "color" -c "ColorReda"`;
+        string $button01=`button -height 30 -width 90 -bgc 0.631 0.188 0.412 -label "color" -c "ColorPurpleb"`;
+        string $button01=`button -height 30 -width 90 -bgc 0.6 0.149 0 -label "color" -c "ColorRedb"`;
+        string $button01=`button -height 30 -width 90 -bgc 1 0.69 0.69 -label "color" -c "ColorRr"`;
+        string $button01=`button -height 30 -width 90 -bgc 1 1 0.338 -label "color" -c "CreateControlColorYellow"`;
+        string $button01=`button -height 30 -width 90 -bgc 0 0 1 -label "color" -c "CreateControlColorBlue"`;
+        string $button01=`button -height 30 -width 90 -bgc 0.188 0.404 0.631 -label "color" -c "ColorBluea"`;
+        string $button01=`button -height 30 -width 90 -bgc 0.188 0.631 0.631 -label "color" -c "ColorBlueb"`;
+        string $button01=`button -height 30 -width 90 -bgc 0 1 1 -label "color" -c "CreateControlColorSkyBlue"`;
+        string $button01=`button -height 30 -width 90 -bgc 1 0 1 -label "color" -c "CreateControlColorPurple"`;
+        string $button01=`button -height 30 -width 90 -bgc 0.435 0.188 0.631 -label "color" -c "ColorPurplea"`;
+        string $button01=`button -height 30 -width 90 -bgc 0 1 0 -label "color" -c "Colorgreencl"`;
+        string $button01=`button -height 30 -width 90 -bgc 0 0.6 0.329 -label "color" -c "CreateControlColorGreen"`;
+        string $button01=`button -height 30 -width 90 -bgc 0.408 0.631 0.188 -label "color" -c "ColorGreena"`;
+        string $button01=`button -height 30 -width 90 -bgc 1 1 1 -label "color" -c "CreateControlColorWhite"`;
+        string $button01=`button -height 30 -width 90 -bgc 0.5 0.5 0.5 -label "color" -c "CreateControlColorGray"`;
+        string $button01=`button -height 30 -width 90 -bgc 0 0 0 -label "color" -c "CreateControlColorBlack"`;
+        setParent ..; 
+        setParent ..; 
+        string $HbAutoTools = `frameLayout -label "                    _____ÑÕÉ«Ê°È¡_____" -labelAlign "top" -cl 0 -cc "" -borderStyle "etchedIn" `;
+        setParent ..;         
+        showWindow CtrlColorWin;
+}
+///////////////////////////////////////////////³ÌÐò
+global proc ColorReda()//Éîºì
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 4 ;   
+        } 
+    }
+}
+global proc ColorRedb()//Ç³ºì
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 12 ;   
+        } 
+    }
+}
+global proc CreateControlColorRed()//ºìÉ«
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 13 ;   
+        } 
+    }
+}
+global proc Colorgreencl()//´¿ÂÌ
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 14 ;   
+        } 
+    }
+}
+global proc CreateControlColorYellow()//»ÆÉ«
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 22 ;   
+        } 
+    }
+}
+global proc ColorRr()//ÈâÉ«
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 20 ;   
+        } 
+    }
+}
+global proc ColorBluea()//Ç³À¶
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 29 ;   
+        } 
+    }
+}
+global proc ColorBlueb()//À¶ÂÌ
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 28 ;   
+        } 
+    }
+}
+global proc CreateControlColorBlue()//À¶É«
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 6 ;   
+        } 
+    }
+}
+global proc CreateControlColorSkyBlue()//ºþÀ¶
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 18 ;   
+        } 
+    }
+}
+global proc CreateControlColorGreen()//ÂÌ
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 23 ;   
+        } 
+    }
+}
+global proc ColorGreena()//ÇàÂÌ
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 26 ;   
+        } 
+    }
+}
+global proc CreateControlColorGray()//»ÒÉ«
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 0 ;   
+        } 
+    }
+}
+global proc CreateControlColorBlack()//ºÚÉ«
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 1 ;   
+        } 
+    }
+}
+global proc CreateControlColorWhite()//°×É«
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 16 ;   
+        } 
+    }
+}
+global proc CreateControlColorPurple()//ÁÁ×Ï
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 9 ;   
+        } 
+    }
+}
+global proc ColorPurplea()//×ÏÉ«
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 30 ;   
+        } 
+    }
+}
+global proc ColorPurpleb()//×Ïºì
+{
+    string $GetObjectName[]=`ls -sl`;
+    for($coloraa in $GetObjectName)
+    {
+        string $ctrlS[] = `listRelatives -s -ni $coloraa`;
+        string $ctrlSp;
+        for($ctrlSp in $ctrlS)
+        {
+            setAttr ($ctrlSp+".overrideEnabled") 1 ;
+            setAttr ($ctrlSp+".overrideColor") 31 ;   
+        } 
+    }
+}
+CtrlColorWindow();

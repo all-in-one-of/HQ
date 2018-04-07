@@ -1,0 +1,31 @@
+global proc shuaiSlideJointOptimize()
+{
+    string $slideJoints[]=`ls -sl`;
+    string $Joint;
+    for($Joint in $slideJoints)
+    {
+        float $pos[]=`xform -q -ws -t $Joint`;
+        string $buffer[];
+        tokenize $Joint "_" $buffer;
+        if(`gmatch $buffer[size($buffer)-1] "Slide50"`)
+        {
+            if(`objExists ($Joint+"_locator")`)
+            {
+                delete ($Joint+"_locator"+"_Grp");
+            }
+            string $slideLoc[]=`spaceLocator -n ($Joint+"_locator")`;
+            hide $slideLoc[0];
+            group -n ($slideLoc[0]+"_Grp") $slideLoc[0];
+            xform -ws -t $pos[0] $pos[1] $pos[2] ($slideLoc[0]+"_Grp");
+            parent ($slideLoc[0]+"_Grp") ($buffer[0]+"_"+$buffer[1]+"_Slide00");
+            pointConstraint -mo $Joint $slideLoc[0];
+            for($i=0;$i<=3;$i++)
+            {
+                if(`objExists ($buffer[0]+"_"+$buffer[1]+"_SlideDist"+$i)`)
+                {
+                    connectAttr ($slideLoc[0]+".t") ($buffer[0]+"_"+$buffer[1]+"_SlideDist"+$i+".point1");
+                }
+            }
+        }
+    }
+}

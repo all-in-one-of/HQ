@@ -1,0 +1,154 @@
+global proc AddSourceObject()
+{
+    string $srcObjs[] = `ls -sl -dag -lf`;
+    for($srcObj in $srcObjs)
+    {
+        if(`nodeType $srcObj` == "mesh")
+        {
+            string $obj = firstParentOf($srcObj);
+            textScrollList -e -a $obj srcObjList;
+        }
+    }
+}
+
+global proc AddTargetObject()
+{
+     string $srcObjs[] = `ls -sl -dag -lf -ni`;
+    for($srcObj in $srcObjs)
+    {
+        if(`nodeType $srcObj` == "mesh")
+        {
+            string $obj = firstParentOf($srcObj);
+            textScrollList -e -a $obj trgObjList;
+        }
+    }
+}
+
+global proc removeSrcObj()
+{
+    string $sls[] = `textScrollList -q -si srcObjList`;
+    for($sl in $sls)
+       textScrollList -e -removeItem $sl srcObjList;
+}
+
+global proc removeTrgObj()
+{
+    string $sls[] = `textScrollList -q -si trgObjList`;
+    for($sl in $sls)
+       textScrollList -e -removeItem $sl trgObjList;
+}
+
+global proc int transferUV()
+{
+    string $sls[] = `textScrollList -q -ai srcObjList`;
+    if(size($sls) >1 )
+    {
+        warning("只能选择一个被传递uv的物体");
+        return 0;
+    }
+    if(size($sls) == 0 )
+    {
+        warning("请选择一个被传递uv的物体");
+        return 0;
+    }
+    string $slTrgs[] = `textScrollList -q -ai trgObjList`;
+    if(size($slTrgs) == 0 )
+    {
+        warning("请选择传递uv的物体");
+        return 0;
+    }
+
+    for($slTrg in $slTrgs)
+    {
+        transferAttributes  -transferPositions 0 -transferNormals 0  -transferUVs 1  -sampleSpace 4  -searchMethod 3 -flipUVs 0 -colorBorders 1 $sls[0] $slTrg;
+        select $slTrg;
+        DeleteHistory();
+    }
+    return 1;
+
+}
+
+
+global proc multiTransferUVWindow()
+{
+    if (`window -exists multiTransferUVWin`) {
+		deleteUI multiTransferUVWin;
+	}
+
+	window
+		-title "传递UV"
+		multiTransferUVWin;
+	formLayout
+		multiTransferUVForm;
+     string $form = `setParent -q`;
+    text -label "正确UV的物体(一个)"
+		 -align "center" txtSrc;
+	text -label "需要被传递UV的物体(多个)"
+		 -align "center" txtTrg;
+
+    paneLayout -width 300 -height 260
+		-configuration "vertical2"
+		transferUVPaneLayout;
+    textScrollList -allowMultiSelection true srcObjList;
+    popupMenu;
+    menuItem -l "清空" -command "textScrollList -e -ra srcObjList";
+    menuItem -l "移除选择的" -command "removeSrcObj";
+    textScrollList -allowMultiSelection true -sc "select `textScrollList -q -si trgObjList`" trgObjList;
+    popupMenu;
+    menuItem -l "清空" -command "textScrollList -e -ra trgObjList";
+    menuItem -l "移除选择的" -command "removeTrgObj";
+
+    setParent .. ;
+    button -label "添加"
+		-command "AddSourceObject"
+		addSrcObjButton;
+    button -label "添加"
+		-command "AddTargetObject"
+		addTrgObjButton;
+
+    button -label "传递"
+		-command "transferUV"
+		transferUVButton;
+
+     button -label "关闭"
+		-command "deleteUI multiTransferUVWin"
+		closeWinButton;
+
+    int $spacer = 5;
+	int $top = 5;
+	int $edge = 5;
+
+    formLayout -e
+                -attachForm				txtSrc			"left"          $edge
+                -attachForm				txtSrc			"top"			$top
+                -attachPosition			txtSrc			"right"         $spacer 50
+
+                -attachPosition			txtTrg			"left"          $spacer 50
+                -attachForm				txtTrg			"top"			$top
+                -attachForm				txtTrg			"right"         $edge
+
+                -attachControl			transferUVPaneLayout	"top"			1 txtSrc
+                -attachForm				transferUVPaneLayout	"left"			$edge
+                -attachForm				transferUVPaneLayout	"right"			$edge
+                -attachControl			transferUVPaneLayout	"bottom"		$spacer addSrcObjButton
+
+                -attachPosition			addSrcObjButton     	"right"			$spacer 25
+                -attachControl			addSrcObjButton     	"bottom"		$spacer transferUVButton
+
+                -attachPosition			addTrgObjButton     	"left"			$spacer 75
+                -attachControl			addTrgObjButton     	"bottom"		$spacer transferUVButton
+
+                -attachForm				transferUVButton	"left"          $edge
+                -attachForm				transferUVButton	"bottom"		$top
+                -attachPosition			transferUVButton	"right"         $spacer 50
+
+                -attachPosition			closeWinButton	"left"          $spacer 50
+                -attachForm				closeWinButton	"bottom"		$top
+                -attachForm				closeWinButton	"right"         $edge
+                $form;
+
+	showWindow multiTransferUVWin;
+}
+
+
+multiTransferUVWindow;

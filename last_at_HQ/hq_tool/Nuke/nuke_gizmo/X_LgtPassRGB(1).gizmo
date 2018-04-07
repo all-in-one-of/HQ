@@ -1,0 +1,491 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ inputs 5
+ note_font_color 0xff
+ addUserKnob {20 X_LgtPassRGB}
+ addUserKnob {41 Merge T Merge1.operation}
+ addUserKnob {41 multiply l "Global color" T Grade5.multiply}
+ addUserKnob {7 gain_all l "Global gain"}
+ gain_all 1
+ addUserKnob {7 gamma_all l "Global gamma"}
+ gamma_all 1
+ addUserKnob {7 fade_all l "Global intensity"}
+ fade_all 1
+ addUserKnob {20 rgroup l Red n 1}
+ addUserKnob {6 r_mask l "Apply mask" +STARTLINE}
+ addUserKnob {4 r_maskby l by -STARTLINE M {rgb.r rgb.g rgb.b Alpha "" ""}}
+ r_maskby Alpha
+ addUserKnob {41 multiply_1 l R-color T GradeR.multiply}
+ addUserKnob {7 r_gain l R-gain}
+ r_gain 1
+ addUserKnob {7 r_gamma l R-gamma}
+ r_gamma 1
+ addUserKnob {7 r_fade l R-intensity}
+ r_fade 0.5
+ addUserKnob {20 RendGroup l endGroup n -1}
+ addUserKnob {20 ggroup l Green n 1}
+ addUserKnob {6 g_mask l "Apply mask" +STARTLINE}
+ addUserKnob {4 g_maskby l by -STARTLINE M {rgb.r rgb.g rgb.b Alpha}}
+ g_maskby Alpha
+ addUserKnob {41 multiply_2 l G-color T Grade2.multiply}
+ addUserKnob {7 g_gain l G-gain}
+ g_gain 1
+ addUserKnob {7 g_gamma l G-gamma}
+ g_gamma 1
+ addUserKnob {7 g_fade l G-intensity}
+ g_fade 0.5
+ addUserKnob {20 GendGroup l endGroup n -1}
+ addUserKnob {20 bgroup l Blue n 1}
+ addUserKnob {6 b_mask l "Apply mask" +STARTLINE}
+ addUserKnob {4 b_maskby l by -STARTLINE M {rgb.r rgb.g rgb.b Alpha ""}}
+ b_maskby Alpha
+ addUserKnob {41 multiply_3 l B-color T Grade3.multiply}
+ addUserKnob {7 b_gain l B-gain}
+ b_gain 1
+ addUserKnob {7 b_gamma l B-gamma}
+ b_gamma 1
+ addUserKnob {7 b_fade l B-intensity}
+ b_fade 0.5
+ addUserKnob {20 bendGroup l endGroup n -1}
+ addUserKnob {20 agroup l Alpha n 1}
+ addUserKnob {6 a_mask l "Apply mask" +STARTLINE}
+ addUserKnob {4 a_maskby l by -STARTLINE M {rgb.r rgb.g rgb.b Alpha ""}}
+ a_maskby Alpha
+ addUserKnob {41 multiply_4 l Alpha-color T Grade6.multiply}
+ addUserKnob {7 alpha_gain l Alpha-gain}
+ alpha_gain 1
+ addUserKnob {7 alpha_gamma l Alpha-gamma}
+ alpha_gamma 1
+ addUserKnob {7 alpha_fade l Alpha-intensity}
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {26 text l "" +STARTLINE T "\t\t\t\t\t\[version 1.0 by Felix.xu]"}
+}
+ Input {
+  inputs 0
+  name Amsk
+  xpos 992
+  ypos 121
+  number 4
+ }
+ Dot {
+  name Dot5
+  xpos 1026
+  ypos 175
+ }
+set N1591b8d0 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle13
+  xpos 1129
+  ypos 254
+ }
+push $N1591b8d0
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle14
+  xpos 1037
+  ypos 255
+ }
+push $N1591b8d0
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle15
+  xpos 942
+  ypos 255
+ }
+push $N1591b8d0
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle16
+  xpos 856
+  ypos 253
+ }
+ Switch {
+  inputs 4
+  which {{a_maskby i}}
+  name Switch4
+  xpos 955
+  ypos 353
+ }
+ Input {
+  inputs 0
+  name Source
+  xpos 22
+  ypos 108
+ }
+ Dot {
+  name Dot1
+  xpos 56
+  ypos 176
+ }
+set N15944fc0 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name ShuffleAlpha
+  xpos 1122
+  ypos 327
+ }
+ ShuffleCopy {
+  inputs 2
+  name ShuffleCopy4
+  xpos 1122
+  ypos 369
+  disable {{abs(a_mask-1) i}}
+ }
+ Premult {
+  name Premult4
+  xpos 1122
+  ypos 395
+  disable {{abs(a_mask-1) i}}
+ }
+ Grade {
+  white {{alpha_gain i}}
+  gamma {{alpha_gamma i}}
+  name GradeB1
+  xpos 1122
+  ypos 480
+ }
+ Grade {
+  name Grade6
+  xpos 1122
+  ypos 506
+ }
+ Multiply {
+  value {{alpha_fade i}}
+  name MultiplyB1
+  xpos 1122
+  ypos 540
+ }
+ Dot {
+  name Dot6
+  xpos 589
+  ypos 638
+ }
+ Input {
+  inputs 0
+  name Bmsk
+  xpos 604
+  ypos 126
+  number 3
+ }
+ Dot {
+  name Dot4
+  xpos 638
+  ypos 180
+ }
+set N15976130 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle5
+  xpos 741
+  ypos 259
+ }
+push $N15976130
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle6
+  xpos 649
+  ypos 260
+ }
+push $N15976130
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle7
+  xpos 554
+  ypos 260
+ }
+push $N15976130
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle8
+  xpos 468
+  ypos 258
+ }
+ Switch {
+  inputs 4
+  which {{b_maskby i}}
+  name Switch2
+  xpos 567
+  ypos 358
+ }
+push $N15944fc0
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name ShuffleB
+  xpos 734
+  ypos 333
+ }
+ ShuffleCopy {
+  inputs 2
+  name ShuffleCopy2
+  xpos 734
+  ypos 374
+  disable {{abs(b_mask-1) i}}
+ }
+ Premult {
+  name Premult3
+  xpos 734
+  ypos 400
+  disable {{abs(b_mask-1) i}}
+ }
+ Grade {
+  white {{b_gain i}}
+  gamma {{b_gamma i}}
+  name GradeB
+  xpos 734
+  ypos 485
+ }
+ Grade {
+  name Grade3
+  xpos 734
+  ypos 511
+ }
+ Multiply {
+  value {{b_fade i}}
+  name MultiplyB
+  xpos 734
+  ypos 545
+ }
+push 0
+ Input {
+  inputs 0
+  name Rmsk
+  xpos -422
+  ypos 68
+  number 1
+ }
+ Dot {
+  name Dot3
+  xpos -375
+  ypos 137
+ }
+set N159c82f0 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle4
+  xpos -272
+  ypos 216
+ }
+push $N159c82f0
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle3
+  xpos -364
+  ypos 217
+ }
+push $N159c82f0
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle2
+  xpos -459
+  ypos 216
+ }
+push $N159c82f0
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle1
+  xpos -545
+  ypos 215
+ }
+ Switch {
+  inputs 4
+  which {{r_maskby i}}
+  name Switch1
+  xpos -446
+  ypos 314
+ }
+push $N15944fc0
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name ShuffleR
+  xpos -279
+  ypos 285
+ }
+ ShuffleCopy {
+  inputs 2
+  name ShuffleCopy1
+  xpos -279
+  ypos 347
+  disable {{abs(r_mask-1) i}}
+ }
+ Premult {
+  name Premult1
+  xpos -279
+  ypos 393
+  disable {{abs(r_mask-1) i}}
+ }
+ Grade {
+  white {{r_gain i}}
+  gamma {{r_gamma i}}
+  name Grade1
+  xpos -279
+  ypos 434
+ }
+ Grade {
+  name GradeR
+  xpos -279
+  ypos 483
+ }
+ Multiply {
+  value {{r_fade i}}
+  name MultiplyR
+  xpos -279
+  ypos 545
+ }
+ Input {
+  inputs 0
+  name Gmsk
+  xpos 222
+  ypos 75
+  number 2
+ }
+ Dot {
+  name Dot2
+  xpos 256
+  ypos 137
+ }
+set N15c1e510 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle9
+  xpos 359
+  ypos 216
+ }
+push $N15c1e510
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle10
+  xpos 267
+  ypos 217
+ }
+push $N15c1e510
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle11
+  xpos 172
+  ypos 216
+ }
+push $N15c1e510
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle12
+  xpos 86
+  ypos 215
+ }
+ Switch {
+  inputs 4
+  which {{g_maskby i}}
+  name Switch3
+  xpos 185
+  ypos 314
+ }
+push $N15944fc0
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name ShuffleG
+  xpos 22
+  ypos 268
+ }
+ ShuffleCopy {
+  inputs 2
+  name ShuffleCopy3
+  xpos 22
+  ypos 314
+  disable {{abs(g_mask-1) i}}
+ }
+ Premult {
+  name Premult2
+  xpos 22
+  ypos 379
+  disable {{abs(g_mask-1) i}}
+ }
+ Grade {
+  white {{g_gain i}}
+  gamma {{g_gamma i}}
+  name GradeG
+  xpos 22
+  ypos 422
+ }
+ Grade {
+  name Grade2
+  xpos 22
+  ypos 455
+ }
+ Multiply {
+  value {{g_fade i}}
+  name MultiplyG
+  xpos 22
+  ypos 487
+ }
+ Merge2 {
+  inputs 4+1
+  operation screen
+  name Merge1
+  xpos 22
+  ypos 553
+ }
+ Grade {
+  white {{gain_all i}}
+  gamma {{gamma_all i}}
+  name Grade4
+  xpos 22
+  ypos 655
+ }
+ Grade {
+  name Grade5
+  xpos 22
+  ypos 690
+ }
+ Multiply {
+  value {{fade_all i}}
+  name Multiply1
+  xpos 22
+  ypos 733
+ }
+ Output {
+  name Output1
+  xpos 20
+  ypos 848
+ }
+end_group

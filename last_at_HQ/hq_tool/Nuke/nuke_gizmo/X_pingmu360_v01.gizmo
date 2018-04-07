@@ -1,0 +1,162 @@
+#! C:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ inputs 6
+ tile_color 0xffff
+ addUserKnob {20 X_pingmu360}
+ addUserKnob {41 format T Constant2.format}
+}
+ Input {
+  inputs 0
+  name cam6
+  xpos 577
+  ypos 211
+  number 5
+ }
+ Reformat {
+  type "to box"
+  format "2100 1200 0 0 2100 1200 1 2100"
+  box_width {{root.width/6}}
+  box_height {{root.height}}
+  box_fixed true
+  name Reformat1
+  xpos 577
+  ypos 247
+ }
+ set C37a34c50 [stack 0]
+ Transform {
+  translate {{"(\[value root.width]/6)*5"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform19
+  xpos 577
+  ypos 290
+ }
+ Input {
+  inputs 0
+  name cam5
+  xpos 471
+  ypos 212
+  number 4
+ }
+clone $C37a34c50 {
+  xpos 477
+  ypos 246
+  selected true
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*4"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform18
+  xpos 477
+  ypos 293
+ }
+ Input {
+  inputs 0
+  name cam4
+  xpos 374
+  ypos 212
+  number 3
+ }
+clone $C37a34c50 {
+  xpos 374
+  ypos 247
+  selected false
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*3"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform17
+  xpos 374
+  ypos 294
+ }
+ Input {
+  inputs 0
+  name cam3
+  xpos 265
+  ypos 211
+  number 2
+ }
+clone $C37a34c50 {
+  xpos 265
+  ypos 249
+  selected false
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*2"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform13
+  xpos 265
+  ypos 294
+ }
+ Input {
+  inputs 0
+  name cam2
+  xpos 161
+  ypos 210
+  number 1
+ }
+clone $C37a34c50 {
+  xpos 164
+  ypos 248
+  selected false
+ }
+ Transform {
+  translate {{"\[value root.width]/6"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform15
+  xpos 164
+  ypos 293
+ }
+push 0
+ Input {
+  inputs 0
+  name cam1
+  xpos 54
+  ypos 209
+ }
+clone $C37a34c50 {
+  xpos 59
+  ypos 248
+  selected false
+ }
+ Transform {
+  center {1024 778}
+  filter Impulse
+  name Transform16
+  xpos 59
+  ypos 292
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  name Constant2
+  xpos 138
+  ypos 346
+ }
+ Merge2 {
+  inputs 7+1
+  also_merge all
+  name Merge1
+  xpos 348
+  ypos 376
+ }
+set N37d064f0 [stack 0]
+ Viewer {
+  frame_range 980-1420
+  input_process false
+  name Viewer1
+  xpos 549
+  ypos 433
+ }
+push $N37d064f0
+ Output {
+  name Output1
+  xpos 341
+  ypos 431
+ }
+end_group

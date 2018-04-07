@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>edo_riggingToolMainUI</class>
+ <widget class="QMainWindow" name="edo_riggingToolMainUI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>329</width>
+    <height>566</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>5</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>edo_riggingToolMainUI</string>
+  </property>
+  <property name="windowOpacity">
+   <double>0.900000000000000</double>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background:url(:/buttonIcon/windowBackground002.jpg)</string>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>311</width>
+      <height>531</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0.142045 rgba(80, 80, 90, 100), stop:1 rgba(180, 180, 220, 5))</string>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="rig_tab">
+     <attribute name="title">
+      <string>RIGGING</string>
+     </attribute>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: italic 10pt &quot;Gill Sans Ultra Bold&quot;;
+color:rgb(0,0,0);
+background:url(:/buttonIcon/buttonBackground001.jpg);
+
+</string>
+      </property>
+      <property name="text">
+       <string>IKFK
+Chain</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_17">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>110</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_27">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>410</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_24">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>310</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="blendshapeTool_Bt">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>10</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: italic 10pt &quot;Gill Sans Ultra Bold&quot;;
+color:rgb(0,0,0);
+background:url(:/buttonIcon/buttonBackground001.jpg);
+
+</string>
+      </property>
+      <property name="text">
+       <string>BLEND
+SHAPE</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_22">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>210</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_21">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>210</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_23">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>310</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_28">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>410</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_3">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>10</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_18">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>110</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_20">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>210</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_25">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>310</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="IkFkChainCtrlTool_Bt_19">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>110</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="BodyRigTool_Bt">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>410</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:url(:/buttonIcon/buttonBackground002.jpg);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="simulation_tab">
+     <attribute name="title">
+      <string>SIMULATION</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="animation_tab">
+     <attribute name="title">
+      <string>ANIMATION</string>
+     </attribute>
+     <widget class="QPushButton" name="riggingCtrlPanel_Bt">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: italic 10pt &quot;Gill Sans Ultra Bold&quot;;
+color:rgb(0,0,0);
+background:url(:/buttonIcon/buttonBackground001.jpg);
+
+</string>
+      </property>
+      <property name="text">
+       <string>Rigging
+Ctrl Panel</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="riggingFileControler_Bt">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>10</y>
+        <width>87</width>
+        <height>86</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: italic 10pt &quot;Gill Sans Ultra Bold&quot;;
+color:rgb(0,0,0);
+background:url(:/buttonIcon/buttonBackground001.jpg);
+
+</string>
+      </property>
+      <property name="text">
+       <string>Rigging
+File
+Controler</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>329</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0.142045 rgba(120,120, 120, 255), stop:1 rgba(200, 200, 200, 255))</string>
+   </property>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>help</string>
+    </property>
+   </widget>
+   <addaction name="menuHelp"/>
+  </widget>
+ </widget>
+ <resources>
+  <include location="icon/edo_buildControlerFromSkeletonUI.qrc"/>
+ </resources>
+ <connections/>
+</ui>

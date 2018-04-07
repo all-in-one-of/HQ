@@ -1,0 +1,236 @@
+#! C:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ tile_color 0xff3f3fff
+ addUserKnob {20 X_pingmuzhuanhuan}
+ addUserKnob {4 inputStyle l "Info from:" M {"565 to 65" "65 to 565" "16 to 65" "65 to 16" "" "" "" ""}}
+ inputStyle "16 to 65"
+ addUserKnob {41 scale_1 l scale T Reformat228.scale}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x7171c600
+  label "65 to 565"
+  note_font_size 42
+  xpos -461
+  ypos -269
+  bdwidth 228
+  bdheight 217
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode2
+  tile_color 0x7171c600
+  label "565 to 65"
+  note_font_size 42
+  xpos -173
+  ypos -269
+  bdwidth 228
+  bdheight 217
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode3
+  tile_color 0x7171c600
+  label "16 to 65"
+  note_font_size 42
+  xpos 105
+  ypos -270
+  bdwidth 228
+  bdheight 217
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode4
+  tile_color 0x7171c600
+  label "65 to 16"
+  note_font_size 42
+  xpos 405
+  ypos -267
+  bdwidth 228
+  bdheight 217
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos 116
+  ypos -362
+ }
+ Dot {
+  name Dot11
+  xpos 150
+  ypos -300
+ }
+set N3a712940 [stack 0]
+ Crop {
+  box {0 0 {root.width/6} {root.height}}
+  name Crop4
+  xpos 416
+  ypos -221
+ }
+ Transform {
+  translate {{root.width-root.width/6} 0}
+  center {{root.width/2} {root.height/2}}
+  name Transform5
+  xpos 416
+  ypos -177
+ }
+push $N3a712940
+ Crop {
+  box {{root.width/6} 0 {root.width} {root.height}}
+  name Crop5
+  xpos 545
+  ypos -236
+ }
+ Transform {
+  translate {{-root.width/6} 0}
+  center {{root.width/2} {root.height/2}}
+  name Transform6
+  xpos 545
+  ypos -169
+ }
+set N3a713700 [stack 0]
+ Merge2 {
+  inputs 2
+  name Merge3
+  xpos 416
+  ypos -113
+ }
+push $N3a712940
+ Crop {
+  box {{root.width-root.width/6} 0 {root.width} {root.height}}
+  name Crop2
+  xpos 116
+  ypos -224
+ }
+ Transform {
+  translate {{-(root.width-root.width/6)} 0}
+  center {{root.width/2} {root.height/2}}
+  name Transform3
+  xpos 116
+  ypos -185
+ }
+push $N3a712940
+ Crop {
+  box {0 0 {root.width-root.width/6} {root.height}}
+  name Crop3
+  xpos 245
+  ypos -239
+ }
+ Transform {
+  translate {{root.width/6} 0}
+  center {{root.width/2} {root.height/2}}
+  name Transform4
+  xpos 245
+  ypos -115
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 116
+  ypos -115
+ }
+push $N3a712940
+ Crop {
+  box {{root.width-root.width/12} 0 {root.width} {root.height}}
+  name Crop27
+  xpos -439
+  ypos -228
+ }
+ Transform {
+  translate {{-(root.width-root.width/12)} 0}
+  center {{root.width/2} {root.height/2}}
+  filter Impulse
+  name Transform230
+  xpos -439
+  ypos -119
+ }
+set N3a916b50 [stack 0]
+push $N3a712940
+ Crop {
+  box {0 0 {root.width-root.width/12} {root.height}}
+  name Crop29
+  xpos -311
+  ypos -194
+ }
+ Transform {
+  translate {{root.width/12} 0}
+  center {{root.width/2} {root.height/2}}
+  filter Impulse
+  name Transform229
+  xpos -311
+  ypos -160
+ }
+ Merge2 {
+  inputs 2
+  name Merge73
+  xpos -311
+  ypos -119
+ }
+push $N3a712940
+ Crop {
+  box {{root.width/12} 0 {root.width} {root.height}}
+  name Crop26
+  xpos -148
+  ypos -228
+ }
+ Transform {
+  translate {{-root.width/12} 0}
+  center {{root.width/2} {root.height/2}}
+  filter Impulse
+  name Transform1
+  xpos -148
+  ypos -182
+ }
+push $N3a712940
+ Crop {
+  box {0 0 {root.width/12} {root.height}}
+  name Crop1
+  xpos -19
+  ypos -228
+ }
+ Transform {
+  translate {{root.width-root.width/12} 0}
+  center {{root.width/2} {root.height/2}}
+  filter Impulse
+  name Transform2
+  xpos -19
+  ypos -107
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos -148
+  ypos -107
+ }
+ Switch {
+  inputs 4
+  which {{inputStyle}}
+  name Switch1
+  xpos 116
+  ypos -13
+ }
+ Reformat {
+  type scale
+  name Reformat228
+  selected true
+  xpos 116
+  ypos 27
+ }
+ Output {
+  name Output2
+  xpos 116
+  ypos 65
+ }
+push $N3a713700
+push $N3a916b50
+ Viewer {
+  inputs 2
+  frame 1450
+  input_process false
+  name Viewer1
+  xpos 416
+  ypos 24
+ }
+end_group

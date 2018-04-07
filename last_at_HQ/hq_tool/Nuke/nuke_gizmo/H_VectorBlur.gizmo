@@ -1,0 +1,517 @@
+#! /home/zhangkh/Nuke6.3v4/Nuke6.3 -nx
+version 6.3 v4
+Gizmo {
+ inputs 2
+ tile_color 0x9078d3ff
+ note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 12
+ mapsize {0.15 0.15}
+ addUserKnob {20 vectorblur l VectorBlur}
+ addUserKnob {14 VectorBlur1_scale l multiply R 0 100}
+ VectorBlur1_scale 2
+ addUserKnob {8 VectorBlur1_offset l offset R -1 0}
+ VectorBlur1_offset -0.5
+ addUserKnob {14 VectorBlur1_grow_bbox l "grow bbox" R 0 100}
+ VectorBlur1_grow_bbox 100
+ addUserKnob {20 fix l "Fix Vector" n 1}
+ fix 0
+ addUserKnob {41 disable_1 l Disable T ShuffleCopy2.disable}
+ addUserKnob {4 choice M {mode1 mode2 "" ""}}
+ addUserKnob {26 mode1}
+ addUserKnob {14 Blur15_size l size1 R 0 100}
+ Blur15_size 10
+ addUserKnob {14 Blur16_size l size2 R 0 100}
+ Blur16_size 150
+ addUserKnob {14 Blur17_size l size3 R 0 100}
+ Blur17_size 6.2
+ addUserKnob {26 mode2}
+ addUserKnob {14 Blur27_size l size R 0 100}
+ Blur27_size 3.8
+ addUserKnob {14 Blur28_size l size R 0 100}
+ Blur28_size 13
+ addUserKnob {14 Blur29_size l size R 0 100}
+ Blur29_size 100
+ addUserKnob {14 Blur30_size l size R 0 100}
+ Blur30_size 6.5
+ addUserKnob {26 ""}
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {20 sample l Sample n 1}
+ addUserKnob {41 amount l "Sample Amount" T F_ReGrain1.amount}
+ addUserKnob {41 size l "Sample Size" T F_ReGrain1.size}
+ addUserKnob {20 endGroup_1 l endGroup n -1}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T VectorBlur1.maskChannelMask}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode3
+  tile_color 0x7171c600
+  note_font_size 42
+  xpos -237
+  ypos -865
+  bdwidth 493
+  bdheight 720
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode4
+  tile_color 0x8e8e3800
+  note_font_size 42
+  xpos 496
+  ypos -874
+  bdwidth 487
+  bdheight 924
+ }
+ Input {
+  inputs 0
+  name mask
+  xpos -742
+  ypos 291
+  number 1
+ }
+ Dot {
+  name Dot1
+  xpos -708
+  ypos 422
+ }
+ Input {
+  inputs 0
+  name input
+  label input_source
+  xpos -541
+  ypos -1189
+ }
+ Dot {
+  name Dot25
+  xpos -507
+  ypos -1006
+ }
+set N4f398f0 [stack 0]
+ Dot {
+  name Dot2
+  xpos 540
+  ypos -1006
+ }
+ Shuffle {
+  in motion
+  alpha alpha2
+  name Shuffle46
+  xpos 506
+  ypos -804
+ }
+ Expression {
+  expr3 "r != 0 || g !=0"
+  name Expression10
+  xpos 506
+  ypos -761
+ }
+set N4f306e0 [stack 0]
+ Dot {
+  name Dot22
+  xpos 540
+  ypos -578
+ }
+push $N4f306e0
+ Blur {
+  size {{parent.Blur27_size.w} {parent.Blur27_size.h}}
+  name Blur27
+  xpos 599
+  ypos -726
+ }
+ Shuffle {
+  red alpha
+  out depth
+  name Shuffle47
+  xpos 599
+  ypos -688
+ }
+ Unpremult {
+  channels {rgba.red rgba.green rgba.blue depth.Z}
+  name Unpremult25
+  xpos 599
+  ypos -662
+ }
+ Shuffle {
+  in depth
+  in2 rgba
+  red red2
+  green green2
+  blue blue2
+  name Shuffle48
+  xpos 599
+  ypos -626
+ }
+ Merge2 {
+  inputs 2
+  name Merge48
+  xpos 599
+  ypos -582
+ }
+set N5d9eba0 [stack 0]
+ Dot {
+  name Dot23
+  xpos 633
+  ypos -350
+ }
+push $N5d9eba0
+ Blur {
+  size {{parent.Blur28_size.w} {parent.Blur28_size.h}}
+  name Blur28
+  xpos 713
+  ypos -556
+ }
+ Shuffle {
+  red alpha
+  out depth
+  name Shuffle49
+  xpos 713
+  ypos -520
+ }
+ Unpremult {
+  channels {rgba.red rgba.green rgba.blue depth.Z}
+  name Unpremult26
+  xpos 713
+  ypos -494
+ }
+ Shuffle {
+  in depth
+  in2 rgba
+  red red2
+  green green2
+  blue blue2
+  name Shuffle50
+  xpos 713
+  ypos -458
+ }
+ Merge2 {
+  inputs 2
+  name Merge49
+  xpos 713
+  ypos -354
+ }
+set N5dd0110 [stack 0]
+ Dot {
+  name Dot24
+  xpos 747
+  ypos -130
+ }
+push $N5dd0110
+ Blur {
+  size {{parent.Blur29_size.w} {parent.Blur29_size.h}}
+  name Blur29
+  xpos 807
+  ypos -328
+ }
+ Shuffle {
+  red alpha
+  out depth
+  name Shuffle51
+  xpos 807
+  ypos -292
+ }
+ Unpremult {
+  channels {rgba.red rgba.green rgba.blue depth.Z}
+  name Unpremult27
+  xpos 807
+  ypos -266
+ }
+ Shuffle {
+  in depth
+  in2 rgba
+  red red2
+  green green2
+  blue blue2
+  name Shuffle52
+  xpos 807
+  ypos -230
+ }
+ Merge2 {
+  inputs 2
+  name Merge50
+  xpos 807
+  ypos -134
+ }
+set N5e01680 [stack 0]
+ EdgeDetectWrapper {
+  threshold 5
+  name EdgeDetectWrapper7
+  xpos 893
+  ypos -65
+ }
+push $N5e01680
+ Blur {
+  inputs 1+1
+  size {{parent.Blur30_size.w} {parent.Blur30_size.h}}
+  name Blur30
+  xpos 807
+  ypos 8
+ }
+push $N4f398f0
+ Shuffle {
+  in motion
+  name ShuffleMotionVectors2
+  xpos -94
+  ypos -815
+ }
+ Expression {
+  expr3 "r != 0 || g != 0"
+  name Expression6
+  xpos -94
+  ypos -765
+ }
+set N5e294c0 [stack 0]
+ Dot {
+  name Dot16
+  xpos -223
+  ypos -632
+ }
+push $N5e294c0
+ Shuffle {
+  red alpha
+  out depth
+  name Shuffle17
+  xpos -94
+  ypos -700
+ }
+ Blur {
+  size {{parent.Blur15_size.w} {parent.Blur15_size.h}}
+  name Blur15
+  xpos -94
+  ypos -666
+ }
+ Unpremult {
+  channels {rgba.red rgba.green rgba.blue depth.Z}
+  name Unpremult15
+  xpos -94
+  ypos -616
+ }
+ Shuffle {
+  in depth
+  in2 rgba
+  red red2
+  green green2
+  blue blue2
+  name Shuffle18
+  xpos -94
+  ypos -563
+ }
+set N5e4e1d0 [stack 0]
+ Merge2 {
+  inputs 2
+  name Merge31
+  xpos -94
+  ypos -502
+ }
+ Dot {
+  name Dot17
+  xpos -60
+  ypos -333
+ }
+push $N5e4e1d0
+ Shuffle {
+  red alpha
+  out depth
+  name Shuffle24
+  xpos 126
+  ypos -519
+ }
+ Blur {
+  size {{parent.Blur16_size.w} {parent.Blur16_size.h}}
+  name Blur16
+  xpos 126
+  ypos -484
+ }
+ Unpremult {
+  channels {rgba.red rgba.green rgba.blue depth.Z}
+  name Unpremult16
+  xpos 126
+  ypos -436
+ }
+ Shuffle {
+  in depth
+  in2 rgba
+  red red2
+  green green2
+  blue blue2
+  name Shuffle25
+  xpos 126
+  ypos -382
+ }
+ Merge2 {
+  inputs 2
+  name Merge35
+  xpos 126
+  ypos -337
+ }
+set N5e8a490 [stack 0]
+ EdgeDetectWrapper {
+  threshold 20
+  name EdgeDetectWrapper4
+  xpos 22
+  ypos -297
+ }
+push $N5e8a490
+ Blur {
+  inputs 1+1
+  size {{parent.Blur17_size.w} {parent.Blur17_size.h}}
+  name Blur17
+  xpos 126
+  ypos -223
+ }
+ Switch {
+  inputs 2
+  which {{parent.choice i}}
+  name Switch1
+  xpos 394
+  ypos 215
+ }
+push $N4f398f0
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue black
+  alpha black
+  out motion
+  name ShuffleCopy2
+  xpos -541
+  ypos 215
+ }
+ VectorBlur {
+  inputs 1+1
+  uv motion
+  scale {{parent.VectorBlur1_scale.w}}
+  offset {{parent.VectorBlur1_offset}}
+  grow_bbox {{parent.VectorBlur1_grow_bbox.w}}
+  method forward
+  maskChannelMask none
+  name VectorBlur1
+  xpos -541
+  ypos 412
+ }
+set N5eb6fa0 [stack 0]
+ Rectangle {
+  area {{0 i} {0 i} {width i} {height i}}
+  name Rectangle1
+  xpos -306
+  ypos 418
+ }
+ OFXuk.co.thefoundry.furnace.f_regrain_v403 {
+  grainType "Preset Stock"
+  presetStock "FUJIF250Under 2K"
+  amount 1
+  size 1
+  output Result
+  "Analysis Region" 0
+  regionBL {921.5999756 700.1999815}
+  regionTR {1126.400024 855.8000185}
+  frame 1
+  grainColourSpace sRGB
+  Advanced 1
+  processRed true
+  redAmount 1
+  redSize 1
+  processGreen true
+  greenAmount 1
+  greenSize 1
+  processBlue true
+  blueAmount 1
+  blueSize 1
+  "Grain Response" 1
+  srcColourSpace "Grain Colour Space"
+  lowGain 1
+  midGain 1
+  highGain 1
+  useResponse false
+  responseMix 1
+  drawResponse false
+  needsGrainSample true
+  notBeenAnalysed true
+  grainClipNeeded true
+  inputHasChanged false
+  responseR0Counts 0
+  responseR0Samples 0
+  responseG0Counts 0
+  responseG0Samples 0
+  responseB0Counts 0
+  responseB0Samples 0
+  responseR1Counts 0
+  responseR1Samples 0
+  responseG1Counts 0
+  responseG1Samples 0
+  responseB1Counts 0
+  responseB1Samples 0
+  responseR2Counts 0
+  responseR2Samples 0
+  responseG2Counts 0
+  responseG2Samples 0
+  responseB2Counts 0
+  responseB2Samples 0
+  responseR3Counts 0
+  responseR3Samples 0
+  responseG3Counts 0
+  responseG3Samples 0
+  responseB3Counts 0
+  responseB3Samples 0
+  responseR4Counts 0
+  responseR4Samples 0
+  responseG4Counts 0
+  responseG4Samples 0
+  responseB4Counts 0
+  responseB4Samples 0
+  responseR5Counts 0
+  responseR5Samples 0
+  responseG5Counts 0
+  responseG5Samples 0
+  responseB5Counts 0
+  responseB5Samples 0
+  responseR6Counts 0
+  responseR6Samples 0
+  responseG6Counts 0
+  responseG6Samples 0
+  responseB6Counts 0
+  responseB6Samples 0
+  responseR7Counts 0
+  responseR7Samples 0
+  responseG7Counts 0
+  responseG7Samples 0
+  responseB7Counts 0
+  responseB7Samples 0
+  responseR8Counts 0
+  responseR8Samples 0
+  responseG8Counts 0
+  responseG8Samples 0
+  responseB8Counts 0
+  responseB8Samples 0
+  responseR9Counts 0
+  responseR9Samples 0
+  responseG9Counts 0
+  responseG9Samples 0
+  responseB9Counts 0
+  responseB9Samples 0
+  grainSample ""
+  cacheBreaker true
+  name F_ReGrain1
+  xpos -306
+  ypos 473
+ }
+ Saturation {
+  saturation 0
+  name Saturation1
+  xpos -306
+  ypos 517
+ }
+push $N5eb6fa0
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge1
+  xpos -541
+  ypos 517
+ }
+ Output {
+  name Output1
+  selected true
+  xpos -541
+  ypos 642
+ }
+end_group

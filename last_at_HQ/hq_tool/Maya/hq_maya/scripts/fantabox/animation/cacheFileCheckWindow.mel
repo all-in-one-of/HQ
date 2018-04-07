@@ -1,0 +1,107 @@
+global proc cacheFileChecking(string $parentLayout)
+{
+	setParent $parentLayout;
+    if (`scrollLayout -q -ex ($parentLayout + "|analysisCheckerScroll")`)
+		deleteUI ($parentLayout + "|analysisCheckerScroll");
+
+    waitCursor -state on;
+    scrollLayout analysisCheckerScroll;
+    columnLayout -adj 1 analysisCheckerColumn;
+    text -label "" -align "left" resultInfo;
+    text -label "";
+    int $numInvalid = 0;
+    string $cacheFiles[] = `ls -typ cacheFile`;
+
+    for($file in  $cacheFiles)
+    {
+        string $path = `getAttr ($file + ".cachePath")`;
+        string $name = `getAttr ($file + ".cacheName")`;
+        string $fullPath =  $path + $name;
+        string $fullCacheXml = $path + $name + ".xml";
+        if(!`filetest -r $fullCacheXml`)
+        {
+            checkBox -l ("缓存节点" + $file + "的路径不存在.") -al left -onc ("if (`objExists " + $file + "` ) select -add " + $file) -ofc ("if (`objExists " + $file + "` ) select -deselect " + $file);
+        	$numInvalid++;
+           // setParent ($parentLayout + "|analysisCheckerColumn");
+        }
+    }
+    text -e -label ("共计" + $numInvalid + "个缓存路径不存在!") resultInfo;
+    waitCursor -state off;
+}
+
+global proc cleanResultInfo(string $parentLayout)
+{
+	setParent $parentLayout;
+    if (`scrollLayout -q -ex ($parentLayout + "|analysisCheckerScroll")`)
+		deleteUI ($parentLayout + "|analysisCheckerScroll");
+}
+
+global proc cacheFileCheckWindow()
+{
+	if(`window -exists cacheFileCheckWin`)
+            deleteUI cacheFileCheckWin;
+
+    window -wh 400 450 -title "缓存路径检查" -menuBar true cacheFileCheckWin;
+
+    formLayout mainForm;
+
+    string $logFrame = `frameLayout -label "检查结果" logFrame`;
+    //string $scroll = `scrollLayout` ;
+
+
+
+  
+    setParent ..;
+    formLayout
+			-numberOfDivisions 3
+			buttonForm;
+
+			button
+				-label "检查"
+				-command ("cacheFileChecking " + $logFrame)
+				createButton;
+			button
+				-label "清空"
+				-command ("cleanResultInfo " + $logFrame)
+				cleanButton;
+
+			button
+				-label "取消"
+				-command "deleteUI cacheFileCheckWin;"
+				closeButton;
+           setParent ..;
+    	formLayout
+				-edit
+				-af createButton left 0
+				-ap createButton right 2 1
+				-af createButton top 0
+				-af createButton bottom 0
+
+				-ap cleanButton left 3 1
+				-ap cleanButton right 2 2
+				-af cleanButton top 0
+				-af cleanButton bottom 0
+
+				-ap closeButton left 3 2
+				-af closeButton right 0
+				-af closeButton top 0
+				-af closeButton bottom 0
+				buttonForm;
+
+	  formLayout -e
+    			-af $logFrame left 0
+                -af $logFrame right 0
+                -af $logFrame top 0
+                -ac $logFrame bottom 5 buttonForm
+
+                -af buttonForm left 5
+                -af buttonForm right 5
+                -an buttonForm top
+                -af buttonForm bottom 5
+    			mainForm;
+
+
+    showWindow cacheFileCheckWin;
+
+}
+cacheFileCheckWindow;

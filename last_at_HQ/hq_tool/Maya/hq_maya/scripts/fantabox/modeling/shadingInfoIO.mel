@@ -1,0 +1,352 @@
+global  proc int writeShadingNetworkConnection(string $pathName)
+{
+
+    int $i, $j, $k, $l, $m, $n, $count;
+    string $sets[] = `ls -sets`;
+    int $numConnections = 0;
+    int $interrupted = 0;
+	global string $processedNode[];
+    $processedNode = {};
+    $count = `size($sets)`;
+
+    $fileId=`fopen $pathName "w"`;
+	string $connections[] = {};
+
+	string $progressWin = `progressWindow
+         -title "writing shader connection"
+         -progress 0
+         -status "stage 1: 0%"
+         -isInterruptable true`;
+
+	fprint $fileId "//shadingGroupCount:\n";
+    fprint $fileId ($count + "\n");
+
+
+    for ($i = 0; $i < $count; $i++)
+	{
+    	if ( `progressWindow -query -isCancelled $progressWin` ) {progressWindow -endProgress ;return 0;}
+        if ( `progressWindow -query -progress $progressWin` >= 100 ) break;
+
+		if (`sets -q -renderable $sets[$i]`)
+        {
+       		string $objs[] = `sets -q $sets[$i]`;
+            if(size($objs))
+            {
+
+            	fprint $fileId "//shadingGroupSets:\n";
+
+                //string $setsName = `stringArrayToString $objs " "`;
+                string $stringGroupName = $sets[$i] + "\n";
+                //string $stringSet = $setsName + "\n";
+
+                fprint $fileId $stringGroupName;
+                //fprint $fileId $stringSet;
+                for($obj in $objs)
+                {
+                    fprint $fileId ($obj + "\n");
+                }
+                writeShadingGroupConnection($sets[$i],$fileId);
+            }
+        }
+
+        int $percent = $i/$count*100.0;
+        progressWindow -edit
+             -progress $percent
+             -status ("stage 1: "+$percent+"%") ;
+    }
+
+
+	string $progressWin = `progressWindow -edit
+             -progress 0
+             -status ("stage 2: 0%")` ;
+
+
+
+
+    string $lightLinkers[] = `ls -type lightLinker`;
+    int $numlinker = size($lightLinkers);
+    string $lightLinkerCons[] = {};
+
+
+    for($i = 0;$i < $numlinker;$i++)
+    {
+        string $connections[] = `listConnections -p true -d false -s true -c true  $lightLinkers[$i]`;
+        $lightLinkerCons = stringArrayCatenate($lightLinkerCons,$connections);
+
+    }
+    int $lightLinkNum = size($lightLinkerCons);
+    fprint $fileId "//lightLinkNum:\n";
+    fprint $fileId ($lightLinkNum/2 + "\n");
+
+    fprint $fileId "//LightLinkerConnections:\n";
+     for($m = 0;$m < $lightLinkNum; $m+=2)
+     {
+         if ( `progressWindow -query -isCancelled $progressWin` ) {progressWindow -endProgress $progressWin;return 0;}
+         if ( `progressWindow -query -progress $progressWin` >= 100 ) break;
+         string $string = $lightLinkerCons[$m + 1] + " " + $lightLinkerCons[$m] + "\n";
+         fprint $fileId $string;
+
+         int $percent = $m/$lightLinkNum*100.0;
+         progressWindow -edit
+         -progress $percent
+         -status ("stage 2: "+$percent+"%") ;
+     }
+
+
+   progressWindow -endProgress ;
+
+	fclose $fileId;
+    return 1;
+}
+
+global proc  writeShadingGroupConnection(string $set,int $fileId)
+{
+	string $connections[] = {};
+    global string $processedNode[];
+
+    int $found = stringArrayContains($set,$processedNode);
+    if (`sets -q -renderable $set`&& ($found == 0))
+    {
+    	fprint $fileId "//shaderConnection:\n";
+
+        string $layers1[] = `listConnections -p true -d true -s false -c true -type renderLayer $set`;
+        string $layers2[] = `listConnections -p true -d false -s true -c true -type renderLayer $set`;
+
+        if(`size($layers1)`)
+        {
+            for($j = 0;$j < size($layers1);$j+=2)
+            {
+                string $string = $layers1[$j] + " " + $layers1[$j + 1] + "\n";
+                fprint $fileId $string;
+            }
+        }
+        if(`size($layers2)`)
+        {
+            for($j = 0;$j < size($layers2);$j+=2)
+            {
+                string $string = $layers2[$j + 1] + " " + $layers2[$j] + "\n";
+                fprint $fileId $string;
+            }
+        }
+
+        string $partitionCon[] = `listConnections -p true -d true -s false -c true ($set + ".partition")`;
+        if(size($partitionCon))
+        {
+            for($i = 0;$i < size($partitionCon);$i+=2)
+            {
+                string $string = $partitionCon[$i] + " " + $partitionCon[$i + 1] + "\n";
+                fprint $fileId $string;
+            }
+        }
+
+        string  $shaders[] = {	".surfaceShader",
+                                ".volumeShader",
+                                ".displacementShader",
+                                ".miMaterialShader",
+                                ".miShadowShader",
+                                ".miVolumeShader",
+                                ".miPhotonShader",
+                                ".miPhotonVolumeShader",
+                                ".miDisplacementShader",
+                                ".miEnvironmentShader",
+                                ".miLightMapShader",
+                                ".miContourShader"
+                                };
+
+        for($shader in $shaders)
+        {
+        	if(`objExists ($set + $shader)`)
+        	{
+                string $connectionsTmp[] = `listConnections -p false -d false -s true -c false ($set + $shader)`;
+                appendStringArray($connections, $connectionsTmp,size($connectionsTmp));
+
+        		string $connectionPlugs[] = `listConnections -p true -d false -s true -c true ($set + $shader)`;
+                for($l = 0;$l < size($connectionPlugs);$l+=2)
+                {
+                    string $plugCon = $connectionPlugs[$l + 1] + " " + $connectionPlugs[$l] + "\n";
+                    fprint $fileId $plugCon;
+        		}
+                $processedNode[size($processedNode)] = $set;
+        	}
+        }
+    }
+
+    if(`size($connections)`)
+    {
+    	$connections = stringArrayRemoveDuplicates($connections);
+        writeConnectionToNode($connections,$fileId);
+    }
+}
+
+global proc  writeConnectionToNode(string $nodes[],int $fileId)
+{
+	int $i, $j;
+    string $connections[] = {};
+    global string $processedNode[];
+    for($node in $nodes)
+    {
+    	int $found = stringArrayContains($node,$processedNode);
+        if($found != 0)
+        	continue;
+        string $connectionsTmp[] = `listConnections -p false -d false -s true -c false $node`;
+        appendStringArray($connections, $connectionsTmp,size($connectionsTmp));
+
+        string $connectionPlugs[] = `listConnections -p true -d false -s true -c true $node`;
+        for($j = 0;$j < size($connectionPlugs);$j+=2)
+        {
+            string $string = $connectionPlugs[$j + 1] + " " + $connectionPlugs[$j] + "\n";
+            fprint $fileId $string;
+        }
+        $processedNode[size($processedNode)] = $node;
+
+    }
+    if(`size($connections)`)
+    {
+        $connections = stringArrayRemoveDuplicates($connections);
+        writeConnectionToNode($connections,$fileId);
+    }
+
+}
+
+global proc readingShadingEngineConnection(string $pathName)
+{
+	$fileId=`fopen $pathName "r"`;
+    string $nextLine = `fgetline $fileId`;
+    int $state = 0;
+
+    int $state = 0;
+
+    int $numShadingGroup= 0;
+    int $numLightLinkerCons = 0;
+    int $percent = 0;
+	string $progressWin = `progressWindow
+         -title "read shader connection"
+         -progress 0
+         -status "stage 1: 0%"
+         -isInterruptable true`;
+    int  $shadingCount = 0;
+    int  $lightLinkconCount = 0;
+    string $shadingGroup = "";
+    while ( size( $nextLine ) > 0 )
+    {
+    	if($nextLine == "//shadingGroupCount:\n")
+        {
+            $state = 1;
+            $nextLine = `fgetline $fileId`;
+            $numShadingGroup = $nextLine;
+            continue;
+        }
+        if($nextLine == "//shadingGroupSets:\n")
+        {
+            $state = 2;
+            $nextLine = `fgetline $fileId`;
+            $shadingGroup = $nextLine;
+            continue;
+        }
+        if($nextLine == "//shaderConnection:\n")
+        {
+            $state = 3;
+            $nextLine = `fgetline $fileId`;
+            continue;
+        }
+
+        if($nextLine == "//lightLinkNum:\n")
+        {
+            $state = 4;
+            $nextLine = `fgetline $fileId`;
+            $numLightLinkerCons = $nextLine;
+            continue;
+        }
+        if($nextLine == "//LightLinkerConnections:\n")
+        {
+            $state = 5;
+            $nextLine = `fgetline $fileId`;
+            continue;
+        }
+
+
+
+        switch($state)
+        {
+            case 1:
+            	progressWindow -edit
+                             -progress 0
+                             -status ("stage 1: 0%") ;
+                break;
+            case 2:
+                //string $nextLine1 = `fgetline $fileId`;
+            	string $array[] = stringToStringArray($nextLine," ");
+                catch(`select -r $array`);catch (`sets -e -forceElement $shadingGroup`);
+                $shadingCount ++;
+
+                $percent = $shadingCount/$numShadingGroup*100.0;
+                             progressWindow -edit
+                             -progress $percent
+                             -status ("stage 1: "+$percent+"%") ;
+
+            	break;
+            case 3:
+            	string $array[] = stringToStringArray($nextLine," ");
+            	catch(`connectAttr -f $array[0] $array[1]`);
+            	break;
+            case 4:
+            	 progressWindow -edit
+                             -progress 0
+                             -status ("stage 2: 0%") ;
+            	break;
+            case 5:
+            	string $array[] = stringToStringArray($nextLine," ");
+            	catch(`connectAttr -f $array[0] $array[1]`);
+                $lightLinkconCount++;
+
+                $percent = $lightLinkconCount/$numLightLinkerCons*100.0;
+                             progressWindow -edit
+                             -progress $percent
+                             -status ("stage 2: "+$percent+"%") ;
+
+            	break;
+
+            break;
+        }
+
+        $nextLine = `fgetline $fileId`;
+
+    }
+     progressWindow -endProgress ;
+    fclose $fileId;
+}
+
+global proc exportFile()
+{
+	string $filter = "*.txt (*.txt)";
+    string $fileName[] = `fileDialog2 -fileFilter $filter -fileMode 0 -dialogStyle 1`;
+    writeShadingNetworkConnection($fileName[0]);
+}
+
+global proc importFile()
+{
+	string $filter = "*.txt (*.txt)";
+    string $fileName[] = `fileDialog2 -fileFilter $filter -fileMode 1 -dialogStyle 1`;
+    readingShadingEngineConnection($fileName[0]);
+}
+
+global proc shadingInfoIO()
+{
+	if ( (`window -exists shadingNetworkImportExportWin`) == true ) deleteUI shadingNetworkImportExportWin;
+	window -t shadingNetworkImportExportTool -w 150 -h 100 shadingNetworkImportExportWin;
+    string $rootLyt = `formLayout`;
+    button -label "导出材质信息" -c exportFile exportBtn;
+    button -label "导入材质信息" -c importFile importBtn;
+    formLayout -e
+                -attachForm exportBtn left 12
+                -attachForm exportBtn right 12
+                -attachForm exportBtn top 12
+
+                -attachControl importBtn top 3 exportBtn
+                -attachForm importBtn left 12
+                -attachForm importBtn right 12
+                $rootLyt;
+    showWindow shadingNetworkImportExportWin;
+}
+
+shadingInfoIO;

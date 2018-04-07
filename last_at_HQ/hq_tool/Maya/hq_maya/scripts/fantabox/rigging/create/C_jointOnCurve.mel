@@ -1,0 +1,102 @@
+global proc C_jointOnCurve(){
+	
+	string $f_joint;
+	string $one_c;
+	string $all_curve[]=`ls -sl`;
+	int $de_cv_joint=0;
+	int $segments = `python("raw_input()")`;
+	int $nun_input=$segments-1;
+	int $nun_int=$nun_input*20;
+	
+	for($one_c in $all_curve){
+		
+		select -r $one_c;
+		string $one_copy=$one_c+"_copy";
+		duplicate -rr -n $one_copy;
+		select -r $one_copy;
+		DeleteHistory;
+		rebuildCurve -ch 1 -rpo 1 -rt 0 -end 1 -kr 0 -kcp 0 -kep 1 -kt 0 -s $nun_int -d 3 -tol 0.01 $one_copy;
+		print $one_copy;
+		
+		delete ($one_copy+".cv[1]");
+		delete ($one_copy+".cv["+$nun_int+"]");
+		select -r $one_copy;
+		selectCurveCV("last");
+		string $se_cv[]=`ls -sl`;
+		string $cv_i1=`match "[+[0-9]+]+" $se_cv[0]`;
+		string $cv_i2=`match "[0-9]+" $cv_i1`;
+		int $cv_i3= $cv_i2;
+		int $cv_i=$cv_i3+1;
+		
+		select -r $one_copy;
+		arclen -ch true;
+		string $one_n=$one_copy+"_Info1";
+		rename "curveInfo1" $one_n;
+		select -cl;
+		
+		int $joint_i=1;
+		
+		
+		for($i=0;$i<$cv_i;$i=$i+20){
+			
+			string $one_n_xV=$one_n+".controlPoints["+$i+"].xValue";
+			string $one_n_yV=$one_n+".controlPoints["+$i+"].yValue";
+			string $one_n_zV=$one_n+".controlPoints["+$i+"].zValue";
+			
+			float $one_n_xV_int = `getAttr $one_n_xV`;
+			float $one_n_yV_int = `getAttr $one_n_yV`;
+			float $one_n_zV_int = `getAttr $one_n_zV`;
+			
+			string $one_joint=$one_c+"_joint"+$joint_i;
+			$joint_i = $joint_i+1;
+			string $one_joint_tx=$one_joint+".tx";
+			string $one_joint_ty=$one_joint+".ty";
+			string $one_joint_tz=$one_joint+".tz";
+			
+			if($i==0){
+				
+				$f_joint=`joint -p $one_n_xV_int $one_n_yV_int $one_n_zV_int -n $one_joint`;
+				
+			}else{
+				
+				int $up_joint_i=$joint_i-2;
+				string $up_joint=$one_c+"_joint"+$up_joint_i;
+				joint -p $one_n_xV_int $one_n_yV_int $one_n_zV_int -n $one_joint;
+				joint -e -zso -oj xyz -sao yup $up_joint;
+				
+			}
+			
+		 }
+		 delete $one_n;
+		 delete $one_copy;
+		 
+		 select -hi $f_joint;
+		 string $ok_joint[]=`ls -sl`;
+		 int $ok_int=`size $ok_joint`;
+		 joint -e  -oj none -ch -zso $ok_joint[$ok_int-1];
+		 for($ok_i=1;$ok_i<$ok_int;$ok_i++){
+		 	parent -w $ok_joint[$ok_i];
+		 }
+		 select -cl;
+		 
+		 float $f_i=1.0/($ok_int-1);
+		 print $f_i;
+		 float $f_ii=0.0;
+		 for($ok_ii=0;$ok_ii<$ok_int;$ok_ii++){
+		 	
+		 	string $r_p_n=$one_c+"point"+($ok_ii+1);
+		 	string $p_n=`pointOnCurve -ch 1 $one_c`;
+		 	rename $p_n $r_p_n;
+		 	
+		 	setAttr ($r_p_n+".parameter") $f_ii;
+		 	setAttr ($r_p_n+".turnOnPercentage") 1;
+		 	
+		 	
+		 	connectAttr -f ($r_p_n+".position") ($ok_joint[$ok_ii]+".translate");
+		 	$f_ii=$f_ii+$f_i;
+		 }
+		 	
+	}
+    
+}
+C_jointOnCurve;

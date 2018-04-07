@@ -1,0 +1,77 @@
+#! C:/Program Files/Nuke8.0v3/nuke-8.0.v3.dll -nx
+version 8.0 v3
+Gizmo {
+addUserKnob {20 User}
+addUserKnob {41 white l gain T Grade1.white}
+addUserKnob {41 white_panelDropped l "panel dropped state" T Grade1.white_panelDropped}
+addUserKnob {41 range T Keyer1.range}
+addUserKnob {41 temp_name0 l "" -STARTLINE T DK_Green_Expression.temp_name0}
+addUserKnob {41 temp_expr0 l = T DK_Green_Expression.temp_expr0}
+addUserKnob {41 temp_name1 l "" -STARTLINE T DK_Green_Expression.temp_name1}
+addUserKnob {41 temp_expr1 l = T DK_Green_Expression.temp_expr1}
+addUserKnob {41 temp_name2 l "" -STARTLINE T DK_Green_Expression.temp_name2}
+addUserKnob {41 temp_expr2 l = T DK_Green_Expression.temp_expr2}
+addUserKnob {41 temp_name3 l "" -STARTLINE T DK_Green_Expression.temp_name3}
+addUserKnob {41 temp_expr3 l = T DK_Green_Expression.temp_expr3}
+addUserKnob {41 channel0 l channels T DK_Green_Expression.channel0}
+addUserKnob {26 "" l " "}
+addUserKnob {41 expr0 l = T DK_Green_Expression.expr0}
+addUserKnob {41 channel1 l channels T DK_Green_Expression.channel1}
+addUserKnob {26 "" l " "}
+addUserKnob {41 expr1 l = T DK_Green_Expression.expr1}
+addUserKnob {41 channel2 l channels T DK_Green_Expression.channel2}
+addUserKnob {26 "" l " "}
+addUserKnob {41 expr2 l = T DK_Green_Expression.expr2}
+addUserKnob {41 channel3 l channels T DK_Green_Expression.channel3}
+addUserKnob {26 "" l " "}
+addUserKnob {41 expr3 l = T DK_Green_Expression.expr3}
+addUserKnob {26 "" l mask}
+addUserKnob {41 maskChannelMask l "" -STARTLINE T DK_Green_Expression.maskChannelMask}
+addUserKnob {41 maskChannelInput l "" -STARTLINE T DK_Green_Expression.maskChannelInput}
+addUserKnob {41 inject T DK_Green_Expression.inject}
+addUserKnob {41 invert_mask l invert T DK_Green_Expression.invert_mask}
+addUserKnob {41 fringe T DK_Green_Expression.fringe}
+addUserKnob {41 unpremult l "(un)premult by" T DK_Green_Expression.unpremult}
+addUserKnob {41 invert_unpremult l invert T DK_Green_Expression.invert_unpremult}
+addUserKnob {26 "" l "mix luminance"}
+addUserKnob {41 enable_mix_luminance l "" -STARTLINE T DK_Green_Expression.enable_mix_luminance}
+addUserKnob {41 mix_luminance l "" -STARTLINE T DK_Green_Expression.mix_luminance}
+addUserKnob {41 mix T DK_Green_Expression.mix}
+}
+Input {
+inputs 0
+name Input1
+xpos 180
+ypos -250
+}
+Grade {
+white 0.175
+name Grade1
+xpos 180
+ypos -224
+}
+Keyer {
+invert true
+operation "green keyer"
+range {0.003055478397 0.03840812101 1 1}
+name Keyer1
+xpos 180
+ypos -198
+}
+Expression {
+expr1 g>(r+b)/2?(r+b)/2:g
+name DK_Green_Expression
+xpos 180
+ypos -160
+}
+Premult {
+name Premult1
+xpos 180
+ypos -134
+}
+Output {
+name Output1
+xpos 180
+ypos -108
+}
+end_group

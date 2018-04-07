@@ -1,0 +1,363 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ addUserKnob {20 X_AspectRatioMark}
+ addUserKnob {4 style l "Aspect Ratio" M {"Academy 1.66" "Academy 1.85" "Full 1.66" "Full 1.85" "Full 1.78(16:9)"}}
+ style "Full 1.85"
+ addUserKnob {41 mix_2 l Label T Merge11.mix}
+ addUserKnob {41 mix_1 l Line T Merge10.mix}
+ addUserKnob {41 mix l "Mark Mask" T Merge1.mix}
+ addUserKnob {18 markcolor l "Mark Color"}
+}
+ Constant {
+  inputs 0
+  channels rgb
+  format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+  name Constant2
+  xpos 378
+  ypos -432
+ }
+ Dot {
+  name Dot2
+  xpos 412
+  ypos -311
+ }
+set N2dda5d0 [stack 0]
+ Bezier {
+  invert true
+  points {{
+{-2.4 1353}
+{-1.3 203}
+{2049 202.4}
+{2049.8 1352.6}
+}}
+  shape {}
+  center {960 540}
+  name Bezier15
+  label 1.78(16:9)
+  xpos 519
+  ypos -79
+ }
+set N2ddcf90 [stack 0]
+ Reformat {
+  format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+  resize fit
+  name Reformat1
+  xpos 629
+  ypos -79
+ }
+ set C2de55c0 [stack 0]
+push $N2dda5d0
+ Bezier {
+  invert true
+  points {{
+{22 1319.6 0 -2.6}
+{21.8 234.5}
+{2025.9 235.3}
+{2025.9 1319.4 0 2.6}
+}}
+  shape {}
+  center {960 540}
+  name Bezier12
+  label 1.85full
+  xpos 524
+  ypos -132
+ }
+set N2dece50 [stack 0]
+clone $C2de55c0 {
+  xpos 626
+  ypos -132
+  selected false
+ }
+push $N2dda5d0
+ Bezier {
+  invert true
+  points {{
+{21.6 1380.8 0 -2.6}
+{21.3 173.5 0 -0.54}
+{2025.4 174.3 0 0.54}
+{2025.5 1380.6 0 2.6}
+}}
+  shape {}
+  center {960 540}
+  name Bezier11
+  label 1.66full
+  xpos 525
+  ypos -183
+ }
+set N1bb011e0 [stack 0]
+clone $C2de55c0 {
+  xpos 624
+  ypos -183
+  selected false
+ }
+push $N2dda5d0
+ Bezier {
+  invert true
+  points {{
+{257.2 1251.6 0 -2.6}
+{257.6 304.4}
+{2008.2 304.9}
+{2008.2 1250.6 0 2.6}
+}}
+  shape {}
+  center {960 540}
+  name Bezier13
+  label 1.85academy
+  xpos 525
+  ypos -242
+ }
+set N1bb115c0 [stack 0]
+clone $C2de55c0 {
+  xpos 626
+  ypos -237
+  selected false
+ }
+push $N2dda5d0
+ Bezier {
+  invert true
+  points {{
+{257.2 1306.3 0 -2.6}
+{257.6 250.7}
+{2008.2 251.2}
+{2008.2 1305.8 0 2.6}
+}}
+  shape {}
+  center {960 540}
+  name Bezier14
+  label 1.66academy
+  xpos 521
+  ypos -299
+ }
+set N1bb219e0 [stack 0]
+clone $C2de55c0 {
+  xpos 624
+  ypos -299
+  selected false
+ }
+ Switch {
+  inputs 5
+  which {{style i}}
+  name Switch1
+  xpos 748
+  ypos -195
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  xpos 810
+  ypos -252
+ }
+ Grade {
+  multiply {{markcolor i}}
+  name Grade7
+  xpos 872
+  ypos -184
+ }
+ set C1bb3d990 [stack 0]
+push $N2ddcf90
+ EdgeDetectWrapper {
+  erodesize 1
+  name EdgeDetectWrapper1
+  xpos 557
+  ypos 439
+ }
+ set C1bb45230 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle7
+  xpos 557
+  ypos 490
+ }
+push $N2dece50
+clone $C1bb45230 {
+  xpos 474
+  ypos 384
+  selected false
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle6
+  xpos 464
+  ypos 435
+ }
+push $N1bb011e0
+clone $C1bb45230 {
+  xpos 401
+  ypos 291
+  selected false
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle5
+  xpos 401
+  ypos 342
+ }
+push $N1bb115c0
+clone $C1bb45230 {
+  xpos 310
+  ypos 196
+  selected false
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle4
+  xpos 329
+  ypos 251
+ }
+push $N1bb219e0
+clone $C1bb45230 {
+  xpos 377
+  ypos 88
+  selected false
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle3
+  xpos 377
+  ypos 126
+ }
+ Switch {
+  inputs 5
+  which {{parent.Switch1.which.main i}}
+  name Switch3
+  xpos 765
+  ypos 304
+ }
+clone $C1bb3d990 {
+  xpos 875
+  ypos 304
+  selected false
+ }
+push $N2dda5d0
+ Dot {
+  name Dot1
+  xpos 446
+  ypos -11
+ }
+set N1bb9a600 [stack 0]
+ Text {
+  message 1.78(16:9)
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify center
+  yjustify center
+  box {512 389 1536 1167}
+  translate {-928 548}
+  center {1024 778}
+  name Text10
+  xpos 510
+  ypos 159
+ }
+push $N1bb9a600
+ Text {
+  message 1.85_full
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify center
+  yjustify center
+  box {512 389 1536 1167}
+  translate {-922 520}
+  center {1024 778}
+  name Text9
+  xpos 510
+  ypos 109
+ }
+push $N1bb9a600
+ Text {
+  message 1.66_full
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify center
+  yjustify center
+  box {512 389 1536 1167}
+  translate {-925 580}
+  center {1024 778}
+  name Text8
+  xpos 510
+  ypos 62
+ }
+push $N1bb9a600
+ Text {
+  message 1.85
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify center
+  yjustify center
+  box {512 389 1536 1167}
+  translate {-719 449}
+  center {1024 778}
+  name Text7
+  xpos 513
+  ypos 15
+ }
+push $N1bb9a600
+ Text {
+  message 1.66
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify center
+  yjustify center
+  box {512 389 1536 1167}
+  translate {-718.2000122 502.2000122}
+  center {1024 778}
+  name Text6
+  xpos 512
+  ypos -27
+ }
+ Switch {
+  inputs 5
+  which {{parent.Switch1.which.main i}}
+  name Switch2
+  xpos 743
+  ypos 37
+ }
+clone $C1bb3d990 {
+  xpos 866
+  ypos 37
+  selected false
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos 985
+  ypos -274
+ }
+ Merge2 {
+  inputs 2
+  name Merge11
+  xpos 985
+  ypos 37
+ }
+ Merge2 {
+  inputs 2
+  name Merge10
+  xpos 985
+  ypos 221
+ }
+ Merge2 {
+  inputs 2
+  mix 0.2
+  name Merge1
+  selected true
+  xpos 985
+  ypos 343
+ }
+ Output {
+  name Output1
+  xpos 985
+  ypos 434
+ }
+end_group

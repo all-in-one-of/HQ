@@ -1,0 +1,1 @@
+若出现“Failed to execute script common_configure”错误，请检查安装列表，是否缺少Visual Studio 2013或Visual Studio 2015文件，对应安装以上安装包即可。

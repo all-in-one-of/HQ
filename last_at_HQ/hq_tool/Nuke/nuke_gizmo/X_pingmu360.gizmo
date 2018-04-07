@@ -1,0 +1,158 @@
+#! D:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ inputs 6
+ tile_color 0xffff
+ addUserKnob {20 X_pingmu360}
+ addUserKnob {41 format T Constant2.format}
+ addUserKnob {41 format_1 l "output format" T Reformat1.format}
+}
+ Input {
+  inputs 0
+  name cam6
+  xpos 577
+  ypos 211
+  number 5
+ }
+ Reformat {
+  format "2100 1200 0 0 2100 1200 1 2100"
+  name Reformat1
+  xpos 577
+  ypos 243
+ }
+ set C41515660 [stack 0]
+ Transform {
+  translate {{"(\[value root.width]/6)*5"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform19
+  xpos 577
+  ypos 290
+ }
+ Input {
+  inputs 0
+  name cam5
+  xpos 471
+  ypos 212
+  number 4
+ }
+clone $C41515660 {
+  xpos 477
+  ypos 246
+  selected false
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*4"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform18
+  xpos 477
+  ypos 293
+ }
+ Input {
+  inputs 0
+  name cam4
+  xpos 374
+  ypos 215
+  number 3
+ }
+clone $C41515660 {
+  xpos 374
+  ypos 247
+  selected false
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*3"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform17
+  xpos 374
+  ypos 294
+ }
+ Input {
+  inputs 0
+  name cam3
+  xpos 265
+  ypos 211
+  number 2
+ }
+clone $C41515660 {
+  xpos 265
+  ypos 249
+  selected false
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*2"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform13
+  xpos 265
+  ypos 294
+ }
+ Input {
+  inputs 0
+  name cam2
+  xpos 161
+  ypos 210
+  number 1
+ }
+clone $C41515660 {
+  xpos 164
+  ypos 248
+  selected false
+ }
+ Transform {
+  translate {{"\[value root.width]/6"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform15
+  xpos 164
+  ypos 293
+ }
+ Input {
+  inputs 0
+  name cam1
+  xpos 54
+  ypos 209
+ }
+clone $C41515660 {
+  xpos 59
+  ypos 248
+  selected false
+ }
+ Transform {
+  center {1024 778}
+  filter Impulse
+  name Transform16
+  xpos 59
+  ypos 292
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "12600 1200 0 0 12600 1200 1 "
+  name Constant2
+  xpos 142
+  ypos 349
+ }
+ ZMerge {
+  inputs 7
+  name ZMerge2
+  xpos 328
+  ypos 373
+ }
+set N7cd4c1a0 [stack 0]
+ Output {
+  name Output1
+  xpos 328
+  ypos 473
+ }
+push $N7cd4c1a0
+ Viewer {
+  frame 425
+  input_process false
+  name Viewer1
+  xpos 328
+  ypos 397
+ }
+end_group

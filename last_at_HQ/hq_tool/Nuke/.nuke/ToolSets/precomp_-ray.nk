@@ -1,0 +1,334 @@
+set cut_paste_input [stack 0]
+version 8.0 v4
+BackdropNode {
+ inputs 0
+ name BackdropNode7
+ tile_color 0x45443fff
+ label "CC Scope"
+ note_font_size 90
+ selected true
+ xpos 7914
+ ypos 87
+ bdwidth 4899
+ bdheight 1726
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode8
+ tile_color 0x8e8e3800
+ note_font_size 42
+ selected true
+ xpos 7889
+ ypos -928
+ bdwidth 4949
+ bdheight 3612
+}
+push $cut_paste_input
+Dot {
+ name Dot6
+ label Sep.18.2013
+ selected true
+ xpos 9697
+ ypos -664
+}
+Unpremult {
+ channels all
+ name Unpremult2
+ selected true
+ xpos 9663
+ ypos -529
+}
+Dot {
+ name Dot133
+ selected true
+ xpos 9697
+ ypos -280
+}
+set N74bdb170 [stack 0]
+Dot {
+ name Dot132
+ selected true
+ xpos 10357
+ ypos -280
+}
+set N74bdb4e0 [stack 0]
+Dot {
+ name Dot129
+ selected true
+ xpos 11017
+ ypos -280
+}
+set N74bdb850 [stack 0]
+Dot {
+ name Dot2
+ selected true
+ xpos 11787
+ ypos -280
+}
+set N74bdbbc0 [stack 0]
+Dot {
+ name Dot130
+ selected true
+ xpos 12337
+ ypos -280
+}
+add_layer {reflect reflect.red reflect.green reflect.blue}
+Shuffle {
+ in reflect
+ out rgb
+ name reflect
+ note_font "Verdana Bold Bold Bold Bold Bold"
+ note_font_size 50
+ selected true
+ xpos 12303
+ ypos -185
+}
+push $N74bdbbc0
+add_layer {specular specular.red specular.green specular.blue}
+Shuffle {
+ in specular
+ out rgb
+ name Specular1
+ note_font "Verdana Bold Bold Bold Bold Bold"
+ note_font_size 50
+ selected true
+ xpos 11753
+ ypos -185
+}
+push $N74bdb850
+add_layer {refract refract.red refract.green refract.blue}
+Shuffle {
+ in refract
+ out rgb
+ name refract
+ note_font "Verdana Bold Bold Bold Bold Bold"
+ note_font_size 50
+ selected true
+ xpos 10983
+ ypos -233
+}
+Dot {
+ name Dot7
+ selected true
+ xpos 11017
+ ypos 2000
+}
+push $N74bdb170
+Dot {
+ name Dot3
+ selected true
+ xpos 8927
+ ypos -280
+}
+set N42903120 [stack 0]
+Dot {
+ name Dot8
+ selected true
+ xpos 8487
+ ypos -280
+}
+add_layer {SSS SSS.red SSS.green SSS.blue}
+Shuffle {
+ in SSS
+ alpha white
+ out rgb
+ name sss
+ note_font "Verdana Bold Bold Bold Bold Bold"
+ note_font_size 50
+ selected true
+ xpos 8453
+ ypos -209
+}
+push $N74bdb170
+add_layer {diffuse diffuse.red diffuse.green diffuse.blue}
+Shuffle {
+ in diffuse
+ in2 rgba
+ alpha alpha2
+ out rgb
+ name Diffuse
+ note_font "Verdana Bold Bold Bold Bold Bold"
+ note_font_size 50
+ selected true
+ xpos 9663
+ ypos -233
+}
+Dot {
+ name Dot4
+ selected true
+ xpos 9697
+ ypos -112
+}
+set N74b7e060 [stack 0]
+Dot {
+ name Dot9
+ selected true
+ xpos 9697
+ ypos -40
+}
+set N74b7e3d0 [stack 0]
+Merge2 {
+ inputs 2
+ operation divide
+ name Merge40
+ selected true
+ xpos 8453
+ ypos -43
+}
+push $N74b7e3d0
+Dot {
+ name Dot10
+ selected true
+ xpos 9697
+ ypos 1904
+}
+set N74b7eab0 [stack 0]
+Merge2 {
+ inputs 2
+ operation multiply
+ Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Multiply2
+ selected true
+ xpos 8453
+ ypos 1901
+}
+Dot {
+ name Dot11
+ selected true
+ xpos 8487
+ ypos 2168
+}
+push $N42903120
+add_layer {lighting lighting.red lighting.green lighting.blue}
+Shuffle {
+ in lighting
+ out rgb
+ name lighting
+ note_font "Verdana Bold Bold Bold Bold Bold"
+ note_font_size 50
+ selected true
+ xpos 8893
+ ypos -209
+}
+push $N74b7e060
+Merge2 {
+ inputs 2
+ operation divide
+ name Merge51
+ selected true
+ xpos 8893
+ ypos -115
+}
+push $N74b7eab0
+Dot {
+ name Dot135
+ selected true
+ xpos 9697
+ ypos 2096
+}
+set N74e18e00 [stack 0]
+Merge2 {
+ inputs 2
+ operation multiply
+ Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Multiply20
+ selected true
+ xpos 8893
+ ypos 2093
+}
+Merge2 {
+ inputs 2
+ operation plus
+ Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Plus1
+ selected true
+ xpos 8893
+ ypos 2165
+}
+push $N74e18e00
+push $N74bdb4e0
+add_layer {GI GI.red GI.green GI.blue}
+Shuffle {
+ in GI
+ out rgb
+ name GI1
+ note_font "Verdana Bold Bold Bold Bold Bold"
+ note_font_size 50
+ selected true
+ xpos 10323
+ ypos -232
+}
+push $N74b7e060
+Merge2 {
+ inputs 2
+ operation divide
+ name Merge52
+ selected true
+ xpos 10323
+ ypos -115
+}
+Merge2 {
+ inputs 2
+ operation multiply
+ maskChannelInput -rgba.alpha
+ name Multiply21
+ selected true
+ xpos 10323
+ ypos 2093
+}
+Merge2 {
+ inputs 2
+ operation plus
+ Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Plus45
+ selected true
+ xpos 10323
+ ypos 2165
+}
+Merge2 {
+ inputs 2
+ operation plus
+ Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Plus48
+ selected true
+ xpos 10983
+ ypos 2165
+}
+Merge2 {
+ inputs 2
+ operation plus
+ Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Plus46
+ selected true
+ xpos 11753
+ ypos 2165
+}
+Merge2 {
+ inputs 2
+ operation plus
+ Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Plus47
+ selected true
+ xpos 12303
+ ypos 2165
+}
+Premult {
+ name Premult2
+ selected true
+ xpos 12303
+ ypos 2334
+}

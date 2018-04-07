@@ -1,0 +1,742 @@
+
+
+///The UI proc//////
+
+global proc pathbatTool()
+
+{
+
+if (`window -exists toRelativeWindow`)
+    deleteUI toRelativeWindow;
+
+windowPref -w 420 -h 470 toRelativeWindow;
+
+window 
+
+    -w 350 -h 323 
+    -t "各种路径批量修改工具" 
+    -rtf 0
+
+toRelativeWindow;
+
+columnLayout -adjustableColumn true;
+
+//////////////////////////
+
+       frameLayout   -lv 0  
+                     -borderStyle "etchedIn"  
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile0;
+       
+         $text0 = `text -label "警告：该操作不可逆。一旦修改了各路径后，不可退回。"`;
+         $text01 = `text -label "请在修改前确保修改后的路径中存放有相关的文件夹或文件，以免造成文件路径丢失！"`;
+         
+         formLayout -edit
+           
+           -af $text0 "top" 10  
+	       -af $text0 "left" 10 
+           
+           -ac $text01 "top" 10 $text0
+           -af $text01 "left" 10
+           -af $text01 "bottom" 10
+           
+         importFile0;
+         
+       setParent ..;
+setParent ..;
+
+////////////////////////
+
+       frameLayout   -lv 0  
+                     -borderStyle "etchedIn"  
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile1;
+       
+        $text1 = `text -label "修改Vray代理文件的路径："`;
+         
+        $text2 = `text -label "需要替换的路径关键字："`;
+        $text3 = `text -label "替换后的路径关键字："`;
+        
+         global string $textField1;
+         $textField1 = `textField -w 150 -h 21 -ed true -text ""`;
+          
+         global string $textField2;
+         $textField2 = `textField -w 150 -h 21 -ed true -text ""`;
+         
+		 $button1 = `button -label "修改路径" -w 130 -command "vrayEditPathUI"`;
+
+         formLayout -edit
+           
+           -af $text1 "top" 5  
+	       -af $text1 "left" 10 
+           
+           -ac $text2 "top" 10  $text1
+           -af $text2 "left" 10
+           
+           -ac $textField1 "top" 10  $text1
+	       -ac $textField1 "left" 10  $text2
+           
+           -ac $text3 "top" 10  $text2
+           -af $text3 "left" 10
+           
+           -ac $textField2 "top" 10  $text2
+	       -af $textField2 "left" 140  
+           
+	       -ac $button1 "top" 10  $text3
+	       -af $button1 "left" 80 
+           -af $button1 "bottom" 5
+           
+         importFile1;
+         
+       setParent ..;
+setParent ..;
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+       frameLayout   -lv 0  
+                     -borderStyle "etchedIn"  
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile2;
+         
+          $text4 = `text -label "修改布料及几何体缓存文件的路径："`;
+         
+          $text5 = `text -label "需要替换的路径关键字："`;
+          $text6 = `text -label "替换后的路径关键字："`;
+          
+         global string $textField3;
+         $textField3 = `textField -w 150 -h 21 -ed true -text ""`;
+          
+         global string $textField4;
+         $textField4 = `textField -w 150 -h 21 -ed true -text ""`;
+         
+		 $button2 = `button -label "修改路径" -w 130 -command "cacheEditPathUI"`;
+
+         formLayout -edit
+           
+           -af $text4 "top" 5  
+	       -af $text4 "left" 10 
+           
+           -ac $text5 "top" 10  $text4
+           -af $text5 "left" 10
+           
+           -ac $textField3 "top" 10  $text4
+	       -ac $textField3 "left" 10  $text5
+           
+           -ac $text6 "top" 10  $text5
+           -af $text6 "left" 10
+           
+           -ac $textField4 "top" 10  $text5
+	       -af $textField4 "left" 140  
+           
+	       -ac $button2 "top" 10  $text6
+	       -af $button2 "left" 80 
+           -af $button2 "bottom" 5
+           
+         importFile2;
+         
+       setParent ..;
+setParent ..;
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+
+frameLayout   -lv 0  
+                     -borderStyle "etchedIn"  
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile3;
+	   
+        $text7 = `text -label "修改Alembic文件的存放路径："`;
+           
+        $text8 = `text -label "需要替换的路径关键字："`;
+        $text9 = `text -label "替换后的路径关键字："`;
+        
+         global string $textField5;
+         $textField5 = `textField -w 150 -h 21 -ed true -text ""`;
+          
+         global string $textField6;
+         $textField6 = `textField -w 150 -h 21 -ed true -text ""`;
+         
+		 $button3 = `button -label "修改路径" -w 130 -command "alembicEditPathUI"`;
+
+         formLayout -edit
+           
+           -af $text7 "top" 5  
+	       -af $text7 "left" 10 
+           
+           -ac $text8 "top" 10  $text7
+           -af $text8 "left" 10
+           
+           -ac $textField5 "top" 10  $text7
+	       -ac $textField5 "left" 10  $text8
+           
+           -ac $text9 "top" 10  $text8
+           -af $text9 "left" 10
+           
+           -ac $textField6 "top" 10  $text8
+	       -af $textField6 "left" 140  
+           
+	       -ac $button3 "top" 10  $text9
+	       -af $button3 "left" 80 
+           -af $button3 "bottom" 5
+           
+         importFile3;
+         
+       setParent ..;
+setParent ..;
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+
+
+frameLayout   -lv 0  
+                     -borderStyle "etchedIn"  
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile4;
+	   
+        $text10 = `text -label "修改阿诺德代理文件的路径："`;
+           
+        $text11 = `text -label "需要替换的路径关键字："`;
+        $text12 = `text -label "替换后的路径关键字："`;
+        
+         global string $textField7;
+         $textField7 = `textField -w 150 -h 21 -ed true -text ""`;
+          
+         global string $textField8;
+         $textField8 = `textField -w 150 -h 21 -ed true -text ""`;
+         
+		 $button4 = `button -label "修改路径" -w 130 -command "arnoldEditPathUI"`;
+
+         formLayout -edit
+       
+           -af $text10 "top" 5  
+	       -af $text10 "left" 10 
+           
+           -ac $text11 "top" 10  $text10
+           -af $text11 "left" 10
+           
+           -ac $textField7 "top" 10  $text10
+	       -ac $textField7 "left" 10  $text11
+           
+           -ac $text12 "top" 10  $text11
+           -af $text12 "left" 10
+           
+           -ac $textField8 "top" 10  $text11
+	       -af $textField8 "left" 140 
+           
+	       -ac $button4 "top" 10  $text12
+	       -af $button4 "left" 80 
+           -af $button4 "bottom" 5
+           
+         importFile4;
+         
+       setParent ..;
+setParent ..;
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+
+
+frameLayout   -lv 0  
+                     -borderStyle "etchedIn"  
+                     -marginHeight 5  -marginWidth 5  ;
+
+
+	   formLayout importFile5;
+	   
+        $text13 = `text -label "修改材质贴图的路径："`;
+           
+        $text14 = `text -label "需要替换的路径关键字："`;
+        $text15 = `text -label "替换后的路径关键字："`;
+        
+         global string $textField9;
+         $textField9 = `textField -w 150 -h 21 -ed true -text ""`;
+          
+         global string $textField10;
+         $textField10 = `textField -w 150 -h 21 -ed true -text ""`;
+         
+		 $button5 = `button -label "修改路径" -w 130 -command "fh_toRelativeUI"`;
+
+         formLayout -edit
+         
+           -af $text13 "top" 5  
+	       -af $text13 "left" 10 
+           
+           -ac $text14 "top" 10  $text13
+           -af $text14 "left" 10
+           
+           -ac $textField9 "top" 10  $text13
+	       -ac $textField9 "left" 10  $text14
+           
+           -ac $text15 "top" 10  $text14
+           -af $text15 "left" 10
+           
+           -ac $textField10 "top" 10  $text14
+	       -af $textField10 "left" 140  
+           
+	       -ac $button5 "top" 10  $text15
+	       -af $button5 "left" 80 
+           -af $button5 "bottom" 5
+           
+         importFile5;
+         
+       setParent ..;
+setParent ..;
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+frameLayout   -lv 0  
+                     -borderStyle "etchedIn"  
+                     -marginHeight 5  -marginWidth 5  ;
+
+	   formLayout importFile6;
+	   
+        $text16 = `text -label "修改参考文件的路径："`;
+           
+        $text17 = `text -label "需要替换的路径关键字："`;
+        $text18 = `text -label "替换后的路径关键字："`;
+        
+         global string $textField11;
+         $textField11 = `textField -w 150 -h 21 -ed true -text ""`;
+          
+         global string $textField12;
+         $textField12 = `textField -w 150 -h 21 -ed true -text ""`;
+         
+		 $button6 = `button -label "修改路径" -w 130 -command "editRef"`;
+
+         formLayout -edit
+         
+           -af $text16 "top" 5  
+	       -af $text16 "left" 10 
+           
+           -ac $text17 "top" 10  $text16
+           -af $text17 "left" 10
+           
+           -ac $textField11 "top" 10  $text16
+	       -ac $textField11 "left" 10  $text17
+           
+           -ac $text18 "top" 10  $text17
+           -af $text18 "left" 10
+           
+           -ac $textField12 "top" 10  $text17
+	       -af $textField12 "left" 140  
+           
+	       -ac $button6 "top" 12  $text18
+	       -af $button6 "left" 80 
+           -af $button6 "bottom" 5
+           
+         importFile6;
+         
+       setParent ..;
+setParent ..;
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+showWindow toRelativeWindow;
+
+}
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+global proc vrayEditPathUI ()
+{
+   global string $textField1;
+   global string $textField2;
+
+   string $oldPath;
+   $oldPath = `textField -q -text $textField1`; 
+   string $oldPathNative;
+   $oldPathNative = fromNativePath($oldPath);
+  
+   string $newPath;
+   $newPath = `textField -q -text $textField2`; 
+   string $newPathNative;
+   $newPathNative = fromNativePath($newPath);
+  
+   vrayEditPath ($oldPathNative, $newPathNative);
+}
+
+global proc cacheEditPathUI ()
+{
+   global string $textField3;
+   global string $textField4;
+
+   string $oldPath;
+   $oldPath = `textField -q -text $textField3`; 
+   string $oldPathNative;
+   $oldPathNative = fromNativePath($oldPath);
+  
+   string $newPath;
+   $newPath = `textField -q -text $textField4`; 
+   string $newPathNative;
+   $newPathNative = fromNativePath($newPath);
+  
+   cacheEditPath ($oldPathNative, $newPathNative);
+}
+
+global proc alembicEditPathUI ()
+{
+   global string $textField5;
+   global string $textField6;
+
+   string $oldPath;
+   $oldPath = `textField -q -text $textField5`; 
+   string $oldPathNative;
+   $oldPathNative = fromNativePath($oldPath);
+  
+   string $newPath;
+   $newPath = `textField -q -text $textField6`; 
+   string $newPathNative;
+   $newPathNative = fromNativePath($newPath);
+  
+   alembicEditPath ($oldPathNative, $newPathNative);
+}
+
+global proc arnoldEditPathUI ()
+{
+   global string $textField7;
+   global string $textField8;
+
+   string $oldPath;
+   $oldPath = `textField -q -text $textField7`; 
+   string $oldPathNative;
+   $oldPathNative = fromNativePath($oldPath);
+  
+   string $newPath;
+   $newPath = `textField -q -text $textField8`; 
+   string $newPathNative;
+   $newPathNative = fromNativePath($newPath);
+  
+   arnoldEditPath ($oldPathNative, $newPathNative);
+}
+
+global proc fh_toRelativeUI ()
+{
+   global string $textField9;
+   global string $textField10;
+
+   string $oldPath;
+   $oldPath = `textField -q -text $textField9`; 
+   string $oldPathNative;
+   $oldPathNative = fromNativePath($oldPath);
+  
+   string $newPath;
+   $newPath = `textField -q -text $textField10`; 
+   string $newPathNative;
+   $newPathNative = fromNativePath($newPath);
+  
+   fh_toRelative ($oldPathNative, $newPathNative);
+}
+
+//////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+///Vray路径
+global proc vrayEditPath (string $oldPath, string $newPath)
+{
+string $VRayMeshNodes[] =  `ls -type VRayMesh`;
+for($VRayMesh in $VRayMeshNodes)
+{
+    string $attrName = $VRayMesh + ".fileName";
+    string $path = `getAttr $attrName`;
+  
+    string  $wholePath = replaceString ($path,$oldPath,$newPath);
+  
+    if(`filetest -r $wholePath`)
+    setAttr -type "string" $attrName $wholePath;    
+}
+}
+
+//布料、几何体缓存解算路径
+global proc cacheEditPath (string $oldPath, string $newPath)
+{
+string $clothCacheNodes[] =  `ls -type cacheFile`;
+for($clothCacheNode in $clothCacheNodes)
+{
+    string $attrName = $clothCacheNode + ".cachePath";
+    string $path = `getAttr $attrName`;
+   
+    string  $wholePath = replaceString ($path,$oldPath,$newPath);
+  
+    if(`filetest -r $wholePath`)
+    setAttr -type "string" $attrName $wholePath; 
+}
+}
+
+//破碎解算路径
+global proc alembicEditPath (string $oldPath, string $newPath)
+{
+string $expCacheNodes[] =  `ls -type AlembicNode`;
+
+for($expCacheNode in $expCacheNodes)
+{
+    string $attrName = $expCacheNode + ".abc_File";
+    string $path = `getAttr $attrName`;
+    
+    string  $wholePath = replaceString ($path,$oldPath,$newPath);
+  
+    if(`filetest -r $wholePath`)
+    setAttr -type "string" $attrName $wholePath;  
+}
+}
+
+//阿诺德代理路径
+
+global proc arnoldEditPath (string $oldPath, string $newPath)
+{
+string $arnoldNodes[] = `ls -type "aiStandIn"`;
+ 
+for($arnoldNode in $arnoldNodes)
+{
+    string $attrName = $arnoldNode + ".dso";
+    string $path = `getAttr $attrName`;
+    
+    string  $wholePath = replaceString ($path,$oldPath,$newPath);
+  
+    if(`filetest -r $wholePath`)
+    setAttr -type "string" $attrName $wholePath;  
+ }
+}
+
+//参考路径替换
+global proc editRef()
+{
+    global string $textField11;
+    string $formerPathTemp;
+    $formerPathTemp = `textField -q -text $textField11`;
+    string $formerPath;
+    $formerPath = fromNativePath($formerPathTemp);
+
+
+    global string $textField12;
+    string $afterPathTemp;
+    $afterPathTemp = `textField -q -text $textField12`;
+    string $afterPath;
+    $afterPath = fromNativePath($afterPathTemp);
+
+$refNodes = `file -q -r`;
+
+for($eachRefs in $refNodes)
+{
+string $eachRefArrray[];
+$eachRefArrray = stringToStringArray($eachRefs,"{");
+string $eachRef = $eachRefArrray[0];
+
+int $ifExist = 0;
+int $startNum = 0;
+string $wholePath;
+
+int $wholeSize = size($eachRef);
+int $formerSize = size($formerPath);
+int $afterSize = size($afterPath);
+
+int $i;
+int $j;
+
+for($i=0;$i<($wholeSize-$formerSize+1);$i++)
+{
+    string $testString = `substring $eachRef ($i+1) ($i+$formerSize)`;
+    if($testString == $formerPath)
+    {
+    $ifExist=1;
+    $startNum=$i;
+    break;
+    }
+}
+
+if($ifExist == 1)
+{
+    string $temp[];
+    if($startNum==0)
+    $temp[0]="";
+    else
+    $temp[0]= `substring $eachRef 1 $startNum`;
+    $temp[1]= $afterPath;
+    $temp[2]= `substring $eachRef ($startNum+$formerSize+1) $wholeSize`;
+    $wholePath = stringArrayToString($temp, "");
+
+	/////////////////////////////////////
+    $eachFile = `referenceQuery -rfn  $eachRefs`;
+    $ifLoaded = `referenceQuery  -il  $eachFile`;
+    print ($eachRef +"\n");
+    print ("set the ref node  " + $eachFile + "  to the path  " + $wholePath + "\n");
+    if(`filetest -f $wholePath`)
+	{
+        file -loadReference  $eachFile  -type "mayaBinary" $wholePath;
+        if($ifLoaded==0)
+        file -unloadReference $eachFile;
+	}
+    else
+    print ("fail! can not find the file in the new path!\n");
+}
+
+}
+}
+////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////
+ 
+//材质贴图路径
+ 
+global proc fh_toRelative(string $oldPath, string $newPath)
+{
+string $allTextureNodes[] = fh_getTextureNodes();
+  
+for ($textureNode in $allTextureNodes)
+{
+   string $oldWholePath = getTextureFullPath2($textureNode);
+   print ($oldWholePath + "\n");
+   string $newWholePath = replaceString ($oldWholePath, $oldPath, $newPath);
+   print ($newWholePath + "\n\n");
+  
+  if (`nodeType $textureNode` == "mentalrayIblShape") 
+  { 
+     if(`filetest -r $newWholePath`)
+     setAttr -type "string"  ($textureNode + ".texture")  $newWholePath;  
+  } 
+  else if (`nodeType $textureNode` == "file")
+  { 
+     if(`filetest -r $newWholePath`)
+     setAttr -type "string"  ($textureNode + ".fileTextureName")  $newWholePath;  
+  }
+}
+}
+
+
+global proc string[] fh_getTextureNodes() {
+  string $allTextureNodes[];
+  string $mayaTextures[] = `ls -type "file" -type "psdFileTex"`;
+  string $mentalrayTextures[] = fh_getMentalrayTextureNodes();
+  return $allTextureNodes = stringArrayCatenate ($mayaTextures, $mentalrayTextures);
+}
+
+// find mentalray texture nodes
+global proc string[] fh_getMentalrayTextureNodes() {
+  string $mentalrayTextures[];
+  if (`pluginInfo -q -loaded Mayatomr` == 0) {
+    loadPlugin "Mayatomr";
+  }
+  $mentalrayTextures = `ls -type "mentalrayTexture" -type "mentalrayIblShape"`;
+  return $mentalrayTextures;
+}
+
+
+// change file texture into relative path
+global proc string toRelativePath(string $path,string $folderName) {
+  string $relativePath;
+  string $dirs[] = stringToStringArray($path, "/");
+  int $len = size($dirs);
+  int $i = $len;
+  if ($len == 0) {
+    return "";
+  }
+  do {
+    $i--;
+    if ($i == $len-1) {
+      $relativePath = $dirs[$i];
+    } else if ($i > 0) {
+      $relativePath = $dirs[$i] + "/" + $relativePath;
+    } else if ($i == 0) {
+      $relativePath = $folderName + "/otherTextures/"+$dirs[$len-1];
+      break;
+    }
+  } while ($dirs[$i] != $folderName);
+  return $relativePath;
+}
+
+//获取材质贴图的绝对路径
+proc string getTextureFullPath2(string $texNode) {
+  string $fullPath;
+  if (`nodeType $texNode` == "mentalrayIblShape") {
+    $fullPath = `getAttr ($texNode + ".texture")`;
+  } else {
+    $fullPath = `getAttr ($texNode + ".fileTextureName")`;
+  }
+ return $fullPath;
+}
+
+//得到工程所存放的路径和工程名字
+global proc string currentProject ()
+{
+    $currentDir = `file -q -exn`;
+    $sceneFolder = "scenes";
+    
+    int $i,$j;
+    string $projectPath = "";
+    
+    string $dirs[] = stringToStringArray($currentDir, "/");
+    
+    for($i=(size($dirs)-1);$i>=0;$i--)
+    {
+        if($dirs[$i]==$sceneFolder)
+        {
+            for($j=0;$j<$i;$j++)
+            {
+              $projectPath = $projectPath + $dirs[$j] + "/";
+            }
+        return $projectPath;
+        }
+    }
+      return -1;
+}
+
+global proc string replaceString ( string $wholePath, string $formerPath, string $afterPath)
+{
+int $wholeSize = size($wholePath);
+int $formerSize = size($formerPath);
+int $afterSize = size($afterPath);
+
+string $newPath;
+
+int $startNum;
+int $ifExist;
+    
+int $i;
+int $j;
+
+for($i=0;$i<($wholeSize-$formerSize+1);$i++)
+{
+    string $testString = `substring $wholePath ($i+1) ($i+$formerSize)`;
+    if($testString == $formerPath)
+    {
+    $ifExist=1;
+    $startNum=$i;
+    break;
+    }
+}
+
+if($ifExist == 1)
+{
+    string $temp[];
+    if($startNum==0)
+    $temp[0]="";
+    else
+    $temp[0]= `substring $wholePath 1 $startNum`;
+    $temp[1]= $afterPath;
+    $temp[2]= `substring $wholePath ($startNum+$formerSize+1) $wholeSize`;
+    $newPath = stringArrayToString($temp, "");
+}
+return $newPath;
+}
+ 
+
+
+///run the UI proc////
+
+pathbatTool;

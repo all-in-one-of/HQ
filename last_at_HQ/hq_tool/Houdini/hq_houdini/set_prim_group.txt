@@ -1,0 +1,28 @@
+import hou
+cz={u'aiStandard1': [u'f[0:42]', u'f[44:60]', u'f[66:79]', u'f[87:99]', u'f[108:119]', u'f[129:138]', u'f[149:157]', u'f[170:177]', u'f[190:196]', u'f[211:215]', u'f[360:379]'], u'aiStandard2': [u'f[43]', u'f[61:65]', u'f[80:86]', u'f[100:107]', u'f[120:128]', u'f[139:148]', u'f[158:169]', u'f[178:189]', u'f[197:210]', u'f[216:359]', u'f[380:399]']}
+pl=range(400)
+
+pladd=[]
+
+for sz in cz.items()[0][1]:
+
+    zy= ((sz[2:-1]).split(':'))
+
+    if len(zy)>1:
+        pladd.append(pl[int(zy[0]):int(zy[1])+1])
+    else:
+        pladd.append(pl[int(zy[0])])
+
+rr=[]
+for pl in pladd:
+    if type(pl)!=int:
+        rr+=pl
+    else:
+        rr+=[pl]
+    
+
+p=''
+for i in rr:
+    p+=str(i)+' '
+
+hou.parm('/obj/geo1/group_caizhi/pattern').set(p)

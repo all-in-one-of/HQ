@@ -1,0 +1,189 @@
+#! /Applications/Nuke7.0v6/NukeX7.0v6.app/../Nuke7.0v6.app/Contents/MacOS/Nuke7.0v6 -nx
+version 7.0 v6
+Gizmo {
+ inputs 11
+ tile_color 0xcbff00ff
+ addUserKnob {20 User}
+ addUserKnob {3 input_width t 每个素材的宽度（像素）}
+ input_width 653
+ addUserKnob {3 input_height t 每个素材的高度（像素）}
+ input_height 399
+ addUserKnob {3 ScreenNumber t 需要几个素材进行横向拼接？（最多10个）}
+ ScreenNumber 6
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 462
+  ypos 314
+ }
+ Transform {
+  center {240 176}
+  name Transform12
+  xpos 462
+  ypos 404
+ }
+ Input {
+  inputs 0
+  name Input2
+  xpos 579
+  ypos 319
+  number 1
+ }
+ Transform {
+  translate {{input_width} 0}
+  center {240 176}
+  name Transform14
+  xpos 579
+  ypos 403
+ }
+ Input {
+  inputs 0
+  name Input3
+  xpos 689
+  ypos 320
+  number 2
+ }
+ Transform {
+  translate {{input_width*2} 0}
+  center {240 176}
+  name Transform13
+  xpos 689
+  ypos 405
+ }
+ Input {
+  inputs 0
+  name Input4
+  xpos 789
+  ypos 320
+  number 3
+ }
+ Transform {
+  translate {{input_width*3} 0}
+  center {240 176}
+  name Transform11
+  xpos 789
+  ypos 406
+ }
+ Input {
+  inputs 0
+  name Input5
+  xpos 894
+  ypos 322
+  number 4
+ }
+ Transform {
+  translate {{input_width*4} 0}
+  center {240 176}
+  name Transform10
+  xpos 894
+  ypos 407
+ }
+ Input {
+  inputs 0
+  name Input6
+  xpos 1004
+  ypos 322
+  number 5
+ }
+ Transform {
+  translate {{input_width*5} 0}
+  center {240 176}
+  name Transform9
+  xpos 1004
+  ypos 408
+ }
+ Input {
+  inputs 0
+  name Input7
+  xpos 1127
+  ypos 325
+  number 6
+ }
+ Transform {
+  translate {{input_width*6} 0}
+  center {240 176}
+  name Transform15
+  xpos 1127
+  ypos 410
+ }
+ Input {
+  inputs 0
+  name Input8
+  xpos 1255
+  ypos 328
+  number 7
+ }
+ Transform {
+  translate {{input_width*7} 0}
+  center {240 176}
+  name Transform16
+  xpos 1255
+  ypos 412
+ }
+push 0
+ Input {
+  inputs 0
+  name Input11
+  xpos 1496
+  ypos 326
+  number 10
+ }
+ Transform {
+  translate {{input_width*9} 0}
+  center {240 176}
+  name Transform17
+  xpos 1496
+  ypos 404
+ }
+ Input {
+  inputs 0
+  name Input9
+  xpos 1381
+  ypos 330
+  number 8
+ }
+ Transform {
+  translate {{input_width*8} 0}
+  center {240 176}
+  name Transform18
+  xpos 1381
+  ypos 412
+ }
+ Merge2 {
+  inputs 10+1
+  also_merge all
+  name Merge5
+  xpos 963
+  ypos 807
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "60000 60000 0 0 60000 60000 1 aa_1_1"
+  name Constant2
+  xpos 737
+  ypos 824
+ }
+ Crop {
+  box {0 0 {input_width*ScreenNumber} {input_height}}
+  reformat true
+  crop false
+  name Crop2
+  xpos 737
+  ypos 916
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge6
+  selected true
+  xpos 963
+  ypos 916
+ }
+ Output {
+  name Output1
+  xpos 963
+  ypos 1038
+ }
+end_group

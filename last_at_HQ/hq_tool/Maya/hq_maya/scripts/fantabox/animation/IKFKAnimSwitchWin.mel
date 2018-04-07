@@ -1,0 +1,281 @@
+global proc IKFKAnimSwitchWin()
+{
+    if(`window -ex "IKFKAnimSwitchWin"`)
+    {
+        deleteUI "IKFKAnimSwitchWin";
+    }
+    window -w 300 -h 200 -s 0 -t "IKFK Animate Switch" "IKFKAnimSwitchWin";
+    columnLayout;
+    text "1.选择角色任意控制器";
+    text "2.点击按钮转换";
+    text "3.将自动获取时间栏上的时间范围";
+    text "4.将自动将手脚的IKFK控制器全部转换";
+    button -l "convert" -w 200 -h 100 -c ikfkAnimSwitch;
+    showWindow "IKFKAnimSwitchWin";
+}
+
+global proc ikfkAnimSwitch()
+{
+string $obj[]=`ls -sl`;
+string $i;
+float $minTime=`playbackOptions -q -min`;
+float $maxTime=`playbackOptions -q -max`;
+string $ns[]=getNamespace($obj[0]);
+string $IKFKCtrls[]={$ns[0]+"FKIKArm_L",$ns[0]+"FKIKArm_R",$ns[0]+"FKIKLeg_L",$ns[0]+"FKIKLeg_R"};
+bakeResults -simulation true -t "1:120" -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -removeBakedAttributeFromLayer false -removeBakedAnimFromLayer false -bakeOnOverrideLayer false -minimizeRotation true -controlPoints false -shape true $IKFKCtrls;
+
+for($i in $IKFKCtrls)
+{
+	select -r $i;
+	string $buffer[];
+	int $num;
+	$num=`tokenize $i "_" $buffer`;
+	string $side="_"+$buffer[$num-1];
+	if(($i==$ns[0]+"FKIKArm_L")||($i==$ns[0]+"FKIKArm_R"))
+    {
+        for($n=$minTime;$n<=$maxTime;$n++)
+        {
+            currentTime $n ;
+            shuaiAdvIkFkSwitch;
+            //hand
+            setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$ns[0]+"IKArm"+$side,$ns[0]+"PoleArm"+$side,$ns[0]+"FKShoulder"+$side,$ns[0]+"FKElbow"+$side,$ns[0]+"FKWrist"+$side};
+            //leg
+            //setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$ns[0]+"IKLeg"+$side,$ns[0]+"PoleLeg"+$side,$ns[0]+"FKScapulaLeg"+$side,$ns[0]+"FKHip"+$side,$ns[0]+"FKKnee"+$side,$ns[0]+"FKAnkle"+$side};
+        }
+    }
+    else
+    {
+        for($n=$minTime;$n<=$maxTime;$n++)
+        {
+            currentTime $n ;
+            shuaiAdvIkFkSwitch;
+            //hand
+            //setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$ns[0]+"IKArm"+$side,$ns[0]+"PoleArm"+$side,$ns[0]+"FKShoulder"+$side,$ns[0]+"FKElbow"+$side,$ns[0]+"FKWrist"+$side};
+            //leg
+            setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {$ns[0]+"IKLeg"+$side,$ns[0]+"PoleLeg"+$side,$ns[0]+"FKScapulaLeg"+$side,$ns[0]+"FKHip"+$side,$ns[0]+"FKKnee"+$side,$ns[0]+"FKAnkle"+$side};
+        }
+    }
+}
+}
+global proc shuaiSwitchIK2FK (string $objs[])
+{
+shuaiAssembleAlignSwitchCmd $objs "shuaiSwitchFKIK" "IK2FK";
+}
+
+global proc shuaiSwitchFK2IK (string $objs[])
+{
+shuaiAssembleAlignSwitchCmd $objs "shuaiSwitchFKIK" "FK2IK";
+}
+
+global proc shuaiAssembleAlignSwitchCmd (string $objs[], string $alignSwitchCmd, string $W2K)
+{
+string $NamespaceAndName[]=getNamespace($objs[0]);
+string $nameSpace=$NamespaceAndName[0];
+$objs[0]=$NamespaceAndName[1];
+int $numLetters=size($objs[0]);
+string $IK=`substring $objs[0] 5 ($numLetters-2)`;
+string $side=`substring $objs[0] ($numLetters-1) $numLetters`;
+eval ($alignSwitchCmd+" "+$IK+" "+$side+" "+$W2K+" "+"\""+$nameSpace+"\""+$objs[0]);
+}
+global proc shuaiSwitchFKIK (string $IK, string $side, string $W2K,string $nameSpace,string $objWithoutNamespace)
+{
+string $sel[]=`ls -sl`;
+string $controlCurve=$nameSpace+"FKIK"+$IK+$side;
+string $poleCurve=$nameSpace+"Pole"+$IK+$side;
+if (!`objExists $controlCurve`)
+	error ("Object:\""+$controlCurve+"\" does not exists !");
+string $startJoint=`getAttr ($controlCurve+".startJoint")`;
+string $middleJoint=`getAttr ($controlCurve+".middleJoint")`;
+string $endJoint=`getAttr ($controlCurve+".endJoint")`;
+string $requiredObj[]={($nameSpace+"Main"),($nameSpace+"FKX"+$endJoint+$side),($nameSpace+"FKX"+$startJoint+$side),($nameSpace+"FKX"+$endJoint+$side),
+	($nameSpace+"Pole"+$IK+$side),($nameSpace+"IKX"+$startJoint+$side),($nameSpace+"IKX"+$middleJoint+$side)};
+for ($obj in $requiredObj)
+	if (!`objExists $obj`)
+		error ("Object:\""+$obj+"\" does not exists !");
+int $Blend;
+int $BlendInverse=10;
+int $onOff;
+if ($W2K=="FK2IK")
+	{
+	$Blend=10;
+	$BlendInverse=0;
+	$onOff=1;
+	}
+
+if ($W2K=="FK2IK" && `getAttr ($controlCurve+".FKIKBlend")`>0)
+	{
+	warning ("Could not switch FK2IK, because \"FKIKBlend\" is not \"0\"\n");
+	return;
+	}
+if ($W2K=="IK2FK" && `getAttr ($controlCurve+".FKIKBlend")`<10)
+	{
+	warning ("Could not switch IK2FK, because \"FKIKBlend\" is not \"10\"\n");
+	return;
+	}
+
+
+
+setAttr ($controlCurve+".FKIKBlend") $BlendInverse;
+
+
+if (`objExists ($nameSpace+"IKXMiddleToe1"+$side)`)
+	{
+	setKeyframe ($nameSpace+"FKMiddleToe1"+$side+".rotate");
+	if (`attributeExists "roll" ($nameSpace+"IK"+$IK+$side)`)
+		setKeyframe ($nameSpace+"IK"+$IK+$side+".roll");
+	}
+
+
+
+
+
+string $scapulaCurve=`shuaiAlignFKIK $IK $side $W2K $nameSpace $objWithoutNamespace`;
+
+
+setAttr ($controlCurve+".FKIKBlend") $Blend;
+
+
+if (`objExists "scapulaLocator"`)
+{
+$tempFloat=`xform -q -ws -ro "scapulaLocator"`;
+xform -ws -ro $tempFloat[0] $tempFloat[1] $tempFloat[2] $scapulaCurve;
+delete "scapulaLocator";
+}
+
+
+if (`objExists ($nameSpace+"IKXMiddleToe1"+$side)`)
+	{
+	setKeyframe ($nameSpace+"FKMiddleToe1"+$side+".rotate");
+	if (`attributeExists "roll" ($nameSpace+"IK"+$IK+$side)`)
+		setKeyframe ($nameSpace+"IK"+$IK+$side+".roll");
+	}
+
+select $sel;
+}
+global proc string shuaiAlignFKIK (string $IK, string $side, string $W2K,string $nameSpace,string $objWithoutNamespace)
+{
+string $sel[]=`ls -sl`;
+string $controlCurve=$nameSpace+"FKIK"+$IK+$side;
+if (!`objExists $controlCurve`)
+	error ("Object:\""+$controlCurve+"\" does not exists !");
+string $startJoint=`getAttr ($controlCurve+".startJoint")`;
+string $middleJoint=`getAttr ($controlCurve+".middleJoint")`;
+string $endJoint=`getAttr ($controlCurve+".endJoint")`;
+string $tempLoc1[],$tempLoc2[],$tempConstraint[];
+string $requiredObj[]={($nameSpace+"Main"),($nameSpace+"FKX"+$endJoint+$side),($nameSpace+"FKX"+$startJoint+$side),($nameSpace+"FKX"+$endJoint+$side),
+	($nameSpace+"Pole"+$IK+$side),($nameSpace+"IKX"+$startJoint+$side),($nameSpace+"IKX"+$middleJoint+$side)};
+for ($obj in $requiredObj)
+	if (!`objExists $obj`)
+		error ("Object:\""+$obj+"\" does not exists !");
+float $charsize=`getAttr ($nameSpace+"Main.height")`;
+float $tempFloat[],$alignIkToFloat[];
+int $autoKey=`autoKeyframe -q -st`;
+if ($autoKey)
+	autoKeyframe -st 0;
+	
+string $legCurve=$nameSpace+"IK"+$IK+$side;
+string $aimOnScapulaConstraints[]=stringArrayRemoveDuplicates(`listConnections -type "aimConstraint" $legCurve`);
+string $constraint ;
+for($constraint in $aimOnScapulaConstraints)
+{
+    if(`gmatch $constraint ("*LegAimOnScapula*"+$side+"_aimConstraint*")`)
+    {
+        break;
+    }
+}
+string $scapulaCurve;
+if(`objExists $constraint`)
+{
+    string $hipDeformJoint=$nameSpace+$startJoint+$side;
+    string $parentJoints[]=`listRelatives -p $hipDeformJoint`;
+    string $scapulaDeformJoint[]=`getNamespace($parentJoints[0])`;
+    $scapulaCurve=$nameSpace+"FK"+$scapulaDeformJoint[1];
+    spaceLocator -n "scapulaLocator";
+    parent "scapulaLocator" $scapulaCurve;
+    int $rotateOrder=`getAttr($scapulaCurve+".rotateOrder")`;
+    setAttr "scapulaLocator.rotateOrder" $rotateOrder;
+    setAttr "scapulaLocator.tx" 0;
+    setAttr "scapulaLocator.ty" 0;
+    setAttr "scapulaLocator.tz" 0;
+    setAttr "scapulaLocator.rx" 0;
+    setAttr "scapulaLocator.ry" 0;
+    setAttr "scapulaLocator.rz" 0;
+    parent -w "scapulaLocator";
+    //setAttr ($constraint+"."+"IK"+$IK+$side+"W0") 0;
+}
+
+if ($W2K=="FK2IK")
+	{
+	$tempFloat=`xform -q -ws -t ($nameSpace+"FK"+$endJoint+$side)`;
+	xform -ws -t $tempFloat[0] $tempFloat[1] $tempFloat[2] ($nameSpace+"IK"+$IK+$side);
+	$tempLoc1=`spaceLocator`;
+	$tempConstraint=`pointConstraint ($nameSpace+"FKX"+$startJoint+$side) ($nameSpace+"FKX"+$endJoint+$side) $tempLoc1[0]`;
+	delete $tempConstraint[0];
+	$tempConstraint=`aimConstraint -aimVector 1 0 0 ($nameSpace+"FKX"+$middleJoint+$side) $tempLoc1[0]`;
+	$tempLoc2=`spaceLocator`;
+	parent $tempLoc2[0] $tempLoc1[0];
+	setAttr -type float3 ($tempLoc2[0]+".translate") ($charsize/3.333) 0 0;
+	$tempFloat=`xform -q -ws -ro ($nameSpace+"AlignIKTo"+$endJoint+$side)`;
+	xform -ws -ro $tempFloat[0] $tempFloat[1] $tempFloat[2] ($nameSpace+"IK"+$IK+$side);
+	$tempFloat=`xform -q -ws -t $tempLoc2[0]`;
+	xform -ws -t $tempFloat[0] $tempFloat[1] $tempFloat[2] ($nameSpace+"Pole"+$IK+$side);
+    if (`objExists "scapulaLocator"`)
+	{
+	$tempFloat=`xform -q -ws -ro "scapulaLocator"`;
+	xform -ws -ro $tempFloat[0] $tempFloat[1] $tempFloat[2] $scapulaCurve;
+	//delete "scapulaLocator";
+	}
+	delete $tempLoc1;
+	if (`objExists ($nameSpace+"IKXMiddleToe1"+$side)`)
+		if (`attributeExists "roll" ($nameSpace+"IK"+$IK+$side)`)
+			setAttr ($nameSpace+"IK"+$IK+$side+".roll") 0;
+	}
+else
+	{
+	$tempFloat=`xform -q -ws -ro ($nameSpace+"IKX"+$startJoint+$side)`;
+	xform -ws -ro $tempFloat[0] $tempFloat[1] $tempFloat[2] ($nameSpace+"FK"+$startJoint+$side);
+	$tempFloat=`xform -q -ws -ro ($nameSpace+"IKX"+$middleJoint+$side)`;
+	xform -ws -ro $tempFloat[0] $tempFloat[1] $tempFloat[2] ($nameSpace+"FK"+$middleJoint+$side);
+	$tempFloat=`xform -q -ws -ro ($nameSpace+"IKX"+$endJoint+$side)`;
+	xform -ws -ro $tempFloat[0] $tempFloat[1] $tempFloat[2] ($nameSpace+"FK"+$endJoint+$side);
+	if (`objExists ($nameSpace+"IKXMiddleToe1"+$side)`)
+		{
+		$tempFloat=`xform -q -ws -ro ($nameSpace+"IKXMiddleToe1"+$side)`;
+		xform -ws -ro $tempFloat[0] $tempFloat[1] $tempFloat[2] ($nameSpace+"FKMiddleToe1"+$side);
+		}
+	}
+
+if ($autoKey)
+	autoKeyframe -st 1;
+select $sel;
+return $scapulaCurve;
+}
+global proc string[] getNamespace(string $obj)
+{
+    string $array[] = stringToStringArray($obj, ":");
+    string $nameWithoutNamespace=$array[size($array)-1];
+    stringArrayRemoveAtIndex((size($array)-1), $array);
+    string $nameSpace=stringArrayToString($array,":")+":";
+    if($nameSpace==":")
+    {
+        $nameSpace="";
+    }
+    return {$nameSpace,$nameWithoutNamespace};
+}
+global proc shuaiAdvIkFkSwitch()
+{
+    string $FKIKCtrl[]=`ls -sl`;
+    string $one;
+    for($one in $FKIKCtrl){
+        float $blendValue=`getAttr ($one+".FKIKBlend")`;
+        if($blendValue!=0 && $blendValue!=10){
+            error("===控制器的属性“FKIKBlend”必须是0或者10，控制器“"+$one+"”不符合要求！！");
+        };
+        switch($blendValue){
+            case 0.0:
+                     shuaiSwitchFK2IK({$one});break;
+            case 10.0:
+                     shuaiSwitchIK2FK({$one});break;
+        }
+    }
+}

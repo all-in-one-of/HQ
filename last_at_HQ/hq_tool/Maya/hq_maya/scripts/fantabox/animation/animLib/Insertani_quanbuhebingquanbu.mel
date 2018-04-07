@@ -1,0 +1,63 @@
+global proc Insertani_quanbuhebingquanbu()
+{
+    global string $listt[];
+    global string $k[];
+    global string $l[];
+    global int $qishizhen;
+    global int $jieshuzhen;
+    global float $delintobj;
+    global float $delintobj1;
+    int $FRISTFame=$qishizhen;
+    int $ENDFame=$jieshuzhen;
+    global float $delint1;
+    float $clipStartEndTime[]=`floatFieldGrp -q -v "timeRange"`;
+    global string $selbosscn[];
+    global int $qishizhen;
+    global int $jieshuzhen;
+    int $ENDFame=$jieshuzhen;
+    ////////////
+    inputAnisli;
+    //string $selbosscn[]=`ls -sl`;
+    select $selbosscn[0];
+    //导入第一段动画
+    file -import -type "animImport" -ra true -mergeNamespacesOnClash false
+    -namespace "pao" -options ";targetTime=4;copies=1;option=replace;pictures=0;connect=0;" 
+     -pr -loadReferenceDepth "all" "D:/AniTxt/Ani_01.anim";
+    select $selbosscn[0];
+    select `ls -sl-dag -typ "nurbsCurve"`;
+    pickWalk -d up;
+    string $selallcns[]=`ls -sl`;
+    character -name "Ani_01" -excludeVisibility -excludeScale;
+    select "Ani_01";
+    clip -name "clip_Ani_01" -sc 1 -allAbsolute -startTime $clipStartEndTime[0] -endTime $clipStartEndTime[1] "Ani_01";
+    $yuanshi=`getAttr "clip_Ani_01.startFrame"` ;
+    setAttr "clip_Ani_01.startFrame" ($clipStartEndTime[1]*10);
+    select $selallcns;
+    string $curs[]=`listConnections -d 1 -t "animCurve"`;
+    select $curs;
+    delete;
+///////////////第二段动画
+    select $selbosscn[0];
+    file -import -type "animImport" -ra true -mergeNamespacesOnClash false
+    -namespace "pao" -options ";targetTime=4;copies=1;option=replace;pictures=0;connect=0;" 
+     -pr -loadReferenceDepth "all" "D:/AniTxt/Ani_02.anim";     
+    $qis=`intField -q -v "startTime"`;
+    $js=`intField -q -v "endTime"`;
+    $pl=`intSliderGrp -q -v "XHCS"`;
+    float $QiShiframe=$qis*$pl;
+    float $allframe=$js*$pl;
+
+    select $selbosscn[0];
+    select `ls -sl-dag -typ "nurbsCurve"`;
+    pickWalk -d up;
+    string $selallcns1[]=`ls -sl`;
+    clip -name "clip_Ani_02" -sc 1 -allAbsolute -startTime $QiShiframe -endTime $allframe "Ani_01";
+    select $selallcns1;
+    string $curs1[]=`listConnections -d 1 -t "animCurve"`;
+    select $curs1;
+    delete;  
+    ////////////////////////  
+    setAttr "clip_Ani_01.startFrame" $yuanshi;
+    select "clip_Ani_01" "clip_Ani_02" ;
+    doBlendClip( "clipEditorPanel1ClipEditor", 3, 0);
+}

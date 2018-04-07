@@ -1,0 +1,309 @@
+#! C:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ addUserKnob {20 User}
+ addUserKnob {41 inputStyle l " info form" T Group1.inputStyle}
+ addUserKnob {41 size T Group1.size}
+ addUserKnob {41 translate T Group1.translate}
+ addUserKnob {41 multiply l color T Group1.multiply}
+ addUserKnob {41 mix T Group1.mix}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 144
+  ypos -82
+ }
+ FrameRange {
+  first_frame {{root.first_frame}}
+  last_frame {{root.last_frame}}
+  time ""
+  name FrameRange1
+  xpos 144
+  ypos -42
+ }
+ Group {
+  name Group1
+  note_font "Bitstream Vera Sans"
+  selected true
+  xpos 144
+  ypos -4
+  addUserKnob {20 Slate t "Slate from input file"}
+  addUserKnob {1 allframe l INVISIBLE +INVISIBLE}
+  allframe "\[python \[value last_frame] - \[value first_frame]+1]"
+  addUserKnob {1 shot2 l INVISIBLE +INVISIBLE}
+  shot2 "\[python nuke.knob('root.name').split('/').pop().split('.').pop(0).split('_').pop(0)]_\[python nuke.knob('root.name').split('/').pop().split('.').pop(0).split('_').pop(1)]"
+  addUserKnob {4 inputStyle l " info form" M {Input Script "" "" ""}}
+  inputStyle Script
+  addUserKnob {1 shot l INVISIBLE +INVISIBLE}
+  shot "\[python nuke.knob('input.file').split('/').pop().split('.').pop(0).split('_').pop(0)]_\[python nuke.knob('input.file').split('/').pop().split('.').pop(0).split('_').pop(1)]"
+  addUserKnob {1 frame_range l INVISIBLE +INVISIBLE}
+  frame_range " \[value first_frame] - \[value last_frame]"
+  addUserKnob {1 artist l INVISIBLE +INVISIBLE}
+  artist "\[python nuke.knob('root.name').split('/').pop().split('.').pop(0).split('_').pop(2)]"
+  addUserKnob {1 date l INVISIBLE +INVISIBLE}
+  date "\[date %Y-%m-%d]"
+  addUserKnob {1 shotNum l INVISIBLE +INVISIBLE}
+  addUserKnob {41 size T frame.size}
+  addUserKnob {41 translate T Transform.translate}
+  addUserKnob {41 multiply l color T color.multiply}
+  addUserKnob {41 mix T Merge1.mix}
+ }
+  Constant {
+   inputs 0
+   channels rgb
+   name Constant1
+   xpos -1149
+   ypos 245
+  }
+  Reformat {
+   type "to box"
+   box_width {{"\[value root.width]"}}
+   box_height {{"\[value root.height]+120"}}
+   box_fixed true
+   name Reformat1
+   xpos -1149
+   ypos 317
+  }
+set N1d74f9c0 [stack 0]
+  FrameRange {
+   first_frame {{root.first_frame}}
+   last_frame {{root.last_frame}}
+   time ""
+   name FrameRange1
+   xpos -1149
+   ypos 349
+  }
+set N2b907d40 [stack 0]
+  Text {
+   message "Crrent frame:00\[frame]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame.size}}
+   yjustify bottom
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]"}}
+   translate {0 {curve}}
+   center {1024 778}
+   name frame1
+   xpos -1041
+   ypos 349
+  }
+  Text {
+   message "Artist:\[value artist]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame.size}}
+   xjustify right
+   yjustify bottom
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]"}}
+   translate {0 {curve}}
+   center {1024 778}
+   name artist
+   xpos -1041
+   ypos 404
+  }
+  set C1d750780 [stack 0]
+  Text {
+   message "frame range:\[value frame_range]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame.size}}
+   xjustify center
+   yjustify bottom
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]"}}
+   translate {0 {curve}}
+   center {1024 778}
+   name frame_range
+   xpos -1041
+   ypos 434
+  }
+  set C1d750af0 [stack 0]
+  Text {
+   message "Date:\[value date]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame.size}}
+   xjustify center
+   yjustify top
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]+120"}}
+   center {1024 778}
+   name date
+   xpos -1041
+   ypos 458
+  }
+  Text {
+   message "Allframe:\[value allframe]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame.size}}
+   xjustify right
+   yjustify top
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]+120"}}
+   center {1024 778}
+   name allframe
+   xpos -1041
+   ypos 484
+  }
+  Text {
+   message "Shot:\[value shot2]\[value shotNum]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame1.size}}
+   yjustify top
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]+120"}}
+   center {1024 778}
+   name shot1
+   xpos -1041
+   ypos 512
+  }
+push $N2b907d40
+  Text {
+   message "Crrent frame:00\[frame]"
+   font C:/Windows/Fonts/arial.ttf
+   yjustify bottom
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]"}}
+   translate {0 {curve}}
+   center {1024 778}
+   name frame
+   xpos -1149
+   ypos 373
+  }
+clone $C1d750780 {
+   xpos -1149
+   ypos 403
+   selected false
+  }
+clone $C1d750af0 {
+   xpos -1149
+   ypos 432
+   selected false
+  }
+  Text {
+   message "Date:\[value date]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame.size}}
+   xjustify center
+   yjustify top
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]+120"}}
+   center {1024 778}
+   name date1
+   xpos -1149
+   ypos 458
+  }
+  Text {
+   message "Allframe:\[value allframe]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame.size}}
+   xjustify right
+   yjustify top
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]+120"}}
+   center {1024 778}
+   name allframe1
+   xpos -1149
+   ypos 482
+  }
+  Text {
+   message "Shot:\[value shot]"
+   font C:/Windows/Fonts/arial.ttf
+   size {{frame.size}}
+   yjustify top
+   Transform 1
+   box {0 0 {"\[value root.width]"} {"\[value root.height]+120"}}
+   center {1024 778}
+   name shot
+   xpos -1149
+   ypos 511
+  }
+  Switch {
+   inputs 2
+   which {{inputStyle}}
+   name Switch2
+   xpos -1149
+   ypos 542
+  }
+  Reformat {
+   type "to box"
+   box_width {{"\[value root.width]"}}
+   box_height {{"\[value root.height]+120"}}
+   box_fixed true
+   resize fit
+   name Reformat3
+   xpos -1149
+   ypos 568
+  }
+  Transform {
+   center {1024 778}
+   name Transform
+   xpos -1149
+   ypos 600
+  }
+  Grade {
+   multiply {1 1 1 1}
+   multiply_panelDropped true
+   name color
+   xpos -1149
+   ypos 626
+  }
+  Input {
+   inputs 0
+   name Input1
+   xpos -1380
+   ypos 626
+  }
+  Reformat {
+   type "to box"
+   box_width {{"\[value root.width]"}}
+   box_height {{"\[value root.height]"}}
+   box_fixed true
+   resize fit
+   name Reformat2
+   xpos -1380
+   ypos 656
+  }
+  Transform {
+   translate {0 60}
+   center {1024 778}
+   name Transform1
+   xpos -1380
+   ypos 682
+  }
+push $N1d74f9c0
+  Dot {
+   name Dot1
+   xpos -1210
+   ypos 321
+  }
+  Merge2 {
+   inputs 2
+   name Merge3
+   xpos -1244
+   ypos 721
+  }
+  Merge2 {
+   inputs 2
+   name Merge1
+   xpos -1149
+   ypos 721
+  }
+  Output {
+   name Output2
+   xpos -1149
+   ypos 805
+  }
+  Viewer {
+   frame_range 1-100
+   input_process false
+   name Viewer1
+   xpos -1355
+   ypos 912
+  }
+ end_group
+ Output {
+  name Output1
+  xpos 144
+  ypos 41
+ }
+end_group

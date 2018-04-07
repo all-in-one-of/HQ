@@ -1,0 +1,96 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ addUserKnob {20 X_RoundLgt}
+ addUserKnob {7 x_direction l "X direction" R -3 3}
+ addUserKnob {7 x_value l "X Value" -STARTLINE R -3 3}
+ addUserKnob {7 y_direction l "Y direction" R -3 3}
+ addUserKnob {7 y_value l "Y Value" -STARTLINE R -3 3}
+ addUserKnob {7 z_direction l "Z direction" R -3 3}
+ addUserKnob {7 z_value l "Z Value" -STARTLINE R -3 3}
+}
+ Input {
+  inputs 0
+  name Normal
+  xpos -233
+  ypos 84
+ }
+ Dot {
+  name Dot1
+  xpos -199
+  ypos 175
+ }
+set N2bc7420 [stack 0]
+ Matrix {
+  channels {-rgba.red -rgba.green rgba.blue}
+  matrix {
+      {0 0 0}
+      {0 {z_direction i} 0}
+      {0 {z_value i} 0}
+    }
+  name Matrix3
+  xpos -128
+  ypos 269
+ }
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle16
+  xpos -121
+  ypos 343
+ }
+push 0
+push $N2bc7420
+ Matrix {
+  channels {rgba.red -rgba.green -rgba.blue}
+  matrix {
+      {0 0 0}
+      {0 {x_direction i} 0}
+      {0 {x_value i} 0}
+    }
+  name Matrix2
+  xpos -368
+  ypos 272
+ }
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle14
+  xpos -344
+  ypos 340
+ }
+push $N2bc7420
+ Matrix {
+  channels {-rgba.red rgba.green -rgba.blue}
+  matrix {
+      {0 0 0}
+      {0 {y_direction i} 0}
+      {0 {y_value i} 0}
+    }
+  name Matrix1
+  xpos -241
+  ypos 276
+ }
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle15
+  xpos -248
+  ypos 335
+ }
+ Merge2 {
+  inputs 3+1
+  operation screen
+  name Merge1
+  xpos -233
+  ypos 401
+ }
+ Output {
+  name Output1
+  xpos -233
+  ypos 501
+ }
+end_group

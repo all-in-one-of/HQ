@@ -1,0 +1,333 @@
+global proc selhidden()
+{
+    if(`window -exists displayWindow`)
+    deleteUI displayWindow;
+    window -t "选择隐藏物体" -widthHeight  400 350 displayWindow;
+   columnLayout -cal "center" -co "left" 3;
+    frameLayout -label " " -labelAlign "bottom" -borderStyle "etchedOut" -w 400;
+    formLayout myformlayout;
+   text -l "选择方式：" selectModeText;
+   radioCollection   myRadioCollection;
+
+    radioButton -label "所有隐藏物体" unVisableButton;
+    radioButton -label "所有显示物体" visableButton;
+    radioButton -label "所有物体" allButton;
+    radioCollection -edit -select unVisableButton myRadioCollection;
+ 
+   formLayout -e 
+        -af selectModeText "top" 5
+		-an selectModeText "bottom"
+		-af selectModeText "left" 100
+		-an selectModeText "right"
+
+              -af unVisableButton "top" 5
+		-an unVisableButton "bottom"
+		-af unVisableButton "left" 170
+		-an unVisableButton "right"
+
+              -af visableButton "top" 25
+		-an visableButton "bottom"
+		-af visableButton "left" 170
+		-an visableButton "right"
+
+              -af allButton "top" 45
+		-an allButton "bottom"
+		-af allButton "left" 170
+		-an allButton "right"
+   myformlayout;
+
+    setParent..;
+    setParent..;
+    frameLayout -label "选择物体类型" -labelAlign "bottom" -borderStyle "etchedOut" -w 400;
+    gridLayout -nrc 3 2 -cellWidthHeight 198 50;
+    button -l "多边形"    -c "selectMesh"    polygonButton;
+    button -l "曲面"   -c "selectSurface" surfaceButton;
+    button -l "曲线"  -c "selectCurve"   curvesButton;
+    button -l "灯光"   -c "selectLight"   lightButton;
+    button -l "摄影机"  -c "selectCamera"  cameraButton;
+    button -l "所有"     -c "selectAll"     allobjButton;
+    setParent..;
+    setParent..;
+    rowLayout -nc 1  -cat 1 "left"200  -rat 1 "top" 6  -cl1 "center";
+     checkBox -label "加选"   -align "left"  addSelectCheckBox1;
+    showWindow;
+     
+}
+global proc listAllObj()
+{
+    global string $allObj[];
+    global string $allMesh[];
+    global string $allSurface[];
+    global string $allCurve[];
+    global string $allCamera[];
+    global string $allLight[];
+    global string $allUnvisMesh[];
+    global string $allUnvisSurface[];
+    global string $allUnvisCurve[];
+    global string $allUnvisLight[];
+    global string $allUnvisCamera[];
+ 
+
+    $allObj=`ls -tr`; 
+    int $i,$mesh_j=0,$k,$surface_j=0,$curve_j=0,$camera_j=0,$light_j=0;
+    int $num=`size($allObj)`;
+    for($i=0;$i<$num;$i++)
+    {string $objShape[]=`pickWalk -d down $allObj[$i]`;
+     if (`objectType $objShape[0]` == "mesh")   
+      {
+        $allMesh[$mesh_j]= $allObj[$i];
+        ++$mesh_j;}
+     if (`objectType $objShape[0]` == "nurbsSurface")   
+      {
+        $allSurface[$surface_j]= $allObj[$i];
+        ++$surface_j;}
+     if (`objectType $objShape[0]` == "nurbsCurve")   
+      {
+        $allCurve[$curve_j]= $allObj[$i];
+        ++$curve_j;} 
+     if (`objectType $objShape[0]` == "camera")   
+      {
+        $allCamera[$camera_j]= $allObj[$i];
+        ++$camera_j;}
+     if (`objectType $objShape[0]` == "ambientLight"
+       ||`objectType $objShape[0]` == "directionalLight"
+       ||`objectType $objShape[0]` == "pointLight"
+       ||`objectType $objShape[0]` == "spotLight"
+       ||`objectType $objShape[0]` == "areaLight"
+       ||`objectType $objShape[0]` == "volumeLight")   
+      {
+        $allLight[$light_j]= $allObj[$i];
+        ++$light_j;}   
+    }
+    listUnvisMesh();
+    listUnvisSurface();
+    listUnvisCurve();
+    listUnvisLight();
+    listUnvisCamera(); 
+}
+
+global proc selectAll()
+{ 
+  global string $allObj[];
+  listAllObj();
+  string $selectType=`radioCollection -q -select  myRadioCollection` ;
+  if($selectType=="allButton") 
+     {select $allObj;}
+  if($selectType=="visableButton")
+     {select -visible $allObj;}
+  if($selectType=="unVisableButton")
+     {select $allObj;
+      select  -visible -d $allObj;}
+}
+global proc selectMesh()
+{ 
+   string $rightSelect[]=`ls -sl`; 
+   global string $allMesh[];
+   global string $allUnvisMesh[];
+   clear($allMesh);
+   clear($allUnvisMesh);
+   listAllObj();
+   string $selectType=`radioCollection -q -select  myRadioCollection` ;
+   int $mySelectmode=`checkBox -q -v addSelectCheckBox1` ;
+   if($mySelectmode==0)
+   {
+    if($selectType=="allButton") 
+       {select  $allMesh;}
+    if($selectType=="visableButton")
+      {select  -visible $allMesh;}
+    if($selectType=="unVisableButton")
+     {select  $allMesh;
+      select  -visible -d $allMesh;}
+   }
+   if($mySelectmode==1)
+   {
+   select $rightSelect;
+    if($selectType=="allButton") 
+       {select -add  $allMesh;}
+    if($selectType=="visableButton")
+      {select  -add  $allMesh;
+       select   -d  $allUnvisMesh;}
+    if($selectType=="unVisableButton")
+     {select -add $allMesh;
+      select -add -visible -d $allMesh;}
+   }   
+}
+global proc selectSurface()
+{
+    string $rightSelect[]=`ls -sl`;
+    global string $allSurface[]; 
+    global string $allUnvisSurface[];
+    clear($allSurface);
+    clear($allUnvisSurface);
+    listAllObj(); 
+   string $selectType=`radioCollection -q -select  myRadioCollection` ;
+   int $mySelectmode=`checkBox -q -v addSelectCheckBox1` ;
+   if($mySelectmode==0)
+   {    
+    if($selectType=="allButton") 
+       {select  $allSurface;}    
+    if($selectType=="visableButton")
+      {select  -visible $allSurface;}
+    if($selectType=="unVisableButton")
+     {select  $allSurface;
+      select  -visible -d $allSurface;} 
+   }
+   if($mySelectmode==1)
+   { 
+   select $rightSelect;    
+    if($selectType=="allButton") 
+       {select -add  $allSurface;}    
+    if($selectType=="visableButton")
+      {select -add  $allSurface;
+       select   -d  $allUnvisSurface;}
+    if($selectType=="unVisableButton")
+     {select -add $allSurface;
+      select -add -visible -d $allSurface;} 
+   }       
+}
+global proc selectCurve()
+{
+    string $rightSelect[]=`ls -sl`;
+    global string $allCurve[]; 
+    global string $allUnvisCurve[];  
+    clear($allCurve);
+    clear($allUnvisCurve);
+    listAllObj(); 
+   string $selectType=`radioCollection -q -select  myRadioCollection` ;
+   int $mySelectmode=`checkBox -q -v addSelectCheckBox1` ;
+   if($mySelectmode==0)
+   { 
+    if($selectType=="allButton") 
+       {select  $allCurve;}    
+    if($selectType=="visableButton")
+      {select  -visible $allCurve;}
+    if($selectType=="unVisableButton")
+     {select  $allCurve;
+      select  -visible -d $allCurve;} 
+    }
+   if($mySelectmode==1)
+   {
+   select $rightSelect; 
+    if($selectType=="allButton") 
+       {select -add $allCurve;}    
+    if($selectType=="visableButton")
+      {select -add  $allCurve;
+       select   -d  $allUnvisCurve;}
+    if($selectType=="unVisableButton")
+     {select -add $allCurve;
+      select -add -visible -d $allCurve;} 
+    }
+         
+}
+global proc selectCamera()
+{
+    string $rightSelect[]=`ls -sl`;
+    global string $allCamera[];
+    global string $allUnvisCamera[];    
+    clear($allCamera);
+    clear($allUnvisCamera);
+    listAllObj();
+   string $selectType=`radioCollection -q -select  myRadioCollection` ;
+   int $mySelectmode=`checkBox -q -v addSelectCheckBox1` ;
+   if($mySelectmode==0)
+   { 
+    if($selectType=="allButton") 
+       {select  $allCamera;}    
+    if($selectType=="visableButton")
+      {select  -visible $allCamera;}
+    if($selectType=="unVisableButton")
+     {select  $allCamera;
+      select  -visible -d $allCamera;} 
+   } 
+   if($mySelectmode==1)
+   {
+   select $rightSelect; 
+    if($selectType=="allButton") 
+       {select -add $allCamera;}    
+    if($selectType=="visableButton")
+      {select -add  $allCamera;
+       select   -d  $allUnvisCamera;}
+    if($selectType=="unVisableButton")
+     {select -add $allCamera;
+      select -add -visible -d $allCamera;} 
+   }  
+}
+global proc selectLight()
+{
+    string $rightSelect[]=`ls -sl`;
+    global string $allLight[];
+    global string $allUnvisLight[];    
+    clear($allLight);
+    clear($allUnvisLight);
+    listAllObj();
+   string $selectType=`radioCollection -q -select  myRadioCollection` ;
+   int $mySelectmode=`checkBox -q -v addSelectCheckBox1` ;
+   if($mySelectmode==0)
+   {
+    if($selectType=="allButton") 
+       {select  $allLight;}    
+    if($selectType=="visableButton")
+      {select  -visible $allLight;}
+    if($selectType=="unVisableButton")
+     {select  $allLight;
+      select  -visible -d $allLight;}
+   } 
+   if($mySelectmode==1)
+   {
+   select $rightSelect;
+    if($selectType=="allButton") 
+       {select -add $allLight;}    
+    if($selectType=="visableButton")
+      {select -add  $allLight;
+       select   -d  $allUnvisLight;}
+    if($selectType=="unVisableButton")
+     {select -add $allLight;
+      select -add -visible -d $allLight;}
+   }    
+}
+global proc listUnvisMesh()
+{
+    global string $allUnvisMesh[];
+    global string $allMesh[];
+    select  $allMesh;
+    select  -visible -d $allMesh;
+    $allUnvisMesh=`ls -sl`; 
+    select -cl;
+}
+global proc listUnvisSurface()
+{
+    global string $allUnvisSurface[];
+    global string $allSurface[];
+    select  $allSurface;
+    select  -visible -d $allSurface;
+    $allUnvisSurface=`ls -sl`; 
+    select -cl;
+}
+global proc listUnvisCurve()
+{
+    global string $allUnvisCurve[];
+    global string $allCurve[];
+    select  $allCurve;
+    select  -visible -d $allCurve;
+    $allUnvisCurve=`ls -sl`; 
+    select -cl;
+}
+global proc listUnvisLight()
+{
+    global string $allUnvisLight[];
+    global string $allLight[];
+    select  $allLight;
+    select  -visible -d $allLight;
+    $allUnvisLight=`ls -sl`; 
+    select -cl;
+}
+global proc listUnvisCamera()
+{
+    global string $allUnvisCamera[];
+    global string $allCamera[];
+    select  $allCamera;
+    select  -visible -d $allCamera;
+    $allUnvisCamera=`ls -sl`; 
+    select -cl;
+}
+selhidden();

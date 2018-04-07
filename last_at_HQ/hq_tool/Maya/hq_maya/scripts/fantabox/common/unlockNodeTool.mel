@@ -1,0 +1,40 @@
+
+global proc unlockNodeTool()
+{
+
+if(`window -q -ex JD_LockNode_Win`)
+{
+deleteUI JD_LockNode_Win;
+};
+window  
+	  -wh 300 200 
+	  -s 1
+	  -mb 1
+	  -t "节点锁定解锁工具"
+	  JD_LockNode_Win;
+columnLayout -adj 1 -cat "both" 10 -rs 15;
+text -l "节点锁定解锁工具";
+separator;
+rowLayout -nc 2 -cw2 150 150 -cl2 "center" "center";
+button -w 120 -h 30 -l "锁定" -c "JD_LockNode_Proc\"1\"";
+button -w 120 -h 30 -l "解锁" -c "JD_LockNode_Proc\"0\"";
+setParent ..;
+
+showWindow JD_LockNode_Win;
+};
+
+
+
+global proc JD_LockNode_Proc(int $JD_LN_Int)
+{
+select -hi;	
+string $JD_Select_Hi[] = `ls -sl`;
+string $JD_LN_For;
+for($JD_LN_For in $JD_Select_Hi)
+{
+lockNode -l $JD_LN_Int $JD_LN_For;
+};
+
+};
+
+unlockNodeTool;

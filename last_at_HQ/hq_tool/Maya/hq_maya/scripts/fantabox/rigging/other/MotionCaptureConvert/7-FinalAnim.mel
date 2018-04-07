@@ -1,0 +1,62 @@
+//////////////////////////////////////////////////////////////
+//动作捕捉转换插件 —— 把捕捉动画转换成TSM设置插件的控制器动画。
+//插件编写人：徐阳
+//2009-8-6 一版 ；2010-4-27 二版
+//////////////////////////////////////////////////////////////
+//生成最终动画
+//躯干
+select -r Character;
+select -add Upper_Body;
+select -add Spine_Pelvis_FK;
+select -add Spine_Middle_FK;
+select -add Spine_Torso_FK;
+select -add Head_Neck;
+select -add Head_FK;
+
+select -add Spine_Pelvis_IK;
+select -add Spine_Middle_IK;
+select -add Spine_Torso_IK;
+//手臂
+select -add LeftArm_Shoulder;
+select -add LeftArm_Arm_Pole_Vector;
+select -add LeftArm_Arm_IK;
+select -add RightArm_Shoulder;
+select -add RightArm_Arm_Pole_Vector;
+select -add RightArm_Arm_IK;
+select -add LeftArm_Upper_Arm;
+select -add LeftArm_Lower_Arm;
+select -add LeftArm_Hand;
+select -add RightArm_Upper_Arm;
+select -add RightArm_Lower_Arm;
+select -add RightArm_Hand;
+//腿
+select -add LeftLeg_IK_Leg;
+select -add LeftLeg_Leg_Pole_Vector;
+select -add RightLeg_IK_Leg;
+select -add RightLeg_Leg_Pole_Vector;
+select -add LeftLeg_Upper_Leg;
+select -add LeftLeg_Lower_Leg;
+select -add LeftLeg_Foot;
+select -add LeftLeg_Toe;
+select -add RightLeg_Upper_Leg;
+select -add RightLeg_Lower_Leg;
+select -add RightLeg_Foot;
+select -add RightLeg_Toe;
+
+
+string $dummyctrl[] = `ls -sl`;
+float $endtime = `playbackOptions -q -maxTime`;
+
+  bakeResults -simulation true -t ("-50:"+$endtime) -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -controlPoints false -shape true ($dummyctrl);
+
+select -cl;
+
+
+////////////////////////////
+channelBoxCommand -break;
+CBdeleteConnection "Character.v";
+ //setAttr Character.visibility 1;
+ 
+ delete dummy_Character;
+
+  print "animation ok！！";

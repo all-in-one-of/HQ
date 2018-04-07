@@ -1,0 +1,77 @@
+#! C:/Program Files/Nuke7.0v6/Nuke7.0.exe -nx
+version 7.0 v6
+Gizmo {
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -299
+  ypos 117
+ }
+ Reformat {
+  name Reformat1
+  xpos -299
+  ypos 179
+ }
+set N3f10a310 [stack 0]
+ Crop {
+  box {10780 0 11760 1200}
+  name Crop2
+  xpos -257
+  ypos 221
+ }
+ Transform {
+  translate {-11760 0}
+  center {5880 600}
+  filter Impulse
+  name Transform1
+  xpos -257
+  ypos 251
+ }
+push $N3f10a310
+ Crop {
+  box {0 0 11760 1200}
+  name Crop3
+  xpos -161
+  ypos 179
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos -161
+  ypos 251
+ }
+push $N3f10a310
+ Crop {
+  box {0 0 980 1200}
+  name Crop1
+  xpos -384
+  ypos 270
+ }
+ Transform {
+  translate {11760 0}
+  center {5880 600}
+  filter Impulse
+  name Transform2
+  xpos -384
+  ypos 325
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos -161
+  ypos 325
+ }
+ Output {
+  name Output1
+  xpos -161
+  ypos 402
+ }
+ Viewer {
+  input_process false
+  name Viewer1
+  selected true
+  xpos -265
+  ypos 535
+ }
+end_group

@@ -1,0 +1,63 @@
+#! /home/zhangkh/Nuke6.3v4/Nuke6.3 -nx
+version 6.3 v4
+Gizmo {
+ tile_color 0xa30000ff
+ addUserKnob {20 User l Data}
+ addUserKnob {26 ""}
+ addUserKnob {41 file l ExrFile T ReadCamData.file}
+ addUserKnob {41 first l "frame range" T ReadCamData.first}
+ addUserKnob {41 before l "" -STARTLINE T ReadCamData.before}
+ addUserKnob {41 last l "" -STARTLINE T ReadCamData.last}
+ addUserKnob {41 after l "" -STARTLINE T ReadCamData.after}
+ addUserKnob {41 frame_mode l frame T ReadCamData.frame_mode}
+ addUserKnob {41 frame l "" -STARTLINE T ReadCamData.frame}
+ addUserKnob {41 origfirst l "original range" T ReadCamData.origfirst}
+ addUserKnob {41 origlast l "" -STARTLINE T ReadCamData.origlast}
+ addUserKnob {41 on_error l "missing frames" T ReadCamData.on_error}
+ addUserKnob {41 reload -STARTLINE T ReadCamData.reload}
+ addUserKnob {26 ""}
+ addUserKnob {22 readcameradata l GenerateCamera T "def createMetaDatCam():\n    node = nuke.toNode('ReadCamData')\n    mDat = node.metadata()\n    reqFields = \['exr/nuke/camera/%s' % i for i in ('focal', 'haperture', 'vaperture', 'matrix')]\n    if not set( reqFields ).issubset( mDat ):\n        nuke.tprint ('no metdata for camera found')\n        return\n    \n    first = node.knob('first').value()\n    last = node.knob('last').value()\n    fRange = nuke.FrameRange('%s-%s' % (first, last))\n    \n    cam = nuke.toNode('CameraData')\n     \n    for k in ( 'focal', 'haperture', 'vaperture', 'matrix'):\n        cam\[k].setAnimated()\n\n    task = nuke.ProgressTask( 'Baking camera from meta data in %s' % node.name() )\n    \n    for curTask, frame in enumerate( fRange ):\n        if task.isCancelled():\n            break\n        task.setMessage( 'processing frame %s' % frame )\n\n        # GET ALL FRAMES\n        for k in ( 'focal', 'haperture', 'vaperture' ):\n            val = float( node.metadata( 'exr/nuke/camera/%s' % k, frame ) )\n            cam\[ k ].setValueAt(  float( val ), frame )\n\n        # CONVERT STRING BACK TO LIST OBJECT AND ASSIGN\n        matrixList = eval( node.metadata('exr/nuke/camera/matrix') )\n        for i, v in enumerate( matrixList ):\n            cam\[ 'matrix' ].setValueAt( v, frame, i)\n        # UPDATE PROGRESS BAR\n        task.setProgress( int( float(curTask) / fRange.frames() *100) )\n\ncreateMetaDatCam()" +STARTLINE}
+ addUserKnob {20 camdata n 1}
+ addUserKnob {41 matrix l Matrix T CameraData.matrix}
+ addUserKnob {41 projection_mode l projection T CameraData.projection_mode}
+ addUserKnob {41 focal l "focal length" T CameraData.focal}
+ addUserKnob {41 haperture l "horiz aperture" T CameraData.haperture}
+ addUserKnob {41 vaperture l "vert aperture" T CameraData.vaperture}
+ addUserKnob {41 near T CameraData.near}
+ addUserKnob {41 far T CameraData.far}
+ addUserKnob {41 win_translate l "window translate" T CameraData.win_translate}
+ addUserKnob {41 win_scale l "window scale" T CameraData.win_scale}
+ addUserKnob {41 winroll l "window roll" T CameraData.winroll}
+ addUserKnob {41 focal_point l "focal distance" T CameraData.focal_point}
+ addUserKnob {41 fstop T CameraData.fstop}
+ addUserKnob {20 endGroup n -1}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -55
+  ypos -420
+ }
+ Camera2 {
+  useMatrix true
+  name CameraData
+  selected true
+  xpos -45
+  ypos -332
+ }
+ Output {
+  name Output1
+  xpos -55
+  ypos -193
+ }
+ Read {
+  inputs 0
+  format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+  origset true
+  version 40
+  name ReadCamData
+  xpos 111
+  ypos -343
+  disable {{"\[python 1\\ -\\ bool(nuke.thisNode()\\\['file'\\].value())]" i}}
+ }
+end_group

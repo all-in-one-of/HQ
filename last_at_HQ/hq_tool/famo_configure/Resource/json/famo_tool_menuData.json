@@ -1,0 +1,85 @@
+{
+    "menuData": [
+        {
+            "menuName": "\u901a\u7528", 
+            "children": [
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\mel_source\\zz01.mel", 
+                    "menuName": "aa"
+                }, 
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "bb"
+                }
+            ]
+        }, 
+        {
+            "menuName": "\u6a21\u578b", 
+            "children": [
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "aa"
+                }, 
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "bb"
+                }
+            ]
+        }, 
+        {
+            "menuName": "\u8bbe\u7f6e", 
+            "children": [
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "aa"
+                }, 
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "bb"
+                }
+            ]
+        }, 
+        {
+            "menuName": "\u52a8\u753b", 
+            "children": [
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "aa"
+                }, 
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "bb"
+                }
+            ]
+        }, 
+        {
+            "menuName": "\u7279\u6548", 
+            "children": [
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "aa"
+                }, 
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "bb"
+                }
+            ]
+        }, 
+        {
+            "menuName": "\u7ec4\u88c5", 
+            "children": [
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "aa"
+                }, 
+                {
+                    "execute": "O:\\mocap\\SJ_ToolBox\\python_tmp\\yeticache2.0.py", 
+                    "menuName": "bb"
+                }
+            ]
+        }
+    ], 
+    "trayIconData": {
+        "toolTip": "\u65b9\u7279\u7535\u5f71\u5de5\u5177\u7bb1"
+    }
+}

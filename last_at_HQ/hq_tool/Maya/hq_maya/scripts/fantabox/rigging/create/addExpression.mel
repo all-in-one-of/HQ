@@ -1,0 +1,1218 @@
+global proc addExpression()
+{
+  if (`window -ex addExpressionWin `) deleteUI addExpressionWin;
+  window
+    -wh 300 50
+    -title "添加自动化表达式"
+    -minimizeButton 0
+    -maximizeButton 0
+    -rtf true
+    -s 1    
+  addExpressionWin; 
+  
+ //columnLayout -adj 1;
+  //scrollLayout scrollLayout;
+  scrollLayout scrollLayout; 
+  
+
+  
+  string $tabs = `tabLayout -innerMarginWidth 5 -innerMarginHeight 5`;
+  
+  string $child1 = ` columnLayout -adj 1`;
+    
+  rowColumnLayout -nc 3 -cw 1 180 -cw 2 50 -cw 3 150;
+    textFieldGrp -label " 指定控制器：" -text "" -cw 1 70 -cw 2 100 ctrlTFG;
+    button -l "<<加载" -c addCtrl; 
+    textFieldGrp -label "命名:" -text"" -cw 1 32 -cw 2 100 expressionPrefixTFG;   
+   setParent..;
+   
+  separator -height 10 -style "in"; 
+
+  columnLayout;
+    checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  translate:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 60 -cw 3 60 -cw 4 60 -cl4 left left left left
+        translateCBG;                
+        
+    checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  rotate:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 60 -cw 3 60 -cw 4 60 -cl4 left left left left
+        rotateCBG;
+    checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  scale:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 60 -cw 3 60 -cw 4 60 -cl4 left left left left
+        scaleCBG;  
+    checkBoxGrp
+        -numberOfCheckBoxes 1
+        -label "  visibility:"        
+        -cw 1 80 -cw 2 60 -cl2 left left
+        visbilityCBG;                          
+  setParent..;
+   
+ separator -height 10 -style "in";
+ 
+ rowColumnLayout -nc 2 -cw 1 120 -cw 2 100; 
+ optionMenuGrp -label "运算："  -columnWidth 1 38 mathOMG;
+         menuItem -label "sin"; 
+         menuItem -label "cos";
+         menuItem -label "noise";
+ checkBox -label "递减" fallOffUpCBX;       
+                         
+ setParent ..;         
+
+ separator -height 10 -style "in" ;
+ 
+ rowColumnLayout -nc 2 -cw 1 80 -cw 2 80;  
+ button -l "规律性表达式" -c createExpression; 
+ 
+ button -l "随机性表达式" -c createRandomExpression;
+  
+ separator -height 5 -style "in"; 
+  
+  setParent ..;
+ setParent ..;
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ 
+ string $child2 = ` columnLayout -adj 1`; 
+   
+  rowColumnLayout -nc 3 -cw 1 150 -cw 2 190 -cw 3 50;
+    textFieldGrp -label "命名:" -text"" -cw 1 32 -cw 2 100 expressionPrefixTFG_V2;
+    textFieldGrp -label " 指定控制器：" -text "" -cw 1 80 -cw 2 100 ctrlTFG_V2;
+    button -l "<<加载" -c addCtrl_V2;    
+   setParent..;
+   
+  separator -height 10 -style "in"; 
+
+    checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  translate:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 80 -cw 3 80 -cw 4 80 -cl4 left left left left
+        translateCBG_V2;
+        
+  rowColumnLayout -nc 4 -cw 1 80 -cw 2 80 -cw 3 80 -cw 4 80; 
+    text -l "";       
+    optionMenuGrp txOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+    optionMenuGrp tyOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+    optionMenuGrp tzOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+   setParent..;            
+        
+    checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  rotate:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 80 -cw 3 80 -cw 4 80 -cl4 left left left left
+        rotateCBG_V2;
+        
+ rowColumnLayout -nc 4 -cw 1 80 -cw 2 80 -cw 3 80 -cw 4 80; 
+    text -l "";       
+    optionMenuGrp rxOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+    optionMenuGrp ryOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+    optionMenuGrp rzOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+   setParent..;                    
+        
+    checkBoxGrp
+        -numberOfCheckBoxes 3
+        -label "  scale:"
+        -labelArray3 "x" "y" "z"
+        -cw 1 80 -cw 2 80 -cw 3 80 -cw 4 80 -cl4 left left left left
+        scaleCBG_V2; 
+                
+ rowColumnLayout -nc 4 -cw 1 80 -cw 2 80 -cw 3 80 -cw 4 80; 
+    text -l "";       
+    optionMenuGrp sxOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+    optionMenuGrp syOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+    optionMenuGrp szOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+   setParent..;                    
+                 
+    checkBoxGrp
+        -numberOfCheckBoxes 1
+        -label "  visibility:"        
+        -cw 1 80 -cw 2 60 -cl2 left left
+        visbilityCBG_V2;  
+        
+  rowColumnLayout -nc 2 -cw 1 80 -cw 2 80; 
+    text -l "";       
+    optionMenuGrp visOMG_V2;
+       menuItem -label "sin";
+       menuItem -label "cos";
+       menuItem -label "noise";
+   setParent..;                   
+                                   
+ separator -height 10 -style "in";
+ 
+ rowColumnLayout -nc 1 -cw 1 100; 
+ optionMenuGrp -label "运算："  -columnWidth 1 38 mathOMG_V2;
+         menuItem -label "sin"; 
+         menuItem -label "cos";
+         menuItem -label "noise";
+                         
+ setParent ..;         
+
+ separator -height 10 -style "in" ;
+ 
+ rowColumnLayout -nc 2 -cw 1 80 -cw 2 80;  
+ button -l "规律性表达式" -c createExpression_V2; 
+ 
+ button -l "随机性表达式" -c createRandomExpression_V2;
+  
+ separator -height 5 -style "in"; 
+  
+  setParent ..;
+ setParent ..;
+
+ tabLayout -edit
+           -tabLabel $child1 "一般表达式" -tabLabel $child2 "高级表达式"
+           $tabs;
+ 
+ showWindow addExpressionWin;  
+}
+
+
+global proc addCtrl()
+{
+ string $selCtrl[] = `ls -sl`;
+ textFieldGrp -e -tx $selCtrl[0] ctrlTFG; 
+}
+
+
+
+
+
+global proc createExpression()
+{
+ string $attributePrefix = `textFieldGrp -q -tx expressionPrefixTFG`; 
+ string $getCtrl = `textFieldGrp -q -tx ctrlTFG`;
+ int $translateX = `checkBoxGrp -q -v1 translateCBG`;
+ int $translateY = `checkBoxGrp -q -v2 translateCBG`;
+ int $translateZ = `checkBoxGrp -q -v3 translateCBG`;  
+ int $rotateX = `checkBoxGrp -q -v1 rotateCBG`;
+ int $rotateY = `checkBoxGrp -q -v2 rotateCBG`; 
+ int $rotateZ = `checkBoxGrp -q -v3 rotateCBG`; 
+ int $scaleX = `checkBoxGrp -q -v1 scaleCBG`;
+ int $scaleY = `checkBoxGrp -q -v2 scaleCBG`;
+ int $scaleZ = `checkBoxGrp -q -v3 scaleCBG`; 
+ int $visibility = `checkBoxGrp -q -v1 visbilityCBG`;
+ int $fallOffUp = `checkBox -q -v fallOffUpCBX`;
+ int $FallOff = 0;
+ 
+ int $GetMathOMG;
+ string $GetMath;
+ $GetMathOMG = `optionMenuGrp -q -sl mathOMG`;
+
+ string $OnOff = "on_off"; //总的自动化开关
+ string $ctrl_OnOff = $getCtrl + "." + $OnOff;
+
+ if(`attributeExists $OnOff $getCtrl`)
+ {
+   print "on_off属性已经存在！";   
+ }  
+ else
+ {
+  addAttr -ln $OnOff  -at double  -min 0 -max 2 -dv 1 $getCtrl; 
+  setAttr -e-keyable true $ctrl_OnOff; 
+  setAttr $ctrl_OnOff 1;     
+ }
+ 
+ 
+ string $timeSwitch = "onTime"; //时间开关
+ string $ctrl_timeSwitch = $getCtrl + "." + $timeSwitch;
+ if(`attributeExists $timeSwitch $getCtrl`)
+ {
+   print "onTime属性已经存在！";   
+ }  
+ else
+ {
+  addAttr -ln $timeSwitch  -at bool $getCtrl; 
+  setAttr -e-keyable true $ctrl_timeSwitch;
+  setAttr $ctrl_timeSwitch 1;     
+ } 
+ 
+ 
+ string $anytime = "anytime"; //自定义开关 
+ string $ctrl_anytime = $getCtrl + "." + $anytime; 
+  if(`attributeExists $anytime $getCtrl`)
+ {
+   print "anytime属性已经存在！";   
+ }  
+ else
+ {
+  addAttr -ln $anytime  -at double $getCtrl; 
+  setAttr -e-keyable true $ctrl_anytime;     
+ }
+ 
+  
+ string $swing = $attributePrefix + "_swing";//amplitude
+ addAttr -ln $swing  -at double $getCtrl;
+ string $ctrl_swing = $getCtrl + "." + $swing;
+ setAttr -e-keyable true $ctrl_swing;
+ setAttr $ctrl_swing 5;
+ 
+ string $fast = $attributePrefix + "_fast";//frequency
+ addAttr -ln $fast  -at double $getCtrl; 
+ string $ctrl_fast = $getCtrl + "." + $fast;
+ setAttr -e-keyable true $ctrl_fast; 
+ setAttr $ctrl_fast 3;
+  
+ string $sine = $attributePrefix + "_sin";//offset
+ addAttr -ln $sine  -at double $getCtrl;  
+ string $ctrl_sine = $getCtrl + "." + $sine;
+ setAttr -e-keyable true $ctrl_sine; 
+ setAttr $ctrl_sine 1;
+    
+ string $fall = $attributePrefix + "_fall"; //transition 
+ addAttr -ln $fall  -at double  -min 0.01 -dv 1 $getCtrl;
+ string $ctrl_fall = $getCtrl + "." + $fall;
+ setAttr -e-keyable true $ctrl_fall; 
+ setAttr $ctrl_fall 1;
+ 
+ string $timeOffset = $attributePrefix + "_timeOffset"; //整体偏移属性
+ addAttr -ln $timeOffset  -at double $getCtrl; 
+ string $ctrl_timeOffset = $getCtrl + "." + $timeOffset;
+ setAttr -e-keyable true $ctrl_timeOffset; 
+ 
+  
+ string $valueOffset = $attributePrefix + "_valueOffset"; //整体偏移属性
+ addAttr -ln $valueOffset  -at double $getCtrl; 
+ string $ctrl_valueOffset = $getCtrl + "." + $valueOffset;
+ setAttr -e-keyable true $ctrl_valueOffset;
+ 
+   
+ 
+
+  
+ 
+/////定义time表达式初始值//////////////////// 
+ 
+ string $getTXexpression = "";
+ string $getTYexpression = ""; 
+ string $getTZexpression = ""; 
+ 
+ string $getRXexpression = "";
+ string $getRYexpression = ""; 
+ string $getRZexpression = ""; 
+ 
+ string $getSXexpression = "";
+ string $getSYexpression = ""; 
+ string $getSZexpression = ""; 
+ 
+ string $getVisexpression = "";  
+ 
+ string $wholeExpression = "";
+ 
+ 
+/////定义自定义时间表达式初始值///////////////
+
+/* 
+ string $getTXexpressionV2 = "";
+ string $getTYexpressionV2 = ""; 
+ string $getTZexpressionV2 = ""; 
+ 
+ string $getRXexpressionV2 = "";
+ string $getRYexpressionV2 = ""; 
+ string $getRZexpressionV2 = ""; 
+ 
+ string $getSXexpressionV2 = "";
+ string $getSYexpressionV2 = ""; 
+ string $getSZexpressionV2 = ""; 
+ 
+ string $getVisexpressionV2 = "";  
+ 
+ string $wholeExpressionV2 = "";
+*/ 
+ 
+ string $selObj[] = `ls -sl`; 
+ 
+ switch($GetMathOMG)
+ {
+   case 1:
+   $GetMath = "sin";
+   break;
+   case 2:
+   $GetMath = "cos";
+   break; 
+   case 3:
+   $GetMath = "noise";    
+ }
+ 
+ 
+
+ 
+
+ 
+  ///translate///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+ if($translateX == 1)
+ {
+   int $tx=0;
+   int $FallOff = 0;   
+   int $objNum = size($selObj);
+   float $multipleTX = 0;            
+   for($tx;$tx<$objNum;$tx++)         
+   {       
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$tx;   
+     }
+     else
+     {
+      $FallOff = $tx+1;   
+     }
+                   
+     $multipleTX = ($objNum-$tx)*0.1;
+     $getTXexpression += $selObj[$tx] + ".translateX = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleTX + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+   }
+ }
+ else{ $getTXexpression = "";}
+ 
+// print $getTXexpression;
+ 
+
+ if($translateY == 1)
+ {
+   int $ty=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleTY = 0;
+   for($ty;$ty<$objNum;$ty++)
+   {
+      //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$ty;   
+     }
+     else
+     {
+      $FallOff = $ty+1;   
+     }     
+                    
+     $multipleTY = ($objNum-$ty)*0.1;
+     $getTXexpression += $selObj[$ty] + ".translateY = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleTY + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+   
+   }
+ }
+ else{ $getTYexpression = "";}
+ 
+// print $getTYexpression;
+ 
+ 
+
+ if($translateZ == 1)
+ {
+   int $tz=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleTZ = 0;
+   for($tz;$tz<$objNum;$tz++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$tz;   
+     }
+     else
+     {
+      $FallOff = $tz+1;   
+     }     
+     
+     $multipleTZ = ($objNum-$tz)*0.1;   
+     $getTXexpression += $selObj[$tz] + ".translateZ = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleTZ + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+  
+   }
+ }
+ else{ $getTZexpression = "";}
+
+// print $getTZexpression;
+ 
+
+///rotate/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  if($rotateX == 1)
+ {
+   int $rx=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleRX = 0;
+   for($rx;$rx<$objNum;$rx++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$rx;   
+     }
+     else
+     {
+      $FallOff = $rx+1;   
+     }     
+     
+     $multipleRX = ($objNum-$rx)*0.1; 
+     $getTXexpression += $selObj[$rx] + ".rotateX = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleRX + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+   }
+ }
+ else{ $getRXexpression = "";}
+ 
+// print $getRXexpression;
+ 
+
+ if($rotateY == 1)
+ {
+   int $ry=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleRY = 0;
+   for($ry;$ry<$objNum;$ry++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$ry;   
+     }
+     else
+     {
+      $FallOff = $ry+1;   
+     }     
+     
+     $multipleRY = ($objNum-$ry)*0.1; 
+     $getTXexpression += $selObj[$ry] + ".rotateY = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleRY + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+  
+   }
+ }
+ else{ $getRYexpression = "";}
+ 
+// print $getRYexpression;
+ 
+ 
+
+ if($rotateZ == 1)
+ {
+   int $rz=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleRZ = 0;
+   for($rz;$rz<$objNum;$rz++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$rz;   
+     }
+     else
+     {
+      $FallOff = $rz+1;   
+     }     
+     
+     $multipleRZ = ($objNum-$rz)*0.1; 
+     $getTXexpression += $selObj[$rz] + ".rotateZ = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleRZ + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+  
+   }
+ }
+ else{ $getRZexpression = "";}
+
+// print $getRZexpression;
+
+
+///scale/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+  if($scaleX == 1)
+ {
+   int $sx=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleSX = 0;
+   for($sx;$sx<$objNum;$sx++)
+   {
+      //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$sx;   
+     }
+     else
+     {
+      $FallOff = $sx+1;   
+     }    
+     
+     $multipleSX = ($objNum-$sx)*0.1;  
+     $getTXexpression += $selObj[$sx] + ".scaleX = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleSX + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + " + 1;\n";  
+
+   }
+ }
+ else{ $getSXexpression = "";}
+ 
+// print $getSXexpression;
+ 
+
+ if($scaleY == 1)
+ {
+   int $sy=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleSY = 0;
+   for($sy;$sy<$objNum;$sy++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$sy;   
+     }
+     else
+     {
+      $FallOff = $sy+1;   
+     }     
+     
+     $multipleSY = ($objNum-$sy)*0.1;  
+     $getTXexpression += $selObj[$sy] + ".scaleY = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleSY + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + " + 1;\n";  
+
+   }
+ }
+ else{ $getSYexpression = "";}
+ 
+// print $getSYexpression;
+ 
+ 
+
+ if($scaleZ == 1)
+ {
+   int $sz=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleSZ = 0;
+   for($sz;$sz<$objNum;$sz++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$sz;   
+     }
+     else
+     {
+      $FallOff = $sz+1;   
+     }     
+     
+     $multipleSZ = ($objNum-$sz)*0.1; 
+     $getTXexpression += $selObj[$sz] + ".scaleZ = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleSZ + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + " + 1;\n";  
+
+   }
+ }
+ else{ $getSZexpression = "";}
+
+// print $getSZexpression;
+
+
+///visibility////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ if($visibility == 1)
+ {
+   int $vis=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleSZ = 0;
+   for($vis;$vis<$objNum;$vis++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$vis;   
+     }
+     else
+     {
+      $FallOff = $vis+1;   
+     }     
+     
+     $multipleVis = ($objNum-$vis)*0.1;      
+     $getTXexpression += $selObj[$vis] + ".visibility = clamp(0,1,((" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleVis + " + " + $ctrl_timeOffset + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + "));\n"; 
+
+   }
+ }
+ else{ $getVisexpression = "";}
+  
+ $wholeExpression = $getTXexpression + $getTYexpression + $getTZexpression + $getRXexpression + $getRYexpression + $getRZexpression + $getSXexpression + $getSYexpression + $getSZexpression +$getVisexpression;
+ 
+ 
+ expression -s $wholeExpression -n ( $attributePrefix + "_automatic");
+ 
+ 
+}
+
+
+
+///////////////////////////////添加random///////////////////////////////////////
+///////////////////////////////添加random///////////////////////////////////////
+///////////////////////////////添加random///////////////////////////////////////
+
+
+
+
+global proc createRandomExpression()
+{
+ string $attributePrefix = `textFieldGrp -q -tx expressionPrefixTFG`; 
+ string $getCtrl = `textFieldGrp -q -tx ctrlTFG`;
+ int $translateX = `checkBoxGrp -q -v1 translateCBG`;
+ int $translateY = `checkBoxGrp -q -v2 translateCBG`;
+ int $translateZ = `checkBoxGrp -q -v3 translateCBG`;  
+ int $rotateX = `checkBoxGrp -q -v1 rotateCBG`;
+ int $rotateY = `checkBoxGrp -q -v2 rotateCBG`; 
+ int $rotateZ = `checkBoxGrp -q -v3 rotateCBG`; 
+ int $scaleX = `checkBoxGrp -q -v1 scaleCBG`;
+ int $scaleY = `checkBoxGrp -q -v2 scaleCBG`;
+ int $scaleZ = `checkBoxGrp -q -v3 scaleCBG`; 
+ int $visibility = `checkBoxGrp -q -v1 visbilityCBG`;
+ int $fallOffUp = `checkBox -q -v fallOffUpCBX`;
+ int $FallOff = 0;
+ 
+ int $GetMathOMG;
+ string $GetMath;
+ $GetMathOMG = `optionMenuGrp -q -sl mathOMG`;
+ string $selObj[] = `ls -sl`;  
+ 
+ 
+ string $IfExpression[] = `listConnections -type "expression" $selObj[0]`;//判断是否存在表达式
+
+ string $listExpression[] = `ls -type "expression" ($attributePrefix + "_automatic")`;
+ 
+  if(size($listExpression) == 1)
+  {
+    delete ($attributePrefix + "_automatic");      
+  }
+ 
+ string $OnOff = "on_off"; //总的自动化开关
+ string $ctrl_OnOff = $getCtrl + "." + $OnOff;
+
+ if(`attributeExists $OnOff $getCtrl`)
+ { 
+ 
+ }  
+ else
+ {
+  addAttr -ln $OnOff  -at double  -min 0 -max 2 -dv 1 $getCtrl; 
+  setAttr -e-keyable true $ctrl_OnOff; 
+  setAttr $ctrl_OnOff 1;     
+ }
+ 
+ 
+ string $timeSwitch = "onTime"; //时间开关
+ string $ctrl_timeSwitch = $getCtrl + "." + $timeSwitch;
+ if(`attributeExists $timeSwitch $getCtrl`)
+ {
+     
+ }  
+ else
+ {
+  addAttr -ln $timeSwitch  -at bool $getCtrl; 
+  setAttr -e-keyable true $ctrl_timeSwitch;
+  setAttr $ctrl_timeSwitch 1;     
+ } 
+ 
+ 
+ string $anytime = "anytime"; //自定义开关 
+ string $ctrl_anytime = $getCtrl + "." + $anytime; 
+  if(`attributeExists $anytime $getCtrl`)
+ {
+ 
+ }  
+ else
+ {
+  addAttr -ln $anytime  -at double $getCtrl; 
+  setAttr -e-keyable true $ctrl_anytime;     
+ }
+ 
+  
+ string $swing = $attributePrefix + "_swing";//amplitude
+ string $ctrl_swing = $getCtrl + "." + $swing;
+ if(`attributeExists $swing $getCtrl`)
+ {
+     
+ }
+ else
+ {
+ addAttr -ln $swing  -at double $getCtrl;
+ setAttr -e-keyable true $ctrl_swing;
+ setAttr $ctrl_swing 5;     
+ }
+
+ 
+ string $fast = $attributePrefix + "_fast";//frequency
+ string $ctrl_fast = $getCtrl + "." + $fast;
+ if(`attributeExists $fast $getCtrl`)
+ {
+     
+ }
+ else
+ {
+ addAttr -ln $fast  -at double $getCtrl; 
+ setAttr -e-keyable true $ctrl_fast; 
+ setAttr $ctrl_fast 3;     
+ }  
+
+  
+ string $sine = $attributePrefix + "_sin";//offset
+ string $ctrl_sine = $getCtrl + "." + $sine;
+ if(`attributeExists $sine $getCtrl`)
+ {
+     
+ }
+ else
+ {
+ addAttr -ln $sine  -at double $getCtrl;  
+ setAttr -e-keyable true $ctrl_sine; 
+ setAttr $ctrl_sine 1;     
+ }  
+
+    
+ string $fall = $attributePrefix + "_fall"; //transition 
+ string $ctrl_fall = $getCtrl + "." + $fall;
+ if(`attributeExists $fall $getCtrl`)
+ {
+     
+ }
+ else
+ {
+ addAttr -ln $fall  -at double  -min 0.01 -dv 1 $getCtrl;
+ setAttr -e-keyable true $ctrl_fall; 
+ setAttr $ctrl_fall 1;     
+ }  
+
+ 
+ string $timeOffset = $attributePrefix + "_timeOffset"; //整体偏移属性
+ string $ctrl_timeOffset = $getCtrl + "." + $timeOffset;
+ if(`attributeExists $timeOffset $getCtrl`)
+ {
+     
+ }
+ else
+ {
+ addAttr -ln $timeOffset  -at double $getCtrl; 
+ setAttr -e-keyable true $ctrl_timeOffset;      
+ }  
+
+ 
+  
+ string $valueOffset = $attributePrefix + "_valueOffset"; //整体偏移属性
+ string $ctrl_valueOffset = $getCtrl + "." + $valueOffset;
+ if(`attributeExists $valueOffset $getCtrl`)
+ {
+     
+ }
+ else
+ {
+ addAttr -ln $valueOffset  -at double $getCtrl; 
+ setAttr -e-keyable true $ctrl_valueOffset;     
+ }  
+
+ 
+
+  
+ 
+
+  
+ 
+/////定义time表达式初始值//////////////////// 
+ 
+ string $getTXexpression = "";
+ string $getTYexpression = ""; 
+ string $getTZexpression = ""; 
+ 
+ string $getRXexpression = "";
+ string $getRYexpression = ""; 
+ string $getRZexpression = ""; 
+ 
+ string $getSXexpression = "";
+ string $getSYexpression = ""; 
+ string $getSZexpression = ""; 
+ 
+ string $getVisexpression = "";  
+ 
+ string $wholeExpression = "";
+ 
+ 
+/////定义自定义时间表达式初始值///////////////
+
+/* 
+ string $getTXexpressionV2 = "";
+ string $getTYexpressionV2 = ""; 
+ string $getTZexpressionV2 = ""; 
+ 
+ string $getRXexpressionV2 = "";
+ string $getRYexpressionV2 = ""; 
+ string $getRZexpressionV2 = ""; 
+ 
+ string $getSXexpressionV2 = "";
+ string $getSYexpressionV2 = ""; 
+ string $getSZexpressionV2 = ""; 
+ 
+ string $getVisexpressionV2 = "";  
+ 
+ string $wholeExpressionV2 = "";
+*/ 
+ 
+
+ 
+ switch($GetMathOMG)
+ {
+   case 1:
+   $GetMath = "sin";
+   break;
+   case 2:
+   $GetMath = "cos";
+   break; 
+   case 3:
+   $GetMath = "noise";    
+ }
+ 
+
+
+
+///获取rand值//////////////////////////////
+
+
+  int $rand=0;
+  float $randNum[];
+  for($rand;$rand<size($selObj);$rand++)  
+  {
+   $randNum[$rand] = `rand 0 360`;
+   // print  ($all[$b]+"\n");  
+  }
+
+
+
+
+ 
+  ///translate///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+ if($translateX == 1)
+ {
+   int $tx=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleTX = 0;
+   for($tx;$tx<$objNum;$tx++)
+   {       
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$tx;   
+     }
+     else
+     {
+      $FallOff = $tx+1;   
+     }     
+     
+     $multipleTX = ($objNum-$tx)*0.1;
+     $getTXexpression += $selObj[$tx] + ".translateX = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleTX + " + " + $ctrl_timeOffset + " + " + $randNum[$tx] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+
+   }
+ }
+ else{ $getTXexpression = "";}
+ 
+// print $getTXexpression;
+ 
+
+ if($translateY == 1)
+ {
+   int $ty=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleTY = 0;
+   for($ty;$ty<$objNum;$ty++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$ty;   
+     }
+     else
+     {
+      $FallOff = $ty+1;   
+     }     
+     
+     $multipleTY = ($objNum-$ty)*0.1;
+     $getTXexpression += $selObj[$ty] + ".translateY = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleTY + " + " + $ctrl_timeOffset + " + " + $randNum[$ty] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+   
+   }
+ }
+ else{ $getTYexpression = "";}
+ 
+// print $getTYexpression;
+ 
+ 
+
+ if($translateZ == 1)
+ {
+   int $tz=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleTZ = 0;
+   for($tz;$tz<$objNum;$tz++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$tz;   
+     }
+     else
+     {
+      $FallOff = $tz+1;   
+     }     
+     
+     $multipleTZ = ($objNum-$tz)*0.1;   
+     $getTXexpression += $selObj[$tz] + ".translateZ = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleTZ + " + " + $ctrl_timeOffset + " + " + $randNum[$tz] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+  
+   }
+ }
+ else{ $getTZexpression = "";}
+
+// print $getTZexpression;
+ 
+
+///rotate/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  if($rotateX == 1)
+ {
+   int $rx=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleRX = 0;
+   for($rx;$rx<$objNum;$rx++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$rx;   
+     }
+     else
+     {
+      $FallOff = $rx+1;   
+     }     
+     
+     $multipleRX = ($objNum-$rx)*0.1; 
+     $getTXexpression += $selObj[$rx] + ".rotateX = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleRX + " + " + $ctrl_timeOffset + " + " + $randNum[$rx] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+  
+   }
+ }
+ else{ $getRXexpression = "";}
+ 
+// print $getRXexpression;
+ 
+
+ if($rotateY == 1)
+ {
+   int $ry=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleRY = 0;
+   for($ry;$ry<$objNum;$ry++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$ry;   
+     }
+     else
+     {
+      $FallOff = $ry+1;   
+     }     
+     
+     $multipleRY = ($objNum-$ry)*0.1; 
+     $getTXexpression += $selObj[$ry] + ".rotateY = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleRY + " + " + $ctrl_timeOffset + " + " + $randNum[$ry] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+  
+   }
+ }
+ else{ $getRYexpression = "";}
+ 
+// print $getRYexpression;
+ 
+ 
+
+ if($rotateZ == 1)
+ {
+   int $rz=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleRZ = 0;
+   for($rz;$rz<$objNum;$rz++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$rz;   
+     }
+     else
+     {
+      $FallOff = $rz+1;   
+     }    
+    
+     $multipleRZ = ($objNum-$rz)*0.1; 
+     $getTXexpression += $selObj[$rz] + ".rotateZ = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleRZ + " + " + $ctrl_timeOffset + " + " + $randNum[$rz] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + ";\n";  
+  
+   }
+ }
+ else{ $getRZexpression = "";}
+
+// print $getRZexpression;
+
+
+///scale/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+  if($scaleX == 1)
+ {
+   int $sx=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleSX = 0;
+   for($sx;$sx<$objNum;$sx++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$sx;   
+     }
+     else
+     {
+      $FallOff = $sx+1;   
+     }     
+     
+     $multipleSX = ($objNum-$sx)*0.1;  
+     $getTXexpression += $selObj[$sx] + ".scaleX = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleSX + " + " + $ctrl_timeOffset + " + " + $randNum[$sx] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + " + 1;\n";  
+
+   }
+ }
+ else{ $getSXexpression = "";}
+ 
+// print $getSXexpression;
+ 
+
+ if($scaleY == 1)
+ {
+   int $sy=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleSY = 0;
+   for($sy;$sy<$objNum;$sy++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$sy;   
+     }
+     else
+     {
+      $FallOff = $sy+1;   
+     }    
+    
+     $multipleSY = ($objNum-$sy)*0.1;  
+     $getTXexpression += $selObj[$sy] + ".scaleY = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleSY + " + " + $ctrl_timeOffset + " + " + $randNum[$sy] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + " + 1;\n";  
+
+   }
+ }
+ else{ $getSYexpression = "";}
+ 
+// print $getSYexpression;
+ 
+ 
+
+ if($scaleZ == 1)
+ {
+   int $sz=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleSZ = 0;
+   for($sz;$sz<$objNum;$sz++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$sz;   
+     }
+     else
+     {
+      $FallOff = $sz+1;   
+     }    
+    
+     $multipleSZ = ($objNum-$sz)*0.1; 
+     $getTXexpression += $selObj[$sz] + ".scaleZ = (" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleSZ + " + " + $ctrl_timeOffset + " + " + $randNum[$sz] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + " + 1;\n";  
+
+   }
+ }
+ else{ $getSZexpression = "";}
+
+// print $getSZexpression;
+
+
+///visibility////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ if($visibility == 1)
+ {
+   int $vis=0;
+   int $FallOff = 0;    
+   int $objNum = size($selObj);
+   float $multipleSZ = 0;
+   for($vis;$vis<$objNum;$vis++)
+   {
+     //////判断是否递增/////////   
+     if($fallOffUp == 0)
+     {
+      $FallOff = $objNum-$vis;   
+     }
+     else
+     {
+      $FallOff = $vis+1;   
+     }     
+     
+     $multipleVis = ($objNum-$vis)*0.1;      
+     $getTXexpression += $selObj[$vis] + ".visibility = clamp(0,1,((" + $GetMath + "((time * " + $ctrl_timeSwitch + " + " + $ctrl_anytime + ") * " + $ctrl_fast + " + " + $ctrl_sine + " * " + $multipleVis + " + " + $ctrl_timeOffset + " + " + $randNum[$vis] + ")*" + $ctrl_swing + "*pow(" + $ctrl_fall + "," + $FallOff + ") + " + $ctrl_valueOffset + ") * " + $ctrl_OnOff + "));\n"; 
+  
+   }    
+ }
+ else{ $getVisexpression = "";}
+
+  
+ $wholeExpression = $getTXexpression + $getTYexpression + $getTZexpression + $getRXexpression + $getRYexpression + $getRZexpression + $getSXexpression + $getSYexpression + $getSZexpression + $getVisexpression;
+ 
+
+ expression -s $wholeExpression -n ( $attributePrefix + "_automatic");   
+     
+   
+}
+addExpression();

@@ -1,0 +1,406 @@
+#! /usr/local/Nuke7.0v6/Nuke7.0 -nx
+version 7.0 v6
+Gizmo {
+ tile_color 0xff5594ff
+ note_font "DejaVu Sans"
+ note_font_size 20
+ mapsize {0.15 0.15}
+ addUserKnob {20 User}
+ addUserKnob {1 note l Note t 备注}
+ note Normal
+ addUserKnob {22 turnoninput l INVISIBLE +INVISIBLE T "node = nuke.thisNode()\nif node.name() == 'VIEWER_INPUT':\n    node\['name'].setValue('H_Maskingwide')\n    \nelse:\n    node\['name'].setValue('VIEWER_INPUT')" +STARTLINE}
+ addUserKnob {6 turnon l INVISIBLE +INVISIBLE +STARTLINE}
+ turnon true
+ addUserKnob {6 turnontext l INVISIBLE +INVISIBLE +STARTLINE}
+ turnontext true
+ addUserKnob {1 shotname l INVISIBLE +INVISIBLE}
+ shotname "\[python \{nuke.knob('input.file').split('/').pop().split('.').pop(0)\}]     \[frame]"
+ addUserKnob {1 artistname l INVISIBLE +INVISIBLE}
+ artistname "\[python \{nuke.knob('input.file').split('/').pop().split('_').pop(2)\}] (\[date %Y/%m/%d])"
+}
+ Text {
+  inputs 0
+  cliptype none
+  opacity 0.5
+  message "Artist: \[value parent.artist]          \[date %Y/%m/%d]         Shotname: \[value parent.Shotname]          Note: \[value parent.note]          Currect Frame: \[frame]          Currect Time: \[python int(int((\[frame]-\[value first_frame])/24)/3600/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/3600)%10]:\[python int(int((\[frame]-\[value first_frame])/24)/60/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/60)%10]:\[python int((int(\[frame]-\[value first_frame])/24)/10)%6]\[python int((\[frame]-\[value first_frame])/24)%10]:\[python int(((\[frame]-\[value first_frame])%24+1)/10)]\[python ((\[frame]-\[value first_frame])%24+1)%10]           AllFrames: \[python \[value input.last_frame] - \[value input.first_frame]+1]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/(input.width*6))<0.24 ? (input.height*0.1*0.7) : (input.width*6/70)   "}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {0 0 {input.width*6 x1555 2880} {input.height x1555 352}}
+  translate {0 {"(input.height/(input.width*6))<0.25 ? (input.height*0.1*0.15) : (input.height*0.1*0.3)"}}
+  center {1372 580}
+  name message4
+  xpos 964
+  ypos 1027
+  disable true
+ }
+ Text {
+  inputs 0
+  cliptype none
+  opacity 0.5
+  message "\[value shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/(input.width*6))<0.24 ? (input.height*0.1*0.7) : (input.width*6/70)   "}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {0 0 {input.width*6 x1555 2880} {input.height x1555 352}}
+  translate {0 {"(input.height/(input.width*6))<0.25 ? (input.height*0.1*0.15) : (input.height*0.1*0.3)"}}
+  center {1372 580}
+  name message1
+  xpos 959
+  ypos 1085
+  disable true
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos 1238
+  ypos 197
+ }
+ Dot {
+  name Dot5
+  xpos 1272
+  ypos 358
+ }
+set N14077260 [stack 0]
+ Crop {
+  box {{(input.width/12)*11} 0 {input.width} {input.height}}
+  reformat true
+  crop false
+  name Crop1
+  xpos 1333
+  ypos 473
+ }
+ Transform {
+  center {240 176}
+  name Transform12
+  xpos 1333
+  ypos 539
+ }
+push $N14077260
+ Crop {
+  box {0 0 {(input.width/12)*11} {input.height}}
+  reformat true
+  crop false
+  name Crop30
+  xpos 1154
+  ypos 471
+ }
+ Transform {
+  translate {{(input.width/11)} 0}
+  center {240 176}
+  name Transform14
+  xpos 1154
+  ypos 521
+ }
+push $N14077260
+ Dot {
+  name Dot2
+  xpos 932
+  ypos 360
+ }
+set Nf801b80 [stack 0]
+ Multiply {
+  value 0
+  name Multiply3
+  xpos 898
+  ypos 564
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge6
+  xpos 1154
+  ypos 570
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge5
+  xpos 1239
+  ypos 693
+ }
+ Transform {
+  translate {0 {input.height*0.1}}
+  center {1440 176}
+  name Transform25
+  xpos 1239
+  ypos 780
+ }
+set Nf8295a0 [stack 0]
+ Dot {
+  name Dot3
+  xpos 1459
+  ypos 784
+ }
+ Multiply {
+  value 0
+  name Multiply1
+  xpos 1425
+  ypos 1386
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 6
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/(input.width))<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{((input.width)/2)} 0}
+  center {1372 580}
+  name a6cock
+  tile_color 0x841616ff
+  xpos 1425
+  ypos 1476
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 6
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/(input.width))<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{-((input.width)/2)} 0}
+  center {1372 580}
+  name a6cock4
+  tile_color 0x891717ff
+  xpos 1425
+  ypos 1522
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 12
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/(input.width))<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{curve} 0}
+  center {1372 580}
+  name a12clock
+  tile_color 0x961919ff
+  xpos 1425
+  ypos 1679
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 9
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/(input.width))<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{-(input.width/12)*3} 0}
+  center {1372 580}
+  name aclock9
+  tile_color 0x8c0000ff
+  xpos 1425
+  ypos 1725
+  cached true
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message 3
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/(input.width))<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width*6))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{(input.width/12)*3} 0}
+  center {1372 580}
+  name aclock3
+  tile_color 0x7f0000ff
+  xpos 1425
+  ypos 1768
+  cached true
+ }
+ Grade {
+  multiply {0.3 1 0.3 1}
+  name Grade1
+  xpos 1425
+  ypos 1836
+ }
+push $Nf8295a0
+ Text {
+  cliptype none
+  opacity 0.5
+  message "Artist: \[value artistname]         Shotname: \[value shotname]-Currect Frame          Note: \[value parent.note]          Currect Time: \[python int(int((\[frame]-\[value first_frame])/24)/3600/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/3600)%10]:\[python int(int((\[frame]-\[value first_frame])/24)/60/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/60)%10]:\[python int((int(\[frame]-\[value first_frame])/24)/10)%6]\[python int((\[frame]-\[value first_frame])/24)%10]:\[python int(((\[frame]-\[value first_frame])%24+1)/10)]\[python ((\[frame]-\[value first_frame])%24+1)%10]           AllFrames: \[python \[value input.last_frame] - \[value input.first_frame]+1]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/input.width)<0.24 ? (input.height*0.1*0.7) : (input.width/70)   "}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {0 0 {input.width x1555 2880} {input.height x1555 352}}
+  translate {0 {"(input.height/input.width)<0.25 ? (input.height*0.1*0.15) : (input.height*0.1*0.3)"}}
+  center {1372 580}
+  name message
+  tile_color 0x770000ff
+  gl_color 0xffffffff
+  xpos 1239
+  ypos 1035
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam06
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/input.width)<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{-(input.width/12)*4} 0}
+  center {1372 580}
+  name cam06
+  tile_color 0x891b1bff
+  xpos 1239
+  ypos 1290
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam01
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/input.width)<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{-(input.width/12)*2} 0}
+  center {1372 580}
+  name cam01
+  tile_color 0x960606ff
+  xpos 1239
+  ypos 1351
+  cached true
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam03
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/input.width)<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{(input.width/12)*2} 0}
+  center {1372 580}
+  name cam03
+  tile_color 0x960606ff
+  xpos 1239
+  ypos 1406
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam04
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/input.width)<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/input.width)<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{(input.width/12)*4} 0}
+  center {1372 580}
+  name cam04
+  tile_color 0x9e0606ff
+  xpos 1239
+  ypos 1463
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message /Cam02
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/input.width)<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/input.width)<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{"((input.height/input.width)<0.25 ?(input.height*0.1*0.7*2.8) : (input.height*0.1*0.4)*2.8)  "} 0}
+  center {1372 580}
+  name cam02
+  tile_color 0xaf0707ff
+  xpos 1239
+  ypos 1620
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message /Cam05
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/input.width)<0.25 ? (input.height*0.1*0.7) : (input.height*0.1*0.4)  "}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/input.width)<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.3))" x490 0}}
+  translate {{"-(input.width/2)+((input.height/input.width)<0.25 ? (input.height*0.1*0.7*2.5) : (input.height*0.1*0.4)*2.5)  "} 0}
+  center {1372 580}
+  name cam05
+  tile_color 0xa51c1cff
+  xpos 1239
+  ypos 1715
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge1
+  xpos 1239
+  ypos 1836
+ }
+push $Nf801b80
+ Dot {
+  name Dot4
+  xpos 751
+  ypos 360
+ }
+ Reformat {
+  type scale
+  scale {1 1.2}
+  filter Impulse
+  name Reformat1
+  xpos 717
+  ypos 1804
+ }
+ Multiply {
+  value 0
+  name Multiply4
+  xpos 717
+  ypos 1924
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 1239
+  ypos 1930
+ }
+set N118f2b20 [stack 0]
+ Output {
+  name Output1
+  xpos 1239
+  ypos 2146
+ }
+push $N118f2b20
+ Viewer {
+  input_process false
+  name Viewer1
+  xpos 543
+  ypos 2410
+ }
+end_group

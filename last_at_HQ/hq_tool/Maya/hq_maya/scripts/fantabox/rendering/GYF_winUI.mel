@@ -1,0 +1,282 @@
+global proc GYF_procject(string $GYF_FileName_a ,string $fileType )
+{
+textField -e -tx $GYF_FileName_a GYF_local_file;
+};
+
+
+global proc GYF_winUI()
+{
+ string $GYF_filebrow = "fileBrowserDialog -m 4  -fc \"GYF_procject\"  -an \"选取要保存到的文件夹\" ";
+
+
+if(`window -q -ex GYF_win`)
+{
+deleteUI GYF_win;
+};
+
+window -wh 420 280
+	   -s 1
+	   GYF_win;
+columnLayout -adj 1;
+text -l "渲三屏工具";
+setParent ..;
+columnLayout -rs 10 -adj 1 -cat "both" 10 ;
+rowLayout -nc 4 -cw4 300 27 33 55;
+textField -en 1 -w 300 GYF_local_file;
+symbolButton -en 1
+	         -w 25
+	         -image "navButtonBrowse.xpm"
+			 -c $GYF_filebrow
+             YY_sysbutton;
+button -w 32 -l "刷新" -c GYF_RT_FileName_SN;
+button -w 32-l "工程" -c GYF_RT_WorkSpace_FN;
+setParent ..;
+rowLayout -nc 6 -cw6 80 85 30 85 30 85;
+text -l "文件名：左：";
+textField -w 80 -tx "Left" GYF_Left_Screen;
+text -l "中：";
+textField -w 80 -tx "Middle" GYF_Middle_Screen;
+text -l "右：";
+textField -w 80 -tx "Right" GYF_Right_Screen;
+setParent ..;
+rowLayout -nc 4 -cw4 110 110 110 60 -cl4 "center" "center" "center" "center" ;
+button -w 100 -l "camL01" -en 0 -c GYF_Panel_Cam_L GYF_RT_L_N;
+button -w 100 -l "camL02" -en 0 -c GYF_Panel_Cam_M GYF_RT_M_N;
+button -w 100 -l "camL03" -en 0 -c GYF_Panel_Cam_R GYF_RT_R_N;
+checkBox -l "默认" -v 1 -cc GYF_RT_Cam_EN GYF_RT_Default;
+setParent ..;
+rowLayout -nc 5 -cw5  130 45 50 45 120;
+//radioButton -l "" ;
+text -l "设定帧数：     起始帧：";
+intField -w 40 -v 1 GYF_RT_ST;
+text -l "结束帧：";
+intField -w 40 -v 24 GYF_RT_ET;;
+button -w 120 -l "获得当前时间线长度" -c GYF_RT_GetTimeLine;
+setParent ..;
+floatSliderGrp -min 0 -max 1 -fmn 0 -fmx 1 -v 1 -f 1 -l "视图缩放比例：" -cw3 95 50 100 GYF_RT_Scale_a;
+//setParent ..;
+rowLayout -nc 4 -cw4 60 60 60 100;
+text -l "视图长度：";
+intField -v 400 GYF_RT_W_A;
+text -l "视图高度：";
+intField -v 240 GYF_RT_H_A;;
+setParent ..;
+button -h 30 -w 100 -l "开始渲染" -c GYF_RT_Render_Button;
+showWindow GYF_win;
+window -e -wh 420 280
+	   -s 1
+	   GYF_win;
+
+    	global string $GYF_RT_PC_La = "modelPanel4";
+		global string $GYF_RT_PC_Ma = "modelPanel2";
+		global string $GYF_RT_PC_Ra = "modelPanel1";
+};
+global proc GYF_RT_FileName_SN()
+{
+//string $GYF_SN = `file -q -sn`;
+//string $GYF_WSP = `workspace -q -fn` + "/images";
+string $GYF_file_sincename = `file -q -sn`;
+if($GYF_file_sincename == "")
+{
+textField -e -tx "请输入视频保存地址或点击工程按钮设定" GYF_local_file;
+};
+if($GYF_file_sincename != "")
+{
+string $GYF_File_DirName = dirname($GYF_file_sincename);
+int $GYF_File_DirName_int = size($GYF_File_DirName);
+string $GYF_File_group[];
+string $GYF_File_tok = `tokenize $GYF_File_DirName "/" $GYF_File_group`;
+int $GYF_File_end_int = size($GYF_File_group) - 1; 
+int $GYF_File_end_int = size($GYF_File_group[$GYF_File_end_int]); 
+string $GYF_File_over_sub = `substring $GYF_File_DirName 1 ($GYF_File_DirName_int - $GYF_File_end_int)` + "images";
+
+textField -e -tx $GYF_File_over_sub GYF_local_file;
+};
+
+};
+
+GYF_RT_FileName_SN();
+///////////////////////////////////////////////////////////////////////////////
+global proc GYF_RT_WorkSpace_FN()
+{
+	string $GYF_WSP = `workspace -q -fn` + "/images";
+textField -e -tx $GYF_WSP GYF_local_file;
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+global proc GYF_Panel_Cam_L()
+{
+	global string $GYF_RT_PC_La;
+	global string $GYF_RT_PC_L;
+$GYF_RT_PC_La =	`getPanel -wf`;
+$GYF_RT_PC_L = `modelPanel -q -cam $GYF_RT_PC_La`;
+button -e -w 100 -l $GYF_RT_PC_L GYF_RT_L_N;		
+};
+
+////////////////////////////////////////////////////////////////////////////////////////
+global proc GYF_Panel_Cam_M()
+{
+	global string $GYF_RT_PC_Ma;
+	global string $GYF_RT_PC_M;	
+	
+string $GYF_RT_PC_Ma =	`getPanel -wf`;
+string $GYF_RT_PC_M = `modelPanel -q -cam $GYF_RT_PC_Ma`;
+button -e -w 100 -l $GYF_RT_PC_M GYF_RT_M_N;		
+};
+////////////////////////////////////////////////////////////////////////////////////////
+global proc GYF_Panel_Cam_R()
+{
+	
+	global string $GYF_RT_PC_Ra;
+	global string $GYF_RT_PC_R;
+string $GYF_RT_PC_Ra =	`getPanel -wf`;
+string $GYF_RT_PC_R = `modelPanel -q -cam $GYF_RT_PC_Ra`;
+button -e -w 100 -l $GYF_RT_PC_R GYF_RT_R_N;		
+};
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+global proc GYF_RT_GetTimeLine()
+{
+	
+int $GYF_RT_TimeLine_Min = `playbackOptions -q -min `;
+int $GYF_RT_TimeLine_Max = `playbackOptions -q -max `;
+intField -e -v $GYF_RT_TimeLine_Min GYF_RT_ST;
+intField -e -v $GYF_RT_TimeLine_Max GYF_RT_ET;
+};
+GYF_RT_GetTimeLine;
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+global proc GYF_RT_Cam_EN()
+{
+	global int $GYF_RT_DF_B;
+$GYF_RT_DF_B = `checkBox -q -v  GYF_RT_Default`;	
+	if($GYF_RT_DF_B == 0)
+	{
+button -e -w 100 -l "左屏名称"  -en 1  GYF_RT_L_N;
+button -e -w 100 -l "中屏名称" -en 1  GYF_RT_M_N;
+button -e -w 100 -l "右屏名称" -en 1  GYF_RT_R_N;
+    }
+else if($GYF_RT_DF_B == 1)
+         {
+button -e -w 100 -l "camL01"  -en 0  GYF_RT_L_N;
+button -e -w 100 -l "camL02"  -en 0  GYF_RT_M_N;
+button -e -w 100 -l "camL03"  -en 0  GYF_RT_R_N;
+        };
+};
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+global proc GYF_RT_Render_Button()
+{
+global string $gMainPane;
+string $GYF_RT_SaveAddress  = `textField -q -tx GYF_local_file`;
+
+string $GYF_RT_LeftName_b   = $GYF_RT_SaveAddress + "\/" + `textField -q  -tx GYF_Left_Screen`;
+
+string $GYF_RT_MiddleName_b = $GYF_RT_SaveAddress + "\/" + `textField -q -tx GYF_Middle_Screen`;
+
+string $GYF_RT_RightName_b  = $GYF_RT_SaveAddress + "\/" + `textField -q -tx GYF_Right_Screen`;
+
+int $GYF_RT_W = `intField -q -v GYF_RT_W_A`;
+
+int $GYF_RT_H = `intField -q -v GYF_RT_H_A`;
+
+int $GYF_RT_Percent = `floatSliderGrp -q -v GYF_RT_Scale_a` *100;
+
+int $GYF_RT_StartTime_a = `intField -q -v  GYF_RT_ST`;
+
+int $GYF_RT_EndTime_a = `intField -q -v  GYF_RT_ET`;
+
+	global int $GYF_RT_DF_B;
+
+	global string $GYF_RT_PC_La;
+	global string $GYF_RT_PC_L;
+	
+	global string $GYF_RT_PC_Ma;
+	global string $GYF_RT_PC_M;
+	
+	global string $GYF_RT_PC_Ra;
+	global string $GYF_RT_PC_R;
+	
+	
+	
+for($GYF_RT_i = 0;$GYF_RT_i < 3; $GYF_RT_i++)
+{
+	
+switch ($GYF_RT_i)
+{
+case 0:
+	string $GYF_RT_sc = $GYF_RT_PC_La;
+	string $GYF_RT_DF_sc = "camL01";
+	string $GYF_RT_FileName = $GYF_RT_LeftName_b;
+	break;
+case 1:
+	string $GYF_RT_sc = $GYF_RT_PC_Ma;
+	string $GYF_RT_DF_sc = "camL02";
+	string $GYF_RT_FileName = $GYF_RT_MiddleName_b;
+	break;
+case 2:
+	string $GYF_RT_sc = $GYF_RT_PC_Ra;
+	string $GYF_RT_DF_sc = "camL03";
+	string $GYF_RT_FileName = $GYF_RT_RightName_b;
+	break;
+	
+		
+};
+
+	if($GYF_RT_DF_B == 0)
+	{	
+		select -cl;
+paneLayout -e -setPane $GYF_RT_sc 1 $gMainPane;
+eval `panelConfiguration -q -cfs panelConfiguration2`;
+setFocus `paneLayout -q -p1 $gMainPane`;
+DisplayShaded;
+modelEditor -e -wos 0 $GYF_RT_sc;
+};
+ if($GYF_RT_DF_B == 1)
+{
+	select -cl;
+	paneLayout -e -setPane modelPanel3 1 $gMainPane;
+eval `panelConfiguration -q -cfs panelConfiguration2`;
+setFocus `paneLayout -q -p1 $gMainPane`;
+DisplayShaded;
+
+lookThroughModelPanel $GYF_RT_DF_sc modelPanel3;
+modelEditor -e -wos 0 modelPanel3;
+};
+
+playblast  -format movie  -filename $GYF_RT_FileName  -st $GYF_RT_StartTime_a -et $GYF_RT_EndTime_a -forceOverwrite -clearCache 0 -viewer 0 -showOrnaments 0 -percent $GYF_RT_Percent -widthHeight $GYF_RT_W $GYF_RT_H;
+
+};
+		
+};
+
+GYF_winUI;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

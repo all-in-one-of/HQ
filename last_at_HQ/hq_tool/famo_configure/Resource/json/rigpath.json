@@ -1,0 +1,93 @@
+{
+    "path": [
+        {
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging": [
+                "buildUp", 
+                "checkTool", 
+                "cleanUp", 
+                "jointChainLocater", 
+                "modifyEditer", 
+                "mopTransfer", 
+                "morphWeight", 
+                "muscleSys", 
+                "wingSys", 
+                "commonTool"
+            ]
+        }, 
+        {
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/mopTransfer": [
+                "listFrameRange.mel", 
+                "motionCaptureConvertTool.mel"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/morphWeight": [
+                "clusterTool_old.mel", 
+                "texChangeTool.py", 
+                "CopySkinWeightJoints.mel"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/buildUp": [
+                "addExpression.mel", 
+                "add_equality_joint.mel", 
+                "Add_locator.mel", 
+                "controlMaker.mel", 
+                "Createobj.mel", 
+                "C_ctrlOnCurve.mel", 
+                "C_jointOnCurve.mel", 
+                "dressRig_adv.mel", 
+                "lz_subCtl_UI.mel", 
+                "polyAttach.py", 
+                "SJ_RiggingTool.py", 
+                "smooth_connectAttr.py", 
+                "softCreateCtrl.py", 
+                "YY_HUV.mel", 
+                "advFaceCtrlAdd.py", 
+                "IkCurStretch.py", 
+                "Pro_Ctrl.py"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/checkTool": [
+                "stateRiggingCheck.py"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/cleanUp": [
+                "removeNameSpace.mel", 
+                "rename.py"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/commonTool": [
+                "rigToolUI.mel"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/muscleSys": [
+                "New_OpenMayaMuscle2013.mel", 
+                "New_OpenMayaMuscle2015.mel", 
+                "New_cMuscleBuilder.mel"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/wingSys": [
+                "PlumeUI.py"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/modifyEditer": [
+                "allHairConnect.py", 
+                "Attr_Link.mel", 
+                "correctiveShapeCmd.py", 
+                "drivenTool.mel", 
+                "jointScale.mel", 
+                "selectSkinJoints.mel", 
+                "MatchingMesh.py", 
+                "mirrorDrivenKey.py", 
+                "un_lock.mel"
+            ], 
+            "O:/hq_tool/Maya/hq_maya/scripts/fantabox/rigging/jointChainLocater": [
+                "MocapCharacter_jnt_adv.mel", 
+                "qunji_jnt_adv.mel"
+            ]
+        }
+    ], 
+    "name": {
+        "morphWeight": "变形权重", 
+        "mopTransfer": "动捕转换", 
+        "cleanUp": "文件清理", 
+        "muscleSys": "创建肌肉系统", 
+        "wingSys": "创建翅膀系统", 
+        "buildUp": "设置创建", 
+        "jointChainLocater": "骨骼链对位", 
+        "modifyEditer": "修改编辑", 
+        "commonTool": "设置常用工具", 
+        "checkTool": "检查工具"
+    }
+}

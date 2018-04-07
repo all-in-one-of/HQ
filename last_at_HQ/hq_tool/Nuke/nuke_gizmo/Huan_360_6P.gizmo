@@ -1,0 +1,159 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ inputs 6
+ tile_color 0xffffff
+ note_font Verdana
+ addUserKnob {20 User}
+ addUserKnob {41 format T Constant3.format}
+}
+ Input {
+  inputs 0
+  name cam06
+  xpos -890
+  ypos 470
+  number 5
+ }
+ Reformat {
+  type "to box"
+  format "2100 1200 0 0 2100 1200 1 2100"
+  box_width {{root.width/6}}
+  box_height {{root.height}}
+  box_fixed true
+  name Reformat1
+  xpos -890
+  ypos 506
+ }
+ set Cc8ad4c00 [stack 0]
+ Transform {
+  translate {{"(\[value root.width]/6)*5"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform19
+  xpos -890
+  ypos 549
+ }
+ Input {
+  inputs 0
+  name cam05
+  xpos -996
+  ypos 471
+  number 4
+ }
+clone $Cc8ad4c00 {
+  xpos -990
+  ypos 505
+  selected false
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*4"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform18
+  xpos -990
+  ypos 552
+ }
+ Input {
+  inputs 0
+  name cam04
+  xpos -1093
+  ypos 471
+  number 3
+ }
+clone $Cc8ad4c00 {
+  xpos -1093
+  ypos 506
+  selected false
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*3"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform17
+  xpos -1093
+  ypos 553
+ }
+ Input {
+  inputs 0
+  name cam03
+  xpos -1202
+  ypos 470
+  number 2
+ }
+clone $Cc8ad4c00 {
+  xpos -1202
+  ypos 508
+  selected false
+ }
+ Transform {
+  translate {{"(\[value root.width]/6)*2"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform6
+  xpos -1202
+  ypos 553
+ }
+ Input {
+  inputs 0
+  name cam02
+  xpos -1306
+  ypos 469
+  number 1
+ }
+clone $Cc8ad4c00 {
+  xpos -1303
+  ypos 507
+  selected false
+ }
+ Transform {
+  translate {{"\[value root.width]/6"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform15
+  xpos -1303
+  ypos 552
+ }
+push 0
+ Input {
+  inputs 0
+  name cam01
+  xpos -1408
+  ypos 457
+ }
+clone $Cc8ad4c00 {
+  xpos -1408
+  ypos 507
+  selected false
+ }
+ Transform {
+  center {1024 778}
+  filter Impulse
+  name Transform16
+  xpos -1408
+  ypos 551
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  name Constant3
+  xpos -1363
+  ypos 612
+ }
+ Merge2 {
+  inputs 7+1
+  also_merge all
+  name Merge20
+  xpos -1119
+  ypos 635
+ }
+ Reformat {
+  name Reformat4
+  xpos -1119
+  ypos 678
+ }
+ Output {
+  name Output1
+  xpos -1119
+  ypos 778
+ }
+end_group

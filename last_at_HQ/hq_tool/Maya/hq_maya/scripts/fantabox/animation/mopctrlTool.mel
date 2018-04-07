@@ -1,0 +1,1904 @@
+//
+//
+//
+//
+//此脚本为修改motion版设置；
+//
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+/////////                       ///////////////////                       ////////////
+/////////                        /////////////////                        ////////////
+//////////                        ///////////////                        /////////////
+//////////                         /////////////                         /////////////
+///////////                         ///////////                         //////////////
+////////////                         //////////                        ///////////////
+////////////                         /////////                        ////////////////
+/////////////                         ///////                        /////////////////
+//////////////                         /////                        //////////////////
+///////////////                        /////                       ///////////////////
+////////////////                       ////                       ////////////////////
+//////////////////                      ///                     //////////////////////
+///////////////////                     //                    ////////////////////////
+/////////////////////                   //                  //////////////////////////
+///////////////////////                  /               /////////////////////////////
+////////////////////////                                //////////////////////////////
+///////////////////////////                           ////////////////////////////////
+/////////////////////////////                         ////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+global proc mopctrlTool()
+{
+if(`window -q -ex YY_motion_modify`)
+{
+	 progressWindow -endProgress;
+	deleteUI YY_motion_modify;
+		
+	                };
+window -wh 150 260
+	    -s 1
+		YY_motion_modify;
+columnLayout -rs 2 -cat "both" 5 -adj 1 ;
+separator;
+text -l "Motion添加设置工具" -fn "boldLabelFont";
+separator;
+setParent ..;
+rowLayout -nc 2 -cw2 70 80;
+text -l "  下颚骨名称";
+textField -w 55 -tx "Chin" YY_Motion_set_xiu;
+setParent ..;
+columnLayout -rs 10 -cat "both" 5 -adj 1;
+button -h 30 -l "修改脚部方向" -c "YY_motion_foot_modify";
+button -w 100 -h 50 -l "添加Motion设置" -c "YY_motion_set";
+button -w 100 -h 30 -l "使用帮助" -c "YY_motion_help";
+showWindow YY_motion_modify;
+
+
+window -e -wh 150 260
+	    -s 1
+		YY_motion_modify;
+};
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_motion_tool()
+	{
+select -r -hi;
+string $YY_sel_one[] = `ls -sl -l`;
+string $YY_jiancha[] = `ls -sl -type "joint"`;
+	string $YY_my[];
+tokenize $YY_sel_one[0] "_" $YY_my;
+int $YY_zifuone = size($YY_my) - 1;
+rename $YY_sel_one[0] $YY_my[$YY_zifuone];
+
+string $YY_fenx[];
+tokenize $YY_jiancha[0] "_" $YY_fenx;
+int $YY_zifu = size($YY_fenx) ;
+string $YY_jia_name = "";
+print $YY_fenx[3];
+for($YY_nci = 0;$YY_nci<size($YY_fenx) - 1;$YY_nci++)
+{
+	
+$YY_jia_name += $YY_fenx[$YY_nci] + "_";
+
+};
+
+searchReplaceNames $YY_jia_name " " "hierarchy";
+	
+};
+
+//////////////////////////////////////////////
+////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+/////////////////maya rename syetem;
+///////////////////////////////////////////////////////////////////////////////
+proc YY_prefixNode(string $prefix, string $node)
+{	
+
+	string $isType[]	= `ls -type transform $node`;
+	if (size($isType) > 0 ) {
+
+	
+		string $nodeName = `substitute ".*|" $node ""`;
+
+		// rename this node
+		//
+		string $newName = `rename $node ( $prefix + $nodeName )`;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+global proc YY_rename_maya(string $YY_sel,string $YY_na)
+{
+         select -r $YY_sel;
+      string $prefix = $YY_na;
+		string $currentNodes[] = eval("listRelatives -pa -ad `ls -sl -l`");	
+		if ( size( $currentNodes ) > 0 ) 
+			{
+			for( $i=0; $i < size( $currentNodes ); $i++ )
+				{
+				YY_prefixNode( $prefix, $currentNodes[$i] );
+			}
+		}
+
+		$currentNodes = `ls -sl -l`;
+
+		if ( size( $currentNodes ) > 0 ) 
+			{
+			for( $i=0; $i < size( $currentNodes ); $i++ )
+				{
+				YY_prefixNode( $prefix, $currentNodes[$i] );
+			}
+		}
+};
+
+////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_motion_set()
+{
+	 progressWindow -endProgress;
+	 
+string $YY_motion_add_con = `confirmDialog -t "添加捕捉设置确认！"
+	          -m "添加设置时可能会出现错误\n建议在添加前保存当前场景。"
+			  -button "添加设置"
+			  -button "暂不添加"`;
+if($YY_motion_add_con == "添加设置")
+
+{
+//int $YY_motion_copy_int = size(`textField -q -tx YY_motion_name_b`);
+//string $YY_motion_copy_string = `textField -q -tx YY_motion_name_b`;
+////////////////////////////////////////////////////////////////////	
+	cycleCheck -e off;
+	int $YY_time = `currentTime -q`;
+	playbackOptions -ast -25 -min -25;
+	
+	currentTime -25;
+
+string $YY_mo_dup[] = `ls -sl -l`;
+string $YY_mo_dup_sn[] = `ls -sl -sn`;
+select -cl;
+for($Yi = 0;$Yi<size($YY_mo_dup);$Yi++)
+{
+		
+progressWindow -min 0  -max 100
+	          -t ("正在为第" + ($Yi+1) + "个角色添加设置，请等待…………")
+			  -st ("正在为第" + ($Yi+1) + "个角色添加设置，已完成 0%")
+			  -isInterruptable true;	
+///////////////////////////////////////////////////////////////////////////////////		
+	setKeyframe -at rotate -at translate  -t $YY_time $YY_mo_dup[$Yi];	
+	setAttr ($YY_mo_dup[$Yi] + ".rotateX") 0;
+	setAttr ($YY_mo_dup[$Yi] + ".rotateY") 0;
+	setAttr ($YY_mo_dup[$Yi] + ".rotateZ") 0;
+setKeyframe -at rotate -t -25 $YY_mo_dup[$Yi];
+
+string $YY_list_name_substring = "";
+string $YY_list_joint_name[] = `listRelatives -type "joint" -c $YY_mo_dup[$Yi]`;
+string $YY_list_Hips_joint_name = $YY_list_joint_name[0];
+if(size($YY_list_joint_name) == 0)
+{
+select -r -hi $YY_mo_dup[$Yi];
+string $YY_list_joint_name_hi[] = `ls -sl -type "joint"`;
+$YY_list_Hips_joint_name = $YY_list_joint_name_hi[0];
+};
+
+
+int $YY_list_joint_name_int = size($YY_list_Hips_joint_name) - 4;
+if ($YY_list_joint_name_int > 0)
+{
+$YY_list_name_substring = `substring $YY_list_Hips_joint_name 1 $YY_list_joint_name_int`;
+};
+
+
+	select -hi $YY_mo_dup[$Yi];
+	string $YY_Moint_j = `textField -q -tx YY_Motion_set_xiu`;
+	select -d ($YY_list_name_substring + $YY_Moint_j);
+////////////////////////////////////////////////////////////////////////////////////////////
+
+	string $YY_mo_list[] = `ls -sl`;
+	
+	for($YY_z = 0;$YY_z <size($YY_mo_list);$YY_z++)
+	{
+string $YY_mo_one_joint = `nodeType $YY_mo_list[$YY_z] `;
+	if($YY_mo_one_joint == "joint")
+	{
+	if($YY_z == 2)
+	{
+
+	};
+	string $YY_atx = $YY_mo_list[$YY_z] + ".rotateX";
+	string $YY_aty = $YY_mo_list[$YY_z] + ".rotateY";
+	string $YY_atz = $YY_mo_list[$YY_z] + ".rotateZ";	
+	/////////////////////////////////////////////////
+	int $YY_kex = `getAttr -se $YY_atx`;
+	if($YY_kex == 1)
+	{setAttr $YY_atx 0;};
+	int $YY_key = `getAttr -se $YY_aty`;
+	if($YY_key == 1)
+	{setAttr $YY_aty 0;};
+	int $YY_kez = `getAttr -se $YY_atz`;
+		if($YY_kez == 1)
+	{setAttr $YY_atz 0;};	
+setKeyframe -at rotate $YY_mo_list[$YY_z];
+	};
+	     };
+	string $YY_mo_an_line = "";
+	
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 5%"
+			   -progress 5;
+
+string $YY_shape[] = `listHistory $YY_mo_dup[$Yi]`;
+string $YY_mo_du_a[];
+string $YY_mo_lin =`tokenize $YY_mo_dup[$Yi] "|" $YY_mo_du_a`;
+int $YY_gang = (size($YY_mo_du_a)) - 1;
+string $YY_name_space[];
+string $YY_na_tok = `tokenize $YY_mo_du_a[$YY_gang] ":" $YY_name_space`;
+
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 6%"
+			   -progress 6;
+/*
+string $YY_list_name_substring = "";
+string $YY_list_joint_name[] = `listRelatives -type "joint" -c $YY_mo_dup[$Yi]`;
+int $YY_list_joint_name_int = size($YY_list_joint_name[0]) - 4;
+if ($YY_list_joint_name_int > 0)
+{
+$YY_list_name_substring = `substring $YY_list_joint_name[0] 1 $YY_list_joint_name_int`;
+};
+*/
+int $YY_name_int = (size($YY_name_space)) -1;
+//print $YY_name_int;
+string $YY_mo_name;
+int $YYH = 0;
+for($YY_xun = 0;$YY_xun<100;$YY_xun++)
+{	
+$YY_mo_name = "YY_motion_" + $YYH + "_" + $YY_name_space[$YY_name_int];
+if(!`objExists $YY_mo_name`)
+{
+break;	
+}else
+{
+$YYH ++;
+};
+};
+print ("qqqqqqqqqq" + $YY_mo_name + "\n");
+
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 7%"
+			   -progress 7;
+
+duplicate -rr -ic -n $YY_mo_name $YY_mo_dup[$Yi];
+
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 9%"
+			   -progress 9;
+
+select -r -hi $YY_mo_name;
+
+string $YY_gh[] = `ls -type "joint" -sl`;
+//string $YY_gh[] = `listRelatives -type "joint" -c $YY_mo_name`;
+select -r -hi $YY_gh[0];
+string $YY_motion_joint[] = `ls -sl`;
+for($i = 0;$i<size($YY_motion_joint);$i++)
+{
+string $YY_mo_no = `nodeType $YY_motion_joint[$i] `;
+	
+	if(($YY_mo_no == "joint") || ($YY_mo_no == "locator")||($YY_mo_no == "mesh")||($YY_mo_no == "nurbsCurve")||($YY_mo_no == "nurbsSurface")||($YY_mo_no == "aimConstraint")||($YY_mo_no == "parentConstraint"))
+	{
+	select -d $YY_motion_joint[$i];	
+        	};	
+                  };
+select -d $YY_mo_name;
+
+delete;
+select -cl;
+//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+	string $YY_prefix_linshi = $YY_mo_name + "_";
+YY_rename_maya($YY_gh[0],$YY_prefix_linshi);
+select -hi $YY_mo_dup[$Yi];
+string $YY_mo_yuan[] = `ls -sl`;	
+////////////////////////////////////////////////////////////
+select -r -hi $YY_mo_dup[$Yi];
+string $YY_mo_yuan_joint[] = `ls -sl -type "joint"`;	
+//////////////////////////////////////////////////////////////////////////////
+
+select -r -hi $YY_mo_name;
+
+//select -r -hi $YY_motion_copy_string;
+
+string $YY_mo_yuan_joint_copy[] = `ls -sl -type "joint"`;
+
+select -cl;
+//////////////////////////////////////////////////////////////////////////
+//////////SET//SetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSet////////////
+////////SETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSET///
+////////SetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSet///////////
+////////SETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSETSET////////
+/////////SetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSetSet/////
+	
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 10%"
+			   -progress 10;
+
+string $YY_new_joint_name = $YY_list_name_substring;
+
+print ("yyyyyyyyyy" + $YY_new_joint_name);
+//string $YY_new_joint_name = $YY_mo_name + "_";
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+string $Pelvis_jn[8] = {($YY_new_joint_name + "Hips"),($YY_new_joint_name + "Spine"),($YY_new_joint_name + "Spine1"),($YY_new_joint_name + "Spine2"),($YY_new_joint_name + "Spine3"),($YY_new_joint_name + "Spine4"),($YY_new_joint_name + "Spine5"),($YY_new_joint_name + "Spine6")};
+
+string $head_jn[5] = {($YY_new_joint_name + "Neck"),($YY_new_joint_name + "Neck1"),($YY_new_joint_name + "Head"),($YY_new_joint_name + "Head_End"),($YY_new_joint_name + "joint_07")};
+/////////////////////////////00000000000000000000000000000///////////111111111111111111111111/////////22222222222222222222222222/////////////////333333333333333333333////////////4444444444444444444444///////////55555555555555555555555555///////6666666666666666666666666666///////////777777777777777777777777777//////////888888888888888888888888/////////
+string $L_leg_jn[9] = {($YY_new_joint_name + "LeftHips_Dummy"),($YY_new_joint_name + "LeftUpLeg"),($YY_new_joint_name + "LeftUpLegRoll"),($YY_new_joint_name + "LeftLeg"),($YY_new_joint_name + "LeftLegRoll"),($YY_new_joint_name + "LeftFoot"),($YY_new_joint_name + "LeftToeBase"),($YY_new_joint_name + "LeftToes_End"),($YY_new_joint_name + "Left_joint01")};
+string $R_leg_jn[9] = {($YY_new_joint_name + "RightHips_Dummy"),($YY_new_joint_name + "RightUpLeg"),($YY_new_joint_name + "RightUpLegRoll"),($YY_new_joint_name + "RightLeg"),($YY_new_joint_name + "RightLegRoll"),($YY_new_joint_name + "RightFoot"),($YY_new_joint_name + "RightToeBase"),($YY_new_joint_name + "RightToes_End"),($YY_new_joint_name + "Right_joint01")};
+///////////ArmJoint////
+/////////////////////////00000000000000000000000000000///////////111111111111111111111111/////////22222222222222222222222222/////////////333333333333333333333/////////////////////4444444444444444444444///////////55555555555555555555555555///////////6666666666666666666666666666///////////777777777777777777777777777//////////888888888888888888888888/////////
+string $L_arm_jn[7] = {($YY_new_joint_name + "LeftShoulder"),($YY_new_joint_name + "LeftArm"),($YY_new_joint_name + "LeftArmRoll"),($YY_new_joint_name + "LeftForeArm"),($YY_new_joint_name + "LeftForeArmRoll" ),($YY_new_joint_name + "LeftHand" ),($YY_new_joint_name + "Leftjoint")};
+string $R_arm_jn[7] = {($YY_new_joint_name + "RightShoulder"),($YY_new_joint_name + "RightArm"),($YY_new_joint_name + "RightArmRoll"),($YY_new_joint_name + "RightForeArm"),($YY_new_joint_name + "RightForeArmRoll" ),($YY_new_joint_name + "RightHand" ),($YY_new_joint_name + "Rightjoint")};
+
+/////////////////////////000000000000000000000///////////111111111111111111111111/////////22222222222222222222222222////////////333333333333333333333//////////////////4444444444444444444444/////////////////55555555555555555555555555///////6666666666666666666666666666///////////777777777777777777777777777//////////888888888888888888888888/////////
+string $L_IK[6] = {($YY_new_joint_name + "L_toe_IK"),($YY_new_joint_name + "L_ball_IK"),($YY_new_joint_name + "L_heel_IK"),($YY_new_joint_name + "L_ankle_IK"),($YY_new_joint_name + "L_shoulder_IK"),($YY_new_joint_name + "L_wrist_roll_IK")};
+string $R_IK[6] = {($YY_new_joint_name + "R_toe_IK"),($YY_new_joint_name + "R_ball_IK"),($YY_new_joint_name + "R_heel_IK"),($YY_new_joint_name + "R_ankle_IK"),($YY_new_joint_name + "R_shoulder_IK"),($YY_new_joint_name + "R_wrist_roll_IK")};
+
+string $L_foot_group[5] = {($YY_new_joint_name + "L_toe_rotateX"),($YY_new_joint_name + "L_ball_rotateX"),($YY_new_joint_name + "L_toe_rotateXY"),($YY_new_joint_name + "L_heel_rotateXY"),($YY_new_joint_name + "L_ankle_rotate")};
+string $R_foot_group[5] = {($YY_new_joint_name + "R_toe_rotateX"),($YY_new_joint_name + "R_ball_rotateX"),($YY_new_joint_name + "R_toe_rotateXY"),($YY_new_joint_name + "R_heel_rotateXY"),($YY_new_joint_name + "R_ankle_rotate")};
+
+string $L_hand_group[4] = {($YY_new_joint_name + "L_wrist_rotateX"),($YY_new_joint_name + "L_hand_group"),($YY_new_joint_name + "L_hand_ctrl_group"),($YY_new_joint_name + "L_shoulder_ctrl_Group")};
+string $R_hand_group[4] = {($YY_new_joint_name + "R_wrist_rotateX"),($YY_new_joint_name + "R_hand_group"),($YY_new_joint_name + "R_hand_ctrl_group"),($YY_new_joint_name + "R_shoulder_ctrl_Group")};
+///////////////////////////////000000000000000000000////////111111111111111111111111////////22222222222222222222222222//////////333333333333333333333///////////4444444444444444444444/////////////55555555555555555555555555///////6666666666666666666666666666////////////777777777777777777777777777///////////////888888888888888888888888888/////////////999999999999999999999999999///////////10///10//10///10//10//10//10///10/////////11//11//11////11////11/////11////11/////12///12///12///12///12///12//12/////13///13///13///13///13///13////////////14////14//14/////14///14///14///15///15///15////15///15///15///15///15////16////16///16//16//16//16//16///16///////17///17//17//17//17//17//17//17//17/////////18/18//18//18//18//18//18///////
+string $YY_ctrl_line[19] = {($YY_new_joint_name + "L_foot"),($YY_new_joint_name + "R_foot"),($YY_new_joint_name + "L_hand"),($YY_new_joint_name + "R_hand"),($YY_new_joint_name + "ctrl_Root"),($YY_new_joint_name + "L_hand_ctrl"),($YY_new_joint_name + "R_hand_ctrl"),($YY_new_joint_name + "figer_ctrl_line"),($YY_new_joint_name + "spinLower_ctrl"),($YY_new_joint_name + "spineMid_ctrl"),($YY_new_joint_name + "spineHigher_ctrl"),($YY_new_joint_name + "spineHigher2_ctrl"),($YY_new_joint_name + "neck_ctrl"),($YY_new_joint_name + "neck01_ctrl"),($YY_new_joint_name + "head_ctrl"),($YY_new_joint_name + "nurbsCircle_copy"),($YY_new_joint_name + "L_shoulder_ctrl"),($YY_new_joint_name + "R_shoulder_ctrl"),($YY_new_joint_name + "Spine3_ctrl")};
+////////////////////////////////////000000000000000000000000000000//////111111111111111111111111111111111////////////222222222222222222222222////////33333333333333333333333333333///////////444444444444444444444444444444///////////5555555555555555555555555555/////////////////666666666666666666666666666666/66666///////////7777777777777777777777777777777777777///////////88888888888888888888888888888888888888////////////999999999999999999999999999999999999999//////////////////////10///10//10//10///10///10///////////////////////////////11//11//11///11//11//11//11/11//////////////////////12///12///12//12///12//12//////////////13///13///13///13///13///13//////////////14///14///14///14///14///14//14//////////15//15//15//15///15//15//15//15/////////////////////16///16//16//16///16////16///////////////////////17//17//17//17//17///////////////////////18///18//18//18//18//18//////////////////19///19//19//19///19///19///19///19////19/////
+string $YY_constrain_group[20] = {($YY_new_joint_name + "L_foot_group"),($YY_new_joint_name + "R_foot_group"),($YY_new_joint_name + "L_hand_con_group"),($YY_new_joint_name + "R_hand_con_group"),($YY_new_joint_name + "ctrl_Root_group"),($YY_new_joint_name +"L_leg_direction_group"),($YY_new_joint_name + "R_leg_direction_group"),($YY_new_joint_name + "L_Hand_direction_group"),($YY_new_joint_name + "R_Hand_direction_group"),($YY_new_joint_name + "Head_direction_Ctrl_group"),($YY_new_joint_name + "L_shoulder_Con_Ctrl_group"),($YY_new_joint_name + "R_shoulder_Con_Ctrl_group"),($YY_new_joint_name + "Neck_Ctrl_group"),($YY_new_joint_name + "Neck01_Ctrl_group"),($YY_new_joint_name + "Head_Ctrl_group"),($YY_new_joint_name + "spinLower_ctrl_group"),($YY_new_joint_name + "spineMiddle_ctrl_group"),($YY_new_joint_name + "spineHigher_ctrl_group"),($YY_new_joint_name + "spineHigher2_ctrl_group"),($YY_new_joint_name + "spineHigher3_ctrl_group")};
+
+string $YY_IK_Constraint[5] = {($YY_new_joint_name + "L_leg_direction"),($YY_new_joint_name + "R_leg_direction"),($YY_new_joint_name + "L_Hand_direction"),($YY_new_joint_name + "R_Hand_direction"),($YY_new_joint_name + "Head_direction_Ctrl")};
+//////////////////////
+string $YY_L_FK[3] = {($YY_new_joint_name + "L_shoulder_FK"),($YY_new_joint_name + "L_forearm_FK"),($YY_new_joint_name + "L_wrist_FK")};
+string $YY_R_FK[3] = {($YY_new_joint_name + "R_shoulder_FK"),($YY_new_joint_name + "R_forearm_FK"),($YY_new_joint_name + "R_wrist_FK")};
+
+string $YY_L_FK_group[3] = {($YY_new_joint_name + "L_shoulder_FK_Group"),($YY_new_joint_name + "L_forearm_FK_Group"),($YY_new_joint_name + "L_wrist_FK_Group")};
+string $YY_R_FK_group[3] = {($YY_new_joint_name + "R_shoulder_FK_Group"),($YY_new_joint_name + "R_forearm_FK_Group"),($YY_new_joint_name + "R_wrist_FK_Group")};
+
+string $YY_dingwei[4] = { "L_foot_lock","R_foot_lock", "L_hand_lock", "R_hand_lock"};
+
+string $YY_lock[4] = {($YY_new_joint_name + "L_foot_lock_group"),($YY_new_joint_name + "R_foot_lock_group"),($YY_new_joint_name + "L_hand_lock_group"),($YY_new_joint_name + "R_hand_lock_group")};
+string $YY_lock_con_name[4] = {($YY_new_joint_name + "L_foot_parentcon"),($YY_new_joint_name + "R_foot_parentcon"),($YY_new_joint_name + "L_hand_parentcon"),($YY_new_joint_name + "R_hand_parentcon")};
+///////////////////////////////////////////////////////////////////////////////////////////////////
+////LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/////////////////////////////
+////LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL/////////////////////////////
+////LegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLeg////////////////////////////
+////LegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLeg//////////////////////
+///////////Add Ik for leftLeg Joint;
+	select -cl;
+ikHandle -sj $L_leg_jn[1] -ee $L_leg_jn[5] -n $L_IK[3];
+ikHandle -sj $L_leg_jn[5] -ee $L_leg_jn[6] -n $L_IK[2];
+ikHandle -sj $L_leg_jn[6] -ee $L_leg_jn[7] -n $L_IK[1];
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////Add Group for Ik;
+group -n $L_foot_group[1] $L_IK[3];
+float $L_toe[3] = `xform -q  -ws -t $L_leg_jn[6]`;
+string $YY_L_ball_Group_scal = $L_foot_group[1] + ".scalePivot";
+string $YY_L_ball_Group_rote = $L_foot_group[1] + ".rotatePivot";
+move $L_toe[0] $L_toe[1] $L_toe[2] $YY_L_ball_Group_scal $YY_L_ball_Group_rote;
+//////////////////////////////////////////////////////////////////////////////////////////
+group -n $L_foot_group[0] $L_IK[2] $L_IK[1];
+string $YY_L_toe_Group_scal = $L_foot_group[0] + ".scalePivot";
+string $YY_L_toe_Group_rote = $L_foot_group[0] + ".rotatePivot";
+move $L_toe[0] $L_toe[1] $L_toe[2] $YY_L_toe_Group_scal $YY_L_toe_Group_rote;
+////////////////////////////////////////////////////////////////////////////////////////////////
+group -n $L_foot_group[2] $L_foot_group[0] $L_foot_group[1];
+float $L_toe_top[3] = `xform -q  -ws -t $L_leg_jn[7]`;
+string $YY_L_toe_01_Group_scal = $L_foot_group[2] + ".scalePivot";
+string $YY_L_toe_01_Group_rote = $L_foot_group[2] + ".rotatePivot";
+move $L_toe_top[0] $L_toe_top[1] $L_toe_top[2] $YY_L_toe_01_Group_scal $YY_L_toe_01_Group_rote ;
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+group -n $L_foot_group[3] $L_foot_group[2];
+float $L_heel[3] = `xform -q  -ws -t $L_leg_jn[5]`;
+string $YY_L_heel_Group_scal = $L_foot_group[3] + ".scalePivot";
+string $YY_L_heel_Group_rote = $L_foot_group[3] + ".rotatePivot";
+move $L_heel[0] $L_heel[1] $L_heel[2] $YY_L_heel_Group_scal $YY_L_heel_Group_rote ;
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 15%"
+			   -progress 15;
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////ctrl Line;
+curve -d 1 -n $YY_ctrl_line[0] -p 1 1 1 -p 1 1 -1 -p -1 1 -1 -p -1 1 1 -p 1 1 1 -p 1 -1 1 -p 1 -1 -1 -p -1 -1 -1 -p -1 -1 1 -p 1 -1 1 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 ;
+curve -d 1 -n ($YY_new_joint_name + "L_line_b") -p 1 1 -1 -p 1 -1 -1 -k 0 -k 1;
+curve -d 1 -n ($YY_new_joint_name + "L_line_c") -p -1 1 -1 -p -1 -1 -1 -k 0 -k 1;
+curve -d 1 -n ($YY_new_joint_name + "L_line_d") -p -1 1 1 -p -1 -1 1 -k 0 -k 1;
+//////////////////////////////////////////////
+select -r -hi ($YY_new_joint_name + "L_line_b");
+string $YY_shape_b[] = `ls -sl -s`;
+/////////////////////////////////////////////
+select -r -hi ($YY_new_joint_name + "L_line_c");
+string $YY_shape_c[] = `ls -sl -s`;
+///////////////////////////////////////
+select -r -hi ($YY_new_joint_name + "L_line_d");
+string $YY_shape_d[] = `ls -sl -s`;
+/////////////////////////////////////////
+parent -add -s $YY_shape_b[0] $YY_shape_c[0] $YY_shape_d[0] $YY_ctrl_line[0];
+
+delete ($YY_new_joint_name + "L_line_b") ($YY_new_joint_name + "L_line_c") ($YY_new_joint_name + "L_line_d");
+////////////////////////////////////////////////
+select -cl;
+duplicate -rr -n $YY_ctrl_line[1] $YY_ctrl_line[0];
+duplicate -rr -n $YY_ctrl_line[2] $YY_ctrl_line[0];
+duplicate -rr -n $YY_ctrl_line[3] $YY_ctrl_line[0];
+duplicate -rr -n $YY_ctrl_line[4] $YY_ctrl_line[0];
+/////////////////////////////////////////////////////////////////////////////
+addAttr -ln $YY_dingwei[0] -at double  -min 0 -max 1 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + "." + $YY_dingwei[0]);
+/////////////////////////////////////////////////////////////////////////////
+addAttr -ln $YY_dingwei[1] -at double  -min 0 -max 1 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + "." + $YY_dingwei[1]);
+/////////////////////////////////////////////////////////////////////////////
+addAttr -ln $YY_dingwei[2] -at double  -min 0 -max 1 -dv 0 $YY_ctrl_line[2];
+setAttr -e -keyable true ($YY_ctrl_line[2] + "." + $YY_dingwei[2]);
+/////////////////////////////////////////////////////////////////////////////
+addAttr -ln $YY_dingwei[3] -at double  -min 0 -max 1 -dv 0 $YY_ctrl_line[3];
+setAttr -e -keyable true ($YY_ctrl_line[3] + "." + $YY_dingwei[3]);
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+float $YY_L_toe_a[3] = `xform -q  -ws -t $L_leg_jn[7]`;//$L_leg_jn[7] == LeftToes_End;
+float $YY_L_gen[3] = `xform -q  -ws -t $L_leg_jn[5]`;//$L_leg_jn[5] == LeftFoot;
+float $YY_L_toe_heel_abs = abs ($YY_L_gen[2] - $YY_L_toe_a[2]);
+
+//float $YY_L_Leg_pivot[2] = {((($YY_L_gen[1] - $YY_L_toe_a[1]))*0.5),((($YY_L_gen[2] - $YY_L_toe_a[2]))*0.5)};
+/////////////////////////////////////////////////////////////////////////////////////////////
+scale -r ($YY_L_toe_heel_abs * 0.4)($YY_L_toe_heel_abs * 0.4)($YY_L_toe_heel_abs * 0.8) $YY_ctrl_line[0];
+
+//move -wd  $YY_L_gen[0] $YY_L_Leg_pivot[0] $YY_L_Leg_pivot[1] $YY_ctrl_line[0] ;
+move -wd  $YY_L_gen[0] $YY_L_gen[1] $YY_L_gen[2] $YY_ctrl_line[0] ;
+string $YY_L_Leg_pivot_scal = $YY_ctrl_line[0] + ".scalePivot";
+string $YY_L_Leg_pivot_rota = $YY_ctrl_line[0] + ".rotatePivot";
+move $YY_L_toe_a[0] $YY_L_toe_a[1] $YY_L_gen[2] $YY_L_Leg_pivot_scal $YY_L_Leg_pivot_rota;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[0];
+parent $L_foot_group[3] $YY_ctrl_line[0];
+
+//////////////////////////
+
+
+
+
+
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 20%"
+			   -progress 20;
+
+
+
+
+
+string $YY_L_foot_s[3] = {($YY_ctrl_line[0] + ".scaleX"),($YY_ctrl_line[0] + ".scaleY"),($YY_ctrl_line[0] + ".scaleZ")};
+setAttr -lock true -keyable false $YY_L_foot_s[0];
+setAttr -lock true -keyable false $YY_L_foot_s[1];
+setAttr -lock true -keyable false $YY_L_foot_s[2];
+/////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+addAttr -ln toe -at double  -min -60 -max 90 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".toe");
+////////////////////////////////////////////
+addAttr -ln twist -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".twist");
+/////////////////////////////////////////////
+addAttr -ln ball -at double  -min 0 -max 60 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".ball");
+//////////////////////////////////////////////////
+addAttr -ln ankle_R_X -at double  -min -60 -max 90 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".ankle_R_X");
+///////////////////////////////////////////////////
+addAttr -ln ankle_R_Y -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".ankle_R_Y");
+///////////////////////////////////////////////////
+addAttr -ln ankle_R_Z -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".ankle_R_Z");
+/////////////////////////////////////////////////////////////
+addAttr -ln tip_R_X -at double  -min 0 -max 90 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".tip_R_X");
+/////////////////////////////////////////////////////////////
+addAttr -ln tip_R_Y -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".tip_R_Y");
+/////////////////////////////////////////////////////////////
+addAttr -ln tip_R_Z -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[0];
+setAttr -e -keyable true ($YY_ctrl_line[0] + ".tip_R_Z");
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".toe") ($L_foot_group[0] + ".rotateX");
+/////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".twist") ($L_IK[3] + ".twist");
+//////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".ball") ($L_foot_group[1] + ".rotateX");
+////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".ankle_R_X") ($L_foot_group[3] + ".rotateX");
+/////////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".ankle_R_Y") ($L_foot_group[3] + ".rotateY");
+/////////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".ankle_R_Z") ($L_foot_group[3] + ".rotateZ");
+/////////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".tip_R_X") ($L_foot_group[2] + ".rotateX");
+///////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".tip_R_Y") ($L_foot_group[2] + ".rotateY");
+///////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[0] + ".tip_R_Z") ($L_foot_group[2] + ".rotateZ");
+///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+setAttr ($L_IK[3] + ".poleVectorX") 0;
+setAttr ($L_IK[3] + ".poleVectorY") 0;
+setAttr ($L_IK[3] + ".poleVectorZ") 0;
+/////////////////////////////////////////////////
+group -n $YY_constrain_group[0] $YY_ctrl_line[0];
+group -n $YY_lock[0] $YY_constrain_group[0];
+string $YY_L_con_Group_scal = $YY_constrain_group[0] + ".scalePivot";
+string $YY_L_con_Group_rote = $YY_constrain_group[0] + ".rotatePivot";
+move $YY_L_gen[0] $YY_L_gen[1] $YY_L_gen[2] $YY_L_con_Group_scal $YY_L_con_Group_rote ;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//addAttr -ln L_hand_lock -at double  -min 0 -max 1 -dv 0 $YY_constrain_group[0];
+//setAttr -e -keyable true ($YY_constrain_group[0] + ".L_hand_lock");
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+curve -d 1 -n $YY_IK_Constraint[0] -p -2 0 0 -p 0 0 2 -p 2 0 0 -p 0.8 0 0 -p 0.8 0 -2 -p -0.8 0 -2 -p -0.8 0 0 -p -2 0 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 ;
+//rename "L_leg_direction";
+curve -d 1 -n ($YY_new_joint_name + "L_leg_one") -p 0 2 0 -p 0 0 2 -p 0 -2 0 -p 0 -0.8 0 -p 0 -0.8 -2 -p 0 0.8 -2 -p 0 0.8 0 -p 0 2 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 ;
+//rename "L_leg_one";
+//setAttr "L_leg_one.rotateZ" 90;
+select -r -hi ($YY_new_joint_name + "L_leg_one");
+string $YY_L_leg_one_shape[] = `ls -sl -s`;
+parent -add -s $YY_L_leg_one_shape[0] $YY_IK_Constraint[0];
+delete ($YY_new_joint_name + "L_leg_one");
+select -cl;
+duplicate -rr -n $YY_IK_Constraint[1] $YY_IK_Constraint[0];
+duplicate -rr -n $YY_IK_Constraint[2] $YY_IK_Constraint[0];
+duplicate -rr -n $YY_IK_Constraint[3] $YY_IK_Constraint[0];
+//duplicate -rr -n $YY_IK_Constraint[4] $YY_IK_Constraint[0];
+scale -r ($YY_L_toe_heel_abs * 0.1)($YY_L_toe_heel_abs * 0.1)($YY_L_toe_heel_abs * 0.1) $YY_IK_Constraint[0];
+///////////////////////////////////////////////////////
+float $L_knee[3] = `xform -q -ws -t $L_leg_jn[3]`;
+xform  -ws -t $L_knee[0] $L_knee[1] (($YY_L_toe_heel_abs * 3) + $YY_L_gen[2]) $YY_IK_Constraint[0];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_IK_Constraint[0];
+poleVectorConstraint -n ($YY_new_joint_name + "L_leg_dir") -w 1 $YY_IK_Constraint[0] $L_IK[3];
+group -n $YY_constrain_group[5] $YY_IK_Constraint[0];
+select -cl;
+////////////////////////////////////////////////////////
+
+
+
+
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 25%"
+			   -progress 25;
+
+
+
+
+
+//////////////////////////////////////////////////////////////
+///RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR/////////////////////////////////////////////////
+////RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR///////////////////////////
+/////LegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLeg////////////////////////
+//////LegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLegLeg////////
+	select -cl;
+ikHandle -sj $R_leg_jn[1] -ee $R_leg_jn[5] -n $R_IK[3];
+ikHandle -sj $R_leg_jn[5] -ee $R_leg_jn[6] -n $R_IK[2];
+ikHandle -sj $R_leg_jn[6] -ee $R_leg_jn[7] -n $R_IK[1];
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////Add Group for Ik;
+group -n $R_foot_group[1] $R_IK[3];
+float $R_toe[3] = `xform -q  -ws -t $R_leg_jn[6]`;
+string $YY_R_ball_Group_scal = $R_foot_group[1] + ".scalePivot";
+string $YY_R_ball_Group_rote = $R_foot_group[1] + ".rotatePivot";
+move $R_toe[0] $R_toe[1] $R_toe[2] $YY_R_ball_Group_scal $YY_R_ball_Group_rote;
+//////////////////////////////////////////////////////////////////////////////////////////
+group -n $R_foot_group[0] $R_IK[2] $R_IK[1];
+string $YY_R_toe_Group_scal = $R_foot_group[0] + ".scalePivot";
+string $YY_R_toe_Group_rote = $R_foot_group[0] + ".rotatePivot";
+move $R_toe[0] $R_toe[1] $R_toe[2] $YY_R_toe_Group_scal $YY_R_toe_Group_rote;
+////////////////////////////////////////////////////////////////////////////////////////////////
+group -n $R_foot_group[2] $R_foot_group[0] $R_foot_group[1];
+float $R_toe_top[3] = `xform -q  -ws -t $R_leg_jn[7]`;
+string $YY_R_toe_01_Group_scal = $R_foot_group[2] + ".scalePivot";
+string $YY_R_toe_01_Group_rote = $R_foot_group[2] + ".rotatePivot";
+move $R_toe_top[0] $R_toe_top[1] $R_toe_top[2] $YY_R_toe_01_Group_scal $YY_R_toe_01_Group_rote ;
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+group -n $R_foot_group[3] $R_foot_group[2];
+float $R_heel[3] = `xform -q  -ws -t $R_leg_jn[5]`;
+string $YY_R_heel_Group_scal = $R_foot_group[3] + ".scalePivot";
+string $YY_R_heel_Group_rote = $R_foot_group[3] + ".rotatePivot";
+move $R_heel[0] $R_heel[1] $R_heel[2] $YY_R_heel_Group_scal $YY_R_heel_Group_rote ;
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////ctrl Line;
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+float $YY_R_toe_a[3] = `xform -q  -ws -t $R_leg_jn[7]`;//$R_leg_jn[7] == ReftToes_End;
+float $YY_R_gen[3] = `xform -q  -ws -t $R_leg_jn[5]`;//$R_leg_jn[5] == ReftFoot;
+float $YY_R_toe_heel_abs = abs ($YY_R_gen[2] - $YY_R_toe_a[2]);
+//float $YY_R_Reg_pivot[2] = {((($YY_R_gen[1] - $YY_R_toe_a[1]))*0.5),((($YY_R_gen[2] - $YY_R_toe_a[2]))*0.5)};
+/////////////////////////////////////////////////////////////////////////////////////////////
+scale -r ($YY_R_toe_heel_abs*0.4)($YY_R_toe_heel_abs * 0.4)($YY_R_toe_heel_abs * 0.8) $YY_ctrl_line[1];
+//move -wd  $YY_R_gen[0] $YY_R_Leg_pivot[0] $YY_R_Leg_pivot[1] $YY_ctrl_line[1] ;
+move -wd  $YY_R_gen[0] $YY_R_gen[1] $YY_R_gen[2] $YY_ctrl_line[1] ;
+string $YY_R_Leg_pivot_scal = $YY_ctrl_line[1] + ".scalePivot";
+string $YY_R_Leg_pivot_rota = $YY_ctrl_line[1] + ".rotatePivot";
+move $YY_R_toe_a[0] $YY_R_toe_a[1] $YY_R_gen[2] $YY_R_Leg_pivot_scal $YY_R_Leg_pivot_rota;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[1];
+parent $R_foot_group[3] $YY_ctrl_line[1];
+//////////////////////////
+string $YY_R_foot_s[3] = {($YY_ctrl_line[1] + ".scaleX"),($YY_ctrl_line[1] + ".scaleY"),($YY_ctrl_line[1] + ".scaleZ")};
+setAttr -lock true -keyable false $YY_R_foot_s[0];
+setAttr -lock true -keyable false $YY_R_foot_s[1];
+setAttr -lock true -keyable false $YY_R_foot_s[2];
+/////////////////////////////////////////
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 30%"
+			   -progress 30;
+///////////////////////////////////////////////////////////////
+addAttr -ln toe -at double  -min -60 -max 90 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".toe");
+////////////////////////////////////////////
+addAttr -ln twist -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".twist");
+/////////////////////////////////////////////
+addAttr -ln ball -at double  -min 0 -max 60 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".ball");
+//////////////////////////////////////////////////
+addAttr -ln ankle_R_X -at double  -min -60 -max 90 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".ankle_R_X");
+///////////////////////////////////////////////////
+addAttr -ln ankle_R_Y -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".ankle_R_Y");
+///////////////////////////////////////////////////
+addAttr -ln ankle_R_Z -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".ankle_R_Z");
+/////////////////////////////////////////////////////////////
+addAttr -ln tip_R_X -at double  -min 0 -max 90 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".tip_R_X");
+/////////////////////////////////////////////////////////////
+addAttr -ln tip_R_Y -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".tip_R_Y");
+/////////////////////////////////////////////////////////////
+addAttr -ln tip_R_Z -at double  -min -90 -max 90 -dv 0 $YY_ctrl_line[1];
+setAttr -e -keyable true ($YY_ctrl_line[1] + ".tip_R_Z");
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".toe") ($R_foot_group[0] + ".rotateX");
+/////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".twist") ($R_IK[3] + ".twist");
+//////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".ball") ($R_foot_group[1] + ".rotateX");
+////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".ankle_R_X") ($R_foot_group[3] + ".rotateX");
+/////////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".ankle_R_Y") ($R_foot_group[3] + ".rotateY");
+/////////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".ankle_R_Z") ($R_foot_group[3] + ".rotateZ");
+/////////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".tip_R_X") ($R_foot_group[2] + ".rotateX");
+///////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".tip_R_Y") ($R_foot_group[2] + ".rotateY");
+///////////////////////////////////////////////////////////////
+connectAttr -f ($YY_ctrl_line[1] + ".tip_R_Z") ($R_foot_group[2] + ".rotateZ");
+///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+setAttr ($R_IK[3] + ".poleVectorX") 0;
+setAttr ($R_IK[3] + ".poleVectorY") 0;
+setAttr ($R_IK[3] + ".poleVectorZ") 0;
+/////////////////////////////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[1] $YY_ctrl_line[1];
+group -n $YY_lock[1] $YY_constrain_group[1];
+string $YY_R_con_Group_scal = $YY_constrain_group[1] + ".scalePivot";
+string $YY_R_con_Group_rote = $YY_constrain_group[1] + ".rotatePivot";
+move $YY_R_gen[0] $YY_R_gen[1] $YY_R_gen[2] $YY_R_con_Group_scal $YY_R_con_Group_rote ;
+///////////////////////////////////////////////////////////////////////////////////////////
+scale -r ($YY_R_toe_heel_abs * 0.1)($YY_R_toe_heel_abs * 0.1)($YY_R_toe_heel_abs * 0.1) $YY_IK_Constraint[1];
+///////////////////////////////////////////////////////
+float $R_knee[3] = `xform -q -ws -t $R_leg_jn[3]`;
+xform  -ws -t $R_knee[0] $R_knee[1] (($YY_L_toe_heel_abs * 3) + $YY_L_gen[2]) $YY_IK_Constraint[1];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_IK_Constraint[1];
+poleVectorConstraint -n ($YY_new_joint_name + "R_leg_dir") -w 1 $YY_IK_Constraint[1] $R_IK[3];
+group -n $YY_constrain_group[6] $YY_IK_Constraint[1];
+select -cl;
+/////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+////////L_HAND___L_HAND___L_HAND___L_HAND___L_HAND___L_HAND___L_HAND;
+////////L_HAND___L_HAND___L_HAND___L_HAND___L_HAND___L_HAND___L_HAND;
+////////L_HAND___L_HAND___L_HAND___L_HAND___L_HAND___L_HAND___L_HAND;
+////////L_HAND___L_HAND___L_HAND___L_HAND___L_HAND___L_HAND___L_HAND;
+ikHandle -sj $L_arm_jn[1] -ee $L_arm_jn[5] -n $L_IK[4];
+ikHandle -sj $L_arm_jn[5] -ee $L_arm_jn[6] -n $L_IK[5];
+group -n $L_hand_group[0] $L_IK[5];
+//////////////////////////////////////////////
+float $YY_L_wrist[3] = `xform -q  -ws -t $L_arm_jn[5]`;
+xform -os -piv $YY_L_wrist[0] $YY_L_wrist[1] $YY_L_wrist[2] $L_hand_group[0];
+group -n $L_hand_group[1] $L_hand_group[0] $L_IK[4];
+xform -os -piv $YY_L_wrist[0] $YY_L_wrist[1] $YY_L_wrist[2] $L_hand_group[1];
+///////////////////////////////////////////////
+select -r $YY_ctrl_line[2];
+////////////////////////////////////
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 35%"
+			   -progress 35;
+
+float $L_hand_wrist_zhi[3] = `xform -q -ws -t $L_arm_jn[5]`;
+float $L_hand_L_forearm_zhi[3] = `xform -q -t $L_arm_jn[3]`;
+float $L_hand_chang= abs ($L_hand_wrist_zhi[0] - $L_hand_L_forearm_zhi[0]);
+xform -cp $YY_ctrl_line[2];//L_hand;
+xform -t $L_hand_wrist_zhi[0] $L_hand_wrist_zhi[1] $L_hand_wrist_zhi[2] $YY_ctrl_line[2];//L_hand;
+scale ($YY_L_toe_heel_abs * 0.3)($YY_L_toe_heel_abs * 0.3)($YY_L_toe_heel_abs * 0.3) $YY_ctrl_line[2];//L_hand;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[2];//L_hand;
+parent $L_hand_group[1] $YY_ctrl_line[2];//L_hand;
+setAttr ($L_IK[4] + ".poleVectorX") 0;
+setAttr ($L_IK[4] + ".poleVectorY") 0;
+setAttr ($L_IK[4] + ".poleVectorZ") 0;
+//////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+curve -d 3 -n $YY_ctrl_line[5] -p -0.0814728 0 -0.0793653 -p -0.0298348 0 -0.0894304 -p 0.0296802 0 -0.0881175 -p 0.080443 0 -0.0894304 -p 0.109784 0 -0.0884507 -p 0.120679 0 -0.0781611 -p 0.109784 0 -0.0675689 -p 0.0716518 0 -0.0675689 -p 0.0425988 0 -0.0660557 -p 0.0365461 0 -0.0639372 -p 0.0432041 0 -0.0618188 -p 0.116442 0 -0.0648451 -p 0.138231 0 -0.0663583 -p 0.147008 0 -0.0554635 -p 0.135749 0 -0.0452178 -p 0.114077 0 -0.0457736 -p 0.048781 0 -0.0421614 -p 0.0368332 0 -0.0396608 -p 0.0518374 0 -0.0391051 -p 0.116022 0 -0.0404943 -p 0.150754 0 -0.0407722 -p 0.157978 0 -0.0310473 -p 0.151309 0 -0.0190995 -p 0.115466 0 -0.0177103 -p 0.0526709 0 -0.0149317 -p 0.0396118 0 -0.0129867 -p 0.0526709 0 -0.0121532 -p 0.1163 0 -0.0129867 -p 0.138528 0 -0.0129867 -p 0.144919 0 -0.00381755 -p 0.141306 0 0.00785233 -p 0.0796228 0 0.00896375 -p 0.042946 0 0.0100752 -p 0.00126789 0 0.0298028 -p 0.0229405 0 0.0453627 -p 0.0337768 0 0.0645346 -p 0.0321097 0 0.084818 -p 0.0234962 0 0.0878744 -p 0.0168277 0 0.0853737 -p 0.0054357 0 0.0678689 -p -0.00956843 0 0.0586997 -p -0.0573594 0 0.0348042 -p -0.0812549 0 -0.00131686 -p -0.0814728 0 -0.0793653 -k 0 -k 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 25 -k 26 -k 27 -k 28 -k 29 -k 30 -k 31 -k 32 -k 33 -k 34 -k 35 -k 36 -k 37 -k 38 -k 39 -k 40 -k 41 -k 41 -k 41 ;
+//rename L_hand_ctrl;
+duplicate -rr -n $YY_ctrl_line[6] $YY_ctrl_line[5];
+scale -r -1 1 1 $YY_ctrl_line[6];
+//scale -r 1 1 1 $YY_ctrl_line[6];
+//makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[6];
+///////////////////////////////////////////////////////////
+float $L_wrist_roll_ws[3] = `xform -q -ws -t $L_arm_jn[6]`;
+move $L_wrist_roll_ws[0] $L_wrist_roll_ws[1] $L_wrist_roll_ws[2] $YY_ctrl_line[5];
+move -r -os -wd($YY_R_toe_heel_abs*0.16) ($YY_R_toe_heel_abs*0.1) ($YY_R_toe_heel_abs*0) $YY_ctrl_line[5];
+scale -r ($YY_R_toe_heel_abs * 3)($YY_R_toe_heel_abs * 3)($YY_R_toe_heel_abs * 3) $YY_ctrl_line[5];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[5];
+group -n $L_hand_group[2] $YY_ctrl_line[5];
+parent $L_hand_group[2] $L_arm_jn[6];//Leftjoint;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".translateX");//"L_hand_ctrl.tx";
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".translateY");
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".translateZ");
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".rotateX");
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".rotateY");
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".rotateZ");
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".scaleX");
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".scaleZ");
+setAttr -lock true -keyable false ($YY_ctrl_line[5] + ".visibility");
+//////////////////////////////////////////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($L_hand_group[2] + ".translateX");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".translateY");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".translateZ");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".rotateX");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".rotateY");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".rotateZ");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".scaleX");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".scaleY");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".scaleZ");
+setAttr -lock true -keyable false ($L_hand_group[2] + ".visibility");
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+addAttr -ln thumb -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[5];
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".thumb");
+/////////////////////////////////////////////////////////
+addAttr -ln index -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[5];
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".index");
+/////////////////////////////////////////////////////////
+addAttr -ln middle -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[5];//L_hand_ctrl;
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".middle");
+/////////////////////////////////////////////////////////
+addAttr -ln Ring -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[5];
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".Ring");
+/////////////////////////////////////////////////////////
+addAttr -ln Pinky -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[5];
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".Pinky");
+/////////////////////////////////////////////////////////
+addAttr -ln thumbY -at double  -min -45 -max 45 -dv 0 $YY_ctrl_line[5];
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".thumbY");
+/////////////////////////////////////////////////////////
+addAttr -ln open -at double  -min -10 -max 10 -dv 0 $YY_ctrl_line[5];
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".open");
+/////////////////////////////////////////////////////////
+addAttr -ln fist -at long  -min 0 -max 10 -dv 0 $YY_ctrl_line[5];
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".fist");
+/////////////////////////////////////////////////////////
+addAttr -ln show_all -at long  -min 0 -max 1 -dv 0 $YY_ctrl_line[5];
+setAttr -e -keyable true ($YY_ctrl_line[5] + ".show_all");
+/////////////////////////////////////////////////////////
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 40%"
+			   -progress 40;
+//////////////////////////////////////////////////////////////Add Finger Ctrl Syetem;
+////////////////////////////////////////////////////////////////////////////////////
+curve -n $YY_ctrl_line[7] -d 3 -p 0 0 0 -p 0 0.0643642 0 -p 0 0.195179 0 -p 0 0.269212 0 -p 0 0.303486 0 -p 0 0.311092 0 -p 0 0.313329 0.00339209 -p 0 0.329882 0.0866058 -p 0 0.426219 0.13977 -p 0 0.539035 0.109273 -p 0 0.58616 -0.000336127 -p 0 0.538364 -0.104055 -p 0 0.444115 -0.141113 -p 0 0.335996 -0.0989101 -p 0 0.314 -0.0265828 -p 0 0.313288 -0.0044519 -p 0 0.311271 -0.00165953 -p 0 0.30375 -3.32413e-005 -k 0 -k 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 15 -k 15 ;
+rotate -r -os 0 0 90 $YY_ctrl_line[7];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[7];
+string $L_Hand_Finger_Ctrl[15] = {($YY_new_joint_name + "L_thumb_palm_ctrl"),($YY_new_joint_name + "L_thumb1_ctrl"),($YY_new_joint_name + "L_thumb2_ctrl"),($YY_new_joint_name + "L_Index01_ctrl"),($YY_new_joint_name + "L_Index02_ctrl"),($YY_new_joint_name + "L_Index03_ctrl"),($YY_new_joint_name + "L_Middle01_ctrl"),($YY_new_joint_name + "L_Middle02_ctrl"),($YY_new_joint_name + "L_Middle03_ctrl"),($YY_new_joint_name + "L_Ring01_ctrl"),($YY_new_joint_name + "L_Ring02_ctrl"),($YY_new_joint_name + "L_Ring03_ctrl"),($YY_new_joint_name + "L_Pinky01_ctrl"),($YY_new_joint_name + "L_Pinky02_ctrl"),($YY_new_joint_name + "L_Pinky03_ctrl")};
+string $L_Hand_Finger_Name[15] = {($YY_new_joint_name + "LeftHandThumb1"),($YY_new_joint_name + "LeftHandThumb2"),($YY_new_joint_name + "LeftHandThumb3"),($YY_new_joint_name + "LeftHandIndex1"),($YY_new_joint_name + "LeftHandIndex2"),($YY_new_joint_name + "LeftHandIndex3"),($YY_new_joint_name + "LeftHandMiddle1"),($YY_new_joint_name + "LeftHandMiddle2"),($YY_new_joint_name + "LeftHandMiddle3"),($YY_new_joint_name + "LeftHandRing1"),($YY_new_joint_name + "LeftHandRing2"),($YY_new_joint_name + "LeftHandRing3"),($YY_new_joint_name + "LeftHandPinky1"),($YY_new_joint_name + "LeftHandPinky2"),($YY_new_joint_name + "LeftHandPinky3")};
+///////////////////////////////////////////00000000000000000000000000000000000000000000000////11111111111111111111111111111111111111111/////222222222222222222222222222222222222///////////////333333333333333333333333333///////4444444444444444444444444444444444444//////////55555555555555555555555555555555555//////////6666666666666666666666666666666666//////////77777777777777777777777777777777/////////////888888888888888888888888888888888888////////9999999999999999999999999999999999999///////1111111111111000000000000000000//////////////11/11//11//1//1/1/1/1//1/1////1111/////12///12///12///12///12//12///12//1////////13/13/13/13/13/13/13/13/13/13//////////14/1/41/41/4/14/14/14/14/1/4/////////////
+string $L_Hand_Finger_Ctrl_Group_one[15] = {($YY_new_joint_name + "L_thumb_palm_RotateYZ"),($YY_new_joint_name + "L_thumb1_RotateYZ"),($YY_new_joint_name + "L_thumb2_RotateYZ"),($YY_new_joint_name + "L_Index01_RotateYZ"),($YY_new_joint_name + "L_Index02_RotateYZ"),($YY_new_joint_name + "L_Index03_RotateYZ"),($YY_new_joint_name + "L_Middle01_RotateYZ"),($YY_new_joint_name + "L_Middle02_RotateYZ"),($YY_new_joint_name + "L_Middle03_RotateYZ"),($YY_new_joint_name + "L_Ring01_RotateYZ"),($YY_new_joint_name + "L_Ring02_RotateYZ"),($YY_new_joint_name + "L_Ring03_RotateYZ"),($YY_new_joint_name + "L_Pinky01_RotateYZ"),($YY_new_joint_name + "L_Pinky02_RotateYZ"),($YY_new_joint_name + "L_Pinky03_RotateYZ")};
+string $L_Hand_Finger_Ctrl_Group_two[15] = {($YY_new_joint_name + "L_thumb_palm_RotateZ"),($YY_new_joint_name + "L_thumb1_RotateZ"),($YY_new_joint_name + "L_thumb2_RotateZ"),($YY_new_joint_name + "L_Index01_RotateZ"),($YY_new_joint_name + "L_Index02_RotateZ"),($YY_new_joint_name + "L_Index03_RotateZ"),($YY_new_joint_name + "L_Middle01_RotateZ"),($YY_new_joint_name + "L_Middle02_RotateZ"),($YY_new_joint_name + "L_Middle03_RotateZ"),($YY_new_joint_name + "L_Ring01_RotateZ"),($YY_new_joint_name + "L_Ring02_RotateZ"),($YY_new_joint_name + "L_Ring03_RotateZ"),($YY_new_joint_name + "L_Pinky01_RotateZ"),($YY_new_joint_name + "L_Pinky02_RotateZ"),($YY_new_joint_name + "L_Pinky03_RotateZ")};
+string $L_Hand_Finger_Ctrl_Group_out[15] = {($YY_new_joint_name + "L_thumb_palm_out"),($YY_new_joint_name + "L_thumb1_out"),($YY_new_joint_name + "L_thumb2_out"),($YY_new_joint_name + "L_Index01_out"),($YY_new_joint_name + "L_Index02_out"),($YY_new_joint_name + "L_Index03_out"),($YY_new_joint_name + "L_Middle01_out"),($YY_new_joint_name + "L_Middle02_out"),($YY_new_joint_name + "L_Middle03_out"),($YY_new_joint_name + "L_Ring01_out"),($YY_new_joint_name + "L_Ring02_out"),($YY_new_joint_name + "L_Ring03_out"),($YY_new_joint_name + "L_Pinky01_out"),($YY_new_joint_name + "L_Pinky02_out"),($YY_new_joint_name + "L_Pinky03_out")};
+string $L_Hand_Finger_Ctrl_Constraint[15] = {($YY_new_joint_name + "L_thumb_palm_ctrl_con"),($YY_new_joint_name + "L_thumb1_ctrl_con"),($YY_new_joint_name + "L_thumb2_ctrl_con"),($YY_new_joint_name + "L_Index01_ctrl_con"),($YY_new_joint_name + "L_Index02_ctrl_con"),($YY_new_joint_name + "L_Index03_ctrl_con"),($YY_new_joint_name + "L_Middle01_ctrl_con"),($YY_new_joint_name + "L_Middle02_ctrl_con"),($YY_new_joint_name + "L_Middle03_ctrl_con"),($YY_new_joint_name + "L_Ring01_ctrl_con"),($YY_new_joint_name + "L_Ring02_ctrl_con"),($YY_new_joint_name + "L_Ring03_ctrl_con"),($YY_new_joint_name + "L_Pinky01_ctrl_con"),($YY_new_joint_name + "L_Pinky02_ctrl_con"),($YY_new_joint_name + "L_Pinky03_ctrl_con")};
+string $L_Hand_Finger_Ctrl_Con_Parent[15] = {($YY_new_joint_name + "Leftjoint"),($YY_new_joint_name + "LeftHandThumb1"),($YY_new_joint_name + "LeftHandThumb2"),($YY_new_joint_name + "Leftjoint"),($YY_new_joint_name + "LeftHandIndex1"),($YY_new_joint_name + "LeftHandIndex2"),($YY_new_joint_name + "Leftjoint"),($YY_new_joint_name + "LeftHandMiddle1"),($YY_new_joint_name + "LeftHandMiddle2"),($YY_new_joint_name + "Leftjoint"),($YY_new_joint_name + "LeftHandRing1"),($YY_new_joint_name + "LeftHandRing2"),($YY_new_joint_name + "Leftjoint"),($YY_new_joint_name + "LeftHandPinky1"),($YY_new_joint_name + "LeftHandPinky2")};
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+string $L_Hand_Finger_Ctrl_Attr_Add[5] = {($YY_new_joint_name + "L_hand_ctrl.thumb"),($YY_new_joint_name + "L_hand_ctrl.index"),($YY_new_joint_name + "L_hand_ctrl.middle"),($YY_new_joint_name + "L_hand_ctrl.Ring"),($YY_new_joint_name + "L_hand_ctrl.Pinky")};
+
+for($i= 0 ;$i<15;$i++)
+{
+duplicate -rr -n $L_Hand_Finger_Ctrl[$i] $YY_ctrl_line[7];
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+float $L_finger_rot[3] = `xform -q -ws -ro $L_Hand_Finger_Name[$i]`;
+float $L_finger_t[3] = `xform -q -ws -t $L_Hand_Finger_Name[$i]`;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+group -w -n $L_Hand_Finger_Ctrl_Group_one[$i] $L_Hand_Finger_Ctrl[$i];
+xform -os -piv 0 0 0 $L_Hand_Finger_Ctrl_Group_one[$i];
+//string $L_fn_sc_pivot = $L_Hand_Finger_Name[$i] + ".scalePivot";
+//string $L_fn_ro_pivot = $L_Hand_Finger_Name[$i] + ".rotatePivot";
+//move -r $L_finger_point[0] $L_finger_point[1] $L_finger_point[2] $L_fn_sc_pivot $L_fn_ro_pivot $L_Hand_Finger_Ctrl_Group_one[$i];
+///////////////////////////////////////////////////////////
+group -w -n $L_Hand_Finger_Ctrl_Group_two[$i] $L_Hand_Finger_Ctrl_Group_one[$i];
+xform -os -piv 0 0 0 $L_Hand_Finger_Ctrl_Group_two[$i];
+/////////////////////////////////////////////////////
+group -n $L_Hand_Finger_Ctrl_Group_out[$i] $L_Hand_Finger_Ctrl_Group_two[$i];
+xform -os -piv 0 0 0 $L_Hand_Finger_Ctrl_Group_out[$i];
+scale -r ($YY_L_toe_heel_abs*0.3)($YY_L_toe_heel_abs * 0.3)($YY_L_toe_heel_abs * 0.3) $L_Hand_Finger_Ctrl_Group_out[$i];
+xform  -ws -t $L_finger_t[0] $L_finger_t[1] $L_finger_t[2] $L_Hand_Finger_Ctrl_Group_out[$i];
+rotate -r -os $L_finger_rot[0] $L_finger_rot[1] ($L_finger_rot[2])  $L_Hand_Finger_Ctrl_Group_out[$i];
+parentConstraint -n $L_Hand_Finger_Ctrl_Constraint[$i] -mo -weight 1 $L_Hand_Finger_Ctrl[$i] $L_Hand_Finger_Name[$i];
+parent $L_Hand_Finger_Ctrl_Group_out[$i] $L_Hand_Finger_Ctrl_Con_Parent[$i];
+////////////////////////////////////////////////////////////////////////////////
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".translateX");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".translateY");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".translateZ");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".rotateX");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".rotateY");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".rotateZ");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".scaleX");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".scaleY");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".scaleZ");
+setAttr -lock true ($L_Hand_Finger_Ctrl_Group_out[$i] + ".visibility");
+//////////////////////////////////////////////////////////////////
+};
+int $YY_L_Hand_Add = 0;
+for($qq = 0;$qq < 5;$qq++)
+{
+for($ww = 0;$ww < 3;$ww++)
+{
+//print $YY_L_Hand_Add; 
+connectAttr -f $L_Hand_Finger_Ctrl_Attr_Add[$qq] ($L_Hand_Finger_Ctrl_Group_one[$YY_L_Hand_Add] + ".rotateZ");
+$YY_L_Hand_Add++;
+            };
+                       };
+////////////////////////////////////////////////////
+disconnectAttr ($YY_ctrl_line[5] + ".thumb")  ($L_Hand_Finger_Ctrl_Group_one[0] + ".rotateZ");
+connectAttr -f ($YY_ctrl_line[5] + ".thumbY") ($L_Hand_Finger_Ctrl_Group_one[0] + ".rotateY");
+/////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv  0 -v   0  ($L_Hand_Finger_Ctrl_Group_one[12] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv 10 -v 20   ($L_Hand_Finger_Ctrl_Group_one[12] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv -10 -v -20 ($L_Hand_Finger_Ctrl_Group_one[12] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv  0 -v   0  ($L_Hand_Finger_Ctrl_Group_one[9] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv 10 -v  10  ($L_Hand_Finger_Ctrl_Group_one[9] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv -10 -v -10 ($L_Hand_Finger_Ctrl_Group_one[9] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv  0 -v   0 ($L_Hand_Finger_Ctrl_Group_one[6] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv 10 -v -10 ($L_Hand_Finger_Ctrl_Group_one[6] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv -10 -v 10 ($L_Hand_Finger_Ctrl_Group_one[6] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv  0 -v   0 ($L_Hand_Finger_Ctrl_Group_one[3] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv 10 -v -20 ($L_Hand_Finger_Ctrl_Group_one[3] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv -10 -v 20 ($L_Hand_Finger_Ctrl_Group_one[3] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv  0 -v   0  ($L_Hand_Finger_Ctrl_Group_one[0] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv 10 -v -10   ($L_Hand_Finger_Ctrl_Group_one[0] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".open") -dv -10 -v 10 ($L_Hand_Finger_Ctrl_Group_one[0] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////					   
+for($fist = 0;$fist < 15 ;$fist++)
+{
+string $L_hand_ctrl_fist = $L_Hand_Finger_Ctrl_Group_two[$fist] + ".rotateZ";
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".fist") -dv  0 -v   0 $L_hand_ctrl_fist ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".fist") -dv 10 -v -85 $L_hand_ctrl_fist ;
+       };
+selectKey -add -k -f 0 -f 10 ($L_Hand_Finger_Ctrl_Group_two[0] + "_rotateZ") ;
+cutKey -animation keys -clear -selectKey;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".fist") -dv 0 -v   0  ($L_Hand_Finger_Ctrl_Group_two[0] + ".rotateZ") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[5] + ".fist") -dv 10 -v -10 ($L_Hand_Finger_Ctrl_Group_two[0] + ".rotateZ") ;
+for($yjl = 0;$yjl < 15;$yjl++)
+{
+connectAttr -f ($YY_ctrl_line[5] + ".show_all") ($L_Hand_Finger_Ctrl_Group_two[$yjl] + ".visibility");
+};
+//////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[2] $YY_ctrl_line[2];
+//////////////////////////////////////////////////////////////////////
+scale ($YY_L_toe_heel_abs * 0.1)($YY_L_toe_heel_abs * 0.1)($YY_L_toe_heel_abs * -0.1) $YY_IK_Constraint[2];
+float $L_Hand_Foream_dis[3] = `xform -q -ws -t $L_arm_jn[3]`;
+xform -t $L_Hand_Foream_dis[0] $L_Hand_Foream_dis[1] ($L_Hand_Foream_dis[2] + ($YY_L_toe_heel_abs * -1.5)) $YY_IK_Constraint[2];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_IK_Constraint[2];
+///////////////////////////////////////////////////////////////////////////////////
+group -n $YY_lock[2] $YY_constrain_group[2];
+///////////////////////////////////////////////////////////////////////////////////////////////////
+poleVectorConstraint -n ($YY_new_joint_name + "L_Hand_dir") -w 1 $YY_IK_Constraint[2] $L_IK[4];
+group -n $YY_constrain_group[7] $YY_IK_Constraint[2];
+//////////////////////////////////////////////////////////////////////
+//RRRRRRRRRHand///Hand///Hand///Hand////Hand////Hand////Hand////Hand////Hand///Hand///Hand///HandHandHandHandHandHandHandHandHandHandHand//////
+//RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR////////////////////
+//RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR////////////////////////
+//RRRRRRRHandHand///Hand///Hand///Hand///Hand///Hand////Hand///Hand///Hand///Hand///Hand///HandHandHandHandHandHandHandHandHandHandHandHandHand///////////////////////////////////////////////////////////////////////////////////////
+//RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+ikHandle -sj $R_arm_jn[1] -ee $R_arm_jn[5] -n $R_IK[4];
+ikHandle -sj $R_arm_jn[5] -ee $R_arm_jn[6] -n $R_IK[5];
+group -n $R_hand_group[0] $R_IK[5];
+//////////////////////////////////////////////
+float $YY_R_wrist[3] = `xform -q  -ws -t $R_arm_jn[5]`;
+xform -os -piv $YY_R_wrist[0] $YY_R_wrist[1] $YY_R_wrist[2] $R_hand_group[0];
+group -n $R_hand_group[1] $R_hand_group[0] $R_IK[4];
+xform -os -piv $YY_R_wrist[0] $YY_R_wrist[1] $YY_R_wrist[2] $R_hand_group[1];
+///////////////////////////////////////////////
+select -r $YY_ctrl_line[3];
+////////////////////////////////////
+float $R_hand_wrist_zhi[3] = `xform -q -ws -t $R_arm_jn[5]`;
+float $R_hand_R_forearm_zhi[3] = `xform -q -t $R_arm_jn[3]`;
+float $R_hand_chang= abs ($R_hand_wrist_zhi[0] - $R_hand_R_forearm_zhi[0]);
+xform -cp $YY_ctrl_line[3];//R_hand;
+xform -t $R_hand_wrist_zhi[0] $R_hand_wrist_zhi[1] $R_hand_wrist_zhi[2] $YY_ctrl_line[3];//R_hand;
+scale ($YY_L_toe_heel_abs * 0.3)($YY_L_toe_heel_abs * 0.3)($YY_L_toe_heel_abs * 0.3) $YY_ctrl_line[3];//R_hand;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[3];//R_hand;
+parent $R_hand_group[1] $YY_ctrl_line[3];//R_hand;
+setAttr ($R_IK[4] + ".poleVectorX") 0;
+setAttr ($R_IK[4] + ".poleVectorY") 0;
+setAttr ($R_IK[4] + ".poleVectorZ") 0;
+//////////////////////////////////////////////////////////////
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 45%"
+			   -progress 45;
+////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+float $R_wrist_roll_ws[3] = `xform -q -ws -t $R_arm_jn[6]`;
+scale -r ($YY_R_toe_heel_abs * 3)($YY_R_toe_heel_abs * 3)($YY_R_toe_heel_abs * 3) $YY_ctrl_line[6];
+move $R_wrist_roll_ws[0] $R_wrist_roll_ws[1] $R_wrist_roll_ws[2] $YY_ctrl_line[6];
+move -r -os -wd($YY_R_toe_heel_abs*0.16) ($YY_R_toe_heel_abs*0.1) ($YY_R_toe_heel_abs*0) $YY_ctrl_line[6];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[6];
+group -n $R_hand_group[2] $YY_ctrl_line[6];
+parent $R_hand_group[2] $R_arm_jn[6];//Reftjoint;
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".translateX");//"R_hand_ctrl.tx";
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".translateY");
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".translateZ");
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".rotateX");
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".rotateY");
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".rotateZ");
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".scaleX");
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".scaleZ");
+setAttr -lock true -keyable false ($YY_ctrl_line[6] + ".visibility");
+//////////////////////////////////////////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($R_hand_group[2] + ".translateX");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".translateY");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".translateZ");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".rotateX");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".rotateY");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".rotateZ");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".scaleX");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".scaleY");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".scaleZ");
+setAttr -lock true -keyable false ($R_hand_group[2] + ".visibility");
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+addAttr -ln thumb -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[6];
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".thumb");
+/////////////////////////////////////////////////////////
+addAttr -ln index -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[6];
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".index");
+/////////////////////////////////////////////////////////
+addAttr -ln middle -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[6];//R_hand_ctrl;
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".middle");
+/////////////////////////////////////////////////////////
+addAttr -ln Ring -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[6];
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".Ring");
+/////////////////////////////////////////////////////////
+addAttr -ln Pinky -at double  -min -90 -max 10 -dv 0 $YY_ctrl_line[6];
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".Pinky");
+/////////////////////////////////////////////////////////
+addAttr -ln thumbY -at double  -min -45 -max 45 -dv 0 $YY_ctrl_line[6];
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".thumbY");
+/////////////////////////////////////////////////////////
+addAttr -ln open -at double  -min -10 -max 10 -dv 0 $YY_ctrl_line[6];
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".open");
+/////////////////////////////////////////////////////////
+addAttr -ln fist -at long  -min 0 -max 10 -dv 0 $YY_ctrl_line[6];
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".fist");
+/////////////////////////////////////////////////////////
+addAttr -ln show_all -at long  -min 0 -max 1 -dv 0 $YY_ctrl_line[6];
+setAttr -e -keyable true ($YY_ctrl_line[6] + ".show_all");
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 50%"
+			   -progress 50;
+/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////Add Finger Ctrl Syetem;
+////////////////////////////////////////////////////////////////////////////////////
+string $R_Hand_Finger_Ctrl[15] = {($YY_new_joint_name + "R_thumb_palm_ctrl"),($YY_new_joint_name + "R_thumb1_ctrl"),($YY_new_joint_name + "R_thumb2_ctrl"),($YY_new_joint_name + "R_Index01_ctrl"),($YY_new_joint_name + "R_Index02_ctrl"),($YY_new_joint_name + "R_Index03_ctrl"),($YY_new_joint_name + "R_Middle01_ctrl"),($YY_new_joint_name + "R_Middle02_ctrl"),($YY_new_joint_name + "R_Middle03_ctrl"),($YY_new_joint_name + "R_Ring01_ctrl"),($YY_new_joint_name + "R_Ring02_ctrl"),($YY_new_joint_name + "R_Ring03_ctrl"),($YY_new_joint_name + "R_Pinky01_ctrl"),($YY_new_joint_name + "R_Pinky02_ctrl"),($YY_new_joint_name + "R_Pinky03_ctrl")};
+string $R_Hand_Finger_Name[15] = {($YY_new_joint_name + "RightHandThumb1"),($YY_new_joint_name + "RightHandThumb2"),($YY_new_joint_name + "RightHandThumb3"),($YY_new_joint_name + "RightHandIndex1"),($YY_new_joint_name + "RightHandIndex2"),($YY_new_joint_name + "RightHandIndex3"),($YY_new_joint_name + "RightHandMiddle1"),($YY_new_joint_name + "RightHandMiddle2"),($YY_new_joint_name + "RightHandMiddle3"),($YY_new_joint_name + "RightHandRing1"),($YY_new_joint_name + "RightHandRing2"),($YY_new_joint_name + "RightHandRing3"),($YY_new_joint_name + "RightHandPinky1"),($YY_new_joint_name + "RightHandPinky2"),($YY_new_joint_name + "RightHandPinky3")};
+///////////////////////////////////////////00000000000000000000000000000000000000000000000////11111111111111111111111111111111111111111/////222222222222222222222222222222222222///////////////333333333333333333333333333///////4444444444444444444444444444444444444//////////55555555555555555555555555555555555//////////6666666666666666666666666666666666//////////77777777777777777777777777777777/////////////888888888888888888888888888888888888////////9999999999999999999999999999999999999///////1111111111111000000000000000000//////////////11/11//11//1//1/1/1/1//1/1////1111/////12///12///12///12///12//12///12//1////////13/13/13/13/13/13/13/13/13/13//////////14/1/41/41/4/14/14/14/14/1/4/////////////
+string $R_Hand_Finger_Ctrl_Group_one[15] = {($YY_new_joint_name + "R_thumb_palm_RotateYZ"),($YY_new_joint_name + "R_thumb1_RotateYZ"),($YY_new_joint_name + "R_thumb2_RotateYZ"),($YY_new_joint_name + "R_Index01_RotateYZ"),($YY_new_joint_name + "R_Index02_RotateYZ"),($YY_new_joint_name + "R_Index03_RotateYZ"),($YY_new_joint_name + "R_Middle01_RotateYZ"),($YY_new_joint_name + "R_Middle02_RotateYZ"),($YY_new_joint_name + "R_Middle03_RotateYZ"),($YY_new_joint_name + "R_Ring01_RotateYZ"),($YY_new_joint_name + "R_Ring02_RotateYZ"),($YY_new_joint_name + "R_Ring03_RotateYZ"),($YY_new_joint_name + "R_Pinky01_RotateYZ"),($YY_new_joint_name + "R_Pinky02_RotateYZ"),($YY_new_joint_name + "R_Pinky03_RotateYZ")};
+string $R_Hand_Finger_Ctrl_Group_two[15] = {($YY_new_joint_name + "R_thumb_palm_RotateZ"),($YY_new_joint_name + "R_thumb1_RotateZ"),($YY_new_joint_name + "R_thumb2_RotateZ"),($YY_new_joint_name + "R_Index01_RotateZ"),($YY_new_joint_name + "R_Index02_RotateZ"),($YY_new_joint_name + "R_Index03_RotateZ"),($YY_new_joint_name + "R_Middle01_RotateZ"),($YY_new_joint_name + "R_Middle02_RotateZ"),($YY_new_joint_name + "R_Middle03_RotateZ"),($YY_new_joint_name + "R_Ring01_RotateZ"),($YY_new_joint_name + "R_Ring02_RotateZ"),($YY_new_joint_name + "R_Ring03_RotateZ"),($YY_new_joint_name + "R_Pinky01_RotateZ"),($YY_new_joint_name + "R_Pinky02_RotateZ"),($YY_new_joint_name + "R_Pinky03_RotateZ")};
+string $R_Hand_Finger_Ctrl_Group_out[15] = {($YY_new_joint_name + "R_thumb_palm_out"),($YY_new_joint_name + "R_thumb1_out"),($YY_new_joint_name + "R_thumb2_out"),($YY_new_joint_name + "R_Index01_out"),($YY_new_joint_name + "R_Index02_out"),($YY_new_joint_name + "R_Index03_out"),($YY_new_joint_name + "R_Middle01_out"),($YY_new_joint_name + "R_Middle02_out"),($YY_new_joint_name + "R_Middle03_out"),($YY_new_joint_name + "R_Ring01_out"),($YY_new_joint_name + "R_Ring02_out"),($YY_new_joint_name + "R_Ring03_out"),($YY_new_joint_name + "R_Pinky01_out"),($YY_new_joint_name + "R_Pinky02_out"),($YY_new_joint_name + "R_Pinky03_out")};
+string $R_Hand_Finger_Ctrl_Constraint[15] = {($YY_new_joint_name + "R_thumb_palm_ctrl_con"),($YY_new_joint_name + "R_thumb1_ctrl_con"),($YY_new_joint_name + "R_thumb2_ctrl_con"),($YY_new_joint_name + "R_Index01_ctrl_con"),($YY_new_joint_name + "R_Index02_ctrl_con"),($YY_new_joint_name + "R_Index03_ctrl_con"),($YY_new_joint_name + "R_Middle01_ctrl_con"),($YY_new_joint_name + "R_Middle02_ctrl_con"),($YY_new_joint_name + "R_Middle03_ctrl_con"),($YY_new_joint_name + "R_Ring01_ctrl_con"),($YY_new_joint_name + "R_Ring02_ctrl_con"),($YY_new_joint_name + "R_Ring03_ctrl_con"),($YY_new_joint_name + "R_Pinky01_ctrl_con"),($YY_new_joint_name + "R_Pinky02_ctrl_con"),($YY_new_joint_name + "R_Pinky03_ctrl_con")};
+string $R_Hand_Finger_Ctrl_Con_Parent[15] = {($YY_new_joint_name + "Rightjoint"),($YY_new_joint_name + "RightHandThumb1"),($YY_new_joint_name + "RightHandThumb2"),($YY_new_joint_name + "Rightjoint"),($YY_new_joint_name + "RightHandIndex1"),($YY_new_joint_name + "RightHandIndex2"),($YY_new_joint_name + "Rightjoint"),($YY_new_joint_name + "RightHandMiddle1"),($YY_new_joint_name + "RightHandMiddle2"),($YY_new_joint_name + "Rightjoint"),($YY_new_joint_name + "RightHandRing1"),($YY_new_joint_name + "RightHandRing2"),($YY_new_joint_name + "Rightjoint"),($YY_new_joint_name + "RightHandPinky1"),($YY_new_joint_name + "RightHandPinky2")};
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+string $R_Hand_Finger_Ctrl_Attr_Add[5] = {($YY_new_joint_name + "R_hand_ctrl.thumb"),($YY_new_joint_name + "R_hand_ctrl.index"),($YY_new_joint_name + "R_hand_ctrl.middle"),($YY_new_joint_name + "R_hand_ctrl.Ring"),($YY_new_joint_name + "R_hand_ctrl.Pinky")};
+scale -r -1 1 1 $YY_ctrl_line[7];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[7];
+for($i= 0 ;$i<15;$i++)
+{
+duplicate -rr -n $R_Hand_Finger_Ctrl[$i] $YY_ctrl_line[7];
+///////////////////////////////////////////////////////////////////////////////////////////////////
+float $R_finger_rot[3] = `xform -q -ws -ro $R_Hand_Finger_Name[$i]`;
+float $R_finger_t[3] = `xform -q -ws -t $R_Hand_Finger_Name[$i]`;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+group -w -n $R_Hand_Finger_Ctrl_Group_one[$i] $R_Hand_Finger_Ctrl[$i];
+xform -os -piv 0 0 0 $R_Hand_Finger_Ctrl_Group_one[$i];
+//string $L_fn_sc_pivot = $L_Hand_Finger_Name[$i] + ".scalePivot";
+//string $L_fn_ro_pivot = $L_Hand_Finger_Name[$i] + ".rotatePivot";
+//move -r $L_finger_point[0] $L_finger_point[1] $L_finger_point[2] $L_fn_sc_pivot $L_fn_ro_pivot $L_Hand_Finger_Ctrl_Group_one[$i];
+///////////////////////////////////////////////////////////
+group -w -n $R_Hand_Finger_Ctrl_Group_two[$i] $R_Hand_Finger_Ctrl_Group_one[$i];
+xform -os -piv 0 0 0 $R_Hand_Finger_Ctrl_Group_two[$i];
+/////////////////////////////////////////////////////
+group -n $R_Hand_Finger_Ctrl_Group_out[$i] $R_Hand_Finger_Ctrl_Group_two[$i];
+xform -os -piv 0 0 0 $R_Hand_Finger_Ctrl_Group_out[$i];
+scale -r ($YY_R_toe_heel_abs * 0.3)($YY_R_toe_heel_abs * 0.3)($YY_R_toe_heel_abs * 0.3) $R_Hand_Finger_Ctrl_Group_out[$i];
+xform  -ws -t $R_finger_t[0] $R_finger_t[1] $R_finger_t[2] $R_Hand_Finger_Ctrl_Group_out[$i];
+rotate -r -os $R_finger_rot[0] $R_finger_rot[1] ($R_finger_rot[2])  $R_Hand_Finger_Ctrl_Group_out[$i];
+parentConstraint -n $R_Hand_Finger_Ctrl_Constraint[$i] -mo -weight 1 $R_Hand_Finger_Ctrl[$i] $R_Hand_Finger_Name[$i];
+parent $R_Hand_Finger_Ctrl_Group_out[$i] $R_Hand_Finger_Ctrl_Con_Parent[$i];
+////////////////////////////////////////////////////////////////////////////////
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".translateX");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".translateY");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".translateZ");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".rotateX");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".rotateY");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".rotateZ");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".scaleX");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".scaleY");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".scaleZ");
+setAttr -lock true ($R_Hand_Finger_Ctrl_Group_out[$i] + ".visibility");
+//////////////////////////////////////////////////////////////////
+};
+int $YY_R_Hand_Add = 0;
+for($qq = 0;$qq < 5;$qq++)
+{
+for($ww = 0;$ww < 3;$ww++)
+{
+//print $YY_R_Hand_Add; 
+connectAttr -f $R_Hand_Finger_Ctrl_Attr_Add[$qq] ($R_Hand_Finger_Ctrl_Group_one[$YY_R_Hand_Add] + ".rotateZ");
+$YY_R_Hand_Add++;
+            };
+                       };
+////////////////////////////////////////////////////
+disconnectAttr ($YY_ctrl_line[6] + ".thumb")  ($R_Hand_Finger_Ctrl_Group_one[0] + ".rotateZ");
+connectAttr -f ($YY_ctrl_line[6] + ".thumbY") ($R_Hand_Finger_Ctrl_Group_one[0] + ".rotateY");
+/////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv  0 -v   0  ($R_Hand_Finger_Ctrl_Group_one[12] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv 10 -v 20   ($R_Hand_Finger_Ctrl_Group_one[12] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv -10 -v -20 ($R_Hand_Finger_Ctrl_Group_one[12] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv  0 -v   0  ($R_Hand_Finger_Ctrl_Group_one[9] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv 10 -v  10  ($R_Hand_Finger_Ctrl_Group_one[9] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv -10 -v -10 ($R_Hand_Finger_Ctrl_Group_one[9] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv  0 -v   0 ($R_Hand_Finger_Ctrl_Group_one[6] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv 10 -v -10 ($R_Hand_Finger_Ctrl_Group_one[6] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv -10 -v 10 ($R_Hand_Finger_Ctrl_Group_one[6] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv  0 -v   0 ($R_Hand_Finger_Ctrl_Group_one[3] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv 10 -v -20 ($R_Hand_Finger_Ctrl_Group_one[3] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv -10 -v 20 ($R_Hand_Finger_Ctrl_Group_one[3] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv  0 -v   0  ($R_Hand_Finger_Ctrl_Group_one[0] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv 10 -v -10   ($R_Hand_Finger_Ctrl_Group_one[0] + ".rotateX") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".open") -dv -10 -v 10 ($R_Hand_Finger_Ctrl_Group_one[0] + ".rotateX") ;
+/////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 55%"
+			   -progress 55;
+for($fist = 0;$fist < 15 ;$fist++)
+{
+string $R_hand_ctrl_fist = $R_Hand_Finger_Ctrl_Group_two[$fist] + ".rotateZ";
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".fist") -dv  0 -v   0 $R_hand_ctrl_fist ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".fist") -dv 10 -v -85 $R_hand_ctrl_fist ;
+                 };
+selectKey -add -k -f 0 -f 10 ($R_Hand_Finger_Ctrl_Group_two[0] + "_rotateZ") ;
+cutKey -animation keys -clear -selectKey;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".fist") -dv 0 -v   0  ($R_Hand_Finger_Ctrl_Group_two[0] + ".rotateZ") ;
+setDrivenKeyframe -cd ($YY_ctrl_line[6] + ".fist") -dv 10 -v -10 ($R_Hand_Finger_Ctrl_Group_two[0] + ".rotateZ") ;
+for($yjl = 0;$yjl < 15;$yjl++)
+{
+connectAttr -f ($YY_ctrl_line[6] + ".show_all") ($R_Hand_Finger_Ctrl_Group_two[$yjl] + ".visibility");
+};
+////////////////////////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[3] $YY_ctrl_line[3];
+group -n $YY_lock[3] $YY_constrain_group[3];
+/////////////////////////////////////////////////////////////////////////////////////////////
+scale ($YY_R_toe_heel_abs * 0.1)($YY_R_toe_heel_abs * 0.1)($YY_R_toe_heel_abs * -0.1) $YY_IK_Constraint[3];
+float $R_Hand_Foream_dis[3] = `xform -q -ws -t $R_arm_jn[3]`;
+xform -t $R_Hand_Foream_dis[0] $R_Hand_Foream_dis[1] ($R_Hand_Foream_dis[2] + ($YY_R_toe_heel_abs * -1.5)) $YY_IK_Constraint[3];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_IK_Constraint[3];
+poleVectorConstraint -n ($YY_new_joint_name + "R_Hand_dir") -w 1 $YY_IK_Constraint[3] $R_IK[4];
+//////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[8] $YY_IK_Constraint[3];
+delete $YY_ctrl_line[7];
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___///////////////////////////////////
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___/////////////////////
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___///////
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___
+//////L_Hand_FK______L_Hand_FK______L_Hand_FK______L_Hand_FK______L_Hand_FK______L_Hand_FK______L_Hand_FK
+//////L_Hand_FK______L_Hand_FK______L_Hand_FK______L_Hand_FK______L_Hand_FK______L_Hand_FK______L_Hand_FK
+//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+circle -n $YY_L_FK[0] -c 0 0 0 -nr 0 1 0 -sw 360 -r ($YY_R_toe_heel_abs * 0.68) -d 3 -ut 0 -tol 0.01 -s 8 -ch 0;
+duplicate -rr -n $YY_L_FK[1] $YY_L_FK[0];
+duplicate -rr -n $YY_L_FK[2] $YY_L_FK[0];
+duplicate -rr -n $YY_R_FK[0] $YY_L_FK[0];
+duplicate -rr -n $YY_R_FK[1] $YY_L_FK[0];
+duplicate -rr -n $YY_R_FK[2] $YY_L_FK[0];
+///////////////////////////////////////////////////////////
+group -n $YY_L_FK_group[0] $YY_L_FK[0];
+group -n $YY_L_FK_group[1] $YY_L_FK[1];
+group -n $YY_L_FK_group[2] $YY_L_FK[2];
+group -n $YY_R_FK_group[0] $YY_R_FK[0];
+group -n $YY_R_FK_group[1] $YY_R_FK[1];
+group -n $YY_R_FK_group[2] $YY_R_FK[2];
+//////////////////////////////////////////////////////////////////////////
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 60%"
+			   -progress 60;
+addAttr -ln L_Hand_IKFK -at double  -min 0 -max 1 -dv 1 $YY_ctrl_line[4] ;//ctrl_Root;
+setAttr -e -keyable true ($YY_ctrl_line[4] + ".L_Hand_IKFK");
+connectAttr -f ($YY_ctrl_line[4] + ".L_Hand_IKFK") ($L_IK[4] + ".ikBlend");
+connectAttr -f ($YY_ctrl_line[4] + ".L_Hand_IKFK") ($L_IK[5] + ".ikBlend");
+///////////////////////////////////////////////////////////////
+addAttr -ln R_Hand_IKFK -at double  -min 0 -max 1 -dv 1 $YY_ctrl_line[4] ;//ctrl_Root;
+setAttr -e -keyable true ($YY_ctrl_line[4] + ".R_Hand_IKFK");
+connectAttr -f ($YY_ctrl_line[4] + ".R_Hand_IKFK") ($R_IK[4] + ".ikBlend");
+connectAttr -f ($YY_ctrl_line[4] + ".R_Hand_IKFK") ($R_IK[5] + ".ikBlend");
+///////////////////////////////////////////////////////////
+addAttr -ln Head_IKFK -at double  -min 0 -max 1 -dv 1 $YY_ctrl_line[4] ;//ctrl_Root;
+setAttr -e -keyable true ($YY_ctrl_line[4] + ".Head_IKFK");
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////L_shoulder_FK;
+float $L_shoulder_rot[3] = `xform -q -ws -ro $L_arm_jn[1]`;
+float $L_shoulder_t[3] = `xform -q -ws -t $L_arm_jn[1]`;
+xform -ws -ro $L_shoulder_rot[0] $L_shoulder_rot[1] ($L_shoulder_rot[2] ) $YY_L_FK_group[0];
+xform -ws -t $L_shoulder_t[0] $L_shoulder_t[1] $L_shoulder_t[2] $YY_L_FK_group[0];
+parent $YY_L_FK_group[0] $L_arm_jn[0];
+orientConstraint -mo -weight 1 $YY_L_FK[0] $L_arm_jn[1] ;
+setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".translateX");
+setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".translateY");
+setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".translateZ");
+//setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".rotateX");
+//setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".rotateY");
+//setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".rotateZ");
+setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".scaleX");
+setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".scaleY");
+setAttr -lock true -keyable false ($YY_L_FK_group[0] + ".scaleZ");
+//////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_L_FK[0] + ".translateX");
+setAttr -lock true -keyable false ($YY_L_FK[0] + ".translateY");
+setAttr -lock true -keyable false ($YY_L_FK[0] + ".translateZ");
+setAttr -lock true -keyable false ($YY_L_FK[0] + ".scaleX");
+setAttr -lock true -keyable false ($YY_L_FK[0] + ".scaleY");
+setAttr -lock true -keyable false ($YY_L_FK[0] + ".scaleZ");
+setAttr -lock true -keyable false ($YY_L_FK[0] + ".visibility");
+//////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".L_Hand_IKFK") -dv  0 -v  1 ($YY_L_FK_group[0] + ".visibility");//L_shoulder_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".L_Hand_IKFK") -dv  1 -v  0 ($YY_L_FK_group[0] + ".visibility");
+//////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+float $L_forearm_FK_rot[3] = `xform -q -ws -ro $L_arm_jn[3]`;
+float $L_forearm_FK_t[3] = `xform -q -ws -t $L_arm_jn[3]`;
+xform -ws -ro $L_forearm_FK_rot[0] $L_forearm_FK_rot[1] ($L_forearm_FK_rot[2]) $YY_L_FK_group[1];
+xform -ws -t $L_forearm_FK_t[0] $L_forearm_FK_t[1] $L_forearm_FK_t[2] $YY_L_FK_group[1];//L_forearm_FK_Group;
+parent $YY_L_FK_group[1] $L_arm_jn[1];
+orientConstraint -mo -weight 1 $YY_L_FK[1] $L_arm_jn[3] ;
+setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".translateX");
+setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".translateY");
+setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".translateZ");
+//setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".rotateX");
+//setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".rotateY");
+//setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".rotateZ");
+setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".scaleX");
+setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".scaleY");
+setAttr -lock true -keyable false ($YY_L_FK_group[1] + ".scaleZ");
+//////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_L_FK[1] + ".translateX");
+setAttr -lock true -keyable false ($YY_L_FK[1] + ".translateY");
+setAttr -lock true -keyable false ($YY_L_FK[1] + ".translateZ");
+setAttr -lock true -keyable false ($YY_L_FK[1] + ".scaleX");
+setAttr -lock true -keyable false ($YY_L_FK[1] + ".scaleY");
+setAttr -lock true -keyable false ($YY_L_FK[1] + ".scaleZ");
+setAttr -lock true -keyable false ($YY_L_FK[1] + ".visibility");
+////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".L_Hand_IKFK") -dv  0 -v  1 ($YY_L_FK_group[1] + ".visibility");//L_forearm_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".L_Hand_IKFK") -dv  1 -v  0 ($YY_L_FK_group[1] + ".visibility");
+//////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 65%"
+			   -progress 65;
+float $L_wrist_FK_rot[3] = `xform -q -ws -ro $L_arm_jn[5]`;
+float $L_wrist_FK_t[3] = `xform -q -ws -t $L_arm_jn[5]`;
+xform -ws -ro $L_wrist_FK_rot[0] $L_wrist_FK_rot[1] ($L_wrist_FK_rot[2]) $YY_L_FK_group[2];
+xform -ws -t $L_wrist_FK_t[0] $L_wrist_FK_t[1] $L_wrist_FK_t[2] $YY_L_FK_group[2];//L_wrist_FK_Group;
+parent $YY_L_FK_group[2] $L_arm_jn[4];//LeftForeArm;
+orientConstraint -mo -weight 1 $YY_L_FK[2] $L_arm_jn[5];//L_wrist_FK LeftHand;
+setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".translateX");
+setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".translateY");
+setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".translateZ");
+//setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".rotateX");
+//setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".rotateY");
+//setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".rotateZ");
+setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".scaleX");
+setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".scaleY");
+setAttr -lock true -keyable false ($YY_L_FK_group[2] + ".scaleZ");
+//////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_L_FK[2] + ".translateX");
+setAttr -lock true -keyable false ($YY_L_FK[2] + ".translateY");
+setAttr -lock true -keyable false ($YY_L_FK[2] + ".translateZ");
+setAttr -lock true -keyable false ($YY_L_FK[2] + ".scaleX");
+setAttr -lock true -keyable false ($YY_L_FK[2] + ".scaleY");
+setAttr -lock true -keyable false ($YY_L_FK[2] + ".scaleZ");
+setAttr -lock true -keyable false ($YY_L_FK[2] + ".visibility");
+/////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".L_Hand_IKFK") -dv  0 -v  1 ($YY_L_FK_group[2] + ".visibility");//L_wrist_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".L_Hand_IKFK") -dv  1 -v  0 ($YY_L_FK_group[2] + ".visibility");//L_wrist_FK_Group ;
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".L_Hand_IKFK") -dv  1 -v  1 ($YY_constrain_group[2] + ".visibility");//L_wrist_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".L_Hand_IKFK") -dv  0 -v  0 ($YY_constrain_group[2] + ".visibility");//L_wrist_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".R_Hand_IKFK") -dv  1 -v  1 ($YY_constrain_group[3] + ".visibility");//L_wrist_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".R_Hand_IKFK") -dv  0 -v  0 ($YY_constrain_group[3] + ".visibility");//L_wrist_FK_Group ;
+
+/////////RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____//////////////////////////////////////////
+/////////RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____////////
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___///////////////////////////////////
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___/////////////////////
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___///////
+/////////FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___FK___
+/////////RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____
+/////////RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____RRRR____
+//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////R_shoulder_FK;
+float $R_shoulder_rot[3] = `xform -q -ws -ro $R_arm_jn[1]`;
+float $R_shoulder_t[3] = `xform -q -ws -t $R_arm_jn[1]`;
+xform -ws -ro $R_shoulder_rot[0] $R_shoulder_rot[1] ($R_shoulder_rot[2] ) $YY_R_FK_group[0];
+xform -ws -t $R_shoulder_t[0] $R_shoulder_t[1] $R_shoulder_t[2] $YY_R_FK_group[0];
+parent $YY_R_FK_group[0] $R_arm_jn[0];
+orientConstraint -mo -weight 1 $YY_R_FK[0] $R_arm_jn[1] ;
+setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".translateX");
+setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".translateY");
+setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".translateZ");
+//setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".rotateX");
+//setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".rotateY");
+//setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".rotateZ");
+setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".scaleX");
+setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".scaleY");
+setAttr -lock true -keyable false ($YY_R_FK_group[0] + ".scaleZ");
+//////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_R_FK[0] + ".translateX");
+setAttr -lock true -keyable false ($YY_R_FK[0] + ".translateY");
+setAttr -lock true -keyable false ($YY_R_FK[0] + ".translateZ");
+setAttr -lock true -keyable false ($YY_R_FK[0] + ".scaleX");
+setAttr -lock true -keyable false ($YY_R_FK[0] + ".scaleY");
+setAttr -lock true -keyable false ($YY_R_FK[0] + ".scaleZ");
+setAttr -lock true -keyable false ($YY_R_FK[0] + ".visibility");
+
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 70%"
+			   -progress 70;
+//////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".R_Hand_IKFK") -dv  0 -v  1 ($YY_R_FK_group[0] + ".visibility");//R_shoulder_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".R_Hand_IKFK") -dv  1 -v  0 ($YY_R_FK_group[0] + ".visibility") ;
+//////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+float $R_forearm_FK_rot[3] = `xform -q -ws -ro $R_arm_jn[3]`;
+float $R_forearm_FK_t[3] = `xform -q -ws -t $R_arm_jn[3]`;
+xform -ws -ro $R_forearm_FK_rot[0] $R_forearm_FK_rot[1] ($R_forearm_FK_rot[2]) $YY_R_FK_group[1];
+xform -ws -t $R_forearm_FK_t[0] $R_forearm_FK_t[1] $R_forearm_FK_t[2] $YY_R_FK_group[1];//R_forearm_FK_Group;
+parent $YY_R_FK_group[1] $R_arm_jn[2];
+orientConstraint -mo -weight 1 $YY_R_FK[1] $R_arm_jn[3] ;
+setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".translateX");
+setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".translateY");
+setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".translateZ");
+//setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".rotateX");
+//setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".rotateY");
+//setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".rotateZ");
+setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".scaleX");
+setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".scaleY");
+setAttr -lock true -keyable false ($YY_R_FK_group[1] + ".scaleZ");
+//////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_R_FK[1] + ".translateX");
+setAttr -lock true -keyable false ($YY_R_FK[1] + ".translateY");
+setAttr -lock true -keyable false ($YY_R_FK[1] + ".translateZ");
+setAttr -lock true -keyable false ($YY_R_FK[1] + ".scaleX");
+setAttr -lock true -keyable false ($YY_R_FK[1] + ".scaleY");
+setAttr -lock true -keyable false ($YY_R_FK[1] + ".scaleZ");
+setAttr -lock true -keyable false ($YY_R_FK[1] + ".visibility");
+////////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".R_Hand_IKFK") -dv  0 -v  1 ($YY_R_FK_group[1] + ".visibility");//R_forearm_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".R_Hand_IKFK") -dv  1 -v  0 ($YY_R_FK_group[1] + ".visibility");
+//////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+float $R_wrist_FK_rot[3] = `xform -q -ws -ro $R_arm_jn[5]`;
+float $R_wrist_FK_t[3] = `xform -q -ws -t $R_arm_jn[5]`;
+xform -ws -ro $R_wrist_FK_rot[0] $R_wrist_FK_rot[1] ($R_wrist_FK_rot[2]) $YY_R_FK_group[2];
+xform -ws -t $R_wrist_FK_t[0] $R_wrist_FK_t[1] $R_wrist_FK_t[2] $YY_R_FK_group[2];//R_wrist_FK_Group;
+parent $YY_R_FK_group[2] $R_arm_jn[4];//ReftForeArm;
+orientConstraint -mo -weight 1 $YY_R_FK[2] $R_arm_jn[5];//R_wrist_FK ReftHand;
+setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".translateX");
+setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".translateY");
+setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".translateZ");
+//setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".rotateX");
+//setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".rotateY");
+//setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".rotateZ");
+setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".scaleX");
+setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".scaleY");
+setAttr -lock true -keyable false ($YY_R_FK_group[2] + ".scaleZ");
+//////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_R_FK[2] + ".translateX");
+setAttr -lock true -keyable false ($YY_R_FK[2] + ".translateY");
+setAttr -lock true -keyable false ($YY_R_FK[2] + ".translateZ");
+setAttr -lock true -keyable false ($YY_R_FK[2] + ".scaleX");
+setAttr -lock true -keyable false ($YY_R_FK[2] + ".scaleY");
+setAttr -lock true -keyable false ($YY_R_FK[2] + ".scaleZ");
+setAttr -lock true -keyable false ($YY_R_FK[2] + ".visibility");
+/////////////////////////////////////////////////////////
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".R_Hand_IKFK") -dv  0 -v  1 ($YY_R_FK_group[2] + ".visibility");//R_wrist_FK_Group ;
+setDrivenKeyframe -cd ($YY_ctrl_line[4] + ".R_Hand_IKFK") -dv  1 -v  0 ($YY_R_FK_group[2] + ".visibility");//R_wrist_FK_Group ;
+//////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//BodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBody
+//BodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBody
+//BodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBody
+//BodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBody
+//BodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBody
+//BodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBodyBody
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 75%"
+			   -progress 75;
+
+scale -r ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 0.3) ($YY_R_toe_heel_abs * 1.3) $YY_ctrl_line[4];//ctrl_Root;
+float $pelvis_t[3] = `xform -q -ws -t $Pelvis_jn[0]`;
+xform -ws -t $pelvis_t[0] $pelvis_t[1] $pelvis_t[2] $YY_ctrl_line[4];//ctrl_Root;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[4];//ctrl_Root;
+setAttr -lock true -keyable false ($YY_ctrl_line[4] + ".scaleX");
+setAttr -lock true -keyable false ($YY_ctrl_line[4] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[4] + ".scaleZ");
+////////////////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[4] $YY_ctrl_line[4];
+move $pelvis_t[0] $pelvis_t[1] $pelvis_t[2] ($YY_constrain_group[4] + ".scalePivot") ($YY_constrain_group[4] + ".rotatePivot") ;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+circle -n $YY_ctrl_line[15] -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0;
+duplicate -rr -n $YY_ctrl_line[8] $YY_ctrl_line[15];//spinLower_ctrl;//nurbsCircle_copy;
+duplicate -rr -n $YY_ctrl_line[9] $YY_ctrl_line[15];//spineMiddle_ctrl;//nurbsCircle_copy;
+duplicate -rr -n $YY_ctrl_line[10] $YY_ctrl_line[15];//spineHigher_ctrl//nurbsCircle_copy;
+duplicate -rr -n $YY_ctrl_line[11] $YY_ctrl_line[15];//spineHigher2_ctrl;//nurbsCircle_copy;
+duplicate -rr -n $YY_ctrl_line[12] $YY_ctrl_line[15];//nurbsCircle_copy;
+duplicate -rr -n $YY_ctrl_line[13] $YY_ctrl_line[15];//nurbsCircle_copy;
+duplicate -rr -n $YY_ctrl_line[14] $YY_ctrl_line[15];//nurbsCircle_copy;
+duplicate -rr -n $YY_ctrl_line[18] $YY_ctrl_line[15];//Spine3;
+////////////////////////////////////////////////////////////////////////
+float $spine_3[3] = `xform -q -ws -t $Pelvis_jn[4]`;//Spine3
+xform -ws -t $spine_3[0] $spine_3[1] $spine_3[2] $YY_ctrl_line[18];//spineMid_ctrl;
+scale -r ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) $YY_ctrl_line[18];//spineMid_ctrl;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[18];//spineMid_ctrl;
+group -n $YY_constrain_group[19] $YY_ctrl_line[18];
+move $spine_3[0] $spine_3[1] $spine_3[2] ($YY_constrain_group[19] + ".scalePivot") ($YY_constrain_group[19] + ".rotatePivot") ;
+/////////////////////////////////////////////////////////////////////////////////////////////////
+move -r -os -wd 0 0.3 0 ($YY_ctrl_line[8] + ".cv[7]") ($YY_ctrl_line[8] + ".cv[3]");
+move -r -os -wd 0 0.15 0 ($YY_ctrl_line[8] + ".cv[6]") ($YY_ctrl_line[8] + ".cv[2]") ($YY_ctrl_line[8] + ".cv[4]") ($YY_ctrl_line[8] + ".cv[0]");
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+move -r -os -wd 0 0.3 0 ($YY_ctrl_line[10] + ".cv[7]") ($YY_ctrl_line[10] + ".cv[3]");
+move -r -os -wd 0 0.15 0 ($YY_ctrl_line[10] + ".cv[6]") ($YY_ctrl_line[10] + ".cv[2]") ($YY_ctrl_line[10] + ".cv[4]") ($YY_ctrl_line[10] + ".cv[0]");
+////////////////////////////////////////////////////////////////////////////
+xform -ws -t $pelvis_t[0] $pelvis_t[1] $pelvis_t[2] $YY_ctrl_line[8];//spinLower_ctrl;
+scale -r ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) $YY_ctrl_line[8];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[8];
+/////////////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[15] $YY_ctrl_line[8];
+move $pelvis_t[0] $pelvis_t[1] $pelvis_t[2] ($YY_constrain_group[15] + ".scalePivot") ($YY_constrain_group[15] + ".rotatePivot") ;
+////////////////////////////////////////////////////////////////////////////////////////////
+setAttr -lock true -keyable false ($YY_ctrl_line[8] + ".scaleX");
+setAttr -lock true -keyable false ($YY_ctrl_line[8] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[8] + ".scaleZ");
+///////////////////////////////////////////////////////////////////////////////////////////
+float $spine_y[3] = `xform -q -ws -t $Pelvis_jn[1]`;//Spine
+xform -ws -t $spine_y[0] $spine_y[1] $spine_y[2] $YY_ctrl_line[9];//spineMid_ctrl;
+scale -r ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) $YY_ctrl_line[9];//spineMid_ctrl;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[9];//spineMid_ctrl;
+setAttr -lock true -keyable false ($YY_ctrl_line[9] + ".scaleX");//"spineMid_ctrl.sx";
+setAttr -lock true -keyable false ($YY_ctrl_line[9] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[9] + ".scaleZ");
+////////////////////////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[16] $YY_ctrl_line[9];
+move $spine_y[0] $spine_y[1] $spine_y[2] ($YY_constrain_group[16] + ".scalePivot") ($YY_constrain_group[16] + ".rotatePivot") ;
+////////////////////////////////////////////////////////////////////
+float $spine_l[3] = `xform -q -ws -t $Pelvis_jn[2]`;//Spine1`;
+xform -ws -t $spine_l[0] $spine_l[1] $spine_l[2] $YY_ctrl_line[10];//spineHigher_ctrl;
+scale -r ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) $YY_ctrl_line[10];//spineHigher_ctrl;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[10];//spineHigher_ctrl;
+setAttr -lock true -keyable false ($YY_ctrl_line[10] + ".scaleX");//"spineHigher_ctrl.sx";
+setAttr -lock true -keyable false ($YY_ctrl_line[10] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[10] + ".scaleZ");
+/////////////////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[17] $YY_ctrl_line[10];
+move $spine_l[0] $spine_l[1] $spine_l[2] ($YY_constrain_group[17] + ".scalePivot") ($YY_constrain_group[17] + ".rotatePivot") ;
+////////////////////////////////////////////////////////////////////
+float $spine_w[3] = `xform -q -ws -t $Pelvis_jn[3]`;//Spine1`;
+xform -ws -t $spine_w[0] $spine_w[1] $spine_w[2] $YY_ctrl_line[11];//spineHigher_ctrl;
+scale -r ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) ($YY_R_toe_heel_abs * 1.3) $YY_ctrl_line[11];//spineHigher_ctrl;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[11];//spineHigher_ctrl;
+setAttr -lock true -keyable false ($YY_ctrl_line[11] + ".scaleX");//"spineHigher_ctrl.sx";
+setAttr -lock true -keyable false ($YY_ctrl_line[11] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[11] + ".scaleZ");
+////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[18] $YY_ctrl_line[11];
+move $spine_w[0] $spine_w[1] $spine_w[2] ($YY_constrain_group[18] + ".scalePivot") ($YY_constrain_group[18] + ".rotatePivot") ;
+////////////////////////////////////////////////////////////////////////////////////
+delete $YY_ctrl_line[15];//nurbsCircle_copy;
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 80%"
+			   -progress 80;
+///////////////////////////////////////////////////////////////////////////////////////////
+parent $YY_constrain_group[18] $YY_ctrl_line[10];
+parent $YY_constrain_group[17] $YY_ctrl_line[9];
+parent  $YY_constrain_group[15] $YY_constrain_group[16] $YY_ctrl_line[4];
+////////////////////////////////////////////////////////
+parentConstraint -mo -weight 1 $YY_ctrl_line[11] $Pelvis_jn[3];
+parentConstraint -mo -weight 1 $YY_ctrl_line[10] $Pelvis_jn[2];
+parentConstraint -mo -weight 1 $YY_ctrl_line[9] $Pelvis_jn[1];
+parentConstraint -mo -weight 1 $YY_ctrl_line[8] $Pelvis_jn[0];
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+curve -n $YY_ctrl_line[16] -d 1 -p 0 0 2 -p 0 1 1 -p 0 2 0 -p 0 1 -1 -p 0 0 -2 -p 0 0 -1 -p 0 1 0 -p 0 0 1 -p 0 0 2 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 ;
+duplicate -rr -n $YY_ctrl_line[17] $YY_ctrl_line[16];
+group -n $L_hand_group[3] $YY_ctrl_line[16];
+scale -r 1 1 1 $L_hand_group[3];
+group -n $R_hand_group[3] $YY_ctrl_line[17];
+scale -r 1 -1 -1 $R_hand_group[3];
+scale -r 1 -1 1 $YY_ctrl_line[17];
+//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+float $YY_L_shoulder_point[3] = `xform -q -ws -t $L_arm_jn[1]`;
+float $YY_L_clavicle_point[3] = `xform -q -ws -t $L_arm_jn[0]`;
+xform -ws -t $YY_L_shoulder_point[0] ($YY_L_shoulder_point[1] + ($YY_R_toe_heel_abs * 0.6)) $YY_L_shoulder_point[2] $YY_ctrl_line[16];
+scale -r ($YY_R_toe_heel_abs * 0.15) ($YY_R_toe_heel_abs * 0.15) ($YY_R_toe_heel_abs * 0.15) $YY_ctrl_line[16];//L_shoulder_ctrl;
+move $YY_L_clavicle_point[0] $YY_L_clavicle_point[1] $YY_L_clavicle_point[2] ($YY_ctrl_line[16] + ".scalePivot") ($YY_ctrl_line[16] + ".rotatePivot") ;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[16];//L_shoulder_ctrl;
+orientConstraint -mo -weight 1 $YY_ctrl_line[16] $L_arm_jn[0] ;//L_shoulder_ctrl LeftShoulder;
+pointConstraint -mo -weight 1 $YY_ctrl_line[16] $L_arm_jn[0] ;//L_shoulder_ctrl LeftShoulder;
+/////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[10] $L_hand_group[3];
+move $YY_L_clavicle_point[0] $YY_L_clavicle_point[1] $YY_L_clavicle_point[2] ($YY_constrain_group[10] + ".scalePivot") ($YY_constrain_group[10] + ".rotatePivot") ;
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+float $YY_R_shoulder_point[3] = `xform -q -ws -t $R_arm_jn[1]`;
+float $YY_R_clavicle_point[3] = `xform -q -ws -t $R_arm_jn[0]`;
+xform -ws -t $YY_R_shoulder_point[0] ($YY_R_shoulder_point[1] + ($YY_R_toe_heel_abs * 0.6)) $YY_R_shoulder_point[2] $YY_ctrl_line[17];
+scale -r ($YY_R_toe_heel_abs * 0.15) ($YY_R_toe_heel_abs * 0.15) ($YY_R_toe_heel_abs * 0.15) $YY_ctrl_line[17];//R_shoulder_ctrl;
+move $YY_R_clavicle_point[0] $YY_R_clavicle_point[1] $YY_R_clavicle_point[2] ($YY_ctrl_line[17] + ".scalePivot") ($YY_ctrl_line[17] + ".rotatePivot") ;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[17];//R_shoulder_ctrl;
+orientConstraint -mo -weight 1 $YY_ctrl_line[17] $R_arm_jn[0] ;//R_shoulder_ctrl RightShoulder;
+pointConstraint -mo -weight 1 $YY_ctrl_line[17] $R_arm_jn[0] ;//R_shoulder_ctrl RightShoulder;
+/////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[11] $R_hand_group[3];
+move $YY_R_clavicle_point[0] $YY_R_clavicle_point[1] $YY_R_clavicle_point[2] ($YY_constrain_group[11] + ".scalePivot") ($YY_constrain_group[11] + ".rotatePivot") ;
+//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+parent $YY_constrain_group[10] $YY_constrain_group[11] $YY_ctrl_line[18];
+//////////////////////////////////////////////////////////////////////////////////////
+float $YY_neck_point[3] = `xform -q -ws -t $head_jn[0]`;
+float $YY_neck01_point[3] = `xform -q -ws -t $head_jn[1]`;
+float $YY_head_point[3] = `xform -q -ws -t $head_jn[2]`;
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 85%"
+			   -progress 85;
+///////////////////////////////////////////////////////////////////////////////////////
+xform -ws -t $YY_neck_point[0] $YY_neck_point[1] $YY_neck_point[2] $YY_ctrl_line[12];
+scale -r ($YY_R_toe_heel_abs * 0.6) ($YY_R_toe_heel_abs * 0.6) ($YY_R_toe_heel_abs * 0.6) $YY_ctrl_line[12];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[12];
+setAttr -lock true -keyable false ($YY_ctrl_line[12] + ".scaleX");
+setAttr -lock true -keyable false ($YY_ctrl_line[12] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[12] + ".scaleZ");
+parentConstraint -mo -weight 1 $YY_ctrl_line[12] $head_jn[0];
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[12] $YY_ctrl_line[12];
+move $YY_neck_point[0] $YY_neck_point[1] $YY_neck_point[2] ($YY_constrain_group[12] + ".scalePivot") ($YY_constrain_group[12] + ".rotatePivot") ;
+/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+xform -ws -t $YY_neck01_point[0] $YY_neck01_point[1] $YY_neck01_point[2] $YY_ctrl_line[13];
+scale -r ($YY_R_toe_heel_abs * 0.6) ($YY_R_toe_heel_abs * 0.6) ($YY_R_toe_heel_abs * 0.6) $YY_ctrl_line[13];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[13];
+setAttr -lock true -keyable false ($YY_ctrl_line[13] + ".scaleX");
+setAttr -lock true -keyable false ($YY_ctrl_line[13] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[13] + ".scaleZ");
+parentConstraint -mo -weight 1 $YY_ctrl_line[13] $head_jn[1];
+/////////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[13] $YY_ctrl_line[13];
+move $YY_neck01_point[0] $YY_neck01_point[1] $YY_neck01_point[2] ($YY_constrain_group[13] + ".scalePivot") ($YY_constrain_group[13] + ".rotatePivot") ;
+////////////////////////////////////////////////////////////////////////////////////
+xform -ws -t $YY_head_point[0] $YY_head_point[1] $YY_head_point[2] $YY_ctrl_line[14];
+scale -r ($YY_R_toe_heel_abs * 0.6) ($YY_R_toe_heel_abs * 0.6) ($YY_R_toe_heel_abs * 0.6) $YY_ctrl_line[14];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $YY_ctrl_line[14];
+setAttr -lock true -keyable false ($YY_ctrl_line[14] + ".scaleX");
+setAttr -lock true -keyable false ($YY_ctrl_line[14] + ".scaleY");
+setAttr -lock true -keyable false ($YY_ctrl_line[14] + ".scaleZ");
+parentConstraint -mo -weight 1 $YY_ctrl_line[14] $head_jn[2];
+//////////////////////////////////////////////////////////////////
+group -n $YY_constrain_group[14] $YY_ctrl_line[14];
+move $YY_head_point[0] $YY_head_point[1] $YY_head_point[2] ($YY_constrain_group[14] + ".scalePivot") ($YY_constrain_group[14] + ".rotatePivot") ;
+/////////////////////////////////////////////////////////////////////
+parent $YY_constrain_group[14] $YY_ctrl_line[13];
+parent $YY_constrain_group[13] $YY_ctrl_line[12];
+parent $YY_constrain_group[12] $YY_ctrl_line[18];
+parent $YY_constrain_group[19] $YY_ctrl_line[11];
+parentConstraint -mo -weight 1 $YY_ctrl_line[18] $Pelvis_jn[4];
+////////////////////////////////////////////////////////////////////////////////////////////////
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 90%"
+			   -progress 90;
+
+for ($YY_ik = 1;$YY_ik<6;$YY_ik++)
+{
+setAttr ($L_IK[$YY_ik] + ".visibility") 0;
+setAttr ($R_IK[$YY_ik] + ".visibility") 0;
+};
+///////////////////////////////////////////////////
+//////////////////////////////////////////////////////Lock_Joint
+setAttr ($L_arm_jn[4] + ".jointTypeX") 0;
+setAttr ($L_arm_jn[4] + ".jointTypeY") 0;
+setAttr ($L_arm_jn[4] + ".jointTypeZ") 0;
+
+//setAttr -lock true ($L_arm_jn[4] + ".rx");
+//setAttr -lock true ($L_arm_jn[4] + ".rz");
+///////////////////////////////////////////////////////////////
+setAttr ($L_arm_jn[2] + ".jointTypeX") 0;
+setAttr ($L_arm_jn[2] + ".jointTypeY") 0;
+setAttr ($L_arm_jn[2] + ".jointTypeZ") 0;
+//setAttr -lock true ($L_arm_jn[2] + ".rx");
+//setAttr -lock true ($L_arm_jn[2] + ".rz");
+/////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+setAttr ($L_leg_jn[2] + ".jointTypeX") 0;
+setAttr ($L_leg_jn[2] + ".jointTypeY") 0;
+setAttr ($L_leg_jn[2] + ".jointTypeZ") 0;
+//setAttr -lock true ($L_leg_jn[2] + ".rx");
+//setAttr -lock true ($L_leg_jn[2] + ".rz");
+///////////////////////////////////////////////////////////////
+setAttr ($L_leg_jn[4] + ".jointTypeX") 0;
+setAttr ($L_leg_jn[4] + ".jointTypeY") 0;
+setAttr ($L_leg_jn[4] + ".jointTypeZ") 0;
+//setAttr -lock true ($L_leg_jn[4] + ".rx");
+//setAttr -lock true ($L_leg_jn[4] + ".rz");
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////RRRRRLock_Joint
+setAttr ($R_arm_jn[4] + ".jointTypeX") 0;
+setAttr ($R_arm_jn[4] + ".jointTypeY") 0;
+setAttr ($R_arm_jn[4] + ".jointTypeZ") 0;
+//setAttr -lock true ($R_arm_jn[4] + ".rx");
+//setAttr -lock true ($R_arm_jn[4] + ".rz");
+///////////////////////////////////////////////////////////////
+setAttr ($R_arm_jn[2] + ".jointTypeX") 0;
+setAttr ($R_arm_jn[2] + ".jointTypeY") 0;
+setAttr ($R_arm_jn[2] + ".jointTypeZ") 0;
+//setAttr -lock true ($R_arm_jn[2] + ".rx");
+//setAttr -lock true ($R_arm_jn[2] + ".rz");
+/////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+setAttr ($R_leg_jn[2] + ".jointTypeX") 0;
+setAttr ($R_leg_jn[2] + ".jointTypeY") 0;
+setAttr ($R_leg_jn[2] + ".jointTypeZ") 0;
+//setAttr -lock true ($R_leg_jn[2] + ".rx");
+//setAttr -lock true ($R_leg_jn[2] + ".rz");
+///////////////////////////////////////////////////////////////
+setAttr ($R_leg_jn[4] + ".jointTypeX") 0;
+setAttr ($R_leg_jn[4] + ".jointTypeY") 0;
+setAttr ($R_leg_jn[4] + ".jointTypeZ") 0;
+//setAttr -lock true ($R_leg_jn[4] + ".rx");
+//setAttr -lock true ($R_leg_jn[4] + ".rz");
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+////////Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___
+////////Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___
+////////Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___Set_End___
+//string $YY_original_prefix = "YY_motion_" + $Yi + "_" + $YY_mo_dup[$Yi] + "_";
+string $YY_original_prefix = ($YY_mo_name + "_");
+group -em -n ($YY_mo_du_a[$YY_gang] + "_Group");
+for($YY_con = 0;$YY_con<size($YY_constrain_group);$YY_con++)
+{
+	if($YY_con < 4)
+	{
+	parent $YY_lock[$YY_con] ($YY_mo_du_a[$YY_gang] + "_Group");
+	};
+	if(($YY_con > 3)&&($YY_con < 9))
+	{
+	parent $YY_constrain_group[$YY_con] ($YY_mo_du_a[$YY_gang] + "_Group");
+       	};
+                   };
+/////////////////////////////////////////////////////////////////////
+string $YY_gh_end[] = `listRelatives -type "joint" -c $YY_mo_name`;	
+string $YY_list_copy_Hips_joint_name = $YY_gh_end[0];
+if(size($YY_gh_end)== 0)
+{
+select -r -hi $YY_mo_name;
+string $YY_list_copy_joint_name_hi[] = `ls -sl -type "joint"`;
+$YY_list_copy_Hips_joint_name = $YY_list_copy_joint_name_hi[0];	
+	
+};
+int $YY_list_joint_name_int_a = size($YY_list_copy_Hips_joint_name) - 4;
+string $YY_list_name_substring_a = `substring $YY_list_copy_Hips_joint_name 1 $YY_list_joint_name_int_a`;
+
+$YY_original_prefix = $YY_list_name_substring_a;
+
+progressWindow -e 
+	           -status "正在为角色添加设置，已完成 95%"
+			   -progress 95;
+
+print ("ppppppppppppppppppp" + $YY_original_prefix + "\n");
+////////////////////////////////////////////////////////////////////////////////////
+parentConstraint -mo -weight 1 -n $YY_lock_con_name[0] ($YY_original_prefix + "LeftFoot") $YY_constrain_group[0];
+parentConstraint -mo -weight 1 -n $YY_lock_con_name[1] ($YY_original_prefix + "RightFoot") $YY_constrain_group[1];
+parentConstraint -mo -weight 1 -n $YY_lock_con_name[2] ($YY_original_prefix + "LeftHand") $YY_constrain_group[2];
+parentConstraint -mo -weight 1 -n $YY_lock_con_name[3] ($YY_original_prefix + "RightHand") $YY_constrain_group[3];
+parentConstraint -mo -weight 1 ($YY_original_prefix + "Hips") $YY_constrain_group[4];
+parentConstraint -mo -weight 1 ($YY_original_prefix + "LeftLeg") $YY_constrain_group[5];
+parentConstraint -mo -weight 1 ($YY_original_prefix + "RightLeg") $YY_constrain_group[6];
+parentConstraint -mo -weight 1 ($YY_original_prefix + "LeftForeArm") $YY_constrain_group[7];
+parentConstraint -mo -weight 1 ($YY_original_prefix + "RightForeArm") $YY_constrain_group[8];
+//parentConstraint -mo -weight 1 ($YY_original_prefix + "") $YY_constrain_group[0];
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+orientConstraint -mo -weight 1 ($YY_original_prefix + "LeftShoulder") $YY_constrain_group[10];
+orientConstraint -mo -weight 1 ($YY_original_prefix + "RightShoulder") $YY_constrain_group[11];
+orientConstraint -mo -weight 1 ($YY_original_prefix + "Neck") $YY_constrain_group[12];
+orientConstraint -mo -weight 1 ($YY_original_prefix + "Neck1") $YY_constrain_group[13];
+orientConstraint -mo -weight 1 ($YY_original_prefix + "Head") $YY_constrain_group[14];
+orientConstraint -mo -weight 1 ($YY_original_prefix + "Spine") $YY_constrain_group[16];
+orientConstraint -mo -weight 1 ($YY_original_prefix + "Spine1") $YY_constrain_group[17];
+orientConstraint -mo -weight 1 ($YY_original_prefix + "Spine2") $YY_constrain_group[18];
+orientConstraint -mo -weight 1 ($YY_original_prefix + "Spine3") $YY_constrain_group[19];
+//orientConstraint -mo -weight 1 ($YY_original_prefix + "") $YY_constrain_group[];
+//////////////////////////////////////////////////////////////////////////////////////////
+//parentConstraint -mo -weight 1 
+expression -n ("YY_motion_" + $YYH + "_L_foot_ex") -s (($YY_ctrl_line[0] + ".toe") + " = " + ($YY_original_prefix + "LeftToeBase" + ".rotateX") + ";");
+expression -n ("YY_motion_" + $YYH + "_R_foot_ex") -s (($YY_ctrl_line[1] + ".toe") + " = " + ($YY_original_prefix + "RightToeBase" +".rotateX") + ";");
+//connectAttr -f  ($YY_original_prefix + "LeftToeBase" + ".rotateX") ($YY_ctrl_line[0] + ".toe");
+//connectAttr -f  ($YY_original_prefix + "RightToeBase" +".rotateX") ($YY_ctrl_line[1] + ".toe");
+string $YY_wan[] = `listRelatives -f -p $YY_mo_dup[$Yi]`;
+print ("*************" + $YY_wan[0]+"*********");
+if(`size($YY_wan)` != 0)
+{
+parent ($YY_mo_du_a[$YY_gang] + "_Group") $YY_wan[0];	
+//group -n ("YY_" + $YY_mo_dup[$Yi] + "_Group") ($YY_mo_du_a[$YY_gang] + "_Group") $YY_mo_dup[$Yi];
+};
+
+
+////////////////////////////////////////////////////////////////
+orientConstraint -mo -weight 1 ($YY_original_prefix + "LeftArm") $YY_L_FK_group[0] ;
+orientConstraint -mo -weight 1 ($YY_original_prefix + "LeftForeArm") $YY_L_FK_group[1] ;
+orientConstraint -mo -weight 1 ($YY_original_prefix + "LeftHand") $YY_L_FK_group[2] ;
+///////////////////////////////////////////////////////////////////
+orientConstraint -mo -weight 1 ($YY_original_prefix + "RightArm") $YY_R_FK_group[0] ;
+orientConstraint -mo -weight 1 ($YY_original_prefix + "RightForeArm") $YY_R_FK_group[1] ;
+orientConstraint -mo -weight 1 ($YY_original_prefix + "RightHand") $YY_R_FK_group[2] ;
+//////////////////////////////////////////////////////////////////////
+orientConstraint -mo -weight 1 ($YY_original_prefix + "LeftShoulder") $YY_constrain_group[10] ;
+orientConstraint -mo -weight 1 ($YY_original_prefix + "RightShoulder") $YY_constrain_group[11] ;
+//////////////////////////////////////////////////////////////////////////////////////
+/*
+parentConstraint -mo -weight 1 -n ($YY_lock[2] + "parentConstraint") $YY_lock[2] $YY_constrain_group[2];
+
+setDrivenKeyframe -cd ($YY_ctrl_line[2] + "." + $YY_dingwei[2]) -dv  0 -v  1 ($YY_lock[2] + "parentConstraint." + $YY_name_space[$YY_name_int] + "W1");
+setDrivenKeyframe -cd ($YY_ctrl_line[2] + "." + $YY_dingwei[2]) -dv  1 -v  0 ($YY_lock[2] + "parentConstraint." + $YY_name_space[$YY_name_int] + "W1");
+setDrivenKeyframe -cd ($YY_ctrl_line[2] + "." + $YY_dingwei[2]) -dv  0 -v  0 ($YY_constrain_group[2] + "W0");
+setDrivenKeyframe -cd ($YY_ctrl_line[2] + "." + $YY_dingwei[2]) -dv  1 -v  1 ($YY_constrain_group[2] + "W0");	
+
+parentConstraint -mo -weight 1 $YY_lock[3] $YY_constrain_group[3];
+
+parentConstraint -mo -weight 1 $YY_lock[0] $YY_constrain_group[0];
+
+parentConstraint -mo -weight 1 $YY_lock[1] $YY_constrain_group[1];
+
+*/
+
+
+progressWindow -e 
+              // -status ("正在为第" + ($Yi+1) + "个角色添加设置，已完成 100%")
+	           -status "正在为角色添加设置，已完成 100%"
+			   -progress 100;
+setAttr ($YY_mo_name + ".visibility") 1;
+string $YY_Motion_hide_org[] = `listRelatives -c -s $YY_mo_dup[$Yi]`;
+setAttr ($YY_Motion_hide_org[0] + ".visibility") 0;
+setAttr ($YY_original_prefix + "Hips.visibility") 0;
+//print ("\n////////////////////"$YY_original_prefix + "Hips");
+//$YY_mo_name
+
+
+
+
+ progressWindow -endProgress;
+};
+select -cl;
+
+};
+};
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_legjoint_ling()
+{
+select -r -hi;
+string $YY_leg_mody[] = `ls -sl -type "joint"`;
+string $YY_upleg[] = `listRelatives -f -p $YY_leg_mody[0]`;
+select -cl;
+////////////////////////////////////////////////////////////	
+for($Yjo = 0;$Yjo<4;$Yjo++)
+{		
+     string $YY_mo_ani[] =`listHistory $YY_leg_mody[$Yjo]`;
+		 for($YY_an = 0;$YY_an<size($YY_mo_ani);$YY_an++)
+	 {
+	 string $YY_mo_an_type = `nodeType $YY_mo_ani[$YY_an]`;
+	 if($YY_mo_an_type == "animCurveTU" ||$YY_mo_an_type == "animCurveTL" )
+	 {
+		 //$YY_mo_an_type == "animCurveTA" ||
+		 selectKey -add -k $YY_mo_ani[$YY_an];
+		 cutKey -animation keys -clear -selectKey;
+                	 };
+	                        };	
+                                   };
+//////////////////////////////////////////////////////////////////////
+float $L_01[3] = `xform -q -ws -t $YY_upleg[0]`;
+float $L_02[3] = `xform -q -ws -t $YY_leg_mody[0]`;//LeftUpLegRoll`;
+float $L_03[3] = `xform -q -ws -t $YY_leg_mody[1]`;//LeftLeg`;
+float $L_04[3] = `xform -q -ws -t $YY_leg_mody[2]`;//LeftLegRoll`;
+float $L_05[3] = `xform -q -ws -t $YY_leg_mody[3]`;//LeftFoot`;
+//////////////////////////////////////////////////////////
+float $nnx01 = ((($L_01[1] - $L_02[1]) * ($L_05[0] - $L_01[0])) / ($L_01[1] - $L_05[1])) + $L_01[0];
+float $nnx02 = ((($L_01[1] - $L_03[1]) * ($L_05[0] - $L_01[0])) / ($L_01[1] - $L_05[1])) + $L_01[0];
+float $nnx03 = ((($L_01[1] - $L_04[1]) * ($L_05[0] - $L_01[0])) / ($L_01[1] - $L_05[1])) + $L_01[0];
+//////////////////////////////////////////////////////////////////////////////////////////////
+float $nnz01 = ((($L_01[1] - $L_02[1]) * ($L_03[2] - $L_01[2])) / ($L_01[1] - $L_03[1])) + $L_01[2] ;
+//float $nnz02 = ((($L_01[1] - $L_03[1]) * ($L_05[2] - $L_01[2])) / ($L_01[1] - $L_03[1])) + $L_01[0];
+float $nnz03 = ((($L_03[1] - $L_04[1]) * ($L_05[2] - $L_03[2])) / ($L_03[1] - $L_05[1])) + $L_03[2];
+//////////////////////////////////////////////////////////////////////////////////////////////
+xform -ws -t $nnx01 $L_02[1] $nnz01 $YY_leg_mody[0];//LeftUpLegRoll;
+xform -ws -t $nnx02 $L_03[1] $L_03[2] $YY_leg_mody[1];//LeftLeg;
+xform -ws -t $nnx03 $L_04[1] $nnz03 $YY_leg_mody[2];//LeftLegRoll;
+xform -ws -t $L_05[0] $L_05[1] $L_05[2] $YY_leg_mody[3];//LeftFoot;
+};
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+global proc YY_motion_help()
+{
+ progressWindow -endProgress;	
+	if(`window -q -ex YY_motion_help_win`)
+	{
+	deleteUI YY_motion_help_win;
+	};
+window  -wh 150 300
+	    -s 1
+		YY_motion_help_win;
+columnLayout -rs 5 -cat "both" 5 -adj 1;
+text -l "帮助";
+separator;
+text -l "添加Motion设置按钮";
+setParent ..;
+columnLayout -cat "left" 5 -adj 1;
+text -al "left" -l "选择要添加设置角色的Locator点击自动\n添加设置按钮。添加设置完成。如果出\n现错误请查看Locator子层级是否为骨骼\n如果不是骨骼请选择Hips骨骼的上一层\n级再点击添加Motion按钮。\n\n";
+separator;
+text -l "修改脚部方向按钮\n";
+text -w 120 -al "left" -rs 1 -l "添加完设置的Motion角色的脚尖方向因\n模型设置的不同可能会出现错误，如果\n发现角色在行走时脚尖骨骼和原骨骼偏\n离位置很大就选择该脚部控制器( L_foot\n或R_foot ) 然后点击修改脚部方向即可。";
+
+showWindow YY_motion_help_win;
+
+
+};
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+global proc YY_motion_foot_modify()
+{
+string $YY_motion_foot_modify_pan[] = `ls -sl -sn`;
+for($YY_motion_modify = 0;$YY_motion_modify<size($YY_motion_foot_modify_pan);$YY_motion_modify++)
+{
+int $YY_motion_mod_int = size($YY_motion_foot_modify_pan[$YY_motion_modify]);
+	string $YY_motion_mod_sting = `substring $YY_motion_foot_modify_pan[$YY_motion_modify] ($YY_motion_mod_int - 5) $YY_motion_mod_int`;
+	if($YY_motion_mod_sting == "L_foot"||$YY_motion_mod_sting == "R_foot")
+	{
+		string $YY_motion_ex_newname;
+	string $YY_motion_ex_pd[] = `listHistory ($YY_motion_foot_modify_pan[$YY_motion_modify] + ".toe")`;	
+		for($YY_mo_ex_for = 0;$YY_mo_ex_for < size ($YY_motion_ex_pd);$YY_mo_ex_for++)
+		{
+		string $YY_motion_ex_type = `nodeType $YY_motion_ex_pd[$YY_mo_ex_for]`;
+		if($YY_motion_ex_type == "expression")
+		{
+		$YY_motion_ex_newname = $YY_motion_ex_pd[$YY_mo_ex_for];	
+		break;
+		};	
+		          };
+	string $YY_motion_mo_ex = `expression -q -s $YY_motion_ex_newname`;
+	string $YY_motion_mo_ex_a[];
+	string $YY_motion_mo_gai = `tokenize $YY_motion_mo_ex "=" $YY_motion_mo_ex_a`;
+expression -e -s ($YY_motion_mo_ex_a[0] + " = -" + $YY_motion_mo_ex_a[1]) $YY_motion_ex_newname;
+		
+	};	
+
+};
+	
+	
+
+};
+
+mopctrlTool;
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,132 @@
+global proc Insertani_qishijieshuqudaitime()
+{
+    global string $listt[];
+    global string $k[];
+    global string $l[];
+    global int $qishizhen;
+    global int $jieshuzhen;
+    global float $delintobj;
+    global float $delintobj1;
+    global float $delintobj2;
+    int $FRISTFame=$qishizhen;
+    int $ENDFame=$jieshuzhen;
+    global float $delint1;
+    global float $delint2;
+    float $clipStartEndTime[]=`floatFieldGrp -q -v "timeRange"`;
+    global string $selbosscn[];
+    global int $qishizhen;
+    global int $jieshuzhen;
+    global float $allframe;
+    global float $XianJieJieShu;
+    global float $XianJieQiShi;
+    global float $fanwei;
+    int $ENDFame=$jieshuzhen;
+    ////////////
+    inputAnisli;
+    //string $selbosscn[]=`ls -sl`;
+    select $selbosscn[0];
+    //导入第一段动画
+    file -import -type "animImport" -ra true -mergeNamespacesOnClash false
+    -namespace "pao" -options ";targetTime=4;copies=1;option=replace;pictures=0;connect=0;" 
+     -pr -loadReferenceDepth "all" "D:/AniTxt/Ani_01.anim";
+    select $selbosscn[0];
+    select `ls -sl-dag -typ "nurbsCurve"`;
+    pickWalk -d up;
+    string $selallcns[]=`ls -sl`;
+    character -name "Ani_01" -excludeVisibility -excludeScale;
+    select "Ani_01";
+    clip -name "clip_Ani_01" -sc 1 -allAbsolute -startTime $clipStartEndTime[0] -endTime $clipStartEndTime[1] "Ani_01";
+    $yuanshi=`getAttr "clip_Ani_01.startFrame"` ;
+    setAttr "clip_Ani_01.startFrame" ($clipStartEndTime[1]*10);
+    select $selallcns;
+    string $curs[]=`listConnections -d 1 -t "animCurve"`;
+    select $curs;
+    delete;
+///////////////动画衔接起始帧！
+    int $hunheKG=`checkBoxGrp -q -v1 "KG"`;
+    int $shijianxuanxiang=`radioButtonGrp -q -sl "SJFW"`;
+        $qishizhen1=`floatFieldGrp -q -v "QSZ"`;
+        float $qishizhen1int[]=$qishizhen1;
+        $jieshuzhen1=`floatFieldGrp -q -v "JSZ"`;
+        float $jieshuzhen1int[]=$jieshuzhen1;
+    $niantiexuanxiang=`radioButtonGrp -q -sl "NTFS"`;
+    $qudaiquyu=`radioButtonGrp -q -vis "QDQY"`;
+     
+    float $RangeFristframe=$clipStartEndTime[0];
+    float $RangeEndframe=$clipStartEndTime[1];
+    //第一个动作循环次数
+    $delint=($RangeEndframe/$ENDFame)-floor($RangeEndframe/$ENDFame);
+    if($delint>0.5)
+        {
+        $delintobj=floor($RangeEndframe/$ENDFame)+1;
+        }
+    else
+        {
+        $delintobj=floor($RangeEndframe/$ENDFame);
+        }
+    //print  $delintobj;
+    //////////最接近的值(起始帧)
+    $delint1=($qishizhen1int[0]/$ENDFame)-floor($qishizhen1int[0]/$ENDFame);
+    if($delint1>0.5)
+        {
+        $delintobj1=floor($qishizhen1int[0]/$ENDFame)+1;
+        }
+    else
+        {
+        $delintobj1=floor($qishizhen1int[0]/$ENDFame);
+        }
+    $XianJieQiShi=$delintobj1*$ENDFame;
+    //////////最接近的值（结束帧）
+    $delint2=($jieshuzhen1int[0]/$ENDFame)-floor($jieshuzhen1int[0]/$ENDFame);
+    if($delint2>0.5)
+        {
+        $delintobj2=floor($jieshuzhen1int[0]/$ENDFame)+1;
+        }
+    else
+        {
+        $delintobj2=floor($jieshuzhen1int[0]/$ENDFame);
+        }
+    $XianJieJieShu=$delintobj2*$ENDFame;    
+///////////////////////
+///////////////////////
+///导入第二段动画
+    select $selbosscn[0];
+    file -import -type "animImport" -ra true -mergeNamespacesOnClash false
+    -namespace "pao" -options ";targetTime=4;copies=1;option=replace;pictures=0;connect=0;" 
+     -pr -loadReferenceDepth "all" "D:/AniTxt/Ani_02.anim";
+     
+    $qis=`intField -q -v "startTime"`;
+    $js=`intField -q -v "endTime"`;
+    float $Qis=$qis;
+    float $Jies=$js;
+////$pl=`intSliderGrp -q -v "XHCS"`;
+    float $fanwei=$XianJieJieShu-$XianJieQiShi;
+    float $delint02=$fanwei/$Jies-floor($fanwei/$Jies);
+    $QiShiframe=$qis;
+    if($delint02>0.5)
+    {
+        $allframe=$Jies*(floor($fanwei/$Jies)+1);
+    }
+    else
+    {
+        $allframe=$Jies*floor($fanwei/$Jies); 
+    }   
+    select $selbosscn[0];
+    select `ls -sl-dag -typ "nurbsCurve"`;
+    pickWalk -d up;
+    string $selallcns1[]=`ls -sl`;
+    clip -name "clip_Ani_02" -sc 1 -allAbsolute -startTime $QiShiframe -endTime $allframe "Ani_01";
+    select $selallcns1;
+    string $curs1[]=`listConnections -d 1 -t "animCurve"`;
+    select $curs1;
+    delete;  
+    ////////////////////////  
+    setAttr "clip_Ani_02.startFrame" $XianJieQiShi;
+    setAttr "clip_Ani_01.startFrame" $yuanshi; 
+    select "clip_Ani_01";   
+    string $splitlist[]=`doSplitClipArgList 1 { "specifyMethod",$XianJieQiShi,"clipEditorPanel1ClipEditor","deleteSourceMethod" }`;
+    select $splitlist[1]; 
+    string $splitlist[]=`doSplitClipArgList 1 { "specifyMethod",$XianJieJieShu,"clipEditorPanel1ClipEditor","deleteSourceMethod" }`;
+    delete $splitlist[0];          
+
+}

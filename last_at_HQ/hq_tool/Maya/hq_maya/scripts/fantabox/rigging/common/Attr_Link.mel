@@ -1,0 +1,697 @@
+
+//if(!`objExists uu`)
+//{
+//polySphere -name "uu" -r 1 -sx 20 -sy 20 -ax 0 1 0 -tx 2 -ch 1;
+
+//};
+global string $YY_AC_Ti[];	
+global string $YY_AC_Select_Twoc[];
+global string $YY_AC_Select_Twod[];
+clear $YY_AC_Ti;
+clear $YY_AC_Select_Twoc;
+clear $YY_AC_Select_Twod;
+
+    if(`window -q -ex YY_AC_Win`)
+	{
+	deleteUI YY_AC_Win;
+	};
+	window 
+		-wh 720 600
+		-t "物体属性连接窗口"
+		-mb 1
+		-s 1
+		YY_AC_Win;
+	menu -l "左窗口";
+	menuItem -l "输入属性" -cb 0 -c "YY_AC_E_Win\"0\"" YY_AC_MI_a;
+	menuItem -l "输出属性" -cb 1 -c "YY_AC_E_Win\"1\"" YY_AC_MI_b;
+	menuItem -l "隐藏属性" -cb 1 -c "YY_AC_E_Win\"2\"" YY_AC_MI_c;
+	setParent ..;
+		menu -l "中窗口";
+	menuItem -l "输入属性" -cb 0 -c "YY_AC_E_Win\"3\"" YY_AC_MI_d;
+	menuItem -l "输出属性" -cb 1 -c "YY_AC_E_Win\"4\"" YY_AC_MI_e;
+	menuItem -l "隐藏属性" -cb 1 -c "YY_AC_E_Win\"5\"" YY_AC_MI_f;
+	setParent ..;
+		menu -l "右窗口";
+	menuItem -l "清空" -c YY_AC_Clear_Proc;
+	//menuItem -l "输出属性" -cb 1;
+	setParent ..;
+		menu -l "选择";
+	menuItem -l "选择Shape节点" -c YY_Sel_Shape;
+	setParent ..;
+	
+			menu -l "灯光";
+	menuItem -l "聚光灯" -c YY_AC_Light_Attr_Win ;
+	setParent ..;
+	
+	menu -l "帮助";
+	menuItem -l "帮助" -c YY_AC_Help;
+	setParent ..;
+	menu -l "关于";
+	menuItem -l "关于" -c YY_AC_About;
+	setParent ..;
+           formLayout -numberOfDivisions 100 YY_AC_FL;
+ button -h 30 -l "选择连接物体" -c YY_Select_One YY_AC_button_a;
+ button -h 30 -l "选择被连接物体" -c YY_AC_Sel_Two_BBC YY_AC_button_b;
+  button -h 30 -l "连接" -c YY_AC_AttrLink YY_AC_button_c;
+           // Create an outliner that will print the name of
+           // every object added to it to history pane of the
+           // script editor, then display all available input
+           // plugs on the node.
+          nodeOutliner YY_AC_NOL_L;
+            nodeOutliner YY_AC_NOL_M;
+			  //nodeOutliner YY_AC_NOL_R;
+			      //scrollField -ed 0 -ww 1 -fn "fixedWidthFont" YY_AC_NOL_R;
+			           textScrollList YY_AC_NOL_R;
+					       //textScrollList YY_AC_NOL_RD;
+					            text -l "共选择 0 个被连接物体" YY_AC_Win_Text_RD;
+								    scrollField -ed 0 -ww 1 -fn "fixedWidthFont" YY_AC_NOL_RD;
+           // Attach the nodeOutliner to the layout
+           formLayout -edit
+			-af  YY_AC_button_a "top" 5
+			    -af  YY_AC_button_a "left" 5
+				   -ap  YY_AC_button_a "right" 0 36
+				 
+		    -af  YY_AC_button_b "top" 5
+				  -ac  YY_AC_button_b "left" 5 YY_AC_button_a 
+				      -ap  YY_AC_button_b "right" 0 72
+					  
+		    -af  YY_AC_button_c "top" 5
+				-ac  YY_AC_button_c "left" 5 YY_AC_button_b 
+				    -af  YY_AC_button_c "right" 5					  
+				   
+		    -ac YY_AC_NOL_L "top" 5 YY_AC_button_a  
+                -af YY_AC_NOL_L "left"  5
+                  -af YY_AC_NOL_L "bottom" 5
+				    -ap YY_AC_NOL_L "right" 0 36
+                    //-af YY_AC_NOL_L "right"  5
+			
+			-ac YY_AC_NOL_M "top" 5 YY_AC_button_a
+			  -ac YY_AC_NOL_M "left" 5 YY_AC_NOL_L
+			    -ap YY_AC_NOL_M "right" 0 72
+			      -af YY_AC_NOL_M "bottom" 5
+				  
+			-ac YY_AC_NOL_R "top" 5 YY_AC_button_a	  
+				-ac YY_AC_NOL_R "left" 5 YY_AC_NOL_M  
+			       -af YY_AC_NOL_R "right" 5
+				      -ap YY_AC_NOL_R "bottom" 0 50
+					  
+			-ac YY_AC_Win_Text_RD "top" 5 YY_AC_NOL_R
+				-ac YY_AC_Win_Text_RD "left" 5 YY_AC_NOL_M
+					 -af YY_AC_Win_Text_RD "right" 5
+					     //-ap YY_AC_Win_Text_RD "bottom" 0 30
+			-ac YY_AC_NOL_RD "top" 5 YY_AC_Win_Text_RD	   
+				-ac YY_AC_NOL_RD "left" 5 YY_AC_NOL_M
+				   -af YY_AC_NOL_RD "right" 5
+				       -af YY_AC_NOL_RD "bottom" 5
+					 
+               YY_AC_FL;
+		   showWindow YY_AC_Win;
+
+window -e
+	   -wh 720 600
+		YY_AC_Win;		   
+		   
+
+global proc YY_Select_One()
+{	
+global string $YY_AC_Ti[];	
+global string $YY_AC_Select_Twoc[];
+global string $YY_AC_Select_Twod[];
+string $YY_AC_Select_One[] = `ls -sl -long`;
+$YY_AC_Ti[0] = $YY_AC_Select_One[0];
+if(size($YY_AC_Select_One) == 0)
+{
+nodeOutliner -e -rma YY_AC_NOL_L;
+clear $YY_AC_Ti;
+}
+else
+{
+nodeOutliner -e -replace $YY_AC_Select_One[0] YY_AC_NOL_L;
+nodeOutliner -e 
+	         -si 0 
+			 -so 1
+			 -sh 0 
+			 -snk 1
+			 -sco 0 
+			 -ms 0
+			 -phu 1
+			 -mmo 1
+			 YY_AC_NOL_L;
+if(size($YY_AC_Select_Twod) != 0)
+{
+
+int $YY_AC_Sel_Bo = stringArrayCount($YY_AC_Select_One[0], $YY_AC_Select_Twod);
+if($YY_AC_Sel_Bo > 0)
+{
+$YY_AC_Select_Twod = stringArrayRemove($YY_AC_Ti,$YY_AC_Select_Twod);
+YY_Select_Two $YY_AC_Select_Twod;
+	
+};
+};
+
+};
+};
+/////////////////////////////////////////////////////////////////////////////////////
+global proc YY_Select_Two(string $YY_AC_Select_Two[])
+{
+global string $YY_AC_Ti[];
+//global string $YY_AC_Select_Two[];
+//$YY_AC_Select_Two = `ls -sl -long`;
+//$YY_AC_Select_Two = stringArrayRemove($YY_AC_Ti,$YY_AC_Select_Two);
+int $YY_AC_Size = size($YY_AC_Select_Two);
+if(size($YY_AC_Select_Two) == 0)
+{
+nodeOutliner -e -rma YY_AC_NOL_M;	
+textScrollList -e -ra YY_AC_NOL_R;
+text -e -l "共选择 0 个被连接物体" YY_AC_Win_Text_RD;
+ scrollField -e -tx "" YY_AC_NOL_RD;
+}
+else
+{
+textScrollList -e -ra YY_AC_NOL_R;
+nodeOutliner -e -replace $YY_AC_Select_Two[0] YY_AC_NOL_M;
+nodeOutliner -e 
+	         -si 0 
+			 -so 1
+			 -sh 1 
+			 -snk 1
+			 -sco 0 
+			 -ms 0
+			 -phu 1
+			 -mmo 1
+			 YY_AC_NOL_M;
+
+
+string $YY_Select_R_ac;
+int $YY_JI = 0;
+for($YY_Select_R_ac in $YY_AC_Select_Two)
+{
+$YY_JI++;	
+string $YY_AC_Sel_Q[];
+tokenize $YY_Select_R_ac "|" $YY_AC_Sel_Q;
+int $YY_AC_QInt = size($YY_AC_Sel_Q)-1;
+print $YY_Select_R_ac;
+//textScrollList -e -a $YY_AC_Sel_Q[$YY_AC_QInt] -sc ("select -r " + $YY_Select_R_ac +";") YY_AC_NOL_R;
+textScrollList -e -a $YY_AC_Sel_Q[$YY_AC_QInt] -sc "YY_AC_Sel_Command \"0\"" -dcc "YY_AC_Sel_Command \"1\"" YY_AC_NOL_R;
+//nodeOutliner -e -a $YY_Select_R_ac YY_AC_NOL_R;
+};
+text -e -l ("共选择 " + $YY_AC_Size + " 个被连接物体") YY_AC_Win_Text_RD;
+
+};	
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_AC_Sel_Two_BBC()
+{
+//global string $YY_AC_Select_Two[];
+//$YY_AC_Select_Two = `ls -sl -long`;
+global string $YY_AC_Ti[];
+global string $YY_AC_Select_Twoc[];
+global string $YY_AC_Select_Twod[];
+//clear $YY_AC_Select_Twoc;
+$YY_AC_Select_Twod = `ls -sl -long`;
+$YY_AC_Select_Twoc = stringArrayRemove($YY_AC_Ti,$YY_AC_Select_Twod);
+YY_Select_Two ($YY_AC_Select_Twoc);
+};
+
+global proc YY_AC_E_Win(int $YY_AC_Ewin_Int)
+{
+switch($YY_AC_Ewin_Int)
+{
+////////////////////////////////////////////////////////////////////////	
+case 0 :
+int $YY_AC_BN_a = `menuItem -q -cb YY_AC_MI_a`;
+	if($YY_AC_BN_a == 0)
+	{	nodeOutliner -e 
+	         -si 0 
+			 YY_AC_NOL_L;
+}
+	else
+	{
+	nodeOutliner -e 
+	         -si 1 
+			 YY_AC_NOL_L;
+	};
+	break;
+/////////////////////////////////////////////////////////////////////////////	
+case 1 :
+int $YY_AC_BN_b = `menuItem -q -cb YY_AC_MI_b`;
+	if($YY_AC_BN_b == 0)
+	{	nodeOutliner -e 
+	         -so 0 
+			 YY_AC_NOL_L;
+}
+	else
+	{
+	nodeOutliner -e 
+	         -so 1 
+			 YY_AC_NOL_L;
+	};
+	break;
+/////////////////////////////////////////////////////////////////////////	
+case 2:
+int $YY_AC_BN_c = `menuItem -q -cb YY_AC_MI_c`;
+	if($YY_AC_BN_c == 0)
+	{	nodeOutliner -e 
+	         -sh 0 
+			 YY_AC_NOL_L;
+}
+	else
+	{
+	nodeOutliner -e 
+	         -sh 1 
+			 YY_AC_NOL_L;
+	};
+	break;
+//////////////////////////////////////////////////////////////////////////
+case 3:
+	int $YY_AC_BN_d = `menuItem -q -cb YY_AC_MI_d`;
+	if($YY_AC_BN_d == 0)
+	{	nodeOutliner -e 
+	         -si 0 
+			 YY_AC_NOL_M;
+}
+	else
+	{
+	nodeOutliner -e 
+	         -si 1 
+			 YY_AC_NOL_M;
+	};
+	break;
+case 4:
+	int $YY_AC_BN_e = `menuItem -q -cb YY_AC_MI_e`;
+	if($YY_AC_BN_e == 0)
+	{	nodeOutliner -e 
+	         -so 0 
+			 YY_AC_NOL_M;
+}
+	else
+	{
+	nodeOutliner -e 
+	         -so 1 
+			 YY_AC_NOL_M;
+	};
+	break;
+case 5:
+	int $YY_AC_BN_f = `menuItem -q -cb YY_AC_MI_f`;
+	if($YY_AC_BN_f == 0)
+	{	nodeOutliner -e 
+	         -sh 0 
+			 YY_AC_NOL_M;
+}
+	else
+	{
+	nodeOutliner -e 
+	         -sh 1 
+			 YY_AC_NOL_M;
+	};
+	break;
+
+/////////////////////////////////////////////////////////////////////////
+};
+	
+	
+	
+};
+
+global proc YY_AC_AttrLink()
+{
+global string $YY_AC_Select_Twoc[];
+global string $YY_AC_OK_Linke[];
+global int $YY_AC_OK_Link_Int;
+$YY_AC_OK_Link_Int = -1;
+string $YY_AC_AL_for;
+string $YY_AC_AL_cs_La[] = `nodeOutliner -q -cs YY_AC_NOL_L`;
+string $YY_AC_AL_cs_Ma[] = `nodeOutliner -q -cs YY_AC_NOL_M`;
+if((size($YY_AC_AL_cs_La) == 0 )||(size($YY_AC_AL_cs_Ma) == 0 ))
+{
+confirmDialog -t "请选择要连接的属性"
+	          -m "请选择要连接的属性\n然后点击连接按钮连接！"
+			  -b "OK";
+
+}
+else
+{
+string $YY_AC_AL_cs_Attr[]; 
+tokenize $YY_AC_AL_cs_Ma[0] "." $YY_AC_AL_cs_Attr;
+for($YY_AC_AL_for in $YY_AC_Select_Twoc)
+{
+	string $YY_AC_AL_Attr_Name = $YY_AC_AL_for + "." + $YY_AC_AL_cs_Attr[1];
+if(`attributeExists $YY_AC_AL_cs_Attr[1] $YY_AC_AL_for`)
+{
+	if(!`getAttr -l $YY_AC_AL_Attr_Name`)
+	{
+connectAttr -f $YY_AC_AL_cs_La[0] $YY_AC_AL_Attr_Name;
+$YY_AC_OK_Link_Int++;
+$YY_AC_OK_Linke[$YY_AC_OK_Link_Int] = $YY_AC_AL_for;
+
+	};
+};
+	
+	
+};
+string $YY_AC_Link_for;
+scrollField -e -tx "" YY_AC_NOL_RD;
+for($YY_AC_Link_for in $YY_AC_OK_Linke)
+{
+string $YY_AC_Sel_Qq[];
+tokenize $YY_AC_Link_for "|" $YY_AC_Sel_Qq;
+int $YY_AC_QqInt = size($YY_AC_Sel_Qq)-1;
+
+scrollField -e -it ($YY_AC_Sel_Qq[$YY_AC_QqInt] + "\n") YY_AC_NOL_RD;
+//textScrollList -e -a $YY_AC_Sel_Qq[$YY_AC_QqInt] YY_AC_NOL_R;	
+//nodeOutliner -e -a $YY_Select_R_ac YY_AC_NOL_R;
+};
+scrollField -e -it ("\n共有"+ $YY_AC_OK_Link_Int + "个物体被成功连接到"+ $YY_AC_AL_cs_Attr[1] + "属性上") YY_AC_NOL_RD;
+};	
+};
+
+
+global proc YY_AC_Clear_Proc()
+{
+
+textScrollList -e -ra YY_AC_NOL_R;
+};
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+global proc YY_AC_Help()
+{
+	if(`window -q -ex YY_AC_Help_Win`)
+	{
+	deleteUI YY_AC_Help_Win;
+	};
+	window 
+		  -wh 220 430
+		  -s 1
+		  -mb 0
+		  -t "物体多属性链接工具帮助"
+		  YY_AC_Help_Win;
+	string $YY_Del_Node_Help_Form = `formLayout`;
+	text -al "center" -l "物体多属性链接工具帮助" YY_Node_Main_Help_Text;
+    string $YY_Del_Node_Help_Scoll = `scrollField -ed 0 -po 1 -ww 1 -fn fixedWidthFont`;	
+	string $YY_Del_Node_Help_Maini_Text_A = "物体多属性链接工具：此工具可以使多个物体属性连接到某一指定属性上。\n";
+	$YY_Del_Node_Help_Maini_Text_A += "使用方法：首先在场景中选择要连接的物体(控制物体)，点击\"选择连接物体\"按钮，此时连接物体";
+	$YY_Del_Node_Help_Maini_Text_A += "的属性被加载到了左边的窗口中，然后在场景中选择要被连接的物体(受控物体,可多选)，点击";
+	$YY_Del_Node_Help_Maini_Text_A += "\"选择被连接物体\"按钮，此时被选择的第一个物体的属性被加载到中间的窗口中，所有选择的";
+	$YY_Del_Node_Help_Maini_Text_A += "被连接物体名称短名被加载到最右边窗口中，然后在左边窗口和中间窗口分别选择连接和被连接";
+	$YY_Del_Node_Help_Maini_Text_A += "物体的属性，点击\"连接\"按钮，连接完成，\n注：被连接物体中如果不存在中间窗口中选择的属性则不被连接。";
+	scrollField -e -tx $YY_Del_Node_Help_Maini_Text_A $YY_Del_Node_Help_Scoll;
+	
+	formLayout -e
+		-af YY_Node_Main_Help_Text "top" 5
+		-af YY_Node_Main_Help_Text "left" 10
+		-af YY_Node_Main_Help_Text "right" 10
+		
+		-ac $YY_Del_Node_Help_Scoll "top" 5 YY_Node_Main_Help_Text 
+		-af $YY_Del_Node_Help_Scoll "left" 5
+	    -af $YY_Del_Node_Help_Scoll "right" 5
+		-af $YY_Del_Node_Help_Scoll "bottom" 5
+		$YY_Del_Node_Help_Form;
+	showWindow YY_AC_Help_Win;
+		window -e
+		  -wh 220 430
+		  		  YY_AC_Help_Win;
+};
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+global proc YY_AC_About()
+{
+if(`window -q -ex YY_AC_About_Win`)
+{
+deleteUI YY_AC_About_Win;
+};
+window 
+	  -wh 350 180
+	  -s 1
+	  -mb 0
+	  -t "关于物体多属性链接工具"
+	  YY_AC_About_Win;
+columnLayout -rs 5 -cat "both" 5 -adj 1;
+text "制作：由继亮";
+text "QQ:78915620";
+text "E-Mail yjl811028@tom.com";
+text "制作时间：2009-04-08";
+text "如使用此工具中有任何问题或漏洞请及时通知本人";
+text "华强电影技术部 由继亮";
+showWindow YY_AC_About_Win;
+
+window -e
+	  -wh 350 180
+	  YY_AC_About_Win;
+};
+
+
+
+
+global proc YY_AC_Sel_Command(int $YY_AC_Comm_Int_Change)
+{
+global string $YY_AC_Select_Twod[];			
+int $YY_AC_Sel_Command_Intk[] = `textScrollList -q -sii YY_AC_NOL_R`;
+int $YY_AC_Sel_command_Int = $YY_AC_Sel_Command_Intk[0] -1;	
+switch($YY_AC_Comm_Int_Change)
+{
+case 0 :
+
+select -r ($YY_AC_Select_Twod[$YY_AC_Sel_command_Int]);
+break;
+case 1 :
+	
+	nodeOutliner -e -replace $YY_AC_Select_Twod[$YY_AC_Sel_command_Int] YY_AC_NOL_M;
+nodeOutliner -e 
+	         -si 0 
+			 -so 1
+			 -sh 1 
+			 -snk 1
+			 -sco 0 
+			 -ms 0
+			 -phu 1
+			 -mmo 1
+			 YY_AC_NOL_M;
+	break;
+};
+};
+
+
+global proc YY_Sel_Shape()
+{
+select `listRelatives -type "shape"`;
+	
+};
+
+
+
+
+
+global proc YY_AC_Light_Attr_Win()
+{
+
+if(`window -q -ex YY_AC_Light_Win`)
+{
+deleteUI YY_AC_Light_Win;
+};
+window 
+	   -t ""
+	   -mb 1
+	   -s 1
+	   -wh 240 600
+	   YY_AC_Light_Win;
+formLayout -numberOfDivisions 100 YY_AC_Light_FL;
+text -l "灯光属性列表" -al "center" YY_AC_Light_Text_A;
+textScrollList -ams 1 YY_AC_NOL_RB;
+button -l "全选" -c "YY_Ac_Light_Select_All_P" YY_Ac_Light_Sel_All;
+button -l "连接" -c YY_AC_Light_Select_Pro YY_AC_Light_Sel_Button;
+
+
+           formLayout -edit
+			-af  YY_AC_Light_Text_A "top" 5
+			    -af  YY_AC_Light_Text_A "left" 5
+				    //-af  YY_AC_Light_Text_A "right" 5
+				       //-ap  YY_AC_Light_Text_A "left"  0 60
+				   -ap  YY_AC_Light_Text_A "right" 0 100
+				   
+	       -ac  YY_AC_NOL_RB "top" 5 YY_AC_Light_Text_A
+		        -ac  YY_AC_NOL_RB "bottom" 5 YY_AC_Light_Sel_Button
+				    -af  YY_AC_NOL_RB "left" 5
+		                -af  YY_AC_NOL_RB "right" 5
+						
+			-af  YY_Ac_Light_Sel_All "bottom" 5		 
+				-af  YY_Ac_Light_Sel_All "left" 5	
+					-ap  YY_Ac_Light_Sel_All "right" 0 50	
+						
+		  // -ac  YY_AC_Light_Sel_Button "top" 5 YY_AC_NOL_RB
+		         -af  YY_AC_Light_Sel_Button "bottom" 5 
+				        //-af  YY_AC_Light_Sel_Button "left" 5 
+				         -ac  YY_AC_Light_Sel_Button "left" 5 YY_Ac_Light_Sel_All
+						     -af  YY_AC_Light_Sel_Button "right" 5 
+               YY_AC_Light_FL;
+
+
+
+showWindow YY_AC_Light_Win;
+
+//textScrollList -e -ams 1 YY_AC_NOL_RB;
+textScrollList -e -da YY_AC_NOL_RB;
+/////////////////////////////////1111111//////222222222222////////333333333333/////////444444444444////////555555555555555555///////666666666666///////77777777777777777/////888888888888888888888888888888/////////99999999999/////////10101010101010//////11//11//11//11//////121212121212///////131313131313131/////////141414/////////////////1515151515151515////
+string $YY_AC_String_List[] = {"颜色(Color)","亮度(Intensity)","衰减类型(Decay Rate)","锥角(Cone Angle)","半影度(Penumbra Angle)","衰减值(Dropoff)","投影颜色(Shadow Color)","深度阴影(Use Depth Map Shadows)","分辨率(Resolution)","过滤值(Filter Size)","偏移值(Bias)","光影跟踪(Ray race)","光影半径(Light Radius)","阴影散射(Shadow Rays)","光影深度(Ray Depth Limit)"};
+
+string $YY_AC_String_Ev_For;
+for($YY_AC_String_Ev_For in $YY_AC_String_List)
+{
+textScrollList -e -a $YY_AC_String_Ev_For YY_AC_NOL_RB;
+//textScrollList -si $YY_AC_String_Ev_For YY_AC_NOL_RB;
+//textScrollList -e -si $YY_AC_String_Ev_For YY_AC_NOL_RB;
+};
+
+
+//textScrollList -e -si $YY_AC_String_List YY_AC_NOL_RB;
+};
+
+
+
+global proc YY_Ac_Light_Select_All_P()
+{
+string $YY_AC_Light_Ai[] = `textScrollList -q -ai YY_AC_NOL_RB`;
+string $YY_AC_Light_For;
+for($YY_AC_Light_For in $YY_AC_Light_Ai)
+{
+textScrollList -e -si $YY_AC_Light_For YY_AC_NOL_RB;
+};
+
+
+};
+
+
+
+//textScrollList -q -sii YY_AC_NOL_RB;
+
+
+
+
+
+global proc YY_AC_Light_Select_Pro()
+{
+
+int $YY_AC_Light_Sel_No[] = `textScrollList -q -sii YY_AC_NOL_RB`;
+int $YY_AC_Light_Sel_For;
+
+for($YY_AC_Light_Sel_For in $YY_AC_Light_Sel_No)
+{
+switch($YY_AC_Light_Sel_For)
+{
+case 1:
+	       YY_AC_Light_Link_Attr "color";	
+	break;
+case 2:
+		   YY_AC_Light_Link_Attr "intensity";
+	break;
+case 3:
+	       YY_AC_Expression_Pro "decayRate";
+	break;
+case 4:
+	       YY_AC_Light_Link_Attr "coneAngle"; 
+	break;
+case 5:
+	       YY_AC_Light_Link_Attr "penumbraAngle";
+	break;
+case 6:
+	       YY_AC_Light_Link_Attr "dropoff";
+	break;
+case 7:
+	       YY_AC_Light_Link_Attr "shadowColor";	
+	break;
+case 8:
+	       YY_AC_Light_Link_Attr "useDepthMapShadows";	
+	break;
+case 9:
+	       YY_AC_Light_Link_Attr "dmapResolution";	
+	break;
+case 10:
+	       YY_AC_Light_Link_Attr "dmapFilterSize";	
+	break;
+case 11:
+	       YY_AC_Light_Link_Attr "dmapBias";	
+	break;
+case 12:
+	       YY_AC_Light_Link_Attr "useRayTraceShadows";	
+	break;
+case 13:
+	       YY_AC_Light_Link_Attr "lightRadius";	
+	break;
+case 14:
+	       YY_AC_Light_Link_Attr "shadowRays";	
+	break;
+case 15:
+	       YY_AC_Light_Link_Attr "rayDepthLimit";	
+	break;
+};
+	
+};
+	
+};
+
+
+global proc YY_AC_Light_Link_Attr(string $YY_AC_Link_Light_Attr_A)
+{
+global string $YY_AC_Select_Twoc[];	
+global string $YY_AC_Ti[];
+string $YY_AC_Link_Light_AZ = $YY_AC_Ti[0] + "." +$YY_AC_Link_Light_Attr_A;
+string $YY_AC_Link_Light_Sel_For_BBC;
+for($YY_AC_Link_Light_Sel_For_BBC in $YY_AC_Select_Twoc)
+{
+if(`attributeExists $YY_AC_Link_Light_Attr_A $YY_AC_Link_Light_Sel_For_BBC`)
+{
+	string $YY_AC_AL_Attr_Name_B = $YY_AC_Link_Light_Sel_For_BBC + "." + $YY_AC_Link_Light_Attr_A;	
+	
+	if(!`getAttr -l $YY_AC_AL_Attr_Name_B`)
+	{
+connectAttr -f $YY_AC_Link_Light_AZ $YY_AC_AL_Attr_Name_B;
+		//print ("**************"  + $YY_AC_Link_Light_AZ + "**************\n");
+		
+//$YY_AC_OK_Link_Int++;
+//$YY_AC_OK_Linke[$YY_AC_OK_Link_Int] = $YY_AC_AL_for;
+
+                    	};
+               };
+
+        };
+
+};
+
+
+global proc YY_AC_Expression_Pro(string $YY_AC_Link_Light_E)
+{
+		
+//$YY_AC_Link_Light_E = "decayRate";	
+global string $YY_AC_Select_Twoc[];	
+global string $YY_AC_Ti[];
+string $YY_AC_Link_Light_AX = $YY_AC_Ti[0] + "." + $YY_AC_Link_Light_E;
+
+addAttr -ln Decay_Rate -at long  -min 0 -max 3 -dv 0 $YY_AC_Ti[0];
+setAttr -e -keyable true ($YY_AC_Ti[0] + ".Decay_Rate");
+
+string $YY_AC_Light_Link_DF;
+string $YY_AC_Expre_Text = "";
+for($YY_AC_Light_Link_DF in $YY_AC_Select_Twoc)
+{
+$YY_AC_Expre_Text += $YY_AC_Light_Link_DF + "." + $YY_AC_Link_Light_E + "=" + $YY_AC_Ti[0] + ".Decay_Rate" + ";\n";
+};
+$YY_AC_Expre_Text += $YY_AC_Ti[0] + "." + $YY_AC_Link_Light_E + "=" + $YY_AC_Ti[0] + ".Decay_Rate" + ";\n";
+expression -s $YY_AC_Expre_Text;
+
+//print $YY_AC_Expre_Text;
+};
+
+
+
+
+
+
+
+

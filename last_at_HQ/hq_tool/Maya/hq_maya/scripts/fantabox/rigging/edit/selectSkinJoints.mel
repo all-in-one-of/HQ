@@ -1,0 +1,8 @@
+global proc selectSkinJoints()
+{
+ string $select[] = `ls -sl`;
+                string $Skin = `findRelatedSkinCluster $select[0]`;
+  string $SkinJoints[]=`skinCluster -q -inf $Skin`;
+ select $SkinJoints;
+}
+selectSkinJoints();

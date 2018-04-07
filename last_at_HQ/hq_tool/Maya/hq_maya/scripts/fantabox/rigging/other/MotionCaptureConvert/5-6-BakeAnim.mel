@@ -1,0 +1,134 @@
+//////////////////////////////////////////////////////////////
+//动作捕捉转换插件 —— 把捕捉动画转换成TSM设置插件的控制器动画。
+//插件编写人：徐阳
+//2009-8-6 一版 ；2010-4-27 二版
+//////////////////////////////////////////////////////////////
+//备刻动画
+//躯干
+select -r dummy_Upper_Body_G;
+select -add dummy_Spine_pelvisnullFK;
+select -add dummy_Spine_middlenullFK;
+select -add dummy_Spine_torsonullIFK;
+select -add dummy_Head_rotationisolated;
+select -add dummy_Head_isolatecalculate;
+//手臂
+select -add dummy_LeftArm_shouldernull;
+select -add dummy_LeftArm_upperarmcontrolnull;
+select -add dummy_LeftArm_amiknull;
+select -add dummy_RightArm_shouldernull;
+select -add dummy_RightArm_upperarmcontrolnull;
+select -add dummy_RightArm_amiknull;
+
+select -add dummy_LeftArm_lowerarmcontrolnull;
+select -add dummy_LeftArm_handcontrolnull;
+select -add dummy_RightArm_lowerarmcontrolnull;
+select -add dummy_RightArm_handcontrolnull;
+
+
+//腿
+select -add dummy_LeftLeg_polevectorgroup;
+select -add dummy_LeftLeg_directioncompensate;
+select -add dummy_RightLeg_polevectorgroup;
+select -add dummy_RightLeg_directioncompensate;
+
+select -add dummy_LeftLeg_upperlegnull;
+select -add dummy_LeftLeg_lowerlegnull;
+select -add dummy_LeftLeg_footnull;
+select -add dummy_LeftLeg_toenull;
+select -add dummy_RightLeg_upperlegnull;
+select -add dummy_RightLeg_lowerlegnull;
+select -add dummy_RightLeg_footnull;
+select -add dummy_RightLeg_toenull;
+
+string $dummyctrl[] = `ls -sl`;
+float $endtime = `playbackOptions -q -maxTime`;
+
+  bakeResults -simulation true -t ("-50:"+$endtime) -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -controlPoints false -shape true ($dummyctrl);
+
+select -cl;
+
+
+
+//拷贝脚尖动画
+copyKey -time ":" -float ":" -hierarchy none -controlPoints 0 -shape 1 {"LeftToeBase.rotateX"};
+select -r dummy_LeftLeg_IK_Leg ;
+setKeyframe "dummy_LeftLeg_IK_Leg.RaiseHeel";
+pasteKey -option replace -copies 1 -connect 1 -timeOffset 0 -floatOffset 0 -valueOffset 0 {"dummy_LeftLeg_IK_Leg.RaiseHeel"};
+
+connectAttr -f dummy_LeftLeg_IK_Leg.RaiseHeel LeftLeg_IK_Leg.RaiseHeel;
+connectAttr -f dummy_LeftLeg_IK_Leg.LegStretch LeftLeg_IK_Leg.LegStretch;
+connectAttr -f dummy_LeftLeg_IK_Leg.AutoStretch LeftLeg_IK_Leg.AutoStretch;
+
+copyKey -time ":" -float ":" -hierarchy none -controlPoints 0 -shape 1 {"RightToeBase.rotateX"};
+select -r dummy_RightLeg_IK_Leg ;
+setKeyframe "dummy_RightLeg_IK_Leg.RaiseHeel";
+pasteKey -option replace -copies 1 -connect 1 -timeOffset 0 -floatOffset 0 -valueOffset 0 {"dummy_RightLeg_IK_Leg.RaiseHeel"};
+
+connectAttr -f dummy_RightLeg_IK_Leg.RaiseHeel RightLeg_IK_Leg.RaiseHeel;
+connectAttr -f dummy_RightLeg_IK_Leg.LegStretch RightLeg_IK_Leg.LegStretch;
+connectAttr -f dummy_RightLeg_IK_Leg.AutoStretch RightLeg_IK_Leg.AutoStretch;
+
+select -cl;
+
+
+
+//////////////////////////////////////
+  currentTime -50;
+
+
+//用中间控制器约束绑定角色
+//躯干
+parentConstraint -mo dummy_Character Character;
+scaleConstraint -mo -weight 1 dummy_Character Character;
+parentConstraint -mo dummy_Upper_Body Upper_Body;
+parentConstraint -mo dummy_Spine_Pelvis_FK Spine_Pelvis_FK;
+parentConstraint -mo dummy_Spine_Middle_FK Spine_Middle_FK;
+parentConstraint -mo dummy_Spine_Torso_FK Spine_Torso_FK;
+orientConstraint -mo dummy_Head_Neck Head_Neck;
+orientConstraint -mo dummy_Head_FK Head_FK;
+
+parentConstraint -mo dummy_Spine_Pelvis_FK Spine_Pelvis_IK;
+parentConstraint -mo dummy_Spine_Middle_FK Spine_Middle_IK;
+parentConstraint -mo dummy_Spine_Torso_FK Spine_Torso_IK;
+
+//手臂
+orientConstraint -mo dummy_LeftArm_Shoulder LeftArm_Shoulder;
+orientConstraint -mo dummy_LeftArm_Arm_Pole_Vector LeftArm_Arm_Pole_Vector;
+parentConstraint -mo dummy_LeftArm_Arm_IK LeftArm_Arm_IK;
+orientConstraint -mo dummy_LeftArm_Upper_Arm LeftArm_Upper_Arm;
+//orientConstraint -mo -skip x -skip z -weight 1 dummy_LeftArm_Lower_Arm LeftArm_Lower_Arm;
+orientConstraint -mo dummy_LeftArm_Hand LeftArm_Hand;
+orientConstraint -mo dummy_RightArm_Shoulder RightArm_Shoulder;
+orientConstraint -mo dummy_RightArm_Arm_Pole_Vector RightArm_Arm_Pole_Vector;
+parentConstraint -mo dummy_RightArm_Arm_IK RightArm_Arm_IK;
+orientConstraint -mo dummy_RightArm_Upper_Arm RightArm_Upper_Arm;
+//orientConstraint -mo -skip x -skip z -weight 1 dummy_RightArm_Lower_Arm RightArm_Lower_Arm;
+orientConstraint -mo dummy_RightArm_Hand RightArm_Hand;
+
+//肘+膝盖
+expression -s "LeftArm_Lower_Arm.rotateY = dummy_LeftArm_Lower_Arm.rotateY + dummy_LeftArm_lowerarmcontrolnull.rotateY;\r\nRightArm_Lower_Arm.rotateY = dummy_RightArm_Lower_Arm.rotateY + dummy_RightArm_lowerarmcontrolnull.rotateY;\r\nLeftLeg_Lower_Leg.rotateZ = dummy_LeftLeg_Lower_Leg.rotateZ + dummy_LeftLeg_lowerlegnull.rotateZ - 7.620086;\r\nRightLeg_Lower_Leg.rotateZ = dummy_RightLeg_Lower_Leg.rotateZ + dummy_RightLeg_lowerlegnull.rotateZ - 7.620086;"  -o "" -n "midball_end_expression" -ae 1 -uc all ;
+
+//腿
+parentConstraint -mo dummy_LeftLeg_IK_Leg LeftLeg_IK_Leg;
+parentConstraint -mo dummy_LeftLeg_Leg_Pole_Vector LeftLeg_Leg_Pole_Vector;
+orientConstraint -mo dummy_LeftLeg_Upper_Leg LeftLeg_Upper_Leg;
+//orientConstraint -mo -skip x -skip y -weight 1 dummy_LeftLeg_Lower_Leg LeftLeg_Lower_Leg;
+orientConstraint -mo dummy_LeftLeg_Foot LeftLeg_Foot;
+orientConstraint -mo dummy_LeftLeg_Toe LeftLeg_Toe;
+parentConstraint -mo dummy_RightLeg_IK_Leg RightLeg_IK_Leg;
+parentConstraint -mo dummy_RightLeg_Leg_Pole_Vector RightLeg_Leg_Pole_Vector;
+orientConstraint -mo dummy_RightLeg_Upper_Leg RightLeg_Upper_Leg;
+//orientConstraint -mo -skip x -skip y -weight 1 dummy_RightLeg_Lower_Leg RightLeg_Lower_Leg;
+orientConstraint -mo dummy_RightLeg_Foot RightLeg_Foot;
+orientConstraint -mo dummy_RightLeg_Toe RightLeg_Toe;
+
+connectAttr -f dummy_Upper_Body.Spine_FKIK Upper_Body.Spine_FKIK;
+connectAttr -f dummy_Upper_Body.LeftArm_FKIK Upper_Body.LeftArm_FKIK;
+connectAttr -f dummy_Upper_Body.RightArm_FKIK Upper_Body.RightArm_FKIK;
+connectAttr -f dummy_Upper_Body.RightLeg_FKIK Upper_Body.RightLeg_FKIK;
+connectAttr -f dummy_Upper_Body.LeftLeg_FKIK Upper_Body.LeftLeg_FKIK;
+
+
+select -cl;
+
+print "bake ok！！";

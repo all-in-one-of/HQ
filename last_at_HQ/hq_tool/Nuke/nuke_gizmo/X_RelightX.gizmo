@@ -1,0 +1,226 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ inputs 8
+ tile_color 0xff0000ff
+ gl_color 0xff0000ff
+ addUserKnob {20 X_RelightX}
+ addUserKnob {22 create_cam l " Create Camera " T "ask=nuke.ask('Create a new Camera?')\nsc=nuke.thisNode()\nnuke.endGroup()\n\nif ask==True:\n  ca=nuke.nodes.Camera2()\n  sc.setInput(3,ca)\n  ca\['xpos'].setValue(sc.xpos()+160)\n  ca\['ypos'].setValue(sc.ypos()-140)\nelse:\n nuke.cancel\n" +STARTLINE}
+ addUserKnob {22 create_mat l " Create Material " -STARTLINE T "ask=nuke.ask('Create a new Material?')\nsc=nuke.thisNode()\nnuke.endGroup()\n\nif ask==True:\n  ma=nuke.nodes.BasicMaterial()\n  sc.setInput(4,ma)\n  ma\['xpos'].setValue(sc.xpos()+200)\n  ma\['ypos'].setValue(sc.ypos()-30)\nelse:\n nuke.cancel\n\n"}
+ addUserKnob {22 create_light l " Create Light " t "You can add more than 2 lights in manually.\n" -STARTLINE T "sc=nuke.thisNode()\nask=nuke.ask('Create a new Light?')\n\nnuke.endGroup()\nif ask==True:\n  L01=nuke.nodes.Light2()\n  sc.setInput(5,L01)\n  L01\['xpos'].setValue(sc.xpos()-120)\n  L01\['ypos'].setValue(sc.ypos()-100)\nelse:\n nuke.cancel\n\n\n"}
+ addUserKnob {26 ""}
+ addUserKnob {4 position_correct l "Postion correct" M {unchanged invert Z-invert "" "" "" ""}}
+ addUserKnob {4 normals_correct l "Normals correct" M {unchanged invert " Z-invert" "" "" "" "" ""}}
+ addUserKnob {7 point_size l "Point Size" R 1 3}
+ point_size 1
+ addUserKnob {7 point_detail l "Point Detail"}
+ point_detail 1
+ addUserKnob {6 only_shader l "Only Shader" +STARTLINE}
+ addUserKnob {26 version l "" +STARTLINE T "\n\t\[Version 2.0] by Felix Xu"}
+}
+ Input {
+  inputs 0
+  name mat
+  xpos 346
+  ypos -138
+  number 4
+ }
+ Input {
+  inputs 0
+  name cam
+  xpos 191
+  ypos -162
+  number 3
+ }
+set N11dae910 [stack 0]
+ Input {
+  inputs 0
+  name lgt3
+  xpos -348
+  ypos 103
+  number 7
+ }
+ Input {
+  inputs 0
+  name lgt2
+  xpos -313
+  ypos 62
+  number 6
+ }
+ Input {
+  inputs 0
+  name lgt1
+  xpos -252
+  ypos 23
+  number 5
+ }
+push $N11dae910
+ Input {
+  inputs 0
+  name N
+  xpos -513
+  ypos -453
+  number 2
+ }
+set N11db8e80 [stack 0]
+ Expression {
+  expr0 r
+  expr1 g
+  expr2 -b
+  name Expression4
+  xpos -407
+  ypos -316
+ }
+push $N11db8e80
+ Expression {
+  expr0 -r
+  expr1 -g
+  expr2 -b
+  name Expression3
+  xpos -513
+  ypos -316
+ }
+push $N11db8e80
+ Dot {
+  name Dot4
+  xpos -590
+  ypos -314
+ }
+ Switch {
+  inputs 3
+  which {{normals_correct i}}
+  name Switch1
+  xpos -513
+  ypos -239
+ }
+ Dot {
+  name Dot2
+  xpos -415
+  ypos -175
+ }
+ Input {
+  inputs 0
+  name P
+  xpos -203
+  ypos -450
+  number 1
+ }
+set N11dd2060 [stack 0]
+ Expression {
+  expr0 r
+  expr1 g
+  expr2 -b
+  name Expression6
+  xpos -105
+  ypos -327
+ }
+push $N11dd2060
+ Expression {
+  expr0 -r
+  expr1 -g
+  expr2 -b
+  name Expression5
+  xpos -214
+  ypos -322
+ }
+push $N11dd2060
+ Dot {
+  name Dot3
+  xpos -267
+  ypos -318
+ }
+ Switch {
+  inputs 3
+  which {{position_correct i}}
+  name Switch2
+  xpos -214
+  ypos -247
+ }
+set N11de4f90 [stack 0]
+ Input {
+  inputs 0
+  name col
+  xpos 34
+  ypos -436
+ }
+ Remove {
+  operation keep
+  channels rgba
+  name Remove1
+  xpos 34
+  ypos -370
+ }
+add_layer {P P.x P.y P.z}
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 P.x
+  from1 rgba.green
+  to1 P.y
+  from2 rgba.blue
+  to2 P.z
+  from3 -rgba.alpha
+  to3 -rgba.alpha
+  name Copy1
+  xpos 34
+  ypos -280
+ }
+add_layer {N N.r N.g N.b}
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 N.r
+  from1 rgba.green
+  to1 N.g
+  from2 rgba.blue
+  to2 N.b
+  name Copy2
+  xpos 34
+  ypos -192
+ }
+set N11df6470 [stack 0]
+push $N11de4f90
+ PositionToPoints {
+  inputs 2
+  detail {{point_detail i}}
+  pointSize {{point_size i}}
+  name PositionToPoints1
+  xpos -137
+  ypos -61
+ }
+ Scene {
+  inputs 5
+  name relightx_scene
+  xpos -127
+  ypos 83
+ }
+push $N11df6470
+ ReLight {
+  inputs 4
+  normal N
+  position P
+  name ReLight1
+  xpos 45
+  ypos 116
+ }
+ Shuffle {
+  alpha red
+  name Shuffle1
+  xpos 45
+  ypos 175
+  disable {{abs(only_shader-1) i}}
+ }
+ Output {
+  name Output1
+  xpos 45
+  ypos 254
+ }
+push $N11df6470
+ Viewer {
+  viewerProcess None
+  input_process false
+  name Viewer1
+  xpos 255
+  ypos -243
+ }
+end_group

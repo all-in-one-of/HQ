@@ -1,0 +1,18 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>animFixShape.bmp</file>
+    <file>bodyOptimize.bmp</file>
+    <file>faceOptimize.bmp</file>
+    <file>moreTools.bmp</file>
+    <file>advOptimize.bmp</file>
+    <file>ADVRig.bmp</file>
+    <file>bodySeletor.bmp</file>
+    <file>buildPose.bmp</file>
+    <file>faceSelector.bmp</file>
+    <file>IKFKSwitch.bmp</file>
+    <file>mocapConvert.bmp</file>
+    <file>Others.bmp</file>
+    <file>poseDesigner.bmp</file>
+    <file>sliderJointOptimize.bmp</file>
+  </qresource>
+</RCC>

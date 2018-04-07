@@ -1,0 +1,55 @@
+global proc seljoint()
+{
+if(`window -q -ex YY_AN_Sel_Joint_Win`)
+{
+deleteUI YY_AN_Sel_Joint_Win;
+};
+
+window -wh 300 500
+	   -s 1
+	   YY_AN_Sel_Joint_Win;
+columnLayout -rs 5 -cat "both" 10 -adj 1;
+text -l "动画反馈工具集";
+separator;
+rowLayout -nc 2 -cw2 150 150 -cl2 "center" "center";
+text -l "   选择所有子骨骼工具";
+button -w 100 -h 30 -l "选择" -c YY_AD_select_hi_JSB;
+setParent ..;
+separator -h 10;
+text -l "使用方法";
+text -al "left" -l "选择子骨骼工具：此工具用于选择当前已选择骨骼\n以下所有子层级的骨骼，而不会选择到其他物体\n\n用法：选择任意一物体点击选择按钮，脚本会选择\n该物体以下的所有骨骼。";
+//separator;
+showWindow YY_AN_Sel_Joint_Win;
+
+
+window -e
+	   -wh 300 200
+	   YY_AN_Sel_Joint_Win;
+
+};
+global proc YY_AD_select_hi_JSB()
+{
+select -hi;
+string $YY_AD_sel[] = `ls -sl`;
+string $YY_AD_d;
+for($YY_AD_d in $YY_AD_sel)
+{
+string $YY_AD_node = `nodeType $YY_AD_d`;
+if($YY_AD_node != "joint")
+{
+select -d $YY_AD_d;
+};	
+};
+};
+/////////////////////////////////////////////////////////////////
+seljoint;
+
+
+
+
+
+
+
+
+
+

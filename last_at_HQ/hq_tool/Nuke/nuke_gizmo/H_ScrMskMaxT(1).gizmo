@@ -1,0 +1,149 @@
+#! /Applications/Nuke7.0v6/NukeX7.0v6.app/../Nuke7.0v6.app/Contents/MacOS/Nuke7.0v6 -nx
+version 7.0 v6
+Gizmo {
+ tile_color 0xcf87ffff
+ note_font "DejaVu Sans"
+ note_font_size 20
+ mapsize {0.15 0.15}
+ addUserKnob {20 User}
+ addUserKnob {1 note l INVISIBLE t 备注 +INVISIBLE}
+ note Normal
+ addUserKnob {22 turnoninput l INVISIBLE +INVISIBLE T "node = nuke.thisNode()\nif node.name() == 'VIEWER_INPUT':\n    node\['name'].setValue('H_Maskingwide')\n    \nelse:\n    node\['name'].setValue('VIEWER_INPUT')" +STARTLINE}
+ addUserKnob {6 turnon l INVISIBLE +INVISIBLE +STARTLINE}
+ turnon true
+ addUserKnob {6 turnontext l INVISIBLE +INVISIBLE +STARTLINE}
+ turnontext true
+ addUserKnob {1 shotname l INVISIBLE +INVISIBLE}
+ shotname "\[python \{nuke.knob('input.file').split('/').pop().split('.').pop(0)\}]     \[frame]"
+ addUserKnob {1 artistname l INVISIBLE +INVISIBLE}
+ artistname "\[python \{nuke.knob('input.file').split('/').pop().split('_').pop(2)\}] (\[date %Y/%m/%d])"
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 1238
+  ypos 1260
+ }
+ Dot {
+  name Dot5
+  xpos 1272
+  ypos 1370
+ }
+set N9bd4d2d0 [stack 0]
+ Transform {
+  translate {0 {input.height*0.1}}
+  center {1440 176}
+  name Transform25
+  xpos 1238
+  ypos 1467
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message "\[date %Y/%m/%d]       Shotname: \[value shotname]/CF        CT: \[python int(int((\[frame]-\[value first_frame])/24)/3600/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/3600)%10]:\[python int(int((\[frame]-\[value first_frame])/24)/60/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/60)%10]:\[python int((int(\[frame]-\[value first_frame])/24)/10)%6]\[python int((\[frame]-\[value first_frame])/24)%10]:\[python int(((\[frame]-\[value first_frame])%24+1)/10)]\[python ((\[frame]-\[value first_frame])%24+1)%10]         AllF: \[python \[value input.last_frame] - \[value input.first_frame]+1]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input.height/input.width)<0.24 ? (input.height*0.1*0.7) : (input.width/62)   "}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {0 0 {input.width x1555 2880} {input.height x1555 352}}
+  translate {0 {"(input.height/input.width)<0.25 ? (input.height*0.1*0.15) : (input.height*0.1*0.2)"}}
+  center {1372 580}
+  name message
+  tile_color 0x770000ff
+  gl_color 0xffffffff
+  xpos 1238
+  ypos 1535
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam01
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{input.height*0.1*0.7}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.2))" x490 0}}
+  translate {{-(input.width/6)*2} 0}
+  center {1372 580}
+  color {1 0.6800000072 0.7159704566 1}
+  name cam_one
+  xpos 1239
+  ypos 1717
+  cached true
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam02
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{input.height*0.1*0.7}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.2))" x490 0}}
+  translate {{curve} 0}
+  center {1372 580}
+  color {0.9527949095 0.9639999866 0.7326399684 1}
+  name cam_two
+  xpos 1239
+  ypos 1776
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam03
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{input.height*0.1*0.7}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input.width} {"input.height+input.height*0.2-((input.height/(input.width))<0.25 ? (input.height*0.1*0.15): (input.height*0.1*0.2))" x490 0}}
+  translate {{(input.width/6)*2} 0}
+  center {1372 580}
+  color {0.6200000048 1 0.7252306938 1}
+  name cam_three
+  xpos 1239
+  ypos 1840
+ }
+push $N9bd4d2d0
+ Dot {
+  name Dot4
+  xpos 995
+  ypos 1370
+ }
+ Reformat {
+  type scale
+  scale {1 1.2}
+  filter Impulse
+  name Reformat1
+  xpos 961
+  ypos 1802
+ }
+ Multiply {
+  value 0
+  name Multiply4
+  xpos 961
+  ypos 1925
+ }
+set N9bd73b90 [stack 0]
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 1239
+  ypos 1930
+ }
+ Output {
+  name Output1
+  xpos 1239
+  ypos 2146
+ }
+push $N9bd73b90
+ Viewer {
+  input_process false
+  name Viewer1
+  xpos 543
+  ypos 2410
+ }
+end_group

@@ -1,0 +1,19 @@
+global proc autosetproj()
+{
+string $YY_file_sincename = `file -q -sn`;
+
+string $YY_File_DirName = dirname($YY_file_sincename);
+int $YY_File_DirName_int = size($YY_File_DirName);
+string $YY_File_group[];
+string $YY_File_tok = `tokenize $YY_File_DirName "/" $YY_File_group`;
+int $YY_File_end_int = size($YY_File_group) - 1;
+//string $YY_File_end =$YY_File_group[$YY_File_end_int]; 
+int $YY_File_end_int = size($YY_File_group[$YY_File_end_int]); 
+string $YY_File_over_sub = `substring $YY_File_DirName 1 ($YY_File_DirName_int - $YY_File_end_int)`;
+
+setProject $YY_File_over_sub;
+
+
+//string $workspace = `workspace -q -fn`;
+};
+autosetproj;

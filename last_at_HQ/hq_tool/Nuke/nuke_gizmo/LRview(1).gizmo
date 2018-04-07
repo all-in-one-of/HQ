@@ -1,0 +1,49 @@
+#! C:/Program Files/Nuke7.0v6/Nuke7.0.exe -nx
+version 7.0 v6
+Gizmo {
+ inputs 2
+ addUserKnob {20 Anaglyph}
+ addUserKnob {41 views T Anaglyph2.views}
+ addUserKnob {41 amtcolour T Anaglyph2.amtcolour}
+ addUserKnob {41 swap l (right=red) T Anaglyph2.swap}
+ addUserKnob {41 offset l "horizontal offset" T Anaglyph2.offset}
+}
+ Input {
+  inputs 0
+  name right
+  selected true
+  xpos 231
+  ypos 210
+  number 1
+ }
+ Input {
+  inputs 0
+  name left
+  xpos 86
+  ypos 204
+ }
+ JoinViews {
+  inputs 2
+  name JoinViews2
+  xpos 154
+  ypos 277
+  viewassoc "left\nright"
+ }
+ Anaglyph {
+  views {left right}
+  amtcolour 1
+  name Anaglyph2
+  xpos 154
+  ypos 319
+ }
+ Output {
+  name Output1
+  xpos 154
+  ypos 369
+ }
+ Output {
+  name Output1
+  xpos 154
+  ypos 469
+ }
+end_group

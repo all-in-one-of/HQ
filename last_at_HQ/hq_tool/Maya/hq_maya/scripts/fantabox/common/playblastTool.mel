@@ -1,0 +1,824 @@
+//=========================================================================
+
+//=========================================================================
+
+//创建窗体
+global proc playblastTool()
+{
+	global int $getResolutionX,$getResolutionY;
+	global float $getResolutionScale;
+	global string $getLenNum;
+	global string $getMovieDir;
+	global string $getUserName;
+	global int $getAnimMode;
+	int $getCfg=headUpReadTxtCfgFile("headUpDisCfg.txt");
+	if($getCfg==0)
+	{
+	 string $myDir=`workspace -q -rd`;
+	 $myDir=$myDir+"images/playblast_<cam>.avi";
+	 $getResolutionX=512;$getResolutionY=512;
+	 $getResolutionScale=1.0;
+	 $getLenNum="写入你的镜头号";
+	 $getMovieDir=$myDir;
+	 $getUserName="不输入则获取系统用户名";
+	 $getAnimMode=1;}
+
+ if(`window -exists wkHUDWindow`)
+   deleteUI wkHUDWindow;
+  window -title "生成预览" -widthHeight 520 250 wkHUDWindow;
+  columnLayout -cal "center" -co "left" 3;
+   separator -w 520;
+     rowLayout -numberOfColumns 3 -cw3 150 120 120 -cat 1 "right" 0 -cat 2 "left" 0 -cat 3 "left" 0;
+     text -l "拍屏分辨率:  ";intField -w 120 -value $getResolutionX -cc "saveResolutionX" playResolutionX; intField -w 120 -value $getResolutionY -cc "saveResolutionY" playResolutionY;
+         setParent ..;
+   floatSliderGrp -label "分辨率缩放: " -field true -cal 1 "right" -cw 1 150
+       -minValue 0.1 -maxValue 1.0
+       -fieldMinValue 0.1 -fieldMaxValue 1.0
+       -value $getResolutionScale -cc "saveResolutionScale" resolutionScale;
+      setParent..;
+     rowLayout -numberOfColumns 2 -cw2 150 240 -cat 1 "right" 0 -cat 2 "left" 0;
+     text -l "拍屏镜头号:  ";textField -tx $getLenNum -w 240 -ed 1 -cc "saveLenNum" lenNum ;
+         setParent..;
+     textFieldButtonGrp -w 450 -cw 1 150 -cw 2 240 -cat 1 "right" 0  -label "拍屏视频文件名:  " -tx $getMovieDir
+ -buttonLabel "指定路径" -buttonCommand "movieBrowser" -cc "saveMovieDir" textButton;
+     rowLayout -numberOfColumns 2 -cw2 150 240 -cat 1 "right" 0 -cat 2 "left" 0;
+     text -l "制作人:  ";textField -tx $getUserName -w 240 -ed 1 -cc "saveUserName" UserName;
+         setParent ..;
+  separator -w 520;
+    radioButtonGrp -numberOfRadioButtons 2 -cw 1 150 -rat 1 "bottom" 9 -rat 2 "bottom" 8 -rat 3 "bottom" 8 -h 30
+    -label "动画类型:"
+    -labelArray2 "LY（layout)" "DH（动画）" -select $getAnimMode -cc "saveAnimMode" animMode;
+    rowLayout -numberOfColumns 6 -cw6 100 100 100 100 100 100 -cl6 "left" "left" "left" "left" "left" "left"-cat 1 "left" 0 -cat 2 "left" 0 -cat 3 "left" 0 -cat 4 "left" 10 -cat 5 "left" 0 -cat 6 "left" 0;
+    button -label "拍屏信息显示" -w 100 -command "HeadsUpDisplay()"  buttonDisplayControllers1;
+    button -label "拍屏信息隐藏" -w 100 -command "HeadsUpDisplayRemove(1)"  buttonunDisplayControllers2;
+    button -label "还原默认信息" -w 100 -command "HeadsUpDisplaySetBack(0)"  buttonunDisplayControllers3;
+    button -label "只留模型" -w 100 -command "HeadsUpDisplayHide()"  buttonunDisplayControllers4;
+    button -label "显示动画必要控制器" -w 100 -command "HeadsUpDisplayShow()"  buttonunDisplayControllers5;
+
+  setParent..;
+  separator -w 520;
+    rowLayout -numberOfColumns 3 -cw3 100 100 100 -cl3 "left" "left"  "left"-cat 1 "left" 0 -cat 2 "left" 0 -cat 3 "left" 0 ;
+    //button -label "1.选择压缩格式" -w 100 -command "HeadsUpDisplayEncode()"  buttonunDisplayControllers1;
+    button -label "1.连续拍屏" -w 100 -command "HeadsUpDisplayContinue()"  buttonunDisplayControllers2;
+    button -label "2.拼接视频" -w 100 -command "HeadsUpDisplayConnectVideo()"  buttonunDisplayControllers3;
+    button -label "3.连续图片序列" -w 100 -command "HeadsUpDisplayImage()"  buttonunDisplayControllers4;
+  setParent..;
+  separator -w 520;
+ rowLayout -nc 1  -cat 1 "left" 10  -rat 1 "top" 6  -cl1 "center";
+		textScrollList -ams 1 -h 100 -w 425 wkScenecamList;
+setParent..;
+ rowLayout -nc 1  -cat 1 "left" 140  -rat 1 "top" 6  -cl1 "center";
+		button -label "载入相机" -w 160 -h 40 -c wkGetSceneCam  getButton;
+setParent..;
+
+  separator -w 520;
+/*  rowLayout -nc 4  -cat 1 "left" 50  -rat 1 "top" 6  -cal 1 "center" -cat 2 "left" 50 -rat 2 "top" 6  -cal 2 "center" -cat 3 "left" 50 -rat 3 "top" 6  -cal 3 "center" -cat 4 "left" 50 -rat 4 "top" 6  -cal 4 "center";
+       text -label "预览相机属性： "   -align "left";
+                      checkBox -label "overscan" -align "left" camOScan;
+			checkBox -label "Safe Action" -align "left" camSafeAction;
+			checkBox -label "Safe Titile" -align "left" camSafeTitle;
+
+setParent..;
+*/
+    rowLayout -nc 2  -cat 1 "left" 60  -rat 1 "top" 10  -cal 1 "center" -cat 2 "left" 140  -rat 2 "top" 10  -cal 2 "center";
+     button -label "视频压缩格式(maya2009)" -w 160 -h 40 -command "playblastOption"          buttonOption;
+     button -label "生成预览" -w 160 -h 40 -command "createPlayblast"          buttonPlayblast;
+
+ showWindow;
+
+ wkGetSceneCam();
+
+}
+global proc saveResolutionX()
+{
+	global int $getResolutionX;
+	$getResolutionX=`intField -q -value playResolutionX`;
+	headUpGetPrintOutData();
+
+	}
+global proc saveResolutionY()
+{
+	global int $getResolutionY;
+	$getResolutionY=`intField -q -value playResolutionY`;
+	headUpGetPrintOutData();
+
+	}
+global proc saveResolutionScale()
+{
+	global float $getResolutionScale;
+	$getResolutionScale=`floatSliderGrp -q -value resolutionScale`;
+	headUpGetPrintOutData();
+
+	}
+global proc saveLenNum()
+{
+	global string $getLenNum;
+	$getLenNum=`textField -q -text lenNum`;
+	headUpGetPrintOutData();
+
+	}
+global proc saveMovieDir()
+{
+	global string $getMovieDir;
+	$getMovieDir=`textFieldButtonGrp -q -text textButton`;
+	headUpGetPrintOutData();
+
+	}
+
+
+global proc saveUserName()
+{
+	global string $getUserName;
+	$getUserName=`textField -q -tx UserName`;
+	headUpGetPrintOutData();
+
+	}
+
+global proc saveAnimMode()
+{
+	global int $getAnimMode;
+	$getAnimMode=`radioButtonGrp -q -select animMode`;
+	headUpGetPrintOutData();
+
+	}
+
+
+global proc headUpGetPrintOutData()
+{
+	global int $getResolutionX,$getResolutionY;
+	global float $getResolutionScale;
+	global string $getLenNum;
+	global string $getMovieDir;
+	global string $getUserName;
+	global int $getAnimMode;
+
+
+ string $printOutData;
+    $printOutData=$getResolutionX+","+$getResolutionY+","+$getResolutionScale+","+$getLenNum+","+$getMovieDir+","+$getUserName+","+$getAnimMode;
+
+ headUpWriteCfgTofile ("headUpDisCfg.txt" ,$printOutData);
+}
+global proc int headUpWriteCfgTofile (string $configFileName ,string $configContent)
+{
+       string $mayaScriptsPath =`internalVar -userScriptDir`;
+       string $mySavedpath=$mayaScriptsPath;
+
+	$cfgFileName = ( $mySavedpath + $configFileName);
+ 	$fileId=`fopen $cfgFileName "w"`;
+ 	fprint $fileId $configContent;
+ 	fclose $fileId;
+     return 1;
+}
+global proc int headUpReadTxtCfgFile(string $configFileName)
+{
+
+	global int $getResolutionX,$getResolutionY;
+	global float $getResolutionScale;
+	global string $getLenNum;
+	global string $getMovieDir;
+	global string $getUserName;
+	global int $getAnimMode;
+ string $mayaScriptsPath =`internalVar -userScriptDir`;
+ $cfgFileName = ($mayaScriptsPath + $configFileName);
+ if(!`filetest -f $cfgFileName`){return 0;}
+ $readFileID=`fopen $cfgFileName "r"`;
+ string $cfgString;
+ string $fGetLineString;
+
+  $fGetLineString=`fgetline $readFileID`;
+  if(size($fGetLineString)==0)
+   {return 0;}
+  $cfgString=$fGetLineString;
+  string $getConfig1[];
+  $numTokens1 = `tokenize  $cfgString "," $getConfig1`;
+  $getResolutionX=$getConfig1[0];
+  $getResolutionY=$getConfig1[1];
+  $getResolutionScale=$getConfig1[2];
+  $getLenNum=$getConfig1[3];
+  $getMovieDir=$getConfig1[4];
+  $getUserName=$getConfig1[5];
+  $getAnimMode=$getConfig1[6];
+
+
+return 1;
+}
+
+global proc wkGetSceneCam()
+{
+	string $allCam[] = `listCameras`;
+	string $eachCam;
+
+	textScrollList -q -e -ra wkScenecamList;
+
+	for ($eachCam in $allCam)
+	{
+
+		textScrollList  -e -a $eachCam wkScenecamList;
+	};
+
+}
+global proc int outputMovie(string $filename, string $fileType )
+{
+    textFieldButtonGrp -e -text $filename textButton;
+    return 1;
+}
+
+global proc movieBrowser()
+{
+    fileBrowserDialog -m 1 -fc "outputMovie" -ft "move" -an "Save Movie" -om "SaveAs";
+}
+
+//压缩视频
+global proc playblastOption()
+{
+    playblast -o;
+}
+
+//输出预览
+global proc string getRealCamName(string $oldCamName)
+{
+    string $newCamName;
+    string $buffer[];
+    $numTokens = `tokenize $oldCamName ":" $buffer`;
+    if($numTokens==1)
+     {return $oldCamName;}
+     if($numTokens>1)
+     {$newCamName=$buffer[$numTokens-1];
+      return $newCamName;}
+}
+global proc createPlayblast()
+{
+    int $movieResolutionX=`intField -q -value playResolutionX` ;
+    int $movieResolutionY=`intField -q -value playResolutionY` ;
+    float $scaleResolution=`floatSliderGrp -q -value resolutionScale`;
+   int $resloutionX=$movieResolutionX*$scaleResolution;
+   int $resloutionY=$movieResolutionY*$scaleResolution;
+    string $movieName=`textFieldButtonGrp -q -text textButton`;
+    string $movieDir;
+    string $buffer[];
+    tokenize $movieName "<>" $buffer;
+
+    string $selCam[] = `textScrollList -q -si wkScenecamList`;
+   string $wkplastCam;
+   string $camrealName;
+ //   deleteUI HUDWindow;
+     for($wkplastCam in $selCam)
+  {$camrealName=getRealCamName($wkplastCam);
+    $movieDir=$buffer[0]+$camrealName+$buffer[2];
+   print $movieDir;
+     lookThru $wkplastCam;
+       if(size($movieName))
+        {playblast -fo -format movie -clearCache 1 -viewer 0 -f $movieDir  -showOrnaments 1 -fp 4 -percent 100 -compression none -widthHeight $resloutionX $resloutionY;}
+    else{playblast  -format movie -clearCache 1 -viewer 0   -showOrnaments 1 -fp 4 -percent 100 -compression none -widthHeight $resloutionX $resloutionY;}
+
+  }
+}
+
+//获取镜头号
+global proc   HUDlenNum()
+{
+    global string $lenNumoutput;
+    int $whichMode;
+    string $inlenNum;
+    $inlenNum=`textField -q -text lenNum` ;
+    $whichMode=`radioButtonGrp -q -select animMode`;
+    string $mode;
+    switch ($whichMode)
+    {case 1:
+     $mode="LY";
+     break;
+     case 2:
+     $mode="DH";
+     break;
+     default:
+     $mode="DH";
+     break;}
+    string $output=$mode+"   "+$inlenNum;
+    $lenNumoutput = $output;
+}
+global proc string headupDisplaylenNum()
+{
+    global string $lenNumoutput;
+
+    string $inlenNum;
+    $inlenNum=$lenNumoutput;
+    return $inlenNum;
+}
+global proc string headupDisplaylenNum2()
+{
+    global string $getLenNum;
+	global int $getAnimMode;
+    string $inlenNum;
+	string $mode;
+    switch ($getAnimMode)
+    {case 1:
+     $mode="LY";
+     break;
+     case 2:
+     $mode="DH";
+     break;
+    }
+    $inlenNum=$mode+"   "+$getLenNum;
+    return $inlenNum;
+}
+
+// 获取分辨率
+global proc  getHUDGlobalResolution()
+{   global string $res_str;
+    int $movieResolutionX=`intField -q -value playResolutionX` ;
+    int $movieResolutionY=`intField -q -value playResolutionY` ;
+	 $res_str = $movieResolutionX + "*" + $movieResolutionY;
+}
+
+global proc string HUDGlobalResolution()
+{
+   global string $res_str;
+   $str=$res_str;
+
+	return $str;
+}
+global proc string HUDGlobalResolution2()
+{
+	global int $getResolutionX,$getResolutionY;
+    $str=$getResolutionX+"*"+$getResolutionY;
+
+	return $str;
+}
+
+//获取用户名
+
+global proc string getHeadsUpDisplayUser()
+{
+
+       string $inputUserName=`textField -q -tx UserName`;
+	   global string $user = "";
+     if($inputUserName=="不输入则获取系统用户名")
+	{
+		$user = `getenv USERNAME`;
+		$user = `tolower $user`;
+	}
+    if($inputUserName!="不输入则获取系统用户名")
+       {$user=$inputUserName;}
+	return $user;
+}
+global proc string HeadsUpDisplayUser()
+{global string $user;
+	string $userName;
+	$userName=$user;
+	return $userName;
+	}
+global proc string HeadsUpDisplayUser2()
+{global string $getUserName;
+	string $userName;
+	$userName=$getUserName;
+	return $userName;
+	}
+
+//获取系统时间
+global proc string HeadsUpDisplayUser1()
+{
+	string $cmd = "date /t";
+	chdir "C:";
+	string $date = `system $cmd`;
+//    $date = `substring $date 1 10`;
+//    $cmd = "time";
+//    string $time   = `system $cmd`;
+//   $time = `substring $time 22 26`;
+//	string $dateTime = strip($date) + " " + $time;
+
+//	return $dateTime;
+    return $date;
+}
+
+//获取开始帧数
+global proc float HeadsUpDisplayStart()
+{
+	float $start;
+
+	if (`optionVar -query playblastUseStartEnd`)
+		$start = `optionVar -q playblastStartTime`;
+	else
+		$start = `playbackOptions -q -minTime`;
+
+	return $start;
+}
+
+//获取结束帧数
+global proc float HeadsUpDisplayEnd()
+{
+	float $end;
+
+	if (`optionVar -query playblastUseStartEnd`)
+		$end = `optionVar -q playblastEndTime`;
+	else
+		$end = `playbackOptions -q -maxTime`;
+
+	return $end;
+}
+
+//总帧数
+global proc int HeadsUpDisplayTotal()
+{
+	float $start = `HeadsUpDisplayStart`;
+	float $end = `HeadsUpDisplayEnd`;
+	int $total = $end - $start + 1;
+
+	return $total;
+}
+
+
+//当前帧数
+global proc string HeadsUpDisplayFrame()
+{
+	float $currentTime = `currentTime -query`;
+
+	return $currentTime;
+}
+
+//sequence显示
+global proc string HeadsUpDisplaySequence()
+{
+	float $currentTime = `currentTime -query`;
+	float $start = `HeadsUpDisplayStart`;
+	int $total = `HeadsUpDisplayTotal`;
+	int $sequence = $currentTime -  $start + 1;//) + "/" + $total;
+	string $str = $sequence + "/" + $total;
+	int $size = size("" + $total) - size("" + $sequence);
+	for ($i=0; $i<$size; $i++)
+		$str = "0" + $str;
+
+	return $str;
+}
+
+//获取相机焦距
+global proc float HeadsUpDisplayFocalLength(string $camera)
+{
+	float $focalLength;
+	if (`objExists $camera`)
+		$focalLength = `getAttr ($camera + ".focalLength")`;
+
+	return $focalLength;
+}
+
+//获取相机名字
+global proc string HeadsUpDisplayCamera()
+{
+	string $modelPanel = `getPanel -withFocus`;
+	string $camera = `modelEditor -query -camera $modelPanel`;
+	string $cameraName = `basenameEx $camera`;
+	return $cameraName;
+}
+
+//filter display type:
+global proc HeadsUpDisplayHide()
+{
+	   //unable unnecessary type,but leave two
+	   modelEditor -e -allObjects 0 modelPanel4;
+
+	   updateModelPanelBar modelPanel4;
+	   updateShowMenu MayaWindow|formLayout1|viewPanes|modelPanel4|menu30 modelPanel4 "modelPanel4" "Playblast Display";
+	   modelEditor -e -nurbsSurfaces true modelPanel4;
+	   modelEditor -e -polymeshes true modelPanel4;
+
+}
+
+global proc HeadsUpDisplayShow()
+{
+	 //enable necessary type.
+	updateModelPanelBar modelPanel4;
+	updateShowMenu MayaWindow|formLayout1|viewPanes|modelPanel4|menu30 modelPanel4 "modelPanel4" "Playblast Display";
+	modelEditor -e -nurbsCurves true modelPanel4;
+	modelEditor -e -nurbsSurfaces true modelPanel4;
+	modelEditor -e -polymeshes true modelPanel4;
+	modelEditor -e -locators true modelPanel4;
+	modelEditor -e -motionTrails true modelPanel4;
+	modelEditor -e -ikHandles true modelPanel4;
+}
+/*
+global proc HeadsUpDisplayEncode()
+{    //select suitable encode
+     playblast -options;
+
+}
+*/
+
+//continue capture cam data
+global proc HeadsUpDisplayContinue()
+{
+	updateModelPanelBar modelPanel4;
+	updateShowMenu MayaWindow|formLayout1|viewPanes|modelPanel4|menu30 modelPanel4 "modelPanel4" "Playblast Display";
+	    int $movieResolutionX=`intField -q -value playResolutionX` ;
+	    int $movieResolutionY=`intField -q -value playResolutionY` ;
+	    float $scaleResolution=`floatSliderGrp -q -value resolutionScale`;
+	    int $resloutionX=$movieResolutionX*$scaleResolution;
+	    int $resloutionY=$movieResolutionY*$scaleResolution;
+	    string $movieName=`textFieldButtonGrp -q -text textButton`;
+	    string $movieDir;
+	    string $buffer[];
+	    tokenize $movieName "<>" $buffer;
+
+	    string $selCam[] = `textScrollList -q -si wkScenecamList`;
+	   string $wkplastCam;
+	   string $camrealName;
+	 //   deleteUI HUDWindow;
+	    for($wkplastCam in $selCam)
+	  {$camrealName=getRealCamName($wkplastCam);
+	   $movieDir=$buffer[0]+$camrealName+$buffer[2];
+	   print $movieDir;
+	   lookThru $wkplastCam;
+	     camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $wkplastCam;
+
+	    if(size($movieName))
+		{playblast -fo -fmt "movie" -compression "XVID" -clearCache 1 -viewer 0 -f $movieDir  -showOrnaments 1 -fp 4 -percent 100  -widthHeight $resloutionX $resloutionY;}
+	    else{playblast  -fmt "movie" -compression "XVID" -clearCache 1 -viewer 0   -showOrnaments 1 -fp 4 -percent 100  -widthHeight $resloutionX $resloutionY;}
+	  }
+
+
+}
+
+global proc HeadsUpDisplayConnectVideo()
+
+{
+	updateModelPanelBar modelPanel4;
+	updateShowMenu MayaWindow|formLayout1|viewPanes|modelPanel4|menu30 modelPanel4 "modelPanel4" "Playblast Display";
+
+	//system("start c:/XXX.EXE");
+	system("start //10.99.1.2/数码电影/部门文件/08技术/技术部工具箱/技术部工具箱_请勿删除/All_mel/digitalTool/animition/avi拼接/64/视频拼接.exe");
+}
+
+
+global proc HeadsUpDisplayImage()
+{
+	updateModelPanelBar modelPanel4;
+	updateShowMenu MayaWindow|formLayout1|viewPanes|modelPanel4|menu30 modelPanel4 "modelPanel4" "Playblast Display";
+	    int $movieResolutionX=`intField -q -value playResolutionX` ;
+	    int $movieResolutionY=`intField -q -value playResolutionY` ;
+	    float $scaleResolution=`floatSliderGrp -q -value resolutionScale`;
+	    int $resloutionX=$movieResolutionX*$scaleResolution;
+	    int $resloutionY=$movieResolutionY*$scaleResolution;
+	    string $movieName=`textFieldButtonGrp -q -text textButton`;
+	    string $movieDir;
+	    string $buffer[];
+	    tokenize $movieName "<>" $buffer;
+
+	    string $selCam[] = `textScrollList -q -si wkScenecamList`;
+	   string $wkplastCam;
+	   string $camrealName;
+	 //   deleteUI HUDWindow;
+	    for($wkplastCam in $selCam)
+	  {$camrealName=getRealCamName($wkplastCam);
+	   $movieDir=$buffer[0]+$camrealName+$buffer[2];
+	   print $movieDir;
+	   lookThru $wkplastCam;
+	     camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $wkplastCam;
+
+	    if(size($movieName))
+		{playblast -fo -fmt "image" -compression "tif" -clearCache 1  -viewer 0 -f $movieDir  -showOrnaments 1 -fp 4 -percent 100  -widthHeight $resloutionX $resloutionY;}
+	    else{playblast  -fmt "image" -compression "tif" -clearCache 1 -viewer 0   -showOrnaments 1 -fp 4 -percent 100  -widthHeight $resloutionX $resloutionY;}
+	  }
+}
+
+
+// HeadsUpDisplayRemove();
+global proc HeadsUpDisplayRemove(int $mode)
+{
+	// $mode =0 ---> rebuild original HUD
+	global string $HeadsUpDisplay;
+
+	string $buf[] = `headsUpDisplay -listHeadsUpDisplays`;
+      int $i;
+	for ($i=0;$i<size($buf);$i++)
+	{if($buf[$i]=="HUDViewAxis")
+		{setViewAxisVisibility(0);
+                    setCameraNamesVisibility(0);
+                headsUpDisplay -e -s 5 -b 1  HUDViewAxis;
+                headsUpDisplay -e -s 2 -b 1  HUDHQCameraNames;
+                headsUpDisplay -e -labelFontSize "large" -dataFontSize "large" HUDCameraNames;}
+         if($buf[$i]=="HUDIKSolverState"||$buf[$i]=="HUDCameraNames"||$buf[$i]=="HUDHQCameraNames"){continue;}
+	if($buf[$i]!="HUDViewAxis")
+             {headsUpDisplay -remove $buf[$i];}
+		}
+
+	if ($mode==0){
+		evalDeferred("source initAfter.mel");
+		catch (`eval $HeadsUpDisplay`);
+		$HeadsUpDisplay = "";
+	}
+}
+
+
+
+
+
+
+
+global proc HeadsUpDisplaySetBack(int $mode)
+{
+	// $mode =0 ---> rebuild original HUD
+	global string $HeadsUpDisplay;
+
+	string $buf[] = `headsUpDisplay -listHeadsUpDisplays`;
+	for ($headsUpDisplay in $buf)
+	{headsUpDisplay -remove $headsUpDisplay;}
+
+	$buf = `ls -type "expression" "zwHeadsUpDisplay*"`;
+	if (size($buf))
+		delete $buf;
+
+	if ($mode==0){
+		evalDeferred("source initAfter.mel");
+		catch (`eval $HeadsUpDisplay`);
+		$HeadsUpDisplay = "";
+
+	}
+
+}
+global proc string zwHeadsUpDisplaySequence()
+{
+	float $currentTime = `currentTime -query`;
+	float $start = `zwHeadsUpDisplayStart`;
+	int $total = `zwHeadsUpDisplayTotal`;
+	int $sequence = $currentTime -  $start + 1;//) + "/" + $total;
+	string $str = $sequence + "/" + $total;
+	int $size = size("" + $total) - size("" + $sequence);
+	for ($i=0; $i<$size; $i++)
+		$str = "0" + $str;
+
+	return $str;
+}
+global proc int HeadsUpDisplay()
+{
+	global int $getResolutionX,$getResolutionY;
+	global string $getLenNum;
+	global string $getUserName;
+	global int $getAnimMode;
+    global string $res_str;
+	global string $HeadsUpDisplay;
+
+	float $space = 84.0;
+
+	HeadsUpDisplayRemove(1);
+
+
+// get camera
+	string $modelPanel = `getPanel -withFocus`;
+	if (`getPanel -typeOf $modelPanel` != "modelPanel")
+		error "请选择你希望用来playblast的视口";
+	string $camera = `modelEditor -query -camera $modelPanel`;
+	string $cameraName = `basenameEx $camera`;
+	if (`nodeType $camera` != "camera")
+	{
+		string $buf[] = `listRelatives -fullPath -shapes $camera`;
+		$camera = $buf[0];
+	}
+
+
+	if (`getAttr ($camera + ".displayResolution")`)
+	{
+		setAttr ($camera + ".displayResolution") 0;
+		$HeadsUpDisplay += "setAttr " + $camera + ".displayResolution true;\n";
+	}
+	getHUDGlobalResolution();
+	HUDlenNum();
+	getHeadsUpDisplayUser();
+         setCameraNamesVisibility(1);
+
+//显示制作人
+	headsUpDisplay -section 5 -block 0  -atr -labelFontSize "large" -dataFontSize "large"  -command "HeadsUpDisplayUser" wkHUDUserName;
+//显示时间
+	headsUpDisplay -section 6 -block 0 -labelFontSize "large" -dataFontSize "large" -blockAlignment "right" -event "timeChanged" -command "HeadsUpDisplayUser1" wkHeadsUpDisplayUser1;
+//显示摄影机
+	if(`exists "HUDCameraNames"`)
+	{headsUpDisplay -e -s 7
+			   -b 0
+				-labelFontSize "large"
+				-dataFontSize "large"
+			   -vis 1
+			   -ao true
+			   -ba center
+			   -pre "cameraNames"
+			   HUDCameraNames;
+		headsUpDisplay -e -s 2
+		   -b 1
+		   -vis  1
+		   -ba center
+		   -label (uiRes("m_initAfter.kHUDTitleCameraName"))
+		   -pre "renderQuality"
+		   HUDHQCameraNames;}
+
+	//headsUpDisplay -section 7 -block 0 -labelFontSize "large" -dataFontSize "large" -c  "HeadsUpDisplayCamera" -atr wkHeadsUpDisplayCameraNames;
+//显示序列帧
+	//headsUpDisplay -section 5 -block 1 -labelFontSize "large" -dataFontSize "large" -label "frame:" -event "timeChanged" -command "HeadsUpDisplayFrame" wkHeadsUpDisplayFrame;
+		headsUpDisplay
+			-section			9
+			-block				0
+			-blockSize			"small"
+			-label				"frame: "
+			-dataWidth			75
+			-labelFontSize		"large"
+			-dataFontSize		"large"
+			-allowOverlap		true
+			-blockAlignment		"center"
+			-preset				"currentFrame"
+			-vis                1
+		HUDCurrentFrame;
+	//headsUpDisplay -section 5 -block 0 -labelFontSize "large" -dataFontSize "large" -label "start:" -event "timeChanged" -command "HeadsUpDisplayStart" wkHeadsUpDisplayStart;
+	//headsUpDisplay -section 7 -block 0 -labelFontSize "large" -dataFontSize "large" -label "end:" -event "timeChanged" -command "HeadsUpDisplayEnd" HeadsUpDisplayEnd;
+//显示总帧数
+	//headsUpDisplay -section 9 -block 0 -labelFontSize "large" -dataFontSize "large" -blockAlignment "right" -label "total:" -event "timeChanged" -command "HeadsUpDisplayTotal" wkHeadsUpDisplayTotal;
+//显示分辨率
+  headsUpDisplay -rp 2 0;
+	headsUpDisplay -section 2 -block 0 -atr -labelFontSize "large" -dataFontSize "large" -command "HUDGlobalResolution" wkGetInputMess;
+
+//显示镜头号
+  headsUpDisplay -rp 0 0;
+   headsUpDisplay -section 0 -block 0 -atr -labelFontSize "large" -dataFontSize "large"  -command "headupDisplaylenNum" wkLoadHeadsUpDisplay;
+//显示帧率
+  // headsUpDisplay -s 9 - b 1 -labelFontSize "large" -dataFontSize "large"  -pre "frameRate" wkHUDframeRate;
+
+	return true;
+
+}
+global proc int startUpDisplay()
+{
+
+
+	HeadsUpDisplayRemove(1);
+
+
+// get camera
+
+         setCameraNamesVisibility(1);
+
+//显示制作人
+
+	headsUpDisplay -section 5 -block 0  -atr -labelFontSize "large" -dataFontSize "large"  -command "HeadsUpDisplayUser2" wkHUDUserName;
+
+	headsUpDisplay -s 5
+			   -b 1
+			   -vis (`optionVar -q viewAxisVisibility`)
+			   -pre "viewAxis"
+			   HUDViewAxis;
+//显示时间
+
+	headsUpDisplay -section 6 -block 0 -labelFontSize "large" -dataFontSize "large" -blockAlignment "right" -event "timeChanged" -command "HeadsUpDisplayUser1" wkHeadsUpDisplayUser1;
+//显示摄影机
+    	headsUpDisplay  -s 7
+			   -b 0
+				-labelFontSize "large"
+				-dataFontSize "large"
+			   -vis 1
+			   -ao true
+			   -ba center
+			   -pre "cameraNames"
+			   HUDCameraNames;
+
+		headsUpDisplay -s 2
+		   -b 1
+		   -vis  1
+		   -ba center
+		   -label (uiRes("m_initAfter.kHUDTitleCameraName"))
+		   -pre "renderQuality"
+		   HUDHQCameraNames;
+//显示序列帧
+
+		headsUpDisplay
+			-section			9
+			-block				0
+			-blockSize			"small"
+			-label				"frame: "
+			-dataWidth			75
+			-labelFontSize		"large"
+			-dataFontSize		"large"
+			-allowOverlap		true
+			-blockAlignment		"center"
+			-preset				"currentFrame"
+			-vis                1
+		HUDCurrentFrame;
+//显示分辨率
+	    headsUpDisplay
+	       -section             2
+		   -block               0
+		   -atr
+		   -labelFontSize       "large"
+		   -dataFontSize        "large"
+		   -command             "HUDGlobalResolution2"
+		wkGetInputMess;
+//显示镜头号
+   headsUpDisplay -section 0 -block 0 -atr -labelFontSize "large" -dataFontSize "large"  -command "headupDisplaylenNum2" wkLoadHeadsUpDisplay;
+
+
+
+	return true;
+
+}
+
+global proc wkinitDisplay()
+{
+int $getCfg=headUpReadTxtCfgFile("headUpDisCfg.txt");
+if($getCfg==1)
+{startUpDisplay();}
+else{print "未找到配置文件，无法显示用户拍屏信息";}
+}
+
+playblastTool();

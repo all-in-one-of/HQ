@@ -1,0 +1,1 @@
+若出现卸载不了shave，请解压该文件到shave安装路径根目录(默认位置为：C:\Program Files\JoeAlter\shaveHaircut\maya2015)，替换原来文件并运行进行卸载

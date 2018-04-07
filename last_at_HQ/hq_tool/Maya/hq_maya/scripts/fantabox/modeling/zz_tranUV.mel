@@ -1,0 +1,64 @@
+global proc zz_tranUV()
+{
+string $selectall[];
+string $tagetShape[];
+$selectall=`ls -sl`;
+string $sel[] = `pickWalk -d down $selectall[0]`;
+
+for($i=1;$i<`size $selectall`;$i++)
+ {
+ $tagetShape= `pickWalk -d down $selectall[$i]`;
+ polyTransfer -vc 0 -uv 1 -v 0 -ao $sel[0] $tagetShape[0];
+ delTransfer($selectall[$i]);
+
+ //delPolyTransferNodeUV;
+ }
+};
+
+global proc delTransfer(string $obj)
+{
+string $SH[]=`listRelatives -s -f -ni -type mesh $obj`;
+string $allSH[]=`listRelatives -s -f -type mesh $obj`;
+string $hist[]=`listHistory $obj`;
+string $orgSH[];clear $orgSH;
+string $delNode[];clear $delNode;
+
+	for($itSH in $allSH)
+		if(`getAttr ($itSH+".intermediateObject")`&&!size(`listConnections -d 0 $itSH`))
+			$orgSH[size($orgSH)]=$itSH;
+	for($histIt in $hist)
+		if(stringArrayContains(`nodeType $histIt`,{"transferAttributes","polyTransfer","polyPlanarProj","polyCylProj","polySphProj","polyAutoProj","polyPlanarProj","polyTweakUV"}))
+			$delNode[size($delNode)]=$histIt;
+
+	if(size($SH)==1&&size($orgSH)&&size($delNode))
+	{
+		string $mesh=`createNode mesh`;
+		for($orgIt in $orgSH)
+		{
+			connectAttr -f ($SH[0]+".outMesh") ($mesh+".inMesh");
+			refresh;
+			disconnectAttr ($SH[0]+".outMesh") ($mesh+".inMesh");
+			refresh;
+			polyTransfer -v 0 -vc 1 -uv 0 -ao $SH[0] $mesh;
+			delete -ch $mesh;
+
+			//string $conAttr[]=`connectionInfo -dfs ($orgIt+".worldMesh")`;
+			//for($conAttrIt in $conAttr)
+			//	disconnectAttr ($orgIt+".worldMesh") $conAttrIt;
+
+			
+			polyTransfer -v 0 -vc 1 -uv 1 -ao $mesh $orgIt;
+			refresh;
+			delete -ch $orgIt;
+
+			string $tranfer[]=`listConnections -d 0 $orgIt`;
+			delete `listConnections -d 0 -sh 1 ($tranfer[0]+".inputPolymesh")`;
+			//for($conAttrIt in $conAttr)
+			//	connectAttr ($orgIt+".worldMesh") $conAttrIt;
+		}
+
+		delete $delNode;
+		delete `listRelatives -p -f $mesh`;
+	}
+};
+zz_tranUV;

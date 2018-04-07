@@ -1,0 +1,304 @@
+#! /home/zhangkh/Nuke6.3v4/Nuke6.3 -nx
+version 6.3 v4
+Gizmo {
+ tile_color 0xff7f28ff
+ note_font "DejaVu Sans"
+ mapsize {0.15 0.15}
+ addUserKnob {20 User}
+ addUserKnob {4 output M {"convolution result" "input kernel" "" ""}}
+ addUserKnob {4 c l channels M {RGB RGBA ""}}
+ addUserKnob {4 kernel M {"35mm f1.4" "35mm f2.8" "35mm f5.6"}}
+ addUserKnob {3 pad l "pad frame" t "If bright areas of the convolved image 'wrap around' to the other side of the image, padding the frame will alleviate this problem. Also, if the bounding extends beyond the image, setting this to a larger size than 0 will allow you to reserve it. value is in pixels.\n"}
+ addUserKnob {7 mix}
+ mix 1
+}
+ Read {
+  inputs 0
+  file /All/Oxygen/util/nuke/6.3/nuke.GIZMOS/LensKernelFFT/35mmf56_normalized_v01.exr
+  format "3908 2602 0 0 3908 2602 1 "
+  origset true
+  name Read6
+  tile_color 0x602be2ff
+  xpos -250
+  ypos -19
+  postage_stamp false
+  addUserKnob {20 Info}
+  addUserKnob {1 modified +HIDDEN}
+  modified "2012-09-13 02:17:57"
+  addUserKnob {1 sourceplatespath +HIDDEN}
+  sourceplatespath /All/Oxygen/util/nuke/6.3/nuke.GIZMOS/LensKernelFFT
+  addUserKnob {1 artist +HIDDEN}
+  artist zhangkh
+  addUserKnob {1 readmode +HIDDEN}
+  readmode "<font color=violet>NETWORK</font>"
+  addUserKnob {22 showinfo l ShowInfo -STARTLINE T "\nnode = nuke.thisNode()\nif '<html>' not in node\['label'].value():\n        node\['label'].setValue(\"<html><br><font color=#808080>Modified:</font> <font color=#F8F8FF><small>%s</small> </font><br>SourcePlatesPath:<small>%s</small><br><font color=#808080>Artist: </font><font color=#F8F8FF><small>%s</small></font><br>ReadMode: <small>%s</small><br></html>\" % (node\['modified'].value(),node\['sourceplatespath'].value(),node\['artist'].value(),node\['readmode'].value() ) )\n        node\['label'].setEnabled(False)\nelse:\n        node\['label'].setValue('')\n        node\['label'].setEnabled(True)\n"}
+ }
+ Read {
+  inputs 0
+  file /All/Oxygen/util/nuke/6.3/nuke.GIZMOS/LensKernelFFT/35mmf28_normalized_v01.exr
+  format "3908 2602 0 0 3908 2602 1 "
+  origset true
+  name Read5
+  tile_color 0x602be2ff
+  xpos -382
+  ypos -16
+  postage_stamp false
+  addUserKnob {20 Info}
+  addUserKnob {1 modified +HIDDEN}
+  modified "2012-09-13 02:17:57"
+  addUserKnob {1 sourceplatespath +HIDDEN}
+  sourceplatespath /All/Oxygen/util/nuke/6.3/nuke.GIZMOS/LensKernelFFT
+  addUserKnob {1 artist +HIDDEN}
+  artist zhangkh
+  addUserKnob {1 readmode +HIDDEN}
+  readmode "<font color=violet>NETWORK</font>"
+  addUserKnob {22 showinfo l ShowInfo -STARTLINE T "\nnode = nuke.thisNode()\nif '<html>' not in node\['label'].value():\n        node\['label'].setValue(\"<html><br><font color=#808080>Modified:</font> <font color=#F8F8FF><small>%s</small> </font><br>SourcePlatesPath:<small>%s</small><br><font color=#808080>Artist: </font><font color=#F8F8FF><small>%s</small></font><br>ReadMode: <small>%s</small><br></html>\" % (node\['modified'].value(),node\['sourceplatespath'].value(),node\['artist'].value(),node\['readmode'].value() ) )\n        node\['label'].setEnabled(False)\nelse:\n        node\['label'].setValue('')\n        node\['label'].setEnabled(True)\n"}
+ }
+ Read {
+  inputs 0
+  file /All/Oxygen/util/nuke/6.3/nuke.GIZMOS/LensKernelFFT/35mmf14_normalized_v01.exr
+  format "3908 2602 0 0 3908 2602 1 "
+  origset true
+  name Read4
+  tile_color 0x602be2ff
+  xpos -508
+  ypos -17
+  postage_stamp false
+  addUserKnob {20 Info}
+  addUserKnob {1 modified +HIDDEN}
+  modified "2012-09-13 02:17:57"
+  addUserKnob {1 sourceplatespath +HIDDEN}
+  sourceplatespath /All/Oxygen/util/nuke/6.3/nuke.GIZMOS/LensKernelFFT
+  addUserKnob {1 artist +HIDDEN}
+  artist zhangkh
+  addUserKnob {1 readmode +HIDDEN}
+  readmode "<font color=violet>NETWORK</font>"
+  addUserKnob {22 showinfo l ShowInfo -STARTLINE T "\nnode = nuke.thisNode()\nif '<html>' not in node\['label'].value():\n        node\['label'].setValue(\"<html><br><font color=#808080>Modified:</font> <font color=#F8F8FF><small>%s</small> </font><br>SourcePlatesPath:<small>%s</small><br><font color=#808080>Artist: </font><font color=#F8F8FF><small>%s</small></font><br>ReadMode: <small>%s</small><br></html>\" % (node\['modified'].value(),node\['sourceplatespath'].value(),node\['artist'].value(),node\['readmode'].value() ) )\n        node\['label'].setEnabled(False)\nelse:\n        node\['label'].setValue('')\n        node\['label'].setEnabled(True)\n"}
+ }
+ Switch {
+  inputs 3
+  which {{parent.kernel}}
+  name Switch1
+  xpos -382
+  ypos 91
+ }
+ Transform {
+  translate {1 0}
+  center {1954 1301}
+  filter Impulse
+  name Transform
+  label recenter
+  xpos -382
+  ypos 122
+ }
+ Dot {
+  name Dot1
+  xpos -348
+  ypos 170
+ }
+set N43a9200 [stack 0]
+ Dot {
+  name Dot2
+  xpos -238
+  ypos 170
+ }
+ Saturation {
+  saturation 0
+  name Saturation
+  label luminance
+  xpos -272
+  ypos 224
+ }
+push $N43a9200
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 rgba.alpha
+  name Copy
+  label luminance->alpha
+  xpos -382
+  ypos 218
+ }
+ Dot {
+  name Dot10
+  xpos -348
+  ypos 272
+ }
+set N43bfdc0 [stack 0]
+ Dot {
+  name Dot9
+  xpos -458
+  ypos 272
+ }
+ Dot {
+  name Dot11
+  xpos -458
+  ypos 745
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos 0
+  ypos -11
+ }
+ NoOp {
+  name ImgIn
+  xpos 0
+  ypos 35
+ }
+ Dot {
+  name Dot12
+  xpos 34
+  ypos 59
+ }
+set N43cf7f0 [stack 0]
+ Reformat {
+  type "to box"
+  box_width {{"width + (2* parent.pad)"}}
+  box_height {{"height + (2* parent.pad)"}}
+  resize none
+  filter Impulse
+  name Reformat_PadFrame
+  xpos 0
+  ypos 349
+ }
+ FFT {
+  channels rgba
+  name FFT2
+  xpos 0
+  ypos 384
+ }
+ Dot {
+  name Dot3
+  xpos 34
+  ypos 451
+ }
+push $N43bfdc0
+ Reformat {
+  type "to box"
+  box_width {{parent.Reformat_PadFrame.box_width.main}}
+  box_height {{parent.Reformat_PadFrame.box_height.main}}
+  resize none
+  filter Impulse
+  name ReformatKernel
+  xpos -382
+  ypos 351
+ }
+ FFT {
+  channels rgba
+  normalize_input true
+  center_kernel true
+  name FFT1
+  xpos -382
+  ypos 395
+ }
+ FFTMultiply {
+  inputs 2
+  name FFTMultiply1
+  xpos -382
+  ypos 442
+ }
+ InvFFT {
+  name InvFFT1
+  xpos -382
+  ypos 478
+ }
+ Dot {
+  name Dot4
+  xpos -348
+  ypos 548
+ }
+ Dot {
+  name Dot6
+  xpos -138
+  ypos 548
+ }
+set N4409a70 [stack 0]
+ Dot {
+  name Dot7
+  xpos 15
+  ypos 548
+ }
+push $N43cf7f0
+ Dot {
+  name Dot13
+  xpos 170
+  ypos 59
+ }
+ Dot {
+  name Dot15
+  xpos 170
+  ypos 415
+ }
+set N4413070 [stack 0]
+ Dot {
+  name Dot5
+  xpos 34
+  ypos 501
+ }
+set N44162a0 [stack 0]
+ Copy {
+  inputs 2
+  channels rgba
+  name Copy3
+  xpos 0
+  ypos 578
+ }
+push $N4409a70
+push $N44162a0
+ Dot {
+  name Dot8
+  xpos -68
+  ypos 501
+ }
+ Copy {
+  inputs 2
+  channels rgb
+  name Copy2
+  xpos -102
+  ypos 581
+ }
+ Switch {
+  inputs 2
+  which {{parent.c i}}
+  name Switch2
+  xpos 0
+  ypos 668
+ }
+ Reformat {
+  type "to box"
+  box_width {{ImgIn.width i}}
+  box_height {{ImgIn.height i}}
+  resize none
+  filter Impulse
+  name ReformatOutput
+  xpos 0
+  ypos 692
+ }
+ Switch {
+  inputs 2
+  which {{parent.output i}}
+  name Switch3
+  xpos 0
+  ypos 742
+ }
+push $N4413070
+ Dot {
+  name Dot14
+  xpos 170
+  ypos 804
+ }
+ Dissolve {
+  inputs 2
+  channels rgba
+  which {{parent.mix i}}
+  name Dissolve1
+  xpos 0
+  ypos 801
+ }
+ Output {
+  name Output1
+  xpos 0
+  ypos 871
+ }
+end_group

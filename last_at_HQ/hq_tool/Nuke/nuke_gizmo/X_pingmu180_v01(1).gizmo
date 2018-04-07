@@ -1,0 +1,125 @@
+#! D:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ inputs 3
+ tile_color 0xffff
+ addUserKnob {20 X_pingmu180}
+ addUserKnob {4 inputStyle l input M {zm m}}
+ addUserKnob {41 format T Constant6.format}
+ addUserKnob {41 box_width l width/height T Reformat1.box_width}
+ addUserKnob {41 box_height l "" -STARTLINE T Reformat1.box_height}
+}
+ Input {
+  inputs 0
+  name cam3
+  xpos 574
+  ypos 208
+ }
+ Reformat {
+  type "to box"
+  format "750 900 0 0 750 900 1 "
+  box_width 1000
+  box_height 1200
+  box_fixed true
+  name Reformat1
+  xpos 577
+  ypos 243
+ }
+ set C295a88a0 [stack 0]
+ Transform {
+  translate {{"(\[value root.width]/3)*2"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform12
+  xpos 577
+  ypos 288
+ }
+set N295a8c10 [stack 0]
+ Input {
+  inputs 0
+  name cam2
+  xpos 473
+  ypos 206
+  number 1
+ }
+clone $C295a88a0 {
+  xpos 476
+  ypos 242
+  selected false
+ }
+ Transform {
+  translate {{"\[value root.width]/3"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform11
+  xpos 476
+  ypos 287
+ }
+set N295a9660 [stack 0]
+push 0
+ Input {
+  inputs 0
+  name cam1
+  xpos 365
+  ypos 201
+  number 2
+ }
+clone $C295a88a0 {
+  xpos 371
+  ypos 242
+  selected false
+ }
+ Transform {
+  center {1024 778}
+  filter Impulse
+  name Transform10
+  xpos 371
+  ypos 286
+ }
+set N416c00c0 [stack 0]
+ Constant {
+  inputs 0
+  channels rgb
+  format "3000 1200 0 0 3000 1200 1 aaa"
+  name Constant6
+  xpos 703
+  ypos 338
+ }
+set N416c0430 [stack 0]
+ Merge2 {
+  inputs 4+1
+  name Merge1
+  xpos 379
+  ypos 355
+ }
+push $N295a8c10
+push $N295a9660
+push $N416c00c0
+push $N416c0430
+ ZMerge {
+  inputs 4
+  name ZMerge1
+  xpos 476
+  ypos 355
+ }
+ Switch {
+  inputs 2
+  which {{inputStyle}}
+  name Switch1
+  xpos 472
+  ypos 412
+ }
+set N4143a930 [stack 0]
+ Output {
+  name Output1
+  xpos 466
+  ypos 454
+ }
+push $N4143a930
+ Viewer {
+  input_process false
+  name Viewer1
+  xpos 281
+  ypos 492
+ }
+end_group

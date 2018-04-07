@@ -1,0 +1,193 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ inputs 2
+ addUserKnob {20 User l X_FilmGrain}
+ addUserKnob {6 alpha l "Apply with alpha" +STARTLINE}
+ addUserKnob {6 bbox l "BBox from BG" t "If \"Transform\" used before input, you can check me that copy BBox from BG to make a correct result." +STARTLINE}
+ addUserKnob {7 size l "@b;Grain Size" R 0.1 5}
+ size 1
+ addUserKnob {7 intensity l "@b;Grain Intensity"}
+ intensity 0.5
+ addUserKnob {16 intensity_r l rGrain}
+ intensity_r 0.3
+ addUserKnob {16 intensity_g l gGrain}
+ intensity_g 0.3
+ addUserKnob {16 intensity_b l bGrain}
+ intensity_b 0.5
+ addUserKnob {26 blurText l "@b;Grain Softness"}
+ addUserKnob {7 blur_r l Red R 0 10}
+ blur_r 1
+ addUserKnob {7 blur_g l Green R 0 10}
+ blur_g 1
+ addUserKnob {7 blur_b l Blue R 0 10}
+ blur_b 1
+ addUserKnob {26 film_response l "@b;Film Response"}
+ addUserKnob {18 black l Black}
+ addUserKnob {18 white l White R 0 0.01}
+ addUserKnob {7 sat l "Grain Satuation"}
+ sat 1
+ addUserKnob {3 grain_seed l seed}
+ grain_seed 20
+}
+ Input {
+  inputs 0
+  name BG
+  xpos 802
+  ypos 76
+  number 1
+ }
+ Input {
+  inputs 0
+  name Source
+  xpos 620
+  ypos 71
+
+ }
+set N11c35f90 [stack 0]
+ CopyBBox {
+  inputs 2
+  name CopyBBox1
+  xpos 750
+  ypos 130
+ }
+push $N11c35f90
+ Switch {
+  inputs 2
+  which {{bbox i}}
+  name Switch1
+  xpos 698
+  ypos 181
+ }
+ Dot {
+  name Dot3
+  xpos 732
+  ypos 235
+ }
+set N11c3f1f0 [stack 0]
+push $N11c3f1f0
+ Shuffle {
+  red white
+  green white
+  blue white
+  alpha white
+  name Shuffle1
+  xpos 561
+  ypos 312
+ }
+set N10e41e80 [stack 0]
+push $N10e41e80
+ Dither {
+  channels {rgba.red -rgba.green -rgba.blue}
+  amount {{intensity_r i}}
+  seed {{grain_seed i}}
+  name red1
+  xpos 442
+  ypos 304
+ }
+ Dither {
+  channels {-rgba.red rgba.green -rgba.blue}
+  amount {{intensity_g i}}
+  seed {{grain_seed i}}
+  name green1
+  xpos 442
+  ypos 354
+ }
+ Dither {
+  channels {-rgba.red -rgba.green rgba.blue}
+  amount {{intensity_b i}}
+  seed {{grain_seed i}}
+  name blue1
+  xpos 442
+  ypos 413
+ }
+ MergeExpression {
+  inputs 2
+  expr0 Br-Ar
+  expr1 Bg-Ag
+  expr2 Bb-Ab
+  name MergeExpression4
+  xpos 494
+  ypos 503
+ }
+ Blur {
+  channels {rgba.red -rgba.green -rgba.blue}
+  size {{blur_r i}}
+  name Blur1
+  xpos 494
+  ypos 547
+ }
+ Blur {
+  channels {-rgba.red rgba.green -rgba.blue}
+  size {{blur_g i}}
+  name Blur2
+  xpos 494
+  ypos 611
+ }
+ Blur {
+  channels {-rgba.red -rgba.green rgba.blue}
+  size {{blur_b i}}
+  name Blur3
+  xpos 494
+  ypos 661
+ }
+ Saturation {
+  saturation {{sat i}}
+  name Saturation1
+  xpos 494
+  ypos 722
+ }
+ Transform {
+  scale {{size+0.9 i}}
+  filter Impulse
+  name Transform1
+  selected true
+  xpos 494
+  ypos 760
+ }
+push $N11c3f1f0
+ MergeExpression {
+  inputs 2
+  expr0 max(white,(Ar*(Br*intensity+black))+Br)
+  expr1 max(white,(Ag*(Bg*intensity+black))+Bg)
+  expr2 max(white,(Ab*(Bb*intensity+black))+Bb)
+  name MergeExpression5
+  xpos 622
+  ypos 760
+ }
+ CopyBBox {
+  inputs 2
+  name CopyBBox2
+  xpos 679
+  ypos 833
+ }
+ Dot {
+  name Dot1
+  xpos 713
+  ypos 887
+ }
+set N11c884a0 [stack 0]
+push $N11c3f1f0
+ Copy {
+  inputs 2
+  channels rgb
+  bbox B
+  maskChannelInput rgba.alpha
+  name Copy1
+  xpos 809
+  ypos 868
+ }
+push $N11c884a0
+ Switch {
+  inputs 2
+  which {{alpha i}}
+  name Switch4
+  xpos 769
+  ypos 994
+ }
+ Output {
+  name Output1
+  xpos 769
+  ypos 1076
+ }
+end_group

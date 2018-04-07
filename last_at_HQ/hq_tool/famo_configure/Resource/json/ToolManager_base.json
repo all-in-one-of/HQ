@@ -1,0 +1,55 @@
+{
+    "AllItem": [
+        {
+            "item": {
+                "icon": "",
+                "text": "base config",
+                "type": "QTabWidget"
+            },
+            "sunitem": [
+                {
+                    "tabIcon": ":/images/maya_2015.png",
+                    "tabList": [
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\\generalapp\\common_configure.exe",
+                            "text": "common_configure",
+                            "tooltip": "common_configure"
+                        },
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\\generalapp\\common_configure_local.exe",
+                            "text": "common_configure_local",
+                            "tooltip": "common_configure_local"
+                        },
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\\generalapp\\common_configure_renderFarm.exe",
+                            "text": "common_configure_renderFarm",
+                            "tooltip": "common_configure_renderFarm"
+                        },
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\\generalapp\\linhaixueyuan_configure.exe",
+                            "text": "linhaixueyuan_configure",
+                            "tooltip": "linhaixueyuan_configure"
+                        },
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\\generalapp\\Wuge_configure.exe",
+                            "text": "Wuge_configure",
+                            "tooltip": "Wuge_configure"
+                        }
+                    ],
+                    "tabText": "Maya"
+                },
+                {
+                    "tabIcon": ":/images/houdini.png",
+                    "tabList": [
+                    ],
+                    "tabText": "Houdini"
+                }
+            ]
+        }
+    ]
+}

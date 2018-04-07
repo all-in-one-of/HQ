@@ -1,0 +1,734 @@
+#! /home/zhangkh/Nuke6.3v4/Nuke6.3 -nx
+version 6.3 v4
+Gizmo {
+ inputs 2
+ note_font Verdana
+ mapsize {0.15 0.15}
+ addUserKnob {20 X_stereo3Dprojection}
+ addUserKnob {4 Projection_style l "@b;Projection Style" M {Horizon Vertical Anaglyph "" "" "" ""}}
+ addUserKnob {41 resize l "Resize type" T Reformat1.resize}
+ addUserKnob {41 center T Reformat1.center}
+ addUserKnob {41 flip T Reformat1.flip}
+ addUserKnob {41 flop T Reformat1.flop}
+ addUserKnob {41 turn T Reformat1.turn}
+ addUserKnob {26 ""}
+ addUserKnob {6 turnonmask l TurnOnMask +STARTLINE}
+ addUserKnob {7 maskingwidescreen l Masking_WideScreen R 0 5}
+ maskingwidescreen 2.4
+ addUserKnob {41 multiply T Grade2.multiply}
+ addUserKnob {26 ""}
+ addUserKnob {6 turnontext l TurnOnText +STARTLINE}
+ addUserKnob {1 shotname l ShotNmae}
+ shotname Test
+ addUserKnob {41 color T Text1.color}
+ addUserKnob {41 size T Text1.size}
+ addUserKnob {26 ""}
+ addUserKnob {26 anaglyphcolor l AnaglyphColor}
+ addUserKnob {7 anacolor}
+}
+ Input {
+  inputs 0
+  name L
+  xpos 305
+  ypos 91
+  number 1
+ }
+set N4c25300 [stack 0]
+ Rectangle {
+  output {rgba.red -rgba.green -rgba.blue}
+  invert true
+  area {{0 i} {"(height- width/(parent.maskingwidescreen))/2" i} {width i} {"height-(height- width/(parent.maskingwidescreen))/2" i}}
+  name Rectangle2
+  xpos 902
+  ypos 227
+ }
+ set C5a42bd0 [stack 0]
+push $N4c25300
+ Shuffle {
+  alpha white
+  name Shuffle4
+  xpos 750
+  ypos 223
+ }
+set N4c315b0 [stack 0]
+ Grade {
+  inputs 1+1
+  multiply 0.3
+  maskChannelMask rgba.red
+  name Grade2
+  xpos 750
+  ypos 322
+ }
+ set C5fe4de0 [stack 0]
+push $N4c315b0
+ Dot {
+  name Dot5
+  xpos 708
+  ypos 364
+ }
+ Switch {
+  inputs 2
+  which {{parent.turnonmask i}}
+  name Switch6
+  xpos 744
+  ypos 398
+ }
+set N4c48bc0 [stack 0]
+ Text {
+  message "Frame \[frame]"
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {{0 i} {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text25
+  xpos 744
+  ypos 437
+ }
+ Text {
+  message "\[value parent.shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {{0 i} {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text26
+  xpos 744
+  ypos 475
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  yjustify bottom
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text27
+  xpos 750
+  ypos 498
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text28
+  xpos 750
+  ypos 530
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  yjustify top
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text29
+  xpos 744
+  ypos 559
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify right
+  yjustify top
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text30
+  xpos 744
+  ypos 580
+ }
+push $N4c48bc0
+ Dot {
+  name Dot6
+  xpos 677
+  ypos 477
+ }
+ Switch {
+  inputs 2
+  which {{parent.turnontext i}}
+  name Switch7
+  xpos 744
+  ypos 635
+ }
+set N6c58a70 [stack 0]
+ Saturation {
+  saturation {{parent.anacolor}}
+  name Saturation1
+  xpos 591
+  ypos 923
+ }
+ Shuffle {
+  green black
+  blue black
+  name Shuffle5
+  xpos 587
+  ypos 967
+ }
+ Input {
+  inputs 0
+  name R
+  xpos 908
+  ypos 95
+ }
+set N56f3f50 [stack 0]
+clone $C5a42bd0 {
+  xpos 1194
+  ypos 255
+  selected false
+ }
+push $N56f3f50
+ Shuffle {
+  alpha white
+  name Shuffle1
+  xpos 1064
+  ypos 247
+ }
+set N5fb1f10 [stack 0]
+clone $C5fe4de0 {
+  inputs 1+1
+  xpos 1066
+  ypos 356
+  selected false
+ }
+push $N5fb1f10
+ Dot {
+  name Dot7
+  xpos 1024
+  ypos 398
+ }
+ Switch {
+  inputs 2
+  which {{parent.turnonmask}}
+  name Switch8
+  xpos 1060
+  ypos 432
+ }
+set N6020df0 [stack 0]
+ Text {
+  message "Frame \[frame]"
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {{0 i} {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text13
+  xpos 1060
+  ypos 476
+ }
+ Text {
+  message "\[value parent.shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {{0 i} {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text14
+  xpos 1060
+  ypos 510
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  yjustify bottom
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text15
+  xpos 1066
+  ypos 533
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text16
+  xpos 1066
+  ypos 565
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  yjustify top
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text17
+  xpos 1060
+  ypos 594
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify right
+  yjustify top
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text18
+  xpos 1060
+  ypos 615
+ }
+push $N6020df0
+ Dot {
+  name Dot8
+  xpos 993
+  ypos 511
+ }
+ Switch {
+  inputs 2
+  which {{parent.turnontext i}}
+  name Switch9
+  xpos 1060
+  ypos 685
+ }
+set N4c207f0 [stack 0]
+ Saturation {
+  saturation {{parent.anacolor}}
+  name Saturation2
+  xpos 915
+  ypos 932
+ }
+ Shuffle {
+  red black
+  name Shuffle6
+  xpos 902
+  ypos 969
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  Achannels rgb
+  name Merge3
+  xpos 705
+  ypos 1151
+ }
+push $N56f3f50
+clone $C5a42bd0 {
+  xpos 529
+  ypos 231
+  selected false
+ }
+push $N56f3f50
+ Shuffle {
+  alpha white
+  name Shuffle3
+  xpos 378
+  ypos 210
+ }
+set N6c6e9d0 [stack 0]
+clone $C5fe4de0 {
+  inputs 1+1
+  xpos 376
+  ypos 241
+  selected false
+ }
+push $N6c6e9d0
+ Dot {
+  name Dot2
+  xpos 340
+  ypos 342
+ }
+ Switch {
+  inputs 2
+  which {{parent.turnonmask i}}
+  name Switch3
+  xpos 376
+  ypos 376
+ }
+set N6c86280 [stack 0]
+ Text {
+  message "Frame \[frame]"
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {{0 i} {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text3
+  xpos 376
+  ypos 416
+ }
+ Text {
+  message "\[value parent.shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {{0 i} {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text4
+  xpos 376
+  ypos 450
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  yjustify bottom
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text9
+  xpos 382
+  ypos 473
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text10
+  xpos 382
+  ypos 505
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  yjustify top
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text11
+  xpos 376
+  ypos 534
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify right
+  yjustify top
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text12
+  xpos 376
+  ypos 555
+ }
+push $N6c86280
+ Dot {
+  name Dot4
+  xpos 309
+  ypos 455
+ }
+ Switch {
+  inputs 2
+  which {{parent.turnontext i}}
+  name Switch5
+  xpos 376
+  ypos 588
+ }
+ Reformat {
+  format "1024 768 0 0 1024 768 1 win"
+  resize fit
+  black_outside true
+  name Reformat1
+  xpos 372
+  ypos 785
+ }
+ set C674a180 [stack 0]
+ BlackOutside {
+  name BlackOutside2
+  xpos 374
+  ypos 826
+ }
+ Transform {
+  center {512 384}
+  name Transform_interocular4
+  xpos 374
+  ypos 852
+ }
+ Transform {
+  center {512 384}
+  name Transform3
+  xpos 374
+  ypos 889
+ }
+push $N4c25300
+clone $C5a42bd0 {
+  xpos 247
+  ypos 203
+  selected false
+ }
+push $N4c25300
+ Shuffle {
+  alpha white
+  name Shuffle2
+  xpos 136
+  ypos 187
+ }
+set N6772260 [stack 0]
+clone $C5fe4de0 {
+  inputs 1+1
+  xpos 136
+  ypos 226
+  selected false
+ }
+push $N6772260
+ Dot {
+  name Dot1
+  xpos 99
+  ypos 347
+ }
+ Switch {
+  inputs 2
+  which {{parent.turnonmask i}}
+  name Switch2
+  xpos 136
+  ypos 362
+ }
+set N67899f0 [stack 0]
+ Text {
+  message "Frame \[frame]"
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {{0 i} {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text2
+  xpos 132
+  ypos 415
+ }
+ Text {
+  message "\[value parent.shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size 30
+  xjustify center
+  yjustify top
+  Transform 1
+  box {{0 i} {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color 0.1
+  name Text1
+  xpos 132
+  ypos 453
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  yjustify bottom
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text5
+  xpos 132
+  ypos 479
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text6
+  xpos 132
+  ypos 511
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  yjustify top
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text7
+  xpos 126
+  ypos 540
+ }
+ Text {
+  message +
+  font /All/Oxygen/util/nuke/plugins/fonts/fonts_default/truetype/ttf-dejavu/DejaVuSans.ttf
+  size {{Text1.size i}}
+  xjustify right
+  yjustify top
+  Transform 1
+  box {0 {height-height*0.05 i} {width i} {height*0.05 i}}
+  center {1280 675}
+  color {{Text1.color i}}
+  name Text8
+  xpos 126
+  ypos 561
+ }
+push $N67899f0
+ Dot {
+  name Dot3
+  xpos 71
+  ypos 511
+ }
+ Switch {
+  inputs 2
+  which {{parent.turnontext i}}
+  name Switch4
+  xpos 132
+  ypos 593
+ }
+clone $C674a180 {
+  xpos 132
+  ypos 781
+  selected false
+ }
+ BlackOutside {
+  name BlackOutside1
+  xpos 132
+  ypos 832
+ }
+ Transform {
+  translate {0 768}
+  center {512 384}
+  name Transform2
+  xpos 132
+  ypos 884
+ }
+ Merge2 {
+  inputs 2
+  name Merge17
+  xpos 251
+  ypos 1152
+ }
+ Constant {
+  inputs 0
+  channels {rgba.red rgba.green rgba.blue rgba.alpha}
+  color {0 0 0 1}
+  format "1024 1536 0 0 1024 1536 1 3Dstereo"
+  name Constant1
+  xpos 380
+  ypos 1171
+ }
+ Merge2 {
+  inputs 2
+  name Merge16
+  xpos 251
+  ypos 1194
+ }
+ Reformat {
+  format "1024 1536 0 0 1024 1536 1 3Dstereo"
+  name Reformat2
+  xpos 251
+  ypos 1236
+ }
+push $N4c207f0
+clone $C674a180 {
+  xpos 1060
+  ypos 823
+  selected false
+ }
+ Transform {
+  translate {1024 0}
+  center {512 384}
+  name Transform1
+  xpos 1060
+  ypos 905
+ }
+push $N6c58a70
+clone $C674a180 {
+  xpos 806
+  ypos 822
+  selected false
+ }
+ Transform {
+  center {512 384}
+  name Transform4
+  xpos 806
+  ypos 896
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos 931
+  ypos 1159
+ }
+ Constant {
+  inputs 0
+  channels {rgba.red rgba.green rgba.blue rgba.alpha}
+  color {0 0 0 1}
+  format "2048 768 0 0 2048 768 1 3Dstereo_horiz"
+  name Constant2
+  xpos 1133
+  ypos 1191
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 931
+  ypos 1215
+ }
+ Reformat {
+  format "2048 768 0 0 2048 768 1 3Dstereo_horiz"
+  name Reformat3
+  xpos 931
+  ypos 1270
+ }
+ Switch {
+  inputs 3
+  which {{Projection_style i}}
+  name Switch1
+  xpos 343
+  ypos 1315
+ }
+ Output {
+  name Output1
+  xpos 343
+  ypos 1418
+ }
+end_group

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="lzk_1" label="lzk_tools">
+    <memberTool name="tool_5"/>
+    <memberTool name="tool_1"/>
+  </toolshelf>
+
+  <tool name="tool_5" label="Cache_Manager" icon="PLASMA_App">
+    <helpText><![CDATA[search the path of all the file,filecache,alembic below the selection geo nodes,and show it ]]></helpText>
+    <script scriptType="python"><![CDATA[
+import Cache_Manager_pro
+reload(Cache_Manager_pro)
+Cache_Manager_pro.show_win()]]></script>
+  </tool>
+
+  <tool name="tool_1" label="set_cam_attr" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou_changed_cam
+reload(hou_changed_cam)
+
+hou_changed_cam.change_cam_attr('resx',1760)
+hou_changed_cam.change_cam_attr('resy',1200)
+#hou_changed_cam.change_cam_attr('shutter',0.8)
+
+#change_cam_res(attr,value)
+
+]]></script>
+  </tool>
+</shelfDocument>

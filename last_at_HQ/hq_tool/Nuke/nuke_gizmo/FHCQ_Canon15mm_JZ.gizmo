@@ -1,0 +1,372 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ tile_color 0xff00ff
+ note_font "Verdana Bold"
+ note_font_size 20
+ note_font_color 0xffffffff
+ dope_sheet true
+ lifetimeStart 1
+ lifetimeEnd 100
+ lock_connections true
+ addUserKnob {20 list l Canon15mm_HM_JZ}
+ addUserKnob {41 file l "Reload Mode" T ReadGeo_sphere.file}
+ addUserKnob {41 cacheLocal l "cache locally" +INVISIBLE T ReadGeo_sphere.cacheLocal}
+ addUserKnob {41 reload -STARTLINE T ReadGeo_sphere.reload}
+ addUserKnob {41 fbx_node_name l "node name" T ReadGeo_sphere.fbx_node_name}
+ addUserKnob {41 all_objects l "all objects" -STARTLINE T ReadGeo_sphere.all_objects}
+ addUserKnob {13 TransformGeo_sphere_rotate l Rotate}
+ addUserKnob {30 SizeChange}
+ SizeChange {1760 1200}
+ addUserKnob {26 line l SingleOutput}
+ addUserKnob {6 check_1 l "Single screen output" +STARTLINE}
+ addUserKnob {4 check_2 l "Screem number" M {1 2 3 4 5 6 ""}}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x71c67100
+  label Canon15mm
+  note_font_size 42
+  xpos -609
+  ypos -424
+  bdwidth 271
+  bdheight 375
+ }
+ Axis2 {
+  inputs 0
+  name Axis_CamLocator
+  xpos -4
+  ypos -402
+ }
+set N2c241800 [stack 0]
+ Camera2 {
+  rotate {0 -60 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam6
+  xpos 250
+  ypos -140
+ }
+ Input {
+  inputs 0
+  name Input1
+  label footage
+  xpos -576
+  ypos -352
+ }
+ Reformat {
+  format "5120 1422 0 0 5120 1422 1 "
+  resize distort
+  name Reformat_hight
+  label hight*0.527
+  xpos -576
+  ypos -242
+ }
+ Transform {
+  translate {0 638.55}
+  center {2560 711.45}
+  name Transform_center
+  xpos -576
+  ypos -170
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "5120 2700 0 0 5120 2700 1 "
+  name Constant_input
+  xpos -435
+  ypos -344
+ }
+ Dot {
+  name Dot65
+  xpos -401
+  ypos -90
+ }
+ Merge2 {
+  inputs 2
+  name Merge_footage
+  xpos -576
+  ypos -94
+ }
+ ReadGeo2 {
+  file E:/work/Project/FHCQ/FHCQ_HM_workflow/scenes/geo/Canon15mm_Sphere_UV_111.fbx
+  version 16
+  all_objects true
+  read_on_each_frame true
+  name ReadGeo_sphere
+  xpos -576
+  ypos 26
+ }
+ TransformGeo {
+  rotate {{parent.TransformGeo_sphere_rotate.x} {parent.TransformGeo_sphere_rotate.y} {parent.TransformGeo_sphere_rotate.z}}
+  name TransformGeo_sphere
+  xpos -576
+  ypos 136
+ }
+ Scene {
+  name Scene3
+  xpos -566
+  ypos 237
+ }
+set N2c26a800 [stack 0]
+ Constant {
+  inputs 0
+  channels rgb
+  format "1760 1200 0 0 1760 1200 1 "
+  name Constant_singleBG
+  xpos 469
+  ypos -87
+ }
+ Crop {
+  box {0 0 {SizeChange.u} {SizeChange.v}}
+  reformat true
+  crop false
+  name Crop1
+  xpos 469
+  ypos 5
+ }
+set N2c26a000 [stack 0]
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender6
+  xpos 240
+  ypos 422
+ }
+ Dot {
+  name Dot6
+  xpos 274
+  ypos 526
+ }
+set N2c2af800 [stack 0]
+ Transform {
+  translate {{Crop1.box.r*5} 0}
+  center {{parent.Transform_5.center} {parent.Transform_5.center}}
+  name Transform_6
+  xpos 240
+  ypos 630
+ }
+push $N2c241800
+ Camera2 {
+  rotate {0 -360 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam5
+  xpos 150
+  ypos -138
+ }
+push $N2c26a800
+push $N2c26a000
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender5
+  xpos 140
+  ypos 331
+ }
+ Dot {
+  name Dot5
+  xpos 174
+  ypos 521
+ }
+set N2c2ae800 [stack 0]
+ Transform {
+  translate {{Crop1.box.r*4} 0}
+  center {{Crop1.box.r/2} {Crop1.box.t/2}}
+  name Transform_5
+  xpos 140
+  ypos 632
+ }
+push $N2c241800
+ Camera2 {
+  rotate {0 -300 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam4
+  xpos 50
+  ypos -137
+ }
+push $N2c26a800
+push $N2c26a000
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender4
+  xpos 40
+  ypos 257
+ }
+ Dot {
+  name Dot4
+  xpos 74
+  ypos 506
+ }
+set N2c307800 [stack 0]
+ Transform {
+  translate {{Crop1.box.r*3} 0}
+  center {{parent.Transform_5.center} {parent.Transform_5.center}}
+  name Transform_4
+  xpos 40
+  ypos 631
+ }
+push $N2c241800
+ Camera2 {
+  rotate {0 -240 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam3
+  xpos -52
+  ypos -138
+ }
+push $N2c26a800
+push $N2c26a000
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender3
+  xpos -62
+  ypos 184
+ }
+ Dot {
+  name Dot3
+  xpos -28
+  ypos 495
+ }
+set N2c306800 [stack 0]
+ Transform {
+  translate {{Crop1.box.r*2} 0}
+  center {{parent.Transform_4.center} {parent.Transform_4.center}}
+  name Transform_3
+  xpos -62
+  ypos 633
+ }
+push $N2c241800
+ Camera2 {
+  rotate {0 -180 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam2
+  xpos -152
+  ypos -141
+ }
+push $N2c26a800
+push $N2c26a000
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender2
+  xpos -162
+  ypos 93
+ }
+ Dot {
+  name Dot2
+  xpos -128
+  ypos 497
+ }
+set N2c369800 [stack 0]
+ Transform {
+  translate {{Crop1.box.r*1} 0}
+  center {{parent.Transform_3.center} {parent.Transform_3.center}}
+  name Transform_2
+  xpos -162
+  ypos 632
+ }
+push 0
+push $N2c241800
+ Camera2 {
+  rotate {0 -120 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam1
+  xpos -252
+  ypos -141
+ }
+push $N2c26a800
+push $N2c26a000
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender1
+  xpos -262
+  ypos 19
+ }
+ Dot {
+  name Dot1
+  xpos -228
+  ypos 494
+ }
+set N2c368800 [stack 0]
+ Transform {
+  center {{parent.Transform_2.center} {parent.Transform_2.center}}
+  name Transform_1
+  xpos -262
+  ypos 630
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "10560 1200 0 0 10560 1200 1 BG_6p"
+  name Constant1_6pBG
+  xpos 619
+  ypos 815
+ }
+ Crop {
+  box {0 0 {Crop1.box.r*6} {Crop1.box.t}}
+  reformat true
+  crop false
+  name Crop2
+  xpos 474
+  ypos 838
+ }
+ Merge2 {
+  inputs 7+1
+  name Merge_6p
+  xpos -4
+  ypos 838
+ }
+set N2c3b7800 [stack 0]
+ Viewer {
+  frame_range 1-100
+  name Viewer1
+  xpos -288
+  ypos 1043
+ }
+push $N2c2af800
+push $N2c2ae800
+push $N2c307800
+push $N2c306800
+push $N2c369800
+push $N2c368800
+ Switch {
+  inputs 6
+  which {{check_2}}
+  name Switch1
+  xpos -262
+  ypos 829
+ }
+push $N2c3b7800
+ Switch {
+  inputs 2
+  which {{check_1}}
+  name Switch2
+  xpos -4
+  ypos 955
+ }
+ Output {
+  name Output1
+  xpos -4
+  ypos 1178
+ }
+end_group

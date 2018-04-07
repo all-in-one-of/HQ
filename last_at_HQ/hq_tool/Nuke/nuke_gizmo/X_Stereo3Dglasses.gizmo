@@ -1,0 +1,119 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ inputs 2
+ label "\n"
+ note_font Verdana
+ note_font_color 0xff
+ addUserKnob {20 X_Stereo3Dglass}
+ addUserKnob {4 style l "@b;Glass Style" M {Red&Cyan Green&Violet "" "" "" "" "" ""}}
+ addUserKnob {7 sat l Satuation}
+ sat 0.6
+ addUserKnob {41 gain l Brightness T Grade1.white}
+}
+ Input {
+  inputs 0
+  name R
+  xpos 132
+  ypos 58
+ }
+ Saturation {
+  saturation {{sat i}}
+  name Saturation1
+  xpos 132
+  ypos 102
+ }
+ set C126ca5a0 [stack 0]
+set Nf66f960 [stack 0]
+ Grade {
+  multiply {1 0 1 1}
+  name right
+  xpos 258
+  ypos 192
+ }
+set N1c60a150 [stack 0]
+ Input {
+  inputs 0
+  name L
+  xpos -49
+  ypos 61
+  number 1
+ }
+clone $C126ca5a0 {
+  xpos -49
+  ypos 102
+  selected false
+ }
+set N126ca5a0 [stack 0]
+ Grade {
+  multiply {0 1 0 1}
+  name left
+  xpos 114
+  ypos 191
+ }
+set N1c614230 [stack 0]
+ JoinViews {
+  inputs 2
+  name JoinViews1
+  xpos 172
+  ypos 311
+  viewassoc "left\nright"
+ }
+push $Nf66f960
+ Grade {
+  multiply {0 1 1 1}
+  name right1
+  xpos -63
+  ypos 190
+ }
+push $N126ca5a0
+ Grade {
+  multiply {1 0 0 1}
+  name left1
+  xpos -199
+  ypos 187
+ }
+ JoinViews {
+  inputs 2
+  name JoinViews2
+  xpos -146
+  ypos 303
+  viewassoc "left\nright"
+ }
+ Switch {
+  inputs 2
+  which {{style i}}
+  name Switch1
+  xpos 16
+  ypos 356
+ }
+ Grade {
+  white 2
+  name Grade1
+  xpos 16
+  ypos 413
+ }
+ MixViews {
+  views {left right}
+  mix 0.5
+  name MixViews1
+  xpos 16
+  ypos 468
+ }
+ Output {
+  name Output1
+  xpos 16
+  ypos 516
+ }
+push $N1c60a150
+push $N1c614230
+ Viewer {
+  inputs 2
+  input_number 1
+  viewerProcess None
+  input_process false
+  name Viewer1
+  xpos -153
+  ypos 456
+ }
+end_group

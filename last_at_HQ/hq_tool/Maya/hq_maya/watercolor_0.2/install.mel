@@ -1,0 +1,46 @@
+/////////////////////////////////////////////////////////////////////////////////////
+//
+// File: install.mel
+// Description:
+//      Installation script for Art-directed Watercolor Rendered Animation System
+// Author: Santiago E. Montesdeoca
+// Website: http://artineering.io
+//
+// Instructions:
+//      Drag and drop this file into Maya to install the System
+//
+/////////////////////////////////////////////////////////////////////////////////////
+{ // avoid global namespace clashing
+
+// check if windows OS
+if ( `about -nt` ) {
+    string $fileDir = `installScriptLocation`;
+    python ("import sys");
+    string $pyPaths[] = python ("sys.path");
+    int $times = stringArrayCount ($fileDir, $pyPaths);
+    string $scriptsDir = $fileDir + "scripts/";
+    if ( stringArrayCount ($scriptsDir, $pyPaths) == 0 ) {
+        //print "Adding current path to PYTHONPATH";
+        python ("sys.path.insert(0, '" + $scriptsDir + "')") ;
+    }
+    python ("import nprSetup");
+    python ("reload(nprSetup)");
+    python ("nprSetup.run('" + $fileDir + "')");
+} else {
+    error "Watercolor System only compatible with Windows OS";
+}
+
+
+global proc string installScriptLocation () {
+    string $whatIs=`whatIs installScriptLocation`;
+    // $whatIs "Mel procedure found in: C:/Users/...."
+    string $fullPath=`substring $whatIs 25 999`;
+    string $buffer[];
+    int $numTok=`tokenize $fullPath "/" $buffer`;
+    int $numLetters=size($fullPath);
+    int $numLettersLastFolder=size($buffer[$numTok-1]);
+    string $scriptLocation=`substring $fullPath 1 ($numLetters-$numLettersLastFolder)`;
+    return $scriptLocation;
+}
+
+}

@@ -1,0 +1,3373 @@
+
+
+/*
+制作：由继亮
+QQ:78915620
+E-Mail yjl811028@tom.com
+制作时间：2009-11-4
+如使用此工具中有任何问题或漏洞请及时通知本人
+华强电影技术部 由继亮
+*/
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+/////////                       ///////////////////                        ///////////
+/////////                        /////////////////                        ////////////
+//////////                        ///////////////                        /////////////
+//////////                         /////////////                         /////////////
+///////////                         ///////////                         //////////////
+////////////                         //////////                        ///////////////
+////////////                         /////////                        ////////////////
+/////////////                         ///////                        /////////////////
+//////////////                         /////                        //////////////////
+///////////////                        /////                       ///////////////////
+////////////////                       ////                       ////////////////////
+//////////////////                      ///                     //////////////////////
+///////////////////                     //                    ////////////////////////
+/////////////////////                   //                  //////////////////////////
+///////////////////////                  /               /////////////////////////////
+////////////////////////                                //////////////////////////////
+///////////////////////////                           ////////////////////////////////
+/////////////////////////////                         ////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+//////////////////////////////                       /////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+///////////////////////////////                     //////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+global proc string[] YY_SMI_CtrlName_Room(int $YY_SMI_CtrlName_Type)
+{
+string $YY_SMI_Name_A[];
+string $YY_SMI_Name_B[];
+string $YY_SMI_Name_C[];
+string $YY_SMI_Name_D[];
+string $YY_SMI_Name[];
+
+$YY_SMI_Name_A = {"Hips","Spine","Spine1","Spine2","Neck","Neck1","Head",
+	              "LeftShoulder","LeftArm","LeftForeArm","LeftHand",
+				  "RightShoulder","RightArm","RightForeArm","RightHand",
+				  "LeftUpLeg","LeftLeg","LeftFoot","LeftToeBase",
+				  "RightUpLeg","RightLeg","RightFoot","RightToeBase"};	
+	
+$YY_SMI_Name_B = {"ctrl_Root","spineMid_ctrl","spineHigher_ctrl","spine2_ctrl","neck_ctrl","neck_M_ctrl","head_ctrl",
+	              "L_shoulder_ctrl","L_shoulder_FK","L_forearm_FK","L_wrist_FK",
+			      "R_shoulder_ctrl","R_shoulder_FK","R_forearm_FK","R_wrist_FK",
+				  "L_UpLeg_FK","L_Leg_FK","L_Foot_FK","L_ToeBase_FK",
+				  "R_UpLeg_FK","R_Leg_FK","R_Foot_FK","R_ToeBase_FK"};
+
+$YY_SMI_Name_C = {"LeftHand","LeftForeArm","LeftArm","LeftToeBase","LeftFoot","LeftLeg","LeftUpLeg",
+	              "RightHand","RightForeArm","RightArm","RightToeBase","RightFoot","RightLeg","RightUpLeg",
+	              "Spine2","Spine1","Spine","Hips"};
+
+$YY_SMI_Name_D = {"L_hand","L_foot","L_Hand_direction","L_leg_direction",
+	              "R_hand","R_foot","R_Hand_direction","R_leg_direction",
+                  "L_hand_AN_T","L_foot_AN_T","L_Hand_direction_AN_T","L_leg_direction_AN_T",
+	              "R_hand_AN_T","R_foot_AN_T","R_Hand_direction_AN_T","R_leg_direction_AN_T",
+				  "L_hand_AN_R","L_foot_AN_R","L_Hand_direction_AN_R","L_leg_direction_AN_R",
+	              "R_hand_AN_R","R_foot_AN_R","R_Hand_direction_AN_R","R_leg_direction_AN_R"};
+
+$YY_SMI_Name_E = {"L_shoulder_FK","L_forearm_FK","L_wrist_FK","L_UpLeg_FK","L_Leg_FK","L_Foot_FK","L_ToeBase_FK",
+	              "R_shoulder_FK","R_forearm_FK","R_wrist_FK","R_UpLeg_FK","R_Leg_FK","R_Foot_FK","R_ToeBase_FK",
+                  "L_shoulder_FK_AN_T","L_forearm_FK_AN_T","L_wrist_FK_AN_T","L_UpLeg_FK_AN_T","L_Leg_FK_AN_T","L_Foot_FK_AN_T","L_ToeBase_FK_AN_T",
+	              "R_shoulder_FK_AN_T","R_forearm_FK_AN_T","R_wrist_FK_AN_T","R_UpLeg_FK_AN_T","R_Leg_FK_AN_T","R_Foot_FK_AN_T","R_ToeBase_FK_AN_T",
+				  "L_shoulder_FK_AN_R","L_forearm_FK_AN_R","L_wrist_FK_AN_R","L_UpLeg_FK_AN_R","L_Leg_FK_AN_R","L_Foot_FK_AN_R","L_ToeBase_FK_AN_R",
+	              "R_shoulder_FK_AN_R","R_forearm_FK_AN_R","R_wrist_FK_AN_R","R_UpLeg_FK_AN_R","R_Leg_FK_AN_R","R_Foot_FK_AN_R","R_ToeBase_FK_AN_R"};
+
+$YY_SMI_Name_F = {"ctrl_Root","head_ctrl","neck_ctrl","spine2_ctrl","spineHigher_ctrl",
+	              "spineMid_ctrl","spinLower_ctrl","L_shoulder_ctrl","R_shoulder_ctrl",
+                  "ctrl_Root_AN_T","head_ctrl_AN_T","neck_ctrl_AN_T","spine2_ctrl_AN_T","spineHigher_ctrl_AN_T",
+	              "spineMid_ctrl_AN_T","spinLower_ctrl_AN_T","L_shoulder_ctrl_AN_T","R_shoulder_ctrl_AN_T",
+				  "ctrl_Root_AN_R","head_ctrl_AN_R","neck_ctrl_AN_R","spine2_ctrl_AN_R","spineHigher_ctrl_AN_R",
+	              "spineMid_ctrl_AN_R","spinLower_ctrl_AN_R","L_shoulder_ctrl_AN_R","R_shoulder_ctrl_AN_R"};
+
+switch($YY_SMI_CtrlName_Type)
+   {
+case 0:
+	$YY_SMI_Name = $YY_SMI_Name_A;
+	break;
+case 1:
+	$YY_SMI_Name = $YY_SMI_Name_B;	
+	break;
+case 2:
+	$YY_SMI_Name = $YY_SMI_Name_C;	
+	break;
+case 3:
+	$YY_SMI_Name = $YY_SMI_Name_D;	
+	break;
+case 4:
+	$YY_SMI_Name = $YY_SMI_Name_E;	
+	break;
+case 5:
+	$YY_SMI_Name = $YY_SMI_Name_F;	
+	break;	
+   };
+return $YY_SMI_Name;
+};
+/////////////////////////////////
+///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+global proc int JD_Export_local_path_a( string $filename_j, string $fileType_d )
+ 	{
+string $YY_SME_JD_Name[];
+string $YY_SME_JD_Point[];
+string $JD_EX_Win_Dir_Name = dirname ($filename_j);	
+tokenize $filename_j "\\/ | :" $YY_SME_JD_Name;
+tokenize $YY_SME_JD_Name[size($YY_SME_JD_Name)-1] "." $YY_SME_JD_Point;
+textField -e -tx ($JD_EX_Win_Dir_Name + "/" +$YY_SME_JD_Point[0] + ".jd") JD_EX_local_file_a;	
+return 1;
+ 	} 
+
+//////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+global proc YY_SMW_Address_B(string $YY_SMW_FileName ,string $YY_SMW_fileType )
+{	
+//$YY_HQ_MN_FileName_a = substituteAllString($YY_HQ_MN_FileName_a ,"/","\\");
+string $YY_SMW_AddressFile_Tok[];
+tokenize $YY_SMW_FileName "\\/. " $YY_SMW_AddressFile_Tok;
+//print $YY_SMW_AddressFile_Tok[size($YY_SMW_AddressFile_Tok) -1];
+if(($YY_SMW_AddressFile_Tok[size($YY_SMW_AddressFile_Tok) -1] == "anim")||($YY_SMW_AddressFile_Tok[size($YY_SMW_AddressFile_Tok) -1] == "jd"))
+{
+textField -e -tx $YY_SMW_FileName YY_SMW_Textfield;
+}else{
+confirmDialog -t "错误的文件类型"
+	          -m "对不起！您输入的文件类型不是\n anim 或 Jd 类型请查正后重新输入！"
+			  -ma "center"
+			  -b "OK";
+    };
+};
+
+
+
+global proc AnimateeCom()
+{
+string $JD_Export_filebrow_a = "fileBrowserDialog -m 2 -fc JD_Export_local_path_a -ft \"jd\" -an \"保存\"";
+string $YY_SMW_filebrow = "fileBrowserDialog -m 0 -fc \"YY_SMW_Address_B\"  -an \"打开文件\" ";	
+
+string $YY_SMI_JointNameArray[] = `YY_SMI_CtrlName_Room 0`;	
+	
+string $YY_SMI_CtrlNameArray[] = `YY_SMI_CtrlName_Room 1`;
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+if(`window -q -ex YY_SMW_Win`) deleteUI YY_SMW_Win;
+
+window 
+	  -wh 300 500
+	  -mb 1
+	  -s 1
+	  -t"角色动画综合工具"
+	  YY_SMW_Win;
+
+string $YY_SMW_FL = `formLayout`;
+string $YY_SMW_TL = `tabLayout -imw 0 
+	                           -imh 0 
+							   -w 5 
+							   -h 5 
+							   -po 1 
+							   -scr 0 
+							   YY_SMW_TBL_Name`;
+
+menu -l "帮助";
+menuItem -l "使用帮助" -c YY_SMH_Help;
+menu -l "关于";
+menuItem -l "关于" -c YY_SMH_About;
+
+ 	formLayout -edit
+ 		-af $YY_SMW_TL "top"    0
+  		-af $YY_SMW_TL "left"   0
+  		-af $YY_SMW_TL "bottom" 0
+  		-af $YY_SMW_TL "right"  0
+  		$YY_SMW_FL ;
+//////////////////////////////////////////////////////////////////
+string $YY_SMW_CL_A = `columnLayout -adj 1 -rs 8 -cat "both" 5`;
+text -l "动画文件导入面板" -fn "boldLabelFont";
+separator;
+text  -al "left" -l "输入动画文件地址：" -rs 1;
+rowLayout -nc 2 -cw2 280 40 -adj 1; 
+textField -w 220 -tx "" YY_SMW_Textfield;
+symbolButton -en 1
+	         -w 30
+	         -image "navButtonBrowse.xpm"
+		     -c $YY_SMW_filebrow
+              YY_SMW_sysbutton;
+setParent ..;
+rowLayout -nc 3 -cw3 100 60 65 -adj 1;
+checkBox -w 160 -l "过滤无变化关键帧物体" -v 1 YY_SMW_ICB_A;
+button -w 55 -l "分析数据" -c "YY_SMI_Panel_Button_Assay (0)" YY_SMW_IB_A;
+button -w 55 -l "查看数据" -c "YY_SMI_Panel_Button_Assay (1)" YY_SMW_IB_B ;
+setParent ..;
+separator;
+text -al "left" -l "数据中含有的动画类型：";
+rowLayout -nc 4 -cw4 80 80 80 80 -adj 4;
+text -w 50 -l "骨骼类型" YY_SMW_IT_Joint;
+text -w 50 -l "IK类型" YY_SMW_IT_IK;
+text -w 50 -l "FK类型" YY_SMW_IT_FL;
+text -w 50 -l "其他类型" YY_SMW_IT_Other;
+setParent ..;
+separator;
+text -l "选择导入后曲线切线类型：";
+rowLayout -nc 2 -cw2 80 135 -adj 1;
+optionMenuGrp -label "入点类型："  
+	          -cw2 50 80 -ct2 "left" "left" 
+			  -co2 0 10  -cc ""	
+			  YY_SMI_Tan_Type_in;
+	menuItem -label "spline";
+	menuItem -label "linear"; 
+    menuItem -label "fast"; 
+	menuItem -label "slow"; 
+	menuItem -label "flat";
+	menuItem -label "step";
+	menuItem -label "fixed";
+	menuItem -label "clamped";
+	menuItem -label "plateau";
+
+	
+optionMenuGrp -label "出点类型："  
+	          -cw2 50 80 -ct2 "left" "left" 
+			  -co2 0 10  -cc ""
+			  YY_SMI_Tan_Type_out;
+	menuItem -label "spline";
+	menuItem -label "linear"; 
+    menuItem -label "fast"; 
+	menuItem -label "slow"; 
+	menuItem -label "flat";
+	menuItem -label "step";
+	menuItem -label "fixed";
+	menuItem -label "clamped";
+	menuItem -label "plateau";	
+setParent ..;
+separator;
+text -al "left" -l "输入当前角色前缀名：";
+rowLayout -nc 2 -cw2 120 65 -adj 1;
+textField -tx "" YY_SMW_ITF_A;
+button -l "自动获取" -c "YY_SMI_AutoGet_NamePrefix(0)" YY_SMW_IB_C;
+setParent ..;
+separator;
+radioCollection;
+checkBoxGrp -ncb 2 
+	        -cw2 160 150
+	        -cl2  "left" "left" 
+	        -l1 "是否自动适配时间线" 
+			-l2 "导入所有物体"
+			-on2 "YY_SMI_CB_En(0)"
+			-of2 "YY_SMI_CB_En(1)"
+			YY_SMI_CB_T;
+radioButtonGrp -adj 1
+	           -nrb 2  
+	           -sl 1 
+			   -l1 "使用默认控制器名称" 
+			   -l2 "自定义控制器名称"
+			   -cw2 160 135
+			   YY_SMI_GetName_RB; 
+button -h 50 -l "导入动画文件" -c YY_SMI_Main_Import YY_SMW_IB_D ;
+setParent ..;
+//////////////////////////////////////////////////////////////////////////////////////////////////
+///FK 转 IK
+///
+string $YY_SMW_CL_B = `columnLayout -adj 1 -rs 10 -cat "both" 10 `;
+text -l "FK 转 IK 面板" -fn "boldLabelFont";
+separator;
+text -al "left" -l "输入当前角色前缀名：";
+rowLayout -nc 2 -cw2 120 65 -adj 1;
+textField -tx "" YY_SMF_TF_Prefix;
+button -l "自动获取" -c "YY_SMI_AutoGet_NamePrefix(1)";
+setParent ..;
+separator;
+text -al "left" -l "请选择时间线类型：";
+radioButtonGrp -nrb 3
+	           -l1 "控制器帧范围" -l2 "时间线" -l3 "自定义" 
+	           -cw3 120 100 100  
+			   -cl3 "left" "left" "left" 
+			   -sl 1
+			   -on1 "YY_SMF_TimeCtrl (0)"
+			   -on2 "YY_SMF_TimeCtrl (0)"
+			   -on3 "YY_SMF_TimeCtrl (1)"
+			   YY_SMF_RBG;
+rowLayout -nc 5 -cw5 50 100 1 80 80 -adj 3 -cl5 "left" "left" "left" "left" "left";
+text -w 50 -l "开始帧：";
+intField -w 60 -en 0 -v 1 YY_SMF_TimeStart;
+text -l "";
+text -w 50 -l "结束帧：";
+intField -w 50 -en 0 -v 24 YY_SMF_TimeEnd;
+setParent ..;
+separator;
+text -al "left" -l "选择要转换的控制器：";
+rowLayout -nc 2 -cw2 200 50 -adj 1;
+checkBoxGrp -ncb 4 
+	        -en 0
+	        -l1 "左手" -l2 "右手" -l3 "左脚"  -l4 "右脚"
+			-cw4 60 60 60 60
+			YY_SMF_CtrlName_CBG;
+checkBox -l "选择" -v 1 -onc "YY_SMF_Sel_OnOff (0)" -ofc "YY_SMF_Sel_OnOff (1)" YY_SMF_HF_Sel_All;
+setParent ..;
+separator;
+checkBox -al "left" -v 0  -l "转换后是否直接塌陷控制器" YY_SMF_TX_CB;
+checkBox -al "left" -v 0 -l "是否强制使用时间线捕捉控制器信息 " YY_SMF_TimeLine_CB;
+checkBox -al "left" -v 1 -l "转换后是否删除原FK控制器关键帧 " YY_SMF_Del_CB;
+separator;
+button -h 50 -l "开始转换" -c YY_SMF_Main_proc;
+setParent ..;
+///////////////////////////////////////////////////////////////////////////////////////////////
+//Ik 转  Fk
+string $YY_SMW_CL_C = `columnLayout -adj 1 -rs 10 -cat "both" 10`;
+text -l "IK 转 FK 面板" -fn "boldLabelFont";
+separator;
+text -al "left" -l "输入当前角色前缀名：";
+rowLayout -nc 2 -cw2 120 65 -adj 1;
+textField -tx "" YY_SMJ_TF_Prefix;
+button -l "自动获取" -c "YY_SMI_AutoGet_NamePrefix(2)";
+setParent ..;
+separator;
+text -al "left" -l "请选择时间线类型：";
+radioButtonGrp -nrb 3
+	           -l1 "控制器帧范围" -l2 "时间线" -l3 "自定义" 
+	           -cw3 120 100 100  
+			   -cl3 "left" "left" "left" 
+			   -sl 1 
+			   -on1 "YY_SMJ_TimeCtrlType(0)"
+			   -on2 "YY_SMJ_TimeCtrlType(0)"
+			   -on3 "YY_SMJ_TimeCtrlType(1)"
+			   YY_SMJ_TimeType_RBG;
+rowLayout -nc 5 -cw5 50 100 1 80 80 -adj 3 -cl5 "left" "left" "left" "left" "left";
+text -w 50 -l "开始帧：";
+intField -w 60 -en 0 -v 1 YY_SMJ_Time_Start;
+text -l "";
+text -w 50 -l "结束帧：";
+intField -w 50 -en 0 -v 24 YY_SMJ_Time_End;
+setParent ..;
+separator;
+text -al "left" -l "选择要转换的控制器：";
+rowLayout -nc 2 -cw2 200 50 -adj 1;
+checkBoxGrp -ncb 4 
+	        -en 0
+	        -l1 "左手" -l2 "右手" -l3 "左脚"  -l4 "右脚"
+			-cw4 60 60 60 60
+			 YY_SMJ_HF_CBG;
+checkBox -l "选择" -v 1 -onc "YY_SMJ_HF_Sel_Proc(0)" -ofc "YY_SMJ_HF_Sel_Proc(1)" YY_SMJ_Sel;
+setParent ..;
+separator;
+checkBox -al "left" -v 0  -l "转换后是否直接塌陷控制器" YY_SMJ_TX;
+checkBox -al "left" -v 0 -l "是否强制使用时间线捕捉控制器信息 " YY_SMJ_TimeLine_Ctrl;
+checkBox -al "left" -v 1  -l "转换后是否删除原FK控制器关键帧 " YY_SMJ_Del;
+separator;
+button -h 50 -l "开始转换" -c YY_SMJ_Main_Proc;
+setParent ..;
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//塌陷
+string $YY_SMW_CL_D = `columnLayout -adj 1 -rs 5 -cat "both" 10`;
+text -l "塌陷控制器面板" -fn "boldLabelFont";
+separator;
+text -al "left" -l "输入当前角色前缀名：";
+rowLayout -nc 2 -cw2 120 65 -adj 1;
+textField -tx "" YY_SMC_TF_Prefix;
+button -l "自动获取" -c "YY_SMI_AutoGet_NamePrefix(3)";
+setParent ..;
+separator;
+text -al "left" -l "请选择时间线类型：";
+radioButtonGrp -nrb 3
+	           -l1 "控制器帧范围" -l2 "时间线" -l3 "自定义" 
+	           -cw3 120 100 100  
+			   -cl3 "left" "left" "left" 
+			   -sl 1 
+			   -on1 "YY_SMC_TimeCtrlType(0)"
+			   -on2 "YY_SMC_TimeCtrlType(0)"
+			   -on3 "YY_SMC_TimeCtrlType(1)"
+			   YY_SMC_TimeType_RBG;
+rowLayout -nc 5 -cw5 50 100 1 80 80 -adj 3 -cl5 "left" "left" "left" "left" "left";
+text -w 50 -l "开始帧：";
+intField -w 60 -en 0 -v 1 YY_SMC_Time_Start;
+text -l "";
+text -w 50 -l "结束帧：";
+intField -w 50 -en 0 -v 24 YY_SMC_Time_End;
+setParent ..;
+separator;
+text -al "left" -l "选择要塌陷的控制器";
+
+rowLayout -nc 2 -cw2 280 100 -adj 2;
+radioButtonGrp -nrb 2 
+	        -en 1
+	        -l1 "塌陷全部" -l2 "塌陷选择"
+			-cw2 200 200 
+			-sl 2
+			YY_SMC_HF_RBG;
+setParent ..;
+separator;
+text -al "left" -l "选择塌陷类型：";
+radioButtonGrp -nrb 3 
+	           -cw3 105 105 100
+	           -l1 "移动节点" -l2 "旋转节点" -l3 "全部塌陷"
+			   -sl 3
+			   YY_SMC_TRA_RBG;
+separator;
+text -l "选择塌陷后曲线切线类型：";
+rowLayout -nc 2 -cw2 80 135 -adj 1;
+optionMenuGrp -label "入点类型："  
+	          -cw2 50 80 -ct2 "left" "left" 
+			  -co2 0 10  -cc ""
+			  YY_SMC_OMG_In;
+	menuItem -label "spline";
+	menuItem -label "linear"; 
+    menuItem -label "fast"; 
+	menuItem -label "slow"; 
+	menuItem -label "flat";
+	menuItem -label "step";
+	menuItem -label "fixed";
+	menuItem -label "clamped";
+	menuItem -label "plateau";
+	
+optionMenuGrp -label "出点类型："  
+	          -cw2 50 80 -ct2 "left" "left" 
+			  -co2 0 10  -cc ""
+			  YY_SMC_OMG_Out;
+	menuItem -label "spline";
+	menuItem -label "linear"; 
+    menuItem -label "fast"; 
+	menuItem -label "slow"; 
+	menuItem -label "flat";
+	menuItem -label "step";
+	menuItem -label "fixed";
+	menuItem -label "clamped";
+	menuItem -label "plateau";	
+setParent ..;
+separator;
+checkBox -al "left" -l "是否强制使用时间线塌陷控制器" YY_SMC_TimeLine_Ctrl;
+checkBox -al "left" -v 1 -l "是否删除无动画曲线" YY_SMC_Del;
+separator;
+button -h 50 -l "开始塌陷" -c YY_SMC_Main_Proc;
+
+setParent ..;
+//////////////////////////////////////////////////////////////////////////////////////////
+//反塌陷
+string $YY_SMW_CL_E = `columnLayout -adj 1 -rs 5 -cat "both" 10`;
+text -l "反塌陷控制器面板" -fn "boldLabelFont";
+separator;
+text -al "left" -l "输入当前角色前缀名：";
+rowLayout -nc 2 -cw2 120 65 -adj 1;
+textField -tx "" YY_SMR_TF_Prefix;
+button -l "自动获取" -c "YY_SMI_AutoGet_NamePrefix(4)";
+setParent ..;
+separator;
+text -al "left" -l "请选择时间线类型：";
+radioButtonGrp -nrb 3
+	           -l1 "控制器帧范围" -l2 "时间线" -l3 "自定义" 
+	           -cw3 120 100 100  
+			   -cl3 "left" "left" "left" 
+			   -sl 1 
+			   -on1 "YY_SMR_TimeCtrlType(0)"
+			   -on2 "YY_SMR_TimeCtrlType(0)"
+			   -on3 "YY_SMR_TimeCtrlType(1)"
+			   YY_SMR_TimeType_RBG;
+rowLayout -nc 5 -cw5 50 100 1 80 80 -adj 3 -cl5 "left" "left" "left" "left" "left";
+text -w 50 -l "开始帧：";
+intField -w 60 -en 0 -v 1 YY_SMR_Time_Start;
+text -l "";
+text -w 50 -l "结束帧：";
+intField -w 50 -en 0 -v 24 YY_SMR_Time_End;
+setParent ..;
+separator;
+text -al "left" -l "选择要反塌陷的控制器";
+rowLayout -nc 2 -cw2 280 90 -adj 2;
+radioButtonGrp -nrb 2 
+	           -en 1
+	           -l1 "反塌陷全部" -l2 "反塌陷选择"
+			   -cw2 190 200 
+			   -sl 2
+			   YY_SMR_HF_RBG;
+setParent ..;
+separator;
+text -al "left" -l "选择反塌陷类型：";
+radioButtonGrp -nrb 3 
+	           -cw3 95 95 90
+	           -l1 "移动节点" -l2 "旋转节点" -l3 "全部反塌陷"
+			   -sl 3
+			   YY_SMR_TRA_RBG;
+separator;
+text -l "选择反塌陷后曲线切线类型：";
+rowLayout -nc 2 -cw2 80 135 -adj 1;
+optionMenuGrp -label "入点类型："  
+	          -cw2 50 80 -ct2 "left" "left" 
+			  -co2 0 10  -cc "" 
+			  YY_SMR_OMG_In;
+	menuItem -label "spline";
+	menuItem -label "linear"; 
+    menuItem -label "fast"; 
+	menuItem -label "slow"; 
+	menuItem -label "flat";
+	menuItem -label "step";
+	menuItem -label "fixed";
+	menuItem -label "clamped";
+	menuItem -label "plateau";
+	
+optionMenuGrp -label "出点类型："  
+	          -cw2 50 80 -ct2 "left" "left" 
+			  -co2 0 10  -cc ""
+			  YY_SMR_OMG_Out;
+	menuItem -label "spline";
+	menuItem -label "linear"; 
+    menuItem -label "fast"; 
+	menuItem -label "slow"; 
+	menuItem -label "flat";
+	menuItem -label "step";
+	menuItem -label "fixed";
+	menuItem -label "clamped";
+	menuItem -label "plateau";	
+setParent ..;
+separator;
+checkBox -al "left" -l "是否强制使用时间线反塌陷控制器" YY_SMR_TimeLine_Ctrl;
+checkBox -al "left" -v 1 -l "是否删除无动画曲线" YY_SMR_Del;
+separator;
+button -h 50 -l "开始反塌陷" -c YY_SMR_Main_Proc;
+setParent ..;
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+string $YY_SMW_CL_F = `columnLayout -adj 1 -rs 10 -cat "both" 10`;
+text -l "动画数据输出工具";
+separator;
+text -l "输入导出文件地址及名称:>>>>>>>>>>>>>>>" -al "left";
+rowLayout -nc 2 -cw2 250 60;
+textField -en 1 -w 250 -tx "" JD_EX_local_file_a;
+symbolButton -en 1
+	         -w 28
+	         -image "navButtonBrowse.xpm"
+			 -c $JD_Export_filebrow_a
+             JD_EX_sysbutton_a;
+setParent ..;
+checkBoxGrp -ncb 2 
+	        -l "需要导出的动画类型：" 
+			-l1 "Translate" 
+			-l2 "Rotete" 
+			-v1 1 
+			-v2 1 
+			-cl3 "left" "left" "left"
+			-cw3 130 90 90
+			JD_EX_Animat_Type;
+rowLayout -nc 2 -cw2 220 120;
+textField -w 200 -tx "" JD_EX_Win_TF;
+text -l "输入前缀名";
+setParent ..;
+//rowLayout -nc 2 -cw2 200 200;
+//checkBoxGrp -ncb 2 -cw2 210 210 -l1 "选择所有子层级" -l2 "只选择骨骼" JD_EX_CBG;
+rowLayout -nc 2 -cw2 155 150 -cl2 "center" "center";
+button -w 130 -h 30 -l "选择所有子层级" -c "JD_EX_Select_FS \"0\"";
+button -w 130 -h 30 -l "只选择骨骼"-c "JD_EX_Select_FS \"1\"";
+setParent ..;
+button -h 50 -l "导出动画" -c JD_Exprot_Proc;
+
+setParent ..;
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//修复面板
+string $YY_SMW_CL_G = `columnLayout -adj 1 -rs 8 -cat "both" 10`;
+text -al  "center" -l "综合修复工具面板" -fn "boldLabelFont";
+separator;
+rowLayout -nc 2 -cw2 190 130 -adj 1 -cl2 "left" "center";
+text -l "角色比例适配按钮：";
+button -al "center" -w 120 -l "自动适配角色比例" -c YY_SMM_Modify;
+setParent ..;
+floatSliderGrp -label "偏移值：" 
+	           -field true 
+			   -fmn -300
+			   -fmx 300			   
+			   -min -10
+			   -max 10
+	           -cl3 "left" "left" "left" 
+			   -cw3 55 65 100
+			   -pre 7
+			   -cc YY_SMM_Modify_FloatSlider
+			   -dc YY_SMM_Modify_FloatSlider
+			   YY_SMM_FSG;
+rowLayout -nc 2 -cw2 190 130 -adj 1 -cl2 "left" "center";
+text -l "塌陷关键帧节点：";
+button -al "center" -bgc 0.7 0.7 1 -w 120 -l "塌陷关键帧节点" -c YY_SMM_Modify_BakKey YY_SMM_TX_Button;
+setParent ..;
+separator;
+separator;
+rowLayout -nc 2 -cw2 180 130 -cl2 "left" "center" -adj 1;
+text -w 120 -l "正负镜像动画曲线：";
+button -w 120 -l "镜像曲线" -c "YY_SMM_RE_Attr_V (0)";
+setParent ..;
+floatSliderGrp -label "叠加值：" 
+	           -field true 
+			   -fmn -300
+			   -fmx 300
+			   -min -10
+			   -max 10
+	           -cl3 "left" "left" "left" 
+			   -cw3 55 65 100
+			   -pre 5
+			   //-cc 
+			   //-dc
+			   YY_SMM_Attr_Add_V_FSG;
+rowLayout -nc 2 -cw2 180 130 -cl2 "left" "center" -adj 1;
+text -w 120 -l "叠加属性数值：";
+button -w 120 -l "叠加数值" -c "YY_SMM_RE_Attr_V (1)";
+setParent ..;
+separator;
+text -al "left" -l "反转动画曲线：";
+button -h 30 -l "反转动画曲线" -c YY_SMM_RE_AniKey;
+separator;
+
+setParent ..;
+////////////////////////////////////////////////////////////////////////////////////////
+//自定义名称面板
+string $YY_SMW_CL_H = `scrollLayout -hst 15 -vst 15`;
+columnLayout -adj 1;
+rowColumnLayout -nc 3 
+	            -cw 1 110 -cw 2 40 -cw 3 110
+				-cal 1 "center" -cal 2 "center" -cal 3 "center"
+				-co 1 "left" 20 -co 2 "left" 20 -co 3 "left" 20
+				YY_SMI_RCL;
+ 				global int $YY_SMI_index;
+				text -l "数据动画名称"; text -l "" ;text -l "角色动画名称";
+ 				for ($YY_SMI_index = 0; $YY_SMI_index < 30; $YY_SMI_index++) { 
+					textField -w 100 -tx $YY_SMI_JointNameArray[$YY_SMI_index] ("YY_SMI_Custom_A_" + $YY_SMI_index);
+					text "  →  ";
+					textField -w 100 -tx $YY_SMI_CtrlNameArray[$YY_SMI_index] ("YY_SMI_Custom_B_" + $YY_SMI_index);
+ 				};
+				setParent ..;
+				
+				rowLayout -nc 2 -cw2 70 200 -cl2 "center" "center";
+				text -l "";
+				button -w 150 -l "添加自定义名称" -al "center" -c YY_SMI_Add_Button;
+				setParent ..;
+				setParent ..;
+setParent ..;
+string $YY_SMW_CL_I = `formLayout`;
+string $YY_SMI_Scroll_Back = `scrollField -fn "fixedWidthFont" YY_SMI_Scooll_Text_Back`;
+text -al "center" -l "数据分析页面" YY_SMW_Back_Text;
+button -l "返回数据导入页面" -c ("tabLayout -e -sti 1 YY_SMW_TBL_Name") YY_SMW_Back_Button;
+
+ 	formLayout -edit
+		-ac $YY_SMI_Scroll_Back "top" 5 YY_SMW_Back_Text
+		-ac $YY_SMI_Scroll_Back "bottom" 5 YY_SMW_Back_Button
+  		-af $YY_SMI_Scroll_Back "left"   5
+  		-af $YY_SMI_Scroll_Back "right"  5
+		
+ 		-af YY_SMW_Back_Text "top" 5
+		-af YY_SMW_Back_Text "left" 5
+		-af YY_SMW_Back_Text "right" 5
+		-an YY_SMW_Back_Text "bottom" 
+		
+		-an YY_SMW_Back_Button "top" 
+		-af YY_SMW_Back_Button "left" 5
+		-af YY_SMW_Back_Button "right" 5
+		-af YY_SMW_Back_Button "bottom" 5
+		
+    	$YY_SMW_CL_I ;
+setParent ..;
+tabLayout -e  
+          -hst 5
+		  -vst 5
+		  -scr 1
+	      -tl $YY_SMW_CL_A "导入数据"
+	      -tl $YY_SMW_CL_B "FK转IK"
+	      -tl $YY_SMW_CL_C "IK转FK"		  
+	      -tl $YY_SMW_CL_D "塌陷"		  
+	      -tl $YY_SMW_CL_E "反塌陷"	
+	      -tl $YY_SMW_CL_F "导出数据"			  
+	      -tl $YY_SMW_CL_G "修复工具"
+	      -tl $YY_SMW_CL_H "自定义"	
+		  -tl $YY_SMW_CL_I "数据反馈"	
+          $YY_SMW_TL;
+tabLayout -e -sti 1 YY_SMW_TBL_Name;
+showWindow YY_SMW_Win;
+window -e -wh 320 500 YY_SMW_Win;
+};
+
+///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMI_Add_Button()
+{
+global int $YY_SMI_index;		
+	
+					textField -p YY_SMI_RCL -w 100 -tx "" ("YY_SMI_Custom_A_" + $YY_SMI_index);
+					text -p YY_SMI_RCL "  →  ";
+					textField -p YY_SMI_RCL -w 100 -tx ""("YY_SMI_Custom_B_" + $YY_SMI_index);
+$YY_SMI_index++;					
+};
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc string[] YY_SMI_GetName(int $YY_SMI_Get_Int)
+{
+global int $YY_SMI_index;
+string $YY_SMI_GetName_AB = "";
+string $YY_SMI_Name[];
+switch($YY_SMI_Get_Int)
+{
+case 0:
+	$YY_SMI_GetName_AB = "A";
+	break;
+case 1:
+	$YY_SMI_GetName_AB = "B";	
+	break;
+};
+for($YY_SMI_TF_i = 0;$YY_SMI_TF_i<$YY_SMI_index;$YY_SMI_TF_i++)
+{
+$YY_SMI_Name[$YY_SMI_TF_i] = `textField -q  -tx ("YY_SMI_Custom_" + $YY_SMI_GetName_AB + "_" + $YY_SMI_TF_i)`;
+};
+return $YY_SMI_Name ;
+};
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMI_Panel_Button_Assay(int $YY_SMI_Panel_Button_Assay_Type)
+{
+switch($YY_SMI_Panel_Button_Assay_Type)
+{
+case 0:
+	waitCursor -state on;	
+string $YY_SMI_Back_Text[];	
+string $YY_SMI_Back_Text_For;
+int $YY_SMI_Back_Int_Array[];
+scrollField -e -tx "" YY_SMI_Scooll_Text_Back;
+string $YY_SMI_TF_A = `textField -q -tx YY_SMW_Textfield`;
+int $YY_SMI_FL = `checkBox -q -v YY_SMW_ICB_A`;
+$YY_SMI_Back_Text = `YY_SMS_Type $YY_SMI_FL $YY_SMI_TF_A`;
+for($YY_SMI_Back_Text_For in $YY_SMI_Back_Text)
+{
+scrollField -e -it ($YY_SMI_Back_Text_For + "\n") YY_SMI_Scooll_Text_Back;	
+};	
+//	tabLayout -e -sti 9 YY_SMW_TBL_Name;//是否直接跳转到信息反馈页面
+
+$YY_SMI_Back_Int_Array = `YY_SMI_FX $YY_SMI_Back_Text`;
+if($YY_SMI_Back_Int_Array[0] == 1)
+{
+text -e -fn "boldLabelFont" YY_SMW_IT_Joint;
+};
+if($YY_SMI_Back_Int_Array[1] == 1)
+{
+text -e -fn "boldLabelFont" YY_SMW_IT_IK;
+};
+if($YY_SMI_Back_Int_Array[2] == 1)
+{
+text -e -fn "boldLabelFont" YY_SMW_IT_FL;
+};
+if($YY_SMI_Back_Int_Array[3] == 1)
+{
+text -e -fn "boldLabelFont" YY_SMW_IT_Other;
+};
+ 	waitCursor -state off;
+	break;
+case 1:
+	tabLayout -e -sti 9 YY_SMW_TBL_Name;
+	break;
+};
+};
+/////////////////////////////////////////////////////////////////////////////
+global proc YY_SMI_CB_En(int $YY_SMI_CB_OnOff)
+{	
+checkBoxGrp -e -en1 $YY_SMI_CB_OnOff YY_SMI_CB_T;
+radioButtonGrp -e -en $YY_SMI_CB_OnOff YY_SMI_GetName_RB; 
+};
+//////////////////////////////////////////////////////////////////
+
+global proc YY_SMI_CB_Return()
+{
+text -e -fn "plainLabelFont" YY_SMW_IT_Joint;
+text -e -fn "plainLabelFont" YY_SMW_IT_IK;
+text -e -fn "plainLabelFont" YY_SMW_IT_FL;
+text -e -fn "plainLabelFont" YY_SMW_IT_Other;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc int[] YY_SMI_FX(string $YY_SMI_Frame_Ty[])
+{
+string $YY_SMI_Name_Joint[];
+string $YY_SMI_Name_IK[];
+string $YY_SMI_Name_FK[];
+string $YY_SMI_Name_Body[];
+int $YY_SMI_P_Int;
+int $YY_SMI_Back_Int[];
+int $YY_SMI_P_Count = 0;
+string $YY_SMI_P_A = "";
+string $YY_SMI_P_B = "";
+string $YY_SMI_P_C = "";
+string $YY_SMI_P_D = "";
+
+$YY_SMI_Name_Joint = `YY_SMI_CtrlName_Room (2)`;
+$YY_SMI_Name_IK = `YY_SMI_CtrlName_Room (3)`;
+$YY_SMI_Name_FK = `YY_SMI_CtrlName_Room (4)`;
+$YY_SMI_Name_Body = `YY_SMI_CtrlName_Room (5)`;
+
+string $YY_SMI_F_For;
+for($YY_SMI_F_For in $YY_SMI_Frame_Ty)
+{ 
+if($YY_SMI_P_A != "A")
+   {
+$YY_SMI_P_Int = stringArrayCount($YY_SMI_F_For, $YY_SMI_Name_Joint);
+if($YY_SMI_P_Int == 1)
+      {
+$YY_SMI_P_A = "A";
+$YY_SMI_P_Count += 1;
+//break;
+      };
+   };
+///////////////////////////////////////////////////////////////////
+if($YY_SMI_P_B != "B")
+   {
+$YY_SMI_P_Int = stringArrayCount($YY_SMI_F_For, $YY_SMI_Name_IK);
+if($YY_SMI_P_Int == 1)
+      {
+$YY_SMI_P_B = "B";
+$YY_SMI_P_Count += 2;
+//break;
+      };
+   };   
+/////////////////////////////////////////////////////////////////// 
+if($YY_SMI_P_C != "C")
+   {
+$YY_SMI_P_Int = stringArrayCount($YY_SMI_F_For, $YY_SMI_Name_FK);
+if($YY_SMI_P_Int == 1)
+      {
+$YY_SMI_P_C = "C";
+$YY_SMI_P_Count += 4;
+//break;
+      };
+   };   
+/////////////////////////////////////////////////////////////////// 
+if($YY_SMI_P_D != "D")
+   {
+$YY_SMI_P_Int = stringArrayCount($YY_SMI_F_For, $YY_SMI_Name_Body);
+if($YY_SMI_P_Int == 1)
+      {
+$YY_SMI_P_D = "D";
+$YY_SMI_P_Count += 8;
+//break;
+      };
+   };   
+/////////////////////////////////////////////////////////////////////   
+//print $YY_SMI_P_Count;
+
+switch($YY_SMI_P_Count)
+{
+case 0	:
+	$YY_SMI_Back_Int = {0,0,0,0};	
+	break;
+case 1:
+	$YY_SMI_Back_Int = {1,0,0,0};
+	break;
+case 2:
+	$YY_SMI_Back_Int = {0,1,0,0};
+	break;
+case 3:
+	$YY_SMI_Back_Int = {0,0,0,1};
+	break;
+case 4:
+	$YY_SMI_Back_Int = {0,0,1,0};	
+	break;
+case 5:
+	$YY_SMI_Back_Int = {0,0,0,1};
+	break;	
+case 6:
+	$YY_SMI_Back_Int = {0,1,1,0};	
+	break;
+case 7:
+	$YY_SMI_Back_Int = {0,0,0,1};
+	break;
+case 8:
+	$YY_SMI_Back_Int = {0,0,0,1};	
+	break;
+case 9:
+	$YY_SMI_Back_Int = {0,0,0,1};
+	break;
+case 10:
+	$YY_SMI_Back_Int = {0,1,0,0};	
+	break;	
+case 11:
+	$YY_SMI_Back_Int = {0,0,0,1};
+	break;
+case 12:
+	$YY_SMI_Back_Int = {0,0,1,0};	
+	break;
+case 13:
+	$YY_SMI_Back_Int = {0,0,0,1};
+	break;	
+case 14:
+    $YY_SMI_Back_Int = {0,1,1,0};		
+	break;	
+case 15:
+	$YY_SMI_Back_Int = {0,0,0,1};
+	break;
+      };
+   };
+return $YY_SMI_Back_Int;
+};
+///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+//该程序为分析Maya Anim文件程序，此段程序可分析在该Anima文件中含有
+//的数据类型，并可以自定义指定是否返回无变化关键帧。
+global proc string[] YY_SMS_Type(int $YY_SMS_NT ,string $YY_SMS_Address)
+{
+string $YY_SMS_Word = "";
+string $YY_SMS_Word_A;
+string $YY_SMS_Tok[];
+string $YY_SMS_Name[] = {""};
+string $YY_SMS_Num_A[];
+string $YY_SMS_Num[];
+string $YY_SMS_Tok_A[];
+string $YY_SMS_Line;
+float $YY_SMS_Float_A = 0.000;
+float $YY_SMS_Float_B;
+int $YY_SMS_Int_A = 0;
+int $YY_SMS_Itn = 0;
+int $YY_SMS_Int_B;
+
+
+int $YY_SMS_ID = `fopen $YY_SMS_Address "r"`;
+$YY_SMS_Line = `fgetline $YY_SMS_ID`;
+$YY_SMS_Line = `fgetline $YY_SMS_ID`;
+tokenize $YY_SMS_Line " " $YY_SMS_Tok_A;
+$YY_SMS_Name[$YY_SMS_Itn] = "数据文件版本为：" + $YY_SMS_Tok_A[1];
+$YY_SMS_Itn++;
+
+$YY_SMS_Line = `fgetline $YY_SMS_ID`;
+tokenize $YY_SMS_Line " ;" $YY_SMS_Tok_A;
+$YY_SMS_Name[$YY_SMS_Itn] = "时间格式为：" + $YY_SMS_Tok_A[1];
+$YY_SMS_Itn++;
+
+$YY_SMS_Line = `fgetline $YY_SMS_ID`;
+$YY_SMS_Line = `fgetline $YY_SMS_ID`;
+$YY_SMS_Line = `fgetline $YY_SMS_ID`;
+tokenize $YY_SMS_Line " ;" $YY_SMS_Tok_A;
+$YY_SMS_Name[$YY_SMS_Itn] = "开始时间为：" + $YY_SMS_Tok_A[1] + " 帧";
+$YY_SMS_Itn++;
+$YY_SMS_Line = `fgetline $YY_SMS_ID`;
+tokenize $YY_SMS_Line " ;" $YY_SMS_Tok_A;
+$YY_SMS_Name[$YY_SMS_Itn] = "结束时间为：" + $YY_SMS_Tok_A[1] + " 帧";
+$YY_SMS_Itn++;
+$YY_SMS_Name[$YY_SMS_Itn] = "控制器名称为：";
+$YY_SMS_Itn++;
+$YY_SMS_Name[$YY_SMS_Itn] = "---------------------------------------";
+$YY_SMS_Itn++;
+
+while ( size($YY_SMS_Line) > 0 ) { 
+
+tokenize $YY_SMS_Line " " $YY_SMS_Tok;
+if($YY_SMS_Tok[0] == "anim")
+{
+$YY_SMS_Word = `fgetword $YY_SMS_ID`;	
+if($YY_SMS_Word == "animData")
+   {
+	   if($YY_SMS_NT == 1)
+	   {	   
+$YY_SMS_Int_A = 0;
+$YY_SMS_Int_B = 0;
+fgetword $YY_SMS_ID "{";
+$YY_SMS_Word_A = `fgetword $YY_SMS_ID`;	
+while($YY_SMS_Word_A != "}")
+    {
+$YY_SMS_Float_A = `fgetword $YY_SMS_ID`;
+$YY_SMS_Num[$YY_SMS_Int_B] = $YY_SMS_Float_A;
+fgetword $YY_SMS_ID ";";
+$YY_SMS_Word_A = `fgetword $YY_SMS_ID`;
+$YY_SMS_Int_B++;
+   };
+$YY_SMS_Num_A = stringArrayRemoveDuplicates($YY_SMS_Num);	
+if((size($YY_SMS_Num_A)) == 1)
+{
+$YY_SMS_Int_A = 1;
+};
+clear $YY_SMS_Num;
+clear $YY_SMS_Num_A;
+};
+if($YY_SMS_Int_A == 0)
+      {
+$YY_SMS_Name[$YY_SMS_Itn] = $YY_SMS_Tok[3];	
+$YY_SMS_Itn++;
+    };
+  };
+};
+$YY_SMS_Line = `fgetline $YY_SMS_ID`;
+ 	};	
+$YY_SMS_Name = stringArrayRemoveDuplicates($YY_SMS_Name);	
+fclose $YY_SMS_ID;
+return $YY_SMS_Name;
+};
+
+//$YY_SMS_NT 是否过滤无帧物体 "0" 不过滤 "1" 过滤
+//$YY_SMS_Address 输入要检查的动画文件地址
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+//函数说明：
+//该函数为找出给定字符串在指定字符串数组中的位置，返回值为-1时说明
+//该字符串数组中不含有指定字符串，返回值为非-1时标示指定字符串在该字符串数组中的位置。
+global proc int YY_SMI_Array(string $YY_SMI_String, string $YY_SMI_StringArray[])
+{
+int $YY_SMI_String_Int = 0;
+int $YY_SMI_String_End;
+int $YY_SMI_String_Count;
+string $YY_SMI_String_For;
+$YY_SMI_String_Count = stringArrayCount($YY_SMI_String, $YY_SMI_StringArray);
+if($YY_SMI_String_Count == 1)
+   {
+for($YY_SMI_String_For in $YY_SMI_StringArray)
+      {
+if($YY_SMI_String == $YY_SMI_String_For)
+         {
+$YY_SMI_String_End = $YY_SMI_String_Int;
+break;
+         };	
+$YY_SMI_String_Int++;	
+      };
+   }else{
+$YY_SMI_String_Int = -1;
+   };
+   return $YY_SMI_String_Int;
+};
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMI_Main_Import()
+{	
+string $YY_SMI_FileAddress;	
+string $YY_SMI_Sel[];
+string $YY_SMI_NamePrefix = "";
+string $YY_SMI_NamePrefix_JD;
+string $YY_SMI_Sel_JD[];
+int $YY_SMI_RB_Sel;
+int $YY_SMI_CB_Sel;
+int $YY_SMI_Tan_in_Num;
+int $YY_SMI_Tan_out_Num;
+string $YY_SMI_Tan_In_Type;
+string $YY_SMI_Tan_Out_Type;
+string $YY_SMI_FileType_Tok[];
+string $YY_SMI_FileType;
+$YY_SMI_FileAddress = `textField -q -tx YY_SMW_Textfield`;	
+tokenize $YY_SMI_FileAddress "\\/ | : ." $YY_SMI_FileType_Tok;
+$YY_SMI_FileType = $YY_SMI_FileType_Tok[size($YY_SMI_FileType_Tok)-1];
+if($YY_SMI_FileType == "jd")
+{
+$YY_SMI_NamePrefix_JD = `textField -q -tx  YY_SMW_ITF_A`;
+if(size($YY_SMI_NamePrefix_JD) == 0)
+{
+$YY_SMI_Sel_JD = `ls -sl`;
+if(size($YY_SMI_Sel_JD) != 0)
+$YY_SMI_NamePrefix_JD = `YY_SetMan_Import_JointName_Prefix $YY_SMI_Sel_JD[0]`;
+};	
+	
+	
+YY_SMI_Import_JD($YY_SMI_FileAddress,$YY_SMI_NamePrefix_JD);	
+}else{
+$YY_SMI_Tan_in_Num = `optionMenuGrp -q -sl YY_SMI_Tan_Type_in`;
+$YY_SMI_Tan_out_Num = `optionMenuGrp -q -sl YY_SMI_Tan_Type_out`;
+switch($YY_SMI_Tan_in_Num)
+{
+case 1:
+	$YY_SMI_Tan_In_Type = "spline";
+	break;
+case 2:
+	$YY_SMI_Tan_In_Type =  "linear"; 
+	break;
+case 3:
+	$YY_SMI_Tan_In_Type =  "fast"; 
+	break;
+case 4:
+	$YY_SMI_Tan_In_Type =  "slow"; 
+	break;
+case 5:
+	$YY_SMI_Tan_In_Type = "flat";
+	break;
+case 6:
+	$YY_SMI_Tan_In_Type =  "step";
+	break;
+case 7:
+	$YY_SMI_Tan_In_Type =  "fixed";
+	break;
+case 8:
+	$YY_SMI_Tan_In_Type =  "clamped";
+	break;
+case 9:
+	$YY_SMI_Tan_In_Type =  "plateau";
+	break;
+};
+switch($YY_SMI_Tan_out_Num)
+{
+case 1:
+	$YY_SMI_Tan_Out_Type = "spline";
+	break;
+case 2:
+	$YY_SMI_Tan_Out_Type =  "linear"; 
+	break;
+case 3:
+	$YY_SMI_Tan_Out_Type =  "fast"; 
+	break;
+case 4:
+	$YY_SMI_Tan_Out_Type =  "slow"; 
+	break;
+case 5:
+	$YY_SMI_Tan_Out_Type = "flat";
+	break;
+case 6:
+	$YY_SMI_Tan_Out_Type =  "step";
+	break;
+case 7:
+	$YY_SMI_Tan_Out_Type =  "fixed";
+	break;
+case 8:
+	$YY_SMI_Tan_Out_Type =  "clamped";
+	break;
+case 9:
+	$YY_SMI_Tan_Out_Type =  "plateau";
+	break;
+};
+
+$YY_SMI_NamePrefix = `textField -q -tx  YY_SMW_ITF_A`;
+if(size($YY_SMI_NamePrefix) == 0)
+{
+$YY_SMI_Sel = `ls -sl`;
+if(size($YY_SMI_Sel) != 0)
+$YY_SMI_NamePrefix = `YY_SetMan_Import_JointName_Prefix $YY_SMI_Sel[0]`;
+};
+$YY_SMI_RB_Sel = `radioButtonGrp -q -sl YY_SMI_GetName_RB`; 
+
+$YY_SMI_CB_Sel = `checkBoxGrp -q -v2 YY_SMI_CB_T`;
+
+YY_SMI_Main($YY_SMI_RB_Sel ,$YY_SMI_FileAddress,$YY_SMI_CB_Sel,$YY_SMI_NamePrefix,$YY_SMI_Tan_In_Type,$YY_SMI_Tan_Out_Type);
+};
+};
+/////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+global proc YY_SMI_AutoGet_NamePrefix(int $YY_SMI_AutoGet_Int)
+{
+string $YY_SMI_Auto_Sel[];
+string $YY_SMI_AutoNamePrefix;
+$YY_SMI_Auto_Sel = `ls -sl`;
+
+$YY_SMI_AutoNamePrefix = `YY_SetMan_Import_JointName_Prefix $YY_SMI_Auto_Sel[0]`;
+switch($YY_SMI_AutoGet_Int)
+{
+case 0:
+	textField -e -tx $YY_SMI_AutoNamePrefix YY_SMW_ITF_A;
+	break;
+case 1:
+	textField -e -tx $YY_SMI_AutoNamePrefix YY_SMF_TF_Prefix;
+	break;
+case 2:
+	textField -e -tx $YY_SMI_AutoNamePrefix YY_SMJ_TF_Prefix;
+	break;
+case 3:
+	textField -e -tx $YY_SMI_AutoNamePrefix YY_SMC_TF_Prefix;	
+	break;
+case 4:
+	textField -e -tx $YY_SMI_AutoNamePrefix YY_SMR_TF_Prefix;	
+	break;
+};
+};
+//////////////////////////////////////////
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//程序说明
+//该程序自动分析给定物体前缀名
+global proc string YY_SetMan_Import_JointName_Prefix(string $YY_SMI_SelObj)
+{
+string $YY_SMI_End_Pre;
+$YY_SMI_End_Pre = rootOf($YY_SMI_SelObj);
+string $YY_SetMan_Import_Joint[] = `listRelatives -type "joint" -c -ad $YY_SMI_End_Pre`;
+string $YY_SetMan_Import_Hips = "";
+string $YY_SetMan_Import_prefix = "";
+string $YY_SetMan_Import_Joint_Parent[];
+string $YY_SetMan_Import_EndString;
+string $YY_SetMan_Import_Joint_For;
+for($YY_SetMan_Import_Joint_For in $YY_SetMan_Import_Joint)
+      {
+$YY_SetMan_Import_Joint_Parent = `listRelatives -type "joint" -p $YY_SetMan_Import_Joint_For`;
+$YY_SetMan_Import_EndString = `endString $YY_SetMan_Import_Joint_Parent[0] 4`;	
+if($YY_SetMan_Import_EndString == "Hips")
+         {
+$YY_SetMan_Import_Hips = $YY_SetMan_Import_Joint_Parent[0];	
+break;
+         };	
+      };
+int $YY_SetMan_Import_Size = size($YY_SetMan_Import_Hips)-4;
+if($YY_SetMan_Import_Size >0)
+   {
+$YY_SetMan_Import_prefix = `substring $YY_SetMan_Import_Hips 1 $YY_SetMan_Import_Size`;
+   };
+return $YY_SetMan_Import_prefix;
+};
+//////////////////////////////////////////
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//程序说明
+//该程序为Maya Anim文件导入程序，可将Maya Anim文件导入到指定角色控制器上
+//再根据数据匹配角色大小后完成导入过程
+global proc YY_SMI_Main(int $YY_SMI_NameType,string $YY_SMI_Address,int $YY_SMI_TypeInt,string $YY_SMI_Main_Prefix,string $YY_SMI_Itt_Type,string $YY_SMI_Ott_Type)
+{
+int $YY_SMI_TimeLine_Auto;	
+string $YY_SMI_Start_Time;
+string $YY_SMI_End_Time;
+string $YY_SMI_Start_Time_Tok[];
+string $YY_SMI_End_Time_Tok[];
+float $YY_SMI_StartTime_V;
+float $YY_SMI_EndTime_V;
+$YY_SMI_TimeLine_Auto = `checkBoxGrp -q -v1 YY_SMI_CB_T`;	
+	
+	
+string $YY_SMI_JointNameArray[];	
+string $YY_SMI_CtrlNameArray[];	
+	switch($YY_SMI_NameType)
+	{
+	case 1:
+		$YY_SMI_JointNameArray = `YY_SMI_CtrlName_Room 0`;
+		$YY_SMI_CtrlNameArray = `YY_SMI_CtrlName_Room 1`;
+		break;
+	case 2:
+		$YY_SMI_JointNameArray = `YY_SMI_GetName 0`;
+		$YY_SMI_CtrlNameArray = `YY_SMI_GetName 1`;
+		break;	
+	};
+int $YY_SMI_ID;
+int $YY_SMI_Return_Int;
+float $YY_SMI_T;
+float $YY_SMI_V; 
+string $YY_SMI_Tok[];
+string $YY_SMI_UpLine;
+string $YY_SMI_Line;
+string $YY_SMI_Word;
+string $YY_SMI_Key;
+string $YY_SMI_Key_Tok[];
+$YY_SMI_ID = `fopen $YY_SMI_Address "r"`;
+$YY_SMI_Line = `fgetline $YY_SMI_ID`;
+waitCursor -state on; 
+fgetline $YY_SMI_ID;
+fgetline $YY_SMI_ID;
+fgetline $YY_SMI_ID;
+fgetline $YY_SMI_ID;
+$YY_SMI_Start_Time = `fgetline $YY_SMI_ID`;
+tokenize ($YY_SMI_Start_Time ,$YY_SMI_Start_Time_Tok);
+$YY_SMI_StartTime_V = $YY_SMI_Start_Time_Tok[1];
+
+$YY_SMI_End_Time = `fgetline $YY_SMI_ID`;
+tokenize ($YY_SMI_End_Time ,$YY_SMI_End_Time_Tok);
+$YY_SMI_EndTime_V = $YY_SMI_End_Time_Tok[1];
+
+while(size($YY_SMI_Line)>0)
+{	
+if($YY_SMI_Line == "animData {\n")
+{
+tokenize($YY_SMI_UpLine , $YY_SMI_Tok);	
+if($YY_SMI_TypeInt != 1)
+$YY_SMI_Return_Int = `YY_SMI_Array $YY_SMI_Tok[3] $YY_SMI_JointNameArray `;
+if(($YY_SMI_Return_Int != -1)||($YY_SMI_TypeInt == 1))
+   {
+	if( ($YY_SMI_Tok[2] == "rotateX")||($YY_SMI_Tok[2] == "rotateY")||($YY_SMI_Tok[2] == "rotateZ")||($YY_SMI_Tok[3] == "Hips")||($YY_SMI_TypeInt == 1))
+      {		
+while(`fgetline $YY_SMI_ID` != "  keys {\n");
+$YY_SMI_Key = `fgetline $YY_SMI_ID`;
+while($YY_SMI_Key != "  }\n")
+         {
+tokenize ($YY_SMI_Key ,$YY_SMI_Key_Tok);
+$YY_SMI_T = $YY_SMI_Key_Tok[0];	
+$YY_SMI_V = $YY_SMI_Key_Tok[1];
+if($YY_SMI_TypeInt == 1)
+{
+if(`objExists ($YY_SMI_Main_Prefix + $YY_SMI_Tok[3])`)	
+setKeyframe -t $YY_SMI_T -v $YY_SMI_V -at $YY_SMI_Tok[2] ($YY_SMI_Main_Prefix + $YY_SMI_Tok[3]);
+
+}else{
+	if(`objExists ($YY_SMI_Main_Prefix + $YY_SMI_CtrlNameArray[$YY_SMI_Return_Int])`)
+setKeyframe -t $YY_SMI_T -v $YY_SMI_V -at $YY_SMI_Tok[2] ($YY_SMI_Main_Prefix + $YY_SMI_CtrlNameArray[$YY_SMI_Return_Int]);
+
+};		   
+$YY_SMI_Key = `fgetline $YY_SMI_ID`;
+         };
+	  };
+if(`objExists ($YY_SMI_Main_Prefix + $YY_SMI_Tok[3])`)
+{
+keyTangent -itt $YY_SMI_Itt_Type -ott $YY_SMI_Ott_Type -at $YY_SMI_Tok[2] ($YY_SMI_Main_Prefix + $YY_SMI_Tok[3]);
+//print $YY_SMI_Itt_Type;
+//print ($YY_SMI_Tok[2]+ "\n" + ($YY_SMI_Main_Prefix + $YY_SMI_Tok[3])+"\n");
+};	  
+   };
+};
+$YY_SMI_UpLine = $YY_SMI_Line;
+$YY_SMI_Line = `fgetline $YY_SMI_ID`;
+};
+fclose $YY_SMI_ID;
+if($YY_SMI_TimeLine_Auto == 1)
+playbackOptions -min $YY_SMI_StartTime_V -max $YY_SMI_EndTime_V;
+waitCursor -state off; 
+};
+//////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMI_Import_JD(string $YY_SMI_Address_T,string $YY_SMI_Prefix_JD)
+{
+string $YY_SMI_Address_T;
+string $YY_SMI_FText_Tok[];
+string $YY_SMI_SelName;
+string $YY_SMI_SelAttrName;
+float $YY_SMI_Key_T;
+float $YY_SMI_Key_V;
+string $YY_SMI_Key_Tok[];
+$YY_SMI_ID_T = `fopen $YY_SMI_Address_T "r"`;
+$YY_SMI_Line_T = `fgetline $YY_SMI_ID_T`;
+while(size($YY_SMI_Line_T)> 0)
+{
+tokenize ($YY_SMI_Line_T , $YY_SMI_FText_Tok);
+
+	if($YY_SMI_FText_Tok[0] == "JD_Name")
+	{
+		$YY_SMI_SelName = $YY_SMI_FText_Tok[size($YY_SMI_FText_Tok) - 1];
+		$YY_SMI_SelAttrName = $YY_SMI_FText_Tok[size($YY_SMI_FText_Tok) - 2];
+		if(`attributeExists $YY_SMI_SelAttrName $YY_SMI_SelName`)
+		{
+		$YY_SMI_Line_T = `fgetline $YY_SMI_ID_T`;
+	if($YY_SMI_Line_T == "JD_KeyStart { \n")
+	   {$YY_SMI_Line_T = `fgetline $YY_SMI_ID_T`;
+			 print "**\n";
+	while($YY_SMI_Line_T != "JD_KeyEnd } \n")
+	      {
+	tokenize ($YY_SMI_Line_T,$YY_SMI_Key_Tok);
+	$YY_SMI_Key_T = $YY_SMI_Key_Tok[0];
+	$YY_SMI_Key_V = $YY_SMI_Key_Tok[1];
+	setKeyframe -t $YY_SMI_Key_T -v $YY_SMI_Key_V ($YY_SMI_Prefix_JD + $YY_SMI_SelName + "." + $YY_SMI_SelAttrName);
+	$YY_SMI_Line_T = `fgetline $YY_SMI_ID_T`;
+	          };	
+	       };
+    	};
+	};
+	
+$YY_SMI_Line_T = `fgetline $YY_SMI_ID_T`;	
+};
+};
+
+////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//塌陷功能副函数程序
+//函数功能说明:
+//此函数返回输入物体首帧和末帧各在第几帧
+global proc float[] YY_SMC_KFC_Time_Proc(string $YY_SMC_Ctrl_Name_B)
+{
+float $YY_SMC_KFC_Time_Min_Max[];	
+float $YY_SMC_KFC_Time[] = `keyframe -q -tc $YY_SMC_Ctrl_Name_B`;
+if(size($YY_SMC_KFC_Time) > 0)
+{
+float $YY_SMC_KFC_Max = $YY_SMC_KFC_Time[0];
+float $YY_SMC_KFC_Min = $YY_SMC_KFC_Time[0];
+for($YY_SMC_KFC_i = 1;$YY_SMC_KFC_i <(size($YY_SMC_KFC_Time));$YY_SMC_KFC_i++)
+   {
+$YY_SMC_KFC_Min = `min $YY_SMC_KFC_Min $YY_SMC_KFC_Time[$YY_SMC_KFC_i]`;
+$YY_SMC_KFC_Max = `max $YY_SMC_KFC_Max $YY_SMC_KFC_Time[$YY_SMC_KFC_i]`;		
+   };
+$YY_SMC_KFC_Time_Min_Max[0] = $YY_SMC_KFC_Min;
+$YY_SMC_KFC_Time_Min_Max[1] = $YY_SMC_KFC_Max;
+};
+return $YY_SMC_KFC_Time_Min_Max;
+};
+//////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+//塌陷功能副函数程序
+//函数功能说明:
+//此函数返回输入物体数组最大最小帧
+global proc float[] YY_SMC_ManyCtrlName(string $YY_SMC_ManyName[])
+{
+string $YY_SMC_ManyName_For;
+float $YY_SMC_Min_V;
+float $YY_SMC_Max_V;
+int $YY_SMC_MinMax_Int = 0;
+float $YY_SMC_M[];
+float $YY_SMC_M_MinMax[];
+for($YY_SMC_ManyName_For in $YY_SMC_ManyName)
+{
+$YY_SMC_M = `YY_SMC_KFC_Time_Proc $YY_SMC_ManyName_For`;
+if(size($YY_SMC_M) > 0)
+{
+if($YY_SMC_MinMax_Int == 0)
+{
+$YY_SMC_Min_V = $YY_SMC_M[0];
+$YY_SMC_Max_V = $YY_SMC_M[1];
+}else
+{
+$YY_SMC_Min_V = `min $YY_SMC_Min_V $YY_SMC_M[0]`;
+$YY_SMC_Max_V = `max $YY_SMC_Max_V $YY_SMC_M[1]`;
+};
+	
+$YY_SMC_MinMax_Int++;	
+}
+};
+$YY_SMC_M_MinMax[0] = $YY_SMC_Min_V;
+$YY_SMC_M_MinMax[1] = $YY_SMC_Max_V;
+return $YY_SMC_M_MinMax;
+};
+////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//塌陷功能副函数程序
+//函数功能说明:
+//此函数可删除输入物体中无变化关键帧节点
+global proc YY_SMC_DelKey(string $YY_SMC_DelCtrlName)
+{
+string $YY_SMC_LA_Name[] = `listAttr -k -u -v $YY_SMC_DelCtrlName`;
+string $YY_SMC_LA_For;
+float $YY_SMC_Attr_Key[];
+string $YY_SMC_Attr_D[];
+string $YY_SMC_FloatToString[];
+int $YY_SMC_F;
+for($YY_SMC_LA_For in $YY_SMC_LA_Name)
+{
+$YY_SMC_Attr_Key = `keyframe -q -vc ($YY_SMC_DelCtrlName + "." + $YY_SMC_LA_For)`;
+for($YY_SMC_F = 0;$YY_SMC_F<size($YY_SMC_Attr_Key);$YY_SMC_F++)
+{
+$YY_SMC_FloatToString[$YY_SMC_F] = $YY_SMC_Attr_Key[$YY_SMC_F];
+};
+$YY_SMC_Attr_D = stringArrayRemoveDuplicates($YY_SMC_FloatToString);
+
+if(size($YY_SMC_Attr_D)<=1)
+      {
+cutKey -at $YY_SMC_LA_For $YY_SMC_DelCtrlName;	
+      };
+clear $YY_SMC_FloatToString;
+   };
+};
+//////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+//IKFK转换副函数
+//函数功能说明:
+//此函数可判断输入数组中数值是否有变化，如果有变化则返回 1 ，否则返回 0 
+global proc int YY_SMF_F_Key(float $YY_SMF_Key_Group[])
+{
+string $YY_SMF_New_String[];	
+string $YY_SMF_Float_To_String[];	
+float $YY_MSF_Key_For;
+int $YY_SMF_Ch_Int = 0;
+int $YY_SMF_Return;
+for($YY_MSF_Key_For in $YY_SMF_Key_Group)
+{
+$YY_SMF_Float_To_String[$YY_SMF_Ch_Int] = $YY_MSF_Key_For;	
+$YY_SMF_Ch_Int++;
+};
+
+$YY_SMF_New_String = stringArrayRemoveDuplicates($YY_SMF_Float_To_String);
+if(size($YY_SMF_New_String) > 1)
+{
+$YY_SMF_Return = 1;
+}else
+{
+$YY_SMF_Return = 0;
+};
+return $YY_SMF_Return;
+};
+//////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+//IKFK转主副函数
+//函数功能说明:
+//
+global proc YY_SMF_FK_To_Ik(int $YY_SMF_Time_Type,int $YY_SMF_CtrlType,int $YY_SMF_Sink_Type,int $YY_SMF_Force_TimeLine,int $YY_SMF_DelKey,string $YY_SMF_Prefix)
+{
+waitCursor -state on;
+global string $gMainProgressBar;
+string $YY_SMF_GPS_Name;
+string $YY_SMF_CtrlName;
+string $YY_SMF_Dir;
+string $YY_SMF_IKFK;
+string $YY_SMF_Direction;
+string $YY_SMF_Toe;
+string $YY_SMF_ToeName;
+string $YY_SMF_Del_RT[] = {"translateX","translateY","translateZ","rotateX","rotateY","rotateZ"};
+string $YY_SMF_L_Hand[] = {($YY_SMF_Prefix + "L_shoulder_FK"),($YY_SMF_Prefix + "L_shoulder_FK_AN_T"),($YY_SMF_Prefix + "L_shoulder_FK_AN_R"),($YY_SMF_Prefix + "L_forearm_FK"),($YY_SMF_Prefix + "L_forearm_FK_AN_T"),($YY_SMF_Prefix + "L_forearm_FK_AN_R"),($YY_SMF_Prefix + "L_wrist_FK"),($YY_SMF_Prefix + "L_wrist_FK_AN_T"),($YY_SMF_Prefix +"L_wrist_FK_AN_R")};
+string $YY_SMF_R_Hand[] = {($YY_SMF_Prefix + "R_shoulder_FK"),($YY_SMF_Prefix + "R_shoulder_FK_AN_T"),($YY_SMF_Prefix + "R_shoulder_FK_AN_R"),($YY_SMF_Prefix + "R_forearm_FK"),($YY_SMF_Prefix + "R_forearm_FK_AN_T"),($YY_SMF_Prefix + "R_forearm_FK_AN_R"),($YY_SMF_Prefix + "R_wrist_FK"),($YY_SMF_Prefix + "R_wrist_FK_AN_T"),($YY_SMF_Prefix + "R_wrist_FK_AN_R")};
+string $YY_SMF_L_Foot[] = {($YY_SMF_Prefix + "L_UpLeg_FK"),($YY_SMF_Prefix + "L_UpLeg_FK_AN_T"),($YY_SMF_Prefix + "L_UpLeg_FK_AN_R"),($YY_SMF_Prefix + "L_Leg_FK"),($YY_SMF_Prefix + "L_Leg_FK_AN_T"),($YY_SMF_Prefix + "L_Leg_FK_AN_R"),($YY_SMF_Prefix + "L_Foot_FK"),($YY_SMF_Prefix + "L_Foot_FK_AN_T"),($YY_SMF_Prefix + "L_Foot_FK_AN_R"),($YY_SMF_Prefix + "L_ToeBase_FK"),($YY_SMF_Prefix + "L_ToeBase_FK_AN_T"),($YY_SMF_Prefix + "L_ToeBase_FK_AN_R")};
+string $YY_SMF_R_Foot[] = {($YY_SMF_Prefix + "R_UpLeg_FK"),($YY_SMF_Prefix + "R_UpLeg_FK_AN_T"),($YY_SMF_Prefix + "R_UpLeg_FK_AN_R"),($YY_SMF_Prefix + "R_Leg_FK"),($YY_SMF_Prefix + "R_Leg_FK_AN_T"),($YY_SMF_Prefix + "R_Leg_FK_AN_R"),($YY_SMF_Prefix + "R_Foot_FK"),($YY_SMF_Prefix + "R_Foot_FK_AN_T"),($YY_SMF_Prefix + "R_Foot_FK_AN_R"),($YY_SMF_Prefix + "R_ToeBase_FK"),($YY_SMF_Prefix + "R_ToeBase_FK_AN_T"),($YY_SMF_Prefix + "R_ToeBase_FK_AN_R")};
+string $YY_SMF_L_Foot_Attr[] = {"translateX","translateY","translateZ","rotateX","rotateY","rotateZ","toe","twist","ball","ankle_R_X","ankle_R_Y","ankle_R_Z","tip_R_X","tip_R_Y","tip_R_Z","IK_Stretchy","L_Foot_Scale"};
+string $YY_SMF_R_Foot_Attr[] = {"translateX","translateY","translateZ","rotateX","rotateY","rotateZ","toe","twist","ball","ankle_R_X","ankle_R_Y","ankle_R_Z","tip_R_X","tip_R_Y","tip_R_Z","IK_Stretchy","R_Foot_Scale"};
+string $YY_SMF_L_Hand_Attr[] = {"translateX","translateY","translateZ","rotateX","rotateY","rotateZ","L_rise","IK_Stretchy","L_Hand_Scale","Hand_orient"};
+string $YY_SMF_R_Hand_Attr[] = {"translateX","translateY","translateZ","rotateX","rotateY","rotateZ","R_rise","IK_Stretchy","R_Hand_Scale","Hand_orient"};
+string $YY_SMF_HF_Attr[];
+string $YY_SMF_HF_Attr_For;
+string $YY_SMF_Ctrl_HF[];
+string $YY_SMF_Ctrl_HF_For;
+string $YY_SMF_Del_For;
+string $YY_SMF_FK_ScaleName;
+string $YY_SMF_IK_ScaleName;
+string $YY_SMF_IK_ListAttr[];
+string $YY_SMF_IK_ListFor;
+string $YY_SMF_T_Name = "";
+string $YY_SMF_R_Name = "";
+float $YY_SMF_Hand_Attr_Float[] = {0,0,0,0,0,0,0,0,1,0};
+float $YY_SMF_Foot_Attr_Float[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+float $YY_SMF_HF_Attr_Float[];
+float $YY_SMF_Toe_R_V[];
+float $YY_SMF_Toe_R_K[];
+float $YY_SMF_Toe_VV[];
+float $YY_SMF_Start_Time;
+float $YY_SMF_End_Time;
+float $YY_SMF_StarEnd_Time[];
+float $YY_SMF_Toe_Ro_K[];
+float $YY_SMF_Toe_Ro_V[];
+float $YY_SMF_Toe_V = 0.0;
+float $YY_SMF_Scale_V[];
+float $YY_SMF_Scale_K[];
+float $YY_SMF_Scale_NoKey_V;
+int $YY_SMF_Toe_KType;
+int $YY_SMF_Toe_KInt = 0;
+int $YY_SMF_Toe_KIntT = 0;
+int $YY_SMF_HF_Attr_Int = 0;
+switch($YY_SMF_CtrlType)
+{
+case 0:
+	$YY_SMF_GPS_Name = ($YY_SMF_Prefix + "YY_L_Hand_GPS_Locator");
+	$YY_SMF_CtrlName = ($YY_SMF_Prefix + "L_hand");
+	$YY_SMF_Dir = ($YY_SMF_Prefix + "L_Hand_Direction_IKFK");
+	$YY_SMF_Direction = ($YY_SMF_Prefix + "L_Hand_direction");
+	$YY_SMF_IKFK = ($YY_SMF_Prefix + "ctrl_Root.L_Hand_IKFK");
+	$YY_SMF_FK_ScaleName = ($YY_SMF_Prefix + "L_wrist_FK.L_Hand_Scale");
+	$YY_SMF_IK_ScaleName = ($YY_SMF_Prefix + "L_hand.L_Hand_Scale");
+	$YY_SMF_Ctrl_HF = $YY_SMF_L_Hand;
+	$YY_SMF_HF_Attr = $YY_SMF_L_Hand_Attr;
+	$YY_SMF_HF_Attr_Float = $YY_SMF_Hand_Attr_Float;
+	break;
+case 1:
+	$YY_SMF_GPS_Name = ($YY_SMF_Prefix + "YY_R_Hand_GPS_Locator");
+	$YY_SMF_CtrlName = ($YY_SMF_Prefix + "R_hand");
+	$YY_SMF_Dir = ($YY_SMF_Prefix + "R_Hand_Direction_IKFK");
+	$YY_SMF_Direction = ($YY_SMF_Prefix + "R_Hand_direction");
+	$YY_SMF_IKFK = ($YY_SMF_Prefix + "ctrl_Root.R_Hand_IKFK");
+	$YY_SMF_FK_ScaleName = ($YY_SMF_Prefix + "R_wrist_FK.R_Hand_Scale");
+	$YY_SMF_IK_ScaleName = ($YY_SMF_Prefix + "R_hand.R_Hand_Scale");
+	$YY_SMF_Ctrl_HF = $YY_SMF_R_Hand;
+	$YY_SMF_HF_Attr = $YY_SMF_R_Hand_Attr;
+	$YY_SMF_HF_Attr_Float = $YY_SMF_Hand_Attr_Float;
+	break;
+case 2:
+	$YY_SMF_GPS_Name = ($YY_SMF_Prefix + "YY_L_Foot_GPS_Locator");
+	$YY_SMF_CtrlName = ($YY_SMF_Prefix + "L_foot");
+	$YY_SMF_Dir = ($YY_SMF_Prefix + "YY_L_Leg_Direction_FK");
+	$YY_SMF_Direction = ($YY_SMF_Prefix + "L_leg_direction");
+	$YY_SMF_IKFK = ($YY_SMF_Prefix + "ctrl_Root.L_Foot_IKFK");
+	$YY_SMF_FK_ScaleName = ($YY_SMF_Prefix + "L_Foot_FK.L_Foot_Scale");
+	$YY_SMF_IK_ScaleName = ($YY_SMF_Prefix + "L_foot.L_Foot_Scale");
+	$YY_SMF_Toe = ($YY_SMF_Prefix + "L_foot.toe");	
+	$YY_SMF_ToeName = ($YY_SMF_Prefix + "L_ToeBase_FK");
+	$YY_SMF_Ctrl_HF = $YY_SMF_L_Foot;
+	$YY_SMF_HF_Attr = $YY_SMF_L_Foot_Attr;
+	$YY_SMF_HF_Attr_Float = $YY_SMF_Foot_Attr_Float;	
+	break;
+case 3:
+	$YY_SMF_GPS_Name = ($YY_SMF_Prefix + "YY_R_Foot_GPS_Locator");
+	$YY_SMF_CtrlName = ($YY_SMF_Prefix + "R_foot");
+	$YY_SMF_Dir = ($YY_SMF_Prefix + "YY_R_Leg_Direction_FK");
+	$YY_SMF_Direction = ($YY_SMF_Prefix + "R_leg_direction");
+	$YY_SMF_IKFK = ($YY_SMF_Prefix + "ctrl_Root.R_Foot_IKFK");
+	$YY_SMF_FK_ScaleName = ($YY_SMF_Prefix + "R_Foot_FK.R_Foot_Scale");
+	$YY_SMF_IK_ScaleName = ($YY_SMF_Prefix + "R_foot.R_Foot_Scale");
+	$YY_SMF_Toe = ($YY_SMF_Prefix + "R_foot.toe");
+	$YY_SMF_ToeName = ($YY_SMF_Prefix + "R_ToeBase_FK");
+	$YY_SMF_Ctrl_HF = $YY_SMF_R_Foot;
+	$YY_SMF_HF_Attr = $YY_SMF_R_Foot_Attr;	
+	$YY_SMF_HF_Attr_Float = $YY_SMF_Foot_Attr_Float;	
+	break;
+};
+float $YY_SMF_IK_TX[];
+float $YY_SMF_IK_TY[];
+float $YY_SMF_IK_TZ[];
+
+float $YY_SMF_IK_RX[];
+float $YY_SMF_IK_RY[];
+float $YY_SMF_IK_RZ[];
+
+float $YY_SMF_Dir_TX[];
+float $YY_SMF_Dir_TY[];
+float $YY_SMF_Dir_TZ[];
+
+switch($YY_SMF_Time_Type)
+{
+case 1:
+$YY_SMF_StarEnd_Time = `YY_SMC_ManyCtrlName ($YY_SMF_Ctrl_HF)`;
+$YY_SMF_Start_Time = $YY_SMF_StarEnd_Time[0];
+$YY_SMF_End_Time = $YY_SMF_StarEnd_Time[1];		
+	break;
+case 2:
+$YY_SMF_Start_Time = `playbackOptions -q -min `;
+$YY_SMF_End_Time = `playbackOptions -q -max `;	
+	break;	
+case 3:
+$YY_SMF_Start_Time = `intField -q -v YY_SMF_TimeStart`;
+$YY_SMF_End_Time = `intField -q -v YY_SMF_TimeEnd`;
+	break;
+};
+setAttr $YY_SMF_IKFK 0;
+float $YY_SMF_FK_Scale_Er[];
+float $YY_SMF_FK_Scale_Er_For;
+int $YY_SMF_FK_Int = 0;
+if(size(`keyframe -q -vc $YY_SMF_FK_ScaleName`) > 0)
+{
+$YY_SMF_FK_Scale_Er = `keyframe -q -vc $YY_SMF_FK_ScaleName`;	
+if((`YY_SMF_F_Key($YY_SMF_FK_Scale_Er)` == 0)&&($YY_SMF_FK_Scale_Er[0] == 1))	
+{
+$YY_SMF_FK_Int = 0;
+}else{
+$YY_SMF_Scale_V = `keyframe -q -vc $YY_SMF_FK_ScaleName`;
+$YY_SMF_Scale_K = `keyframe -q -tc $YY_SMF_FK_ScaleName`;
+$YY_SMF_FK_Int = 1;
+};			
+}else
+{	
+if(`getAttr $YY_SMF_FK_ScaleName`)
+{
+$YY_SMF_FK_Int = 0;
+}else{
+$YY_SMF_FK_Int = 1;
+};
+};
+int $YY_SMF_PS = $YY_SMF_End_Time - $YY_SMF_Start_Time;
+//print $YY_SMF_PS;
+progressBar -e -bp -ii true -st "正在转换FK数值......"  -max $YY_SMF_PS $gMainProgressBar; 	 
+//print ("***********" + $YY_SMF_FK_Int + "***********\n");
+//print ("***********" + $YY_SMF_Force_TimeLine + "***********\n");
+int $YY_SMF_Int = 0;
+for($YY_SMF_IK_i = $YY_SMF_Start_Time;$YY_SMF_IK_i<=$YY_SMF_End_Time;$YY_SMF_IK_i++)
+{
+if(($YY_SMF_FK_Int == 0) && ($YY_SMF_Force_TimeLine == 0))
+{
+$YY_SMF_IK_TX[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_GPS_Name + ".translateX")`;
+$YY_SMF_IK_TY[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_GPS_Name + ".translateY")`;
+$YY_SMF_IK_TZ[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_GPS_Name + ".translateZ")`;
+
+$YY_SMF_IK_RX[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_GPS_Name + ".rotateX")`;
+$YY_SMF_IK_RY[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_GPS_Name + ".rotateY")`;
+$YY_SMF_IK_RZ[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_GPS_Name + ".rotateZ")`;
+
+$YY_SMF_Dir_TX[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_Dir + ".translateX")`;
+$YY_SMF_Dir_TY[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_Dir + ".translateY")`;
+$YY_SMF_Dir_TZ[$YY_SMF_Int] = `getAttr -t $YY_SMF_IK_i ($YY_SMF_Dir + ".translateZ")`;
+};
+if(($YY_SMF_FK_Int == 1) || ($YY_SMF_Force_TimeLine == 1))
+{
+currentTime $YY_SMF_IK_i;
+$YY_SMF_IK_TX[$YY_SMF_Int] = `getAttr ($YY_SMF_GPS_Name + ".translateX")`;
+$YY_SMF_IK_TY[$YY_SMF_Int] = `getAttr ($YY_SMF_GPS_Name + ".translateY")`;
+$YY_SMF_IK_TZ[$YY_SMF_Int] = `getAttr ($YY_SMF_GPS_Name + ".translateZ")`;
+
+$YY_SMF_IK_RX[$YY_SMF_Int] = `getAttr ($YY_SMF_GPS_Name + ".rotateX")`;
+$YY_SMF_IK_RY[$YY_SMF_Int] = `getAttr ($YY_SMF_GPS_Name + ".rotateY")`;
+$YY_SMF_IK_RZ[$YY_SMF_Int] = `getAttr  ($YY_SMF_GPS_Name + ".rotateZ")`;
+
+$YY_SMF_Dir_TX[$YY_SMF_Int] = `getAttr ($YY_SMF_Dir + ".translateX")`;
+$YY_SMF_Dir_TY[$YY_SMF_Int] = `getAttr ($YY_SMF_Dir + ".translateY")`;
+$YY_SMF_Dir_TZ[$YY_SMF_Int] = `getAttr ($YY_SMF_Dir + ".translateZ")`;
+};
+progressBar -edit -step 1 $gMainProgressBar;
+$YY_SMF_Int++;
+};
+if(($YY_SMF_CtrlType == 2)||($YY_SMF_CtrlType == 3))
+{	
+$YY_SMF_Toe_R_V = `keyframe -q -vc ($YY_SMF_ToeName + "_AN_R.rotateX")`;	
+$YY_SMF_Toe_R_K = `keyframe -q -tc ($YY_SMF_ToeName + "_AN_R.rotateX")`;
+
+$YY_SMF_Toe_Ro_V = `keyframe -q -vc ($YY_SMF_ToeName + ".rotateX")`;
+$YY_SMF_Toe_Ro_K = `keyframe -q -tc ($YY_SMF_ToeName + ".rotateX")`;
+
+if((`YY_SMF_F_Key ($YY_SMF_Toe_R_V)` == 0)&&(`YY_SMF_F_Key($YY_SMF_Toe_Ro_V)` == 0))
+{
+$YY_SMF_Toe_KType = 0;
+$YY_SMF_Toe_V = `getAttr ($YY_SMF_ToeName + "_AN_GPS.rotateX")`;
+}else if((`YY_SMF_F_Key($YY_SMF_Toe_R_V)` == 1)&&(`YY_SMF_F_Key($YY_SMF_Toe_Ro_V)` == 0))
+{
+$YY_SMF_Toe_KType = 1;	
+$YY_SMF_Toe_V = `getAttr ($YY_SMF_ToeName + ".rotateX")`;
+}else if((`YY_SMF_F_Key($YY_SMF_Toe_R_V)` == 0)&&(`YY_SMF_F_Key($YY_SMF_Toe_Ro_V)` == 1))
+{
+$YY_SMF_Toe_KType = 2;	
+$YY_SMF_Toe_V = `getAttr ($YY_SMF_ToeName + "_AN_R.rotateX")`;
+}else{
+$YY_SMF_Toe_KType = 3;
+for($YY_SMF_Toe_Ei = $YY_SMF_Start_Time;$YY_SMF_Toe_Ei <= $YY_SMF_End_Time;$YY_SMF_Toe_Ei++)
+      {
+$YY_SMF_Toe_VV[$YY_SMF_Toe_KInt] = `getAttr -t $YY_SMF_Toe_Ei ($YY_SMF_ToeName + "_AN_GPS.rotateX")`;
+$YY_SMF_Toe_KInt++;
+      };
+   };
+};
+progressBar -edit -endProgress $gMainProgressBar; 
+///////////////////////////
+setAttr $YY_SMF_IKFK 1;
+if($YY_SMF_Sink_Type == 1)
+{
+$YY_SMF_T_Name = "_AN_T";	
+$YY_SMF_R_Name = "_AN_R";	
+};
+
+cutKey $YY_SMF_CtrlName;
+for($YY_SMF_HF_Attr_For in $YY_SMF_HF_Attr)
+{
+setAttr ($YY_SMF_CtrlName + "." + $YY_SMF_HF_Attr_For) $YY_SMF_HF_Attr_Float[$YY_SMF_HF_Attr_Int];
+$YY_SMF_HF_Attr_Int++;	
+};
+switch($YY_SMF_CtrlType)
+{
+case 0:
+	cutKey ($YY_SMF_Prefix + "L_Hand_direction");
+	setAttr ($YY_SMF_Prefix + "L_Hand_direction.translate") 0 0 0;
+	break;
+case 1:
+	cutKey ($YY_SMF_Prefix + "R_Hand_direction");
+	setAttr ($YY_SMF_Prefix + "R_Hand_direction.translate") 0 0 0;
+	break;
+case 2:
+	cutKey ($YY_SMF_Prefix + "L_leg_direction");
+	setAttr ($YY_SMF_Prefix + "L_leg_direction.translate") 0 0 0;	
+	break;
+case 3:
+	cutKey ($YY_SMF_Prefix + "R_leg_direction");
+	setAttr ($YY_SMF_Prefix + "R_leg_direction.translate") 0 0 0;	
+	break;
+};
+progressBar -e -bp -ii true -st "正在添加IK数值......"  -max $YY_SMF_PS $gMainProgressBar; 	
+int $YY_SMF_Import_Int = 0;
+for($YY_SMF_IK_D = $YY_SMF_Start_Time;$YY_SMF_IK_D<=$YY_SMF_End_Time;$YY_SMF_IK_D++)
+{
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_IK_TX[$YY_SMF_Import_Int] ($YY_SMF_CtrlName + $YY_SMF_T_Name + ".translateX");
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_IK_TY[$YY_SMF_Import_Int] ($YY_SMF_CtrlName + $YY_SMF_T_Name + ".translateY");
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_IK_TZ[$YY_SMF_Import_Int] ($YY_SMF_CtrlName + $YY_SMF_T_Name + ".translateZ");
+
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_IK_RX[$YY_SMF_Import_Int] ($YY_SMF_CtrlName + $YY_SMF_R_Name + ".rotateX");
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_IK_RY[$YY_SMF_Import_Int] ($YY_SMF_CtrlName + $YY_SMF_R_Name + ".rotateY");
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_IK_RZ[$YY_SMF_Import_Int] ($YY_SMF_CtrlName + $YY_SMF_R_Name + ".rotateZ");
+
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_Dir_TX[$YY_SMF_Import_Int] ($YY_SMF_Direction + $YY_SMF_T_Name + ".translateX");
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_Dir_TY[$YY_SMF_Import_Int] ($YY_SMF_Direction + $YY_SMF_T_Name + ".translateY");
+setKeyframe -shape 0 -t $YY_SMF_IK_D -v $YY_SMF_Dir_TZ[$YY_SMF_Import_Int] ($YY_SMF_Direction + $YY_SMF_T_Name + ".translateZ");
+
+$YY_SMF_Import_Int++;
+
+progressBar -edit -step 1 $gMainProgressBar;
+};
+////////////////////////////////////////////////////////////
+if($YY_SMF_FK_Int == 0)
+  {	  
+setAttr $YY_SMF_IK_ScaleName 1;
+  }else{
+for($YY_SMF_Scale_i =0;$YY_SMF_Scale_i < size($YY_SMF_Scale_K);$YY_SMF_Scale_i++)
+   {
+setKeyframe -shape 0 -t $YY_SMF_Scale_K[$YY_SMF_Scale_i] -v $YY_SMF_Scale_V[$YY_SMF_Scale_i]  $YY_SMF_IK_ScaleName;	
+   };		
+};
+
+//////////////////////////////////////////////////////////////////////////
+if(($YY_SMF_CtrlType == 2)||($YY_SMF_CtrlType == 3))
+{
+switch($YY_SMF_Toe_KType)
+  {
+case 0:
+setAttr ($YY_SMF_CtrlName + ".toe") (-$YY_SMF_Toe_V);		
+	break;
+case 1:
+for($YY_SMF_Toe_For_i = 0 ;$YY_SMF_Toe_For_i < size($YY_SMF_Toe_R_V);$YY_SMF_Toe_For_i++)
+     {
+setKeyframe -shape 0 -t $YY_SMF_Toe_R_K[$YY_SMF_Toe_For_i] -v (-$YY_SMF_Toe_R_V[$YY_SMF_Toe_For_i] + $YY_SMF_Toe_V) ($YY_SMF_CtrlName + ".toe");	
+     };	
+	break;
+case 2:
+for($YY_SMF_Toe_For_ii = 0 ;$YY_SMF_Toe_For_ii < size($YY_SMF_Toe_Ro_V);$YY_SMF_Toe_For_ii++)
+     {	 
+setKeyframe -shape 0 -t $YY_SMF_Toe_Ro_K[$YY_SMF_Toe_For_ii] -v (-$YY_SMF_Toe_Ro_V[$YY_SMF_Toe_For_ii] - $YY_SMF_Toe_V) ($YY_SMF_CtrlName + ".toe");	
+     };	
+	break;
+case 3:
+for($YY_SMF_Toe_For_iii = $YY_SMF_Start_Time ;$YY_SMF_Toe_For_iii <= $YY_SMF_End_Time;$YY_SMF_Toe_For_iii++)
+      {
+setKeyframe -shape 0 -t $YY_SMF_Toe_For_iii -v (-$YY_SMF_Toe_VV[$YY_SMF_Toe_KIntT]) ($YY_SMF_CtrlName + ".toe");	
+$YY_SMF_Toe_KIntT++;
+      };	
+	break;
+   };
+};
+progressBar -edit -endProgress $gMainProgressBar; 
+////////////////////////////////////
+//删除FK关键帧
+if($YY_SMF_DelKey == 1)
+{
+for($YY_SMF_Ctrl_HF_For in $YY_SMF_Ctrl_HF)
+   {
+cutKey ($YY_SMF_Ctrl_HF_For + ".translate");	   
+cutKey ($YY_SMF_Ctrl_HF_For + ".rotate");
+   };
+};
+waitCursor -state off;  
+currentTime `currentTime -q` ;
+
+clear $YY_SMF_IK_TX;
+clear $YY_SMF_IK_TY;
+clear $YY_SMF_IK_TZ;
+
+clear $YY_SMF_IK_RX;
+clear $YY_SMF_IK_RY;
+clear $YY_SMF_IK_RZ;
+
+clear $YY_SMF_Dir_TX;
+clear $YY_SMF_Dir_TY;
+clear $YY_SMF_Dir_TZ;
+
+clear $YY_SMF_HF_Attr_Float;
+clear $YY_SMF_Toe_VV;
+print "////////////////////转换完成////////////////////";
+};
+
+//YY_SMF_FK_To_Ik (1 ,2 ,1 ,0 , 1 ,"dvvvbvbfsdfsfdsfdsf_JD_")
+
+//YY_SMF_FK_To_Ik ( 1 , 0 , 0 , 0 , 1 ,"YY_Prefix")
+//********1******/**2*/*3*/*4*/*5*/*6*/****7******/
+//函数说明
+//"1" 函数名称
+//"2" 起始帧结束帧类型 "0" 为时间滑块最大最小帧 "1" 为控制器(包括塌陷控制器)关键帧中最大最小帧
+//"3" 要转换的控制器类型 "0" 左手 "1" 右手 "2" 左脚 "3" 右脚
+//"4" 转换后是否直接塌陷 "0" 否 "1" 是
+//"5" 是否强制使用时间线捕捉控制器信息 "0" 非强制 "1" 强制
+//"6" 是否删除原FK关键帧 "0" 否 "1" 是
+//"7" 角色前缀名
+
+/////////////////////////////////////////////////////////
+//此函数可以自动分析选择的控制器为L_Hand , R_Hand , L_Foot , R_Foot类型
+global proc int[] YY_SMF_Sel_Proc(int $YY_SM_Int)
+{	
+string $YY_SMF_SelObj_List[] = `ls -sl`;
+string $YY_SMF_Sel_Prefix = `YY_SetMan_Import_JointName_Prefix $YY_SMF_SelObj_List[0]`;	
+string $YY_SMF_For;	
+string $YY_SM_L_Hand[];
+string $YY_SM_R_Hand[];
+string $YY_SM_L_Foot[];	
+string $YY_SM_R_Foot[];	
+int $YY_SMF_count = 0;
+int $YY_SMF_Type[] = {0,0,0,0};
+switch($YY_SM_Int)
+{
+case 0:
+$YY_SM_L_Hand = {($YY_SMF_Sel_Prefix + "L_shoulder_FK"),($YY_SMF_Sel_Prefix + "L_forearm_FK"),($YY_SMF_Sel_Prefix + "L_wrist_FK"),($YY_SMF_Sel_Prefix + "L_hand_ctrl"),($YY_SMF_Sel_Prefix + "L_shoulder_ctrl")};	
+$YY_SM_R_Hand = {($YY_SMF_Sel_Prefix + "R_shoulder_FK"),($YY_SMF_Sel_Prefix + "R_forearm_FK"),($YY_SMF_Sel_Prefix + "R_wrist_FK"),($YY_SMF_Sel_Prefix + "R_hand_ctrl"),($YY_SMF_Sel_Prefix + "R_shoulder_ctrl")};	
+$YY_SM_L_Foot = {($YY_SMF_Sel_Prefix + "L_UpLeg_FK"),($YY_SMF_Sel_Prefix + "L_Leg_FK"),($YY_SMF_Sel_Prefix + "L_Foot_FK"),($YY_SMF_Sel_Prefix + "L_ToeBase_FK")};	
+$YY_SM_R_Foot = {($YY_SMF_Sel_Prefix + "R_UpLeg_FK"),($YY_SMF_Sel_Prefix + "R_Leg_FK"),($YY_SMF_Sel_Prefix + "R_Foot_FK"),($YY_SMF_Sel_Prefix + "R_ToeBase_FK")};		
+	break;
+case 1:
+$YY_SM_L_Hand = {($YY_SMF_Sel_Prefix + "L_hand"),($YY_SMF_Sel_Prefix + "L_Hand_direction"),($YY_SMF_Sel_Prefix + "L_hand_ctrl"),($YY_SMF_Sel_Prefix + "L_shoulder_ctrl")};
+$YY_SM_R_Hand = {($YY_SMF_Sel_Prefix + "R_hand"),($YY_SMF_Sel_Prefix + "R_Hand_direction"),($YY_SMF_Sel_Prefix + "R_hand_ctrl"),($YY_SMF_Sel_Prefix + "R_shoulder_ctrl")};
+$YY_SM_L_Foot = {($YY_SMF_Sel_Prefix + "L_leg_direction"),($YY_SMF_Sel_Prefix + "L_foot")};
+$YY_SM_R_Foot = {($YY_SMF_Sel_Prefix + "R_leg_direction"),($YY_SMF_Sel_Prefix + "R_foot")};	
+	break;
+case 2:
+	break;
+case 3:
+	break;
+};
+for($YY_SMF_For in $YY_SMF_SelObj_List)
+{
+$YY_SMF_count = stringArrayCount($YY_SMF_For, $YY_SM_L_Hand);
+if($YY_SMF_count == 1)
+{
+$YY_SMF_Type[0] = 1;
+$YY_SMF_count = 0;
+};
+$YY_SMF_count = stringArrayCount($YY_SMF_For, $YY_SM_R_Hand);
+if($YY_SMF_count == 1)
+{
+$YY_SMF_Type[1] = 1;
+$YY_SMF_count = 0;
+};
+
+$YY_SMF_count = stringArrayCount($YY_SMF_For, $YY_SM_L_Foot);
+if($YY_SMF_count == 1)
+{
+$YY_SMF_Type[2] = 1;
+$YY_SMF_count = 0;
+};
+
+$YY_SMF_count = stringArrayCount($YY_SMF_For, $YY_SM_R_Foot);
+if($YY_SMF_count == 1)
+{
+$YY_SMF_Type[3] = 1;
+$YY_SMF_count = 0;
+};
+};
+return $YY_SMF_Type;
+};
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+global proc YY_SMF_TimeCtrl(int $YY_SMF_Int)
+{
+intField -e -en $YY_SMF_Int YY_SMF_TimeStart;
+intField -e -en $YY_SMF_Int YY_SMF_TimeEnd;
+};
+global proc YY_SMF_Sel_OnOff(int $YY_SMF_Sel_ONF)
+{
+checkBoxGrp -e -en $YY_SMF_Sel_ONF YY_SMF_CtrlName_CBG ;
+};
+global proc YY_SMF_Main_proc()
+{
+string $YY_SMF_Sel[];
+string $YY_SMF_Prefix;
+int $YY_SMF_TimeType_Int;
+int $YY_SMF_Type_A;
+int $YY_SMF_Type_B;
+int $YY_SMF_Type_C;
+int $YY_SMF_HF_Int = 0;
+int $YY_SMF_HF_Int_S = 0;
+int $YY_SMF_HF_Type_Int[];
+string $YY_SMF_Prefix = `textField -q -tx YY_SMF_TF_Prefix`;
+if(size($YY_SMF_Prefix) == 0)
+{
+$YY_SMF_Sel = `ls -sl`;
+if(size($YY_SMF_Sel) != 0)
+$YY_SMF_Prefix = `YY_SetMan_Import_JointName_Prefix $YY_SMF_Sel[0]`;	
+};
+///////////////////////////////
+$YY_SMF_TimeType_Int = `radioButtonGrp -q -sl YY_SMF_RBG`;
+
+$YY_SMF_Type_A = `checkBox -q -v YY_SMF_TX_CB`;
+$YY_SMF_Type_B = `checkBox -q -v YY_SMF_TimeLine_CB`;
+$YY_SMF_Type_C = `checkBox -q -v YY_SMF_Del_CB`;
+
+
+if(`checkBox -q -v YY_SMF_HF_Sel_All` == 0)
+      {
+for($YY_SMF_i = 1;$YY_SMF_i<=4;$YY_SMF_i++)
+   {
+$YY_SMF_HF_Select = eval("checkBoxGrp -q -v" + $YY_SMF_i + " YY_SMF_CtrlName_CBG");
+if($YY_SMF_HF_Select == 1)
+ {	
+YY_SMF_FK_To_Ik ($YY_SMF_TimeType_Int ,$YY_SMF_HF_Int ,$YY_SMF_Type_A ,$YY_SMF_Type_B , $YY_SMF_Type_C ,$YY_SMF_Prefix);
+ };
+$YY_SMF_HF_Int++;	
+   };
+}else{
+$YY_SMF_HF_Type_Int = `YY_SMF_Sel_Proc (0)`;
+
+for($YY_SMF_ii = 0;$YY_SMF_ii<4;$YY_SMF_ii++)
+        {
+if($YY_SMF_HF_Type_Int[$YY_SMF_ii] == 1)
+           {	
+YY_SMF_FK_To_Ik ($YY_SMF_TimeType_Int ,$YY_SMF_HF_Int_S ,$YY_SMF_Type_A ,$YY_SMF_Type_B , $YY_SMF_Type_C ,$YY_SMF_Prefix);
+           };
+$YY_SMF_HF_Int_S++;	   
+        };
+     };
+};
+///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+//反塌陷函数主程序
+//函数功能说明:
+//此函数可反塌陷指定控制器上的关键帧
+global proc YY_SMR_Ani(string $YY_SMR_CtrlName,int $YY_SMR_Type,int $YY_SMR_DelKey)
+{
+waitCursor -state on;	
+string $YY_SMR_CtrlAttrName;
+string $YY_SMR_NodeName[];
+string $YY_SMR_RN;
+string $YY_SMR_NN;	
+float $YY_SMR_OneKey[];
+$YY_SMR_OneKey = `YY_SMC_KFC_Time_Proc $YY_SMR_CtrlName`;
+string $YY_SMR_Attr[] = {"translateX","translateY","translateZ",
+		                 "rotateX","rotateY","rotateZ"};
+string $YY_SMR_TR[] = {"_AN_T","_AN_T","_AN_T",
+	                   "_AN_R","_AN_R","_AN_R"};
+int $YY_SMR_Start = 0;	
+int $YY_SMR_End = 6;
+switch($YY_SMR_Type)
+   {
+case 0:
+	$YY_SMR_End = 3;
+	break;
+case 1:
+	$YY_SMR_Start = 3;
+	break;
+case 2:
+	break;
+   };
+for($YY_SMR_i = $YY_SMR_Start;$YY_SMR_i < $YY_SMR_End;$YY_SMR_i++)
+   {
+$YY_SMR_CtrlAttrName = ($YY_SMR_CtrlName + $YY_SMR_TR[$YY_SMR_i] + "." + $YY_SMR_Attr[$YY_SMR_i]);
+if(`objExists $YY_SMR_CtrlAttrName`)
+      {
+if(`connectionInfo -ied $YY_SMR_CtrlAttrName` == 0)//此属性是否有连接
+setKeyframe -shape 0 -t $YY_SMR_OneKey[0] $YY_SMR_CtrlAttrName;
+$YY_SMR_NodeName = `listConnections -s 1 $YY_SMR_CtrlAttrName`;//节点名称
+
+if((`keyframe -q -kc ($YY_SMR_CtrlName + "." + $YY_SMR_Attr[$YY_SMR_i])` > 0)||(`getAttr ($YY_SMR_CtrlName + "." + $YY_SMR_Attr[$YY_SMR_i])` != 0))
+YY_SMC_TX_Main ($YY_SMR_CtrlName ,2,0,0,0,1);
+
+$YY_SMR_RN = $YY_SMR_CtrlName + "." + $YY_SMR_Attr[$YY_SMR_i];
+while(size($YY_SMR_RN) != 0)
+         {
+$YY_SMR_NN = $YY_SMR_RN;	
+$YY_SMR_RN = `connectionInfo -sfd $YY_SMR_RN`;
+         };
+disconnectAttr ($YY_SMR_NodeName[0] + ".output") $YY_SMR_CtrlAttrName;
+if(`getAttr -l ($YY_SMR_CtrlName + "." + $YY_SMR_Attr[$YY_SMR_i])` != 1)
+connectAttr -f ($YY_SMR_NodeName[0] + ".output") $YY_SMR_NN;
+setAttr $YY_SMR_CtrlAttrName 0;
+       };
+   };
+ if($YY_SMR_DelKey == 1)
+YY_SMC_DelKey ($YY_SMR_CtrlName + $YY_SMR_TR[$YY_SMR_i]);  
+  	  print "//////////////////操作成功完成//////////////////////";   
+waitCursor -state off;
+};
+//YY_SMR_Ani L_Leg_FK 2
+
+
+//YY_SMR_Ani ("L_hand" , 2 )
+//****1*****//****2***//*3*//
+
+
+//函数说明
+//"1" 函数名称 
+//"2" 控制器名称
+//"3" 反塌陷方式 "0"为只反塌陷移动 "1"为只反塌陷旋转 "2" 为移动旋转全部反塌陷
+//
+
+
+////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+//IK转FK函数主程序
+//程序说明:
+//该程序可以使角色自身进行IK到FK的动画无缝转换
+global proc YY_SMJ_To_FK(int $YY_SMJ_Time_Type, int $YY_SMJ_Ctrl_Type,int $YY_SMJ_Sink_Type,int $YY_SMJ_Force_TimeLine,int $YY_SMJ_DelKey,string $YY_SMJ_Prefix)
+{
+waitCursor -state on;
+global string $gMainProgressBar;	
+int $YY_SMJ_IK_Int = 0;	
+int $YY_SMJ_FK_Int = 0;	
+int $YY_SMJ_FK_ToeBase_Int = 0;
+int $YY_SMJ_FK_Scale = 0;	
+int $YY_SMJ_IK_Scale_Int;
+//float $YY_SMJ_Time_Start;
+//float $YY_SMJ_Time_End;	
+float $YY_SMJ_FK_A_RX[];
+float $YY_SMJ_FK_A_RY[];
+float $YY_SMJ_FK_A_RZ[];
+float $YY_SMJ_FK_B_RX[];
+float $YY_SMJ_FK_C_RX[];
+float $YY_SMJ_FK_C_RY[];
+float $YY_SMJ_FK_C_RZ[];
+float $YY_SMJ_Scale_T[];
+float $YY_SMJ_Scale_V[];
+float $YY_SMJ_Scale_For;
+float $YY_SMJ_Scale_Change[];
+float $YY_SMJ_StarEnd_Time[];
+float $YY_SMJ_Slider;
+float $YY_SMJ_IK_Toe_T[];
+float $YY_SMJ_IK_Toe_V[];
+float $YY_SMJ_IK_Toe_For;
+string $YY_SMJ_JointName[];
+string $YY_SMJ_CtrlName[];
+string $YY_SMJ_IKFK;
+string $YY_SMJ_FK_R_Name = "";
+string $YY_SMJ_ScaleName;
+string $YY_SMJ_FK_ScaleName;
+string $YY_SMJ_IK_Ctrl_Name[];
+string $YY_SMJ_IK_Toe_Name;
+string $YY_SMJ_FK_ToeBase_Name;
+string $YY_SMJ_TX_CName;
+string $YY_SMJ_DelKey_For;
+string $YY_SMJ_L_Hand_JN[] = {($YY_SMJ_Prefix + "LeftArm"),($YY_SMJ_Prefix + "LeftForeArm"),($YY_SMJ_Prefix + "LeftHand")};
+string $YY_SMJ_R_Hand_JN[] = {($YY_SMJ_Prefix + "RightArm"),($YY_SMJ_Prefix + "RightForeArm"),($YY_SMJ_Prefix + "RightHand")};
+string $YY_SMJ_L_Toot_JN[] = {($YY_SMJ_Prefix + "LeftUpLeg"),($YY_SMJ_Prefix + "LeftLeg"),($YY_SMJ_Prefix + "LeftFoot")};
+string $YY_SMJ_R_Toot_JN[] = {($YY_SMJ_Prefix + "RightUpLeg"),($YY_SMJ_Prefix + "RightLeg"),($YY_SMJ_Prefix + "RightFoot")};
+string $YY_SMJ_L_Hand_CN[] = {($YY_SMJ_Prefix + "L_shoulder_FK"),($YY_SMJ_Prefix + "L_forearm_FK"),($YY_SMJ_Prefix + "L_wrist_FK")};
+string $YY_SMJ_R_Hand_CN[] = {($YY_SMJ_Prefix + "R_shoulder_FK"),($YY_SMJ_Prefix + "R_forearm_FK"),($YY_SMJ_Prefix + "R_wrist_FK")};
+string $YY_SMJ_L_Toot_CN[] = {($YY_SMJ_Prefix + "L_UpLeg_FK"),($YY_SMJ_Prefix + "L_Leg_FK"),($YY_SMJ_Prefix + "L_Foot_FK")};
+string $YY_SMJ_R_Toot_CN[] = {($YY_SMJ_Prefix + "R_UpLeg_FK"),($YY_SMJ_Prefix + "R_Leg_FK"),($YY_SMJ_Prefix + "R_Foot_FK")};
+string $YY_SMJ_L_Hand_N[] = {($YY_SMJ_Prefix + "L_hand"),($YY_SMJ_Prefix + "L_Hand_direction")};
+string $YY_SMJ_R_Hand_N[] = {($YY_SMJ_Prefix + "R_hand"),($YY_SMJ_Prefix + "R_Hand_direction")};
+string $YY_SMJ_L_Foot_N[] = {($YY_SMJ_Prefix + "L_foot"),($YY_SMJ_Prefix + "L_leg_direction")};
+string $YY_SMJ_R_Foot_N[] = {($YY_SMJ_Prefix + "R_foot"),($YY_SMJ_Prefix + "R_leg_direction")};
+
+string $YY_SMJ_IKFK;
+
+switch($YY_SMJ_Ctrl_Type)
+{
+case 0:
+	$YY_SMJ_TX_CName = $YY_SMJ_Prefix + "L_hand";
+	$YY_SMJ_FK_ScaleName = $YY_SMJ_Prefix + "L_wrist_FK.L_Hand_Scale";
+	$YY_SMJ_ScaleName = $YY_SMJ_Prefix + "L_hand.L_Hand_Scale";
+	$YY_SMJ_IKFK = $YY_SMJ_Prefix + "ctrl_Root.L_Hand_IKFK";	
+	$YY_SMJ_IK_Ctrl_Name = $YY_SMJ_L_Hand_N;
+	$YY_SMJ_JointName = $YY_SMJ_L_Hand_JN;
+	$YY_SMJ_CtrlName = $YY_SMJ_L_Hand_CN;
+	break;
+case 1:
+	$YY_SMJ_TX_CName = $YY_SMJ_Prefix + "R_hand";
+	$YY_SMJ_FK_ScaleName = $YY_SMJ_Prefix + "R_wrist_FK.R_Hand_Scale";
+	$YY_SMJ_ScaleName = $YY_SMJ_Prefix + "R_hand.R_Hand_Scale";
+	$YY_SMJ_IKFK = $YY_SMJ_Prefix + "ctrl_Root.R_Hand_IKFK";	
+	$YY_SMJ_IK_Ctrl_Name = $YY_SMJ_R_Hand_N;
+	$YY_SMJ_JointName = $YY_SMJ_R_Hand_JN;
+	$YY_SMJ_CtrlName = $YY_SMJ_R_Hand_CN;
+	break;
+case 2:
+	$YY_SMJ_TX_CName = $YY_SMJ_Prefix + "L_foot";
+	$YY_SMJ_FK_ScaleName = $YY_SMJ_Prefix + "L_Foot_FK.L_Foot_Scale";
+	$YY_SMJ_ScaleName = $YY_SMJ_Prefix + "L_foot.L_Foot_Scale";
+	$YY_SMJ_IKFK = $YY_SMJ_Prefix + "ctrl_Root.L_Foot_IKFK";
+	$YY_SMJ_IK_Toe_Name = $YY_SMJ_Prefix + "L_foot.toe";
+	$YY_SMJ_FK_ToeBase_Name = $YY_SMJ_Prefix + "L_ToeBase_FK";
+	$YY_SMJ_IK_Ctrl_Name = $YY_SMJ_L_Foot_N;
+	$YY_SMJ_JointName = $YY_SMJ_L_Toot_JN;
+	$YY_SMJ_CtrlName = $YY_SMJ_L_Toot_CN;
+	break;
+case 3:
+	$YY_SMJ_TX_CName = $YY_SMJ_Prefix + "R_foot";
+	$YY_SMJ_FK_ScaleName = $YY_SMJ_Prefix + "R_Foot_FK.R_Foot_Scale";
+	$YY_SMJ_ScaleName = $YY_SMJ_Prefix + "R_foot.R_Foot_Scale";
+	$YY_SMJ_IKFK = $YY_SMJ_Prefix + "ctrl_Root.R_Foot_IKFK";
+	$YY_SMJ_IK_Toe_Name = $YY_SMJ_Prefix + "R_foot.toe";
+	$YY_SMJ_FK_ToeBase_Name = $YY_SMJ_Prefix + "R_ToeBase_FK";
+	$YY_SMJ_IK_Ctrl_Name = $YY_SMJ_R_Foot_N;
+	$YY_SMJ_JointName = $YY_SMJ_R_Toot_JN;
+	$YY_SMJ_CtrlName = $YY_SMJ_R_Toot_CN;
+	break;
+};
+switch($YY_SMJ_Time_Type)
+{
+case 1:
+		$YY_SMJ_StarEnd_Time = `YY_SMC_ManyCtrlName ($YY_SMJ_IK_Ctrl_Name)`;
+    $YY_SMJ_Start_Time = $YY_SMJ_StarEnd_Time[0];
+    $YY_SMJ_End_Time = $YY_SMJ_StarEnd_Time[1];		
+	break;
+case 2:
+	$YY_SMJ_Start_Time = `playbackOptions -q -min`;
+    $YY_SMJ_End_Time = `playbackOptions -q -max`;
+	break;
+case 3:
+    $YY_SMJ_Start_Time = `intField -q -v YY_SMJ_Time_Start`;
+    $YY_SMJ_End_Time = `intField -q -v YY_SMJ_Time_Endt`;
+	break;	
+};
+setAttr $YY_SMJ_IKFK 1;
+if(size(`keyframe -q -vc $YY_SMJ_ScaleName`) > 0)
+{
+$YY_SMJ_Scale_Change = `keyframe -q -vc $YY_SMJ_ScaleName`;
+if((`YY_SMF_F_Key($YY_SMJ_Scale_Change)` == 0)&&($YY_SMJ_Scale_Change[0] == 1))
+    {     $YY_SMJ_IK_Scale_Int = 0;
+    }else{
+	$YY_SMJ_Scale_T = `keyframe -q -tc $YY_SMJ_ScaleName`;	
+	$YY_SMJ_Scale_V = `keyframe -q -vc $YY_SMJ_ScaleName`;
+$YY_SMJ_IK_Scale_Int = 1;
+        };
+  }else{
+if(`getAttr $YY_SMJ_ScaleName` == 1)
+  {$YY_SMJ_IK_Scale_Int = 0;
+  }else{
+$YY_SMJ_IK_Scale_Int = 1;	
+       };
+};
+if(($YY_SMJ_Ctrl_Type == 2)||($YY_SMJ_Ctrl_Type == 3))
+{
+$YY_SMJ_IK_Toe_T = `keyframe -q -tc $YY_SMJ_IK_Toe_Name`;
+$YY_SMJ_IK_Toe_V = `keyframe -q -vc $YY_SMJ_IK_Toe_Name`;
+};
+cycleCheck -e off;	
+if(($YY_SMJ_IK_Scale_Int == 0) && ($YY_SMJ_Force_TimeLine == 0))
+YY_SMR_Ani($YY_SMJ_TX_CName , 2 ,0);
+
+$YY_SMJ_Slider = $YY_SMJ_End_Time - $YY_SMJ_Start_Time;
+progressBar -e -bp -ii true -st "正在转换IK数值......"  -max $YY_SMJ_Slider $gMainProgressBar; 	
+for($YY_SMJ_IK_i = $YY_SMJ_Start_Time;$YY_SMJ_IK_i <= $YY_SMJ_End_Time;$YY_SMJ_IK_i++)
+{
+if(($YY_SMJ_IK_Scale_Int == 0) && ($YY_SMJ_Force_TimeLine == 0))
+{
+$YY_SMJ_FK_A_RX[$YY_SMJ_IK_Int] = `getAttr -t $YY_SMJ_IK_i ($YY_SMJ_JointName[0] + ".rotateX")`;
+$YY_SMJ_FK_A_RY[$YY_SMJ_IK_Int] = `getAttr -t $YY_SMJ_IK_i ($YY_SMJ_JointName[0] + ".rotateY")`;
+$YY_SMJ_FK_A_RZ[$YY_SMJ_IK_Int] = `getAttr -t $YY_SMJ_IK_i ($YY_SMJ_JointName[0] + ".rotateZ")`;
+
+$YY_SMJ_FK_B_RX[$YY_SMJ_IK_Int] = `getAttr -t $YY_SMJ_IK_i ($YY_SMJ_JointName[1] + ".rotateX")`;
+
+$YY_SMJ_FK_C_RX[$YY_SMJ_IK_Int] = `getAttr -t $YY_SMJ_IK_i ($YY_SMJ_JointName[2] + ".rotateX")`;
+$YY_SMJ_FK_C_RY[$YY_SMJ_IK_Int] = `getAttr -t $YY_SMJ_IK_i ($YY_SMJ_JointName[2] + ".rotateY")`;
+$YY_SMJ_FK_C_RZ[$YY_SMJ_IK_Int] = `getAttr -t $YY_SMJ_IK_i ($YY_SMJ_JointName[2] + ".rotateZ")`;
+};
+if(($YY_SMJ_IK_Scale_Int == 1)||($YY_SMJ_Force_TimeLine == 1))
+   {
+currentTime $YY_SMJ_IK_i;	
+$YY_SMJ_FK_A_RX[$YY_SMJ_IK_Int] = `getAttr ($YY_SMJ_JointName[0] + ".rotateX")`;
+$YY_SMJ_FK_A_RY[$YY_SMJ_IK_Int] = `getAttr ($YY_SMJ_JointName[0] + ".rotateY")`;
+$YY_SMJ_FK_A_RZ[$YY_SMJ_IK_Int] = `getAttr ($YY_SMJ_JointName[0] + ".rotateZ")`;
+
+$YY_SMJ_FK_B_RX[$YY_SMJ_IK_Int] = `getAttr ($YY_SMJ_JointName[1] + ".rotateX")`;
+
+$YY_SMJ_FK_C_RX[$YY_SMJ_IK_Int] = `getAttr ($YY_SMJ_JointName[2] + ".rotateX")`;
+$YY_SMJ_FK_C_RY[$YY_SMJ_IK_Int] = `getAttr ($YY_SMJ_JointName[2] + ".rotateY")`;
+$YY_SMJ_FK_C_RZ[$YY_SMJ_IK_Int] = `getAttr ($YY_SMJ_JointName[2] + ".rotateZ")`;
+
+if(($YY_SMJ_Force_TimeLine == 1))	
+$YY_SMJ_Scale_V[$YY_SMJ_IK_Int] = `getAttr  $YY_SMJ_ScaleName`;
+   };
+progressBar -edit -step 1 $gMainProgressBar;
+$YY_SMJ_IK_Int++;
+};
+progressBar -edit -endProgress $gMainProgressBar; 
+cycleCheck -e on;	
+setAttr $YY_SMJ_IKFK 0;	
+if($YY_SMJ_Sink_Type == 1)
+	$YY_SMJ_FK_R_Name = "_AN_R";
+progressBar -e -bp -ii true -st "正在添加FK数值......"  -max $YY_SMJ_Slider $gMainProgressBar; 	
+for($YY_SMJ_FK_i = $YY_SMJ_Start_Time;$YY_SMJ_FK_i <= $YY_SMJ_End_Time;$YY_SMJ_FK_i++)
+{	
+setKeyframe -t $YY_SMJ_FK_i -v $YY_SMJ_FK_A_RX[$YY_SMJ_FK_Int] ($YY_SMJ_CtrlName[0] + $YY_SMJ_FK_R_Name +".rotateX");
+setKeyframe -t $YY_SMJ_FK_i -v $YY_SMJ_FK_A_RY[$YY_SMJ_FK_Int] ($YY_SMJ_CtrlName[0] + $YY_SMJ_FK_R_Name + ".rotateY");
+setKeyframe -t $YY_SMJ_FK_i -v $YY_SMJ_FK_A_RZ[$YY_SMJ_FK_Int] ($YY_SMJ_CtrlName[0] + $YY_SMJ_FK_R_Name + ".rotateZ");
+
+setKeyframe -t $YY_SMJ_FK_i -v $YY_SMJ_FK_B_RX[$YY_SMJ_FK_Int] ($YY_SMJ_CtrlName[1] + $YY_SMJ_FK_R_Name + ".rotateX");
+
+setKeyframe -t $YY_SMJ_FK_i -v $YY_SMJ_FK_C_RX[$YY_SMJ_FK_Int] ($YY_SMJ_CtrlName[2] + $YY_SMJ_FK_R_Name + ".rotateX");
+setKeyframe -t $YY_SMJ_FK_i -v $YY_SMJ_FK_C_RY[$YY_SMJ_FK_Int] ($YY_SMJ_CtrlName[2] + $YY_SMJ_FK_R_Name + ".rotateY");
+setKeyframe -t $YY_SMJ_FK_i -v $YY_SMJ_FK_C_RZ[$YY_SMJ_FK_Int] ($YY_SMJ_CtrlName[2] + $YY_SMJ_FK_R_Name + ".rotateZ");
+
+if($YY_SMJ_Force_TimeLine == 1)
+setKeyframe -t $YY_SMJ_FK_i -v $YY_SMJ_Scale_V[$YY_SMJ_FK_Int] $YY_SMJ_FK_ScaleName;
+
+progressBar -edit -step 1 $gMainProgressBar;	
+$YY_SMJ_FK_Int++;	
+};	
+progressBar -edit -endProgress $gMainProgressBar; 	
+if($YY_SMJ_Force_TimeLine == 0)
+  {
+for($YY_SMJ_Scale_For in $YY_SMJ_Scale_V)
+     {
+setKeyframe -t $YY_SMJ_Scale_T[$YY_SMJ_FK_Scale] -v $YY_SMJ_Scale_For $YY_SMJ_FK_ScaleName;
+$YY_SMJ_FK_Scale++;
+     };
+  };
+if(($YY_SMJ_Ctrl_Type == 2)||($YY_SMJ_Ctrl_Type == 3))
+{
+for($YY_SMJ_IK_Toe_For in $YY_SMJ_IK_Toe_V)
+   {
+setKeyframe -t $YY_SMJ_IK_Toe_T[$YY_SMJ_FK_ToeBase_Int] -v (-$YY_SMJ_IK_Toe_For) ($YY_SMJ_FK_ToeBase_Name + $YY_SMJ_FK_R_Name + ".rotateX");
+$YY_SMJ_FK_ToeBase_Int++;
+   };
+};
+if($YY_SMJ_IK_Scale_Int == 0)
+	setAttr $YY_SMJ_FK_ScaleName 1;
+if($YY_SMJ_DelKey == 1)
+{
+for($YY_SMJ_DelKey_For in $YY_SMJ_IK_Ctrl_Name)
+   {
+cutKey ($YY_SMJ_DelKey_For + ".translate");
+cutKey ($YY_SMJ_DelKey_For + "_AN_T.translate");
+cutKey ($YY_SMJ_DelKey_For + ".rotate");
+cutKey ($YY_SMJ_DelKey_For + "_AN_R.rotate");
+if(`getAttr -l ($YY_SMJ_DelKey_For + ".translateX")` == 0)
+setAttr ($YY_SMJ_DelKey_For + ".translateX") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + ".translateY")`== 0)
+setAttr ($YY_SMJ_DelKey_For + ".translateY") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + ".translateZ")`== 0)
+setAttr ($YY_SMJ_DelKey_For + ".translateZ") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + ".rotateX")`== 0)
+setAttr ($YY_SMJ_DelKey_For + ".rotateX") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + ".rotateY")`== 0)
+setAttr ($YY_SMJ_DelKey_For + ".rotateY") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + ".rotateZ")`== 0)
+setAttr ($YY_SMJ_DelKey_For + ".rotateZ") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + "_AN_T.translateX")` == 0)
+setAttr ($YY_SMJ_DelKey_For + "_AN_T.translateX") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + "_AN_T.translateY")`== 0)
+setAttr ($YY_SMJ_DelKey_For + "_AN_T.translateY") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + "_AN_T.translateZ")`== 0)
+setAttr ($YY_SMJ_DelKey_For + "_AN_T.translateZ") 0;
+
+if(`getAttr -l ($YY_SMJ_DelKey_For + "_AN_R.rotateX")`== 0)
+setAttr ($YY_SMJ_DelKey_For + "_AN_R.rotateX") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + "_AN_R.rotateY")`== 0)
+setAttr ($YY_SMJ_DelKey_For + "_AN_R.rotateY") 0;
+if(`getAttr -l ($YY_SMJ_DelKey_For + "_AN_R.rotateZ")`== 0)
+setAttr ($YY_SMJ_DelKey_For + "_AN_R.rotateZ") 0;
+   };	
+};
+clear $YY_SMJ_FK_A_RX;
+clear $YY_SMJ_FK_A_RY;
+clear $YY_SMJ_FK_A_RZ;
+clear $YY_SMJ_FK_B_RX;
+clear $YY_SMJ_FK_C_RX;
+clear $YY_SMJ_FK_C_RY;
+clear $YY_SMJ_FK_C_RZ;
+
+waitCursor -state off;
+};
+//YY_SMJ_To_FK(0,2,1,0,1);
+
+
+//YY_SMJ_To_FK( 0 , 0 , 1 , 0 , 1);
+//******1*****/*2*/*3*/*4*/*5*/*6*/
+//函数说明：
+//"1" 函数名称
+//"2" 起始帧结束帧类型 "0" 为时间滑块最大最小帧 "1" 为控制器(包括塌陷控制器)关键帧中最大最小帧
+//"3" 要转换的控制器类型 "0" 左手 "1" 右手 "2" 左脚 "3" 右脚
+//"4" 转换后是否直接塌陷 "0" 否 "1" 是
+//"5" 是否强制使用时间线捕捉控制器信息 "0" 非强制 "1" 强制
+//"6" 是否删除原IK控制器上的移动缩放关键帧 "0" 否 "1" 是
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMJ_TimeCtrlType(int $YY_SMJ_Time_SE)
+{
+intField -e -en $YY_SMJ_Time_SE YY_SMJ_Time_Start;
+intField -e -en $YY_SMJ_Time_SE YY_SMJ_Time_End;
+};
+global proc YY_SMJ_HF_Sel_Proc(int $YY_SMJ_HF_Int)
+{
+checkBoxGrp -e -en $YY_SMJ_HF_Int YY_SMJ_HF_CBG;
+};
+
+global proc YY_SMJ_Main_Proc()
+{
+string $YY_SMJ_NamePrefix;	
+string $YY_SMJ_Sel[];	
+int $YY_SMJ_HF_Type_Int[];
+int $YY_SMJ_Time_Type_Int;
+int $YY_SMJ_TX_Int;
+int $YY_SMJ_Time_Int;
+int $YY_SMJ_Del_Int;
+int $YY_SMJ_HF_Select;
+int $YY_SMJ_HF_Int = 0;
+$YY_SMJ_HF_Int_S = 0;
+$YY_SMJ_NamePrefix = `textField -q -tx YY_SMJ_TF_Prefix`;
+if(size($YY_SMJ_NamePrefix) == 0)
+{
+$YY_SMJ_Sel = `ls -sl`;
+if(size($YY_SMJ_Sel) != 0)
+$YY_SMJ_NamePrefix = `YY_SetMan_Import_JointName_Prefix $YY_SMJ_Sel[0]`;
+};
+$YY_SMJ_Time_Type_Int = `radioButtonGrp -q -sl YY_SMJ_TimeType_RBG`;
+$YY_SMJ_TX_Int = `checkBox -q -v YY_SMJ_TX`;
+$YY_SMJ_Time_Int = `checkBox -q -v YY_SMJ_TimeLine_Ctrl`;
+$YY_SMJ_Del_Int = `checkBox -q -v YY_SMJ_Del`;
+/////////////////////////////////////////////////////////////////////////////////////////
+if(`checkBox -q -v YY_SMJ_Sel` == 0)
+      {
+for($YY_SMJ_i = 1;$YY_SMJ_i<=4;$YY_SMJ_i++)
+   {
+$YY_SMJ_HF_Select = eval("checkBoxGrp -q -v" + $YY_SMJ_i + " YY_SMJ_HF_CBG");
+if($YY_SMJ_HF_Select == 1)
+ {	
+YY_SMJ_To_FK ($YY_SMJ_Time_Type_Int ,$YY_SMJ_HF_Int ,$YY_SMJ_TX_Int ,$YY_SMJ_Time_Int , $YY_SMJ_Del_Int,$YY_SMJ_NamePrefix);
+ };
+$YY_SMJ_HF_Int++;	
+   };
+}else{
+$YY_SMJ_HF_Type_Int = `YY_SMF_Sel_Proc(1)`;
+
+for($YY_SMJ_ii = 0;$YY_SMJ_ii<4;$YY_SMJ_ii++)
+        {
+if($YY_SMJ_HF_Type_Int[$YY_SMJ_ii] == 1)
+           {	
+YY_SMJ_To_FK ($YY_SMJ_Time_Type_Int ,$YY_SMJ_HF_Int_S ,$YY_SMJ_TX_Int ,$YY_SMJ_Time_Int , $YY_SMJ_Del_Int,$YY_SMJ_NamePrefix);
+           };
+$YY_SMJ_HF_Int_S++;	   
+        };
+    };
+currentTime (`currentTime -q`) ;	
+};
+////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//塌陷功能副函数程序
+//函数功能说明:
+//此函数可使输入控制器的TR控制器以指定方式插入关键帧
+global proc YY_SMC_Key(int $YY_SMC_TL_Min,int $YY_SMC_TL_Max,string $YY_SMC_Ctrl_Name,int $YY_SMC_TR)
+{
+global string $gMainProgressBar;
+int $YY_SMC_AT_Int = 0;
+int $YY_SMC_TR_Int_Start = 0;
+int $YY_SMC_TR_Int_End = 6;
+switch($YY_SMC_TR)
+{
+case 0:
+	$YY_SMC_TR_Int_End = 3;
+	break;
+case 1:
+	$YY_SMC_AT_Int = 3;
+	$YY_SMC_TR_Int_Start = 3;
+	break;
+case 2:
+	break;	
+};
+string $YY_SMC_KFN[] = {"translateX","translateY","translateZ",
+	                    "rotateX","rotateY","rotateZ"
+						};
+string $YY_SMC_KF_TR[] = {"_AN_T","_AN_T","_AN_T",
+						  "_AN_R","_AN_R","_AN_R"};
+
+string $YY_SMC_KF_AL[] = {"animCurveTL","animCurveTL","animCurveTL",
+						  "animCurveTA","animCurveTA","animCurveTA"};
+
+string $YY_SMC_AT_NodeName = "";
+string $YY_SMC_AT_ConnectName[];
+string $YY_SMC_TX_For;
+float $YY_SMC_TX_TA[];
+float $YY_SMC_TX_TT[];
+float $YY_SMC_Add;
+float $YY_SMC_Key_Min_Max[];
+float $YY_SMC_SK_AN_TR;
+for($YY_SMC_KeyMain_For = $YY_SMC_TR_Int_Start;$YY_SMC_KeyMain_For<$YY_SMC_TR_Int_End;$YY_SMC_KeyMain_For++)
+{	
+$YY_SMC_TX_For = $YY_SMC_KFN[$YY_SMC_KeyMain_For];	
+if(!`connectionInfo -ied ($YY_SMC_Ctrl_Name + $YY_SMC_KF_TR[$YY_SMC_AT_Int] + "." + $YY_SMC_TX_For)`)//此属性是否有连接
+   {
+$YY_SMC_SK_AN_TR = `getAttr ($YY_SMC_Ctrl_Name + $YY_SMC_KF_TR[$YY_SMC_AT_Int] + "." + $YY_SMC_TX_For)`;	   
+$YY_SMC_AT_NodeName = `createNode $YY_SMC_KF_AL[$YY_SMC_AT_Int] -n ($YY_SMC_Ctrl_Name + $YY_SMC_KF_TR[$YY_SMC_AT_Int] + "_" + $YY_SMC_TX_For + "#")`;
+connectAttr -f ($YY_SMC_AT_NodeName + ".output") ($YY_SMC_Ctrl_Name + $YY_SMC_KF_TR[$YY_SMC_AT_Int] + "." + $YY_SMC_TX_For);
+//print $YY_SMC_SK_AN_TR;
+setKeyframe -shape 0 -t $YY_SMC_TL_Min -v $YY_SMC_SK_AN_TR ($YY_SMC_Ctrl_Name + $YY_SMC_KF_TR[$YY_SMC_AT_Int] + "." + $YY_SMC_TX_For);
+   }else
+{	
+$YY_SMC_AT_ConnectName = `listConnections -s 1 ($YY_SMC_Ctrl_Name + $YY_SMC_KF_TR[$YY_SMC_AT_Int] + "." + $YY_SMC_TX_For)`;
+if((`nodeType $YY_SMC_AT_ConnectName[0]` == $YY_SMC_KF_AL[$YY_SMC_AT_Int])||(`nodeType $YY_SMC_AT_ConnectName[0]` == "character"))
+  {
+$YY_SMC_AT_NodeName = $YY_SMC_AT_ConnectName[0];
+  }else{
+ 
+error ($YY_SMC_Ctrl_Name + $YY_SMC_KF_TR[$YY_SMC_AT_Int] + "." + $YY_SMC_TX_For + "  通道栏被其他节点占用，请检查。");
+       };
+};
+if((size(`keyframe -q -tc ($YY_SMC_Ctrl_Name + "." + $YY_SMC_TX_For)`)) == 0)
+{
+setKeyframe -shape 0 -t $YY_SMC_TL_Min ($YY_SMC_Ctrl_Name + "." + $YY_SMC_TX_For);
+};
+float $YY_SMC_Mia;
+for($YY_SMC_Mia = $YY_SMC_TL_Min;$YY_SMC_Mia <= $YY_SMC_TL_Max;$YY_SMC_Mia++)
+{
+setKeyframe -i -t $YY_SMC_Mia -itt spline -ott spline ($YY_SMC_Ctrl_Name + "." + $YY_SMC_TX_For);
+setKeyframe -i -t $YY_SMC_Mia -itt spline -ott spline ($YY_SMC_Ctrl_Name + $YY_SMC_KF_TR[$YY_SMC_AT_Int] + "." + $YY_SMC_TX_For);	
+};
+$YY_SMC_AT_Int++;
+};
+};
+///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//塌陷功能副函数程序
+//函数功能说明:
+//此函数可输出指定控制器的塌陷数据
+global proc float[] YY_SMC_GPS_TR (string $YY_SMC_CtrlName,string $YY_SMC_R_Type,int $YY_SMC_GPS_Min,int $YY_SMC_GPS_Max)
+{
+global string $gMainProgressBar;	
+int $YY_SMC_PB_int = $YY_SMC_GPS_Max - $YY_SMC_GPS_Min;
+progressBar -e -bp -ii true -st "正在获得塌陷数据......" -max $YY_SMC_PB_int $gMainProgressBar;
+	
+float $YY_SMC_GPS_Float[];
+int $YY_SMC_GPS_Int_B = 0;
+for($YY_SMC_GPS_FOr = $YY_SMC_GPS_Min;$YY_SMC_GPS_FOr<=$YY_SMC_GPS_Max;$YY_SMC_GPS_FOr++)
+{
+$YY_SMC_GPS_Float[$YY_SMC_GPS_Int_B] = `getAttr -t $YY_SMC_GPS_FOr ($YY_SMC_CtrlName + "." + $YY_SMC_R_Type)`;	
+$YY_SMC_GPS_Int_B++;
+progressBar -edit -step 1 $gMainProgressBar;
+};
+progressBar -edit -endProgress $gMainProgressBar; 
+return $YY_SMC_GPS_Float;
+};
+////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+//塌陷功能副函数程序
+//函数功能说明:
+//此函数可以将获得的已知数据塌陷到指定控制器上
+global proc YY_SMC_For_Proc(float $YY_SMC_SKF_V[] ,string $YY_SMC_Ctrl_C,string $YY_SMC_Attr_C,string $YY_SMC_PC,int $YY_SMC_TL_Min,int $YY_SMC_TL_Max,int $YY_SMC_Itt,int $YY_SMC_Ott)
+{
+global string $gMainProgressBar;
+string $YY_SMC_Itt_Type = "";
+switch($YY_SMC_Itt)
+{
+case 0:
+	$YY_SMC_Itt_Type = "spline";
+	break;
+case 1:
+	$YY_SMC_Itt_Type = "linear";	
+	break;
+case 2:
+	$YY_SMC_Itt_Type = "fast";	
+	break;	
+case 3:
+	$YY_SMC_Itt_Type = "slow";	
+	break;	
+case 4:
+	$YY_SMC_Itt_Type = "flat";	
+	break;	
+case 5:
+	$YY_SMC_Itt_Type = "step";	
+	break;	
+case 6:
+	$YY_SMC_Itt_Type = "fixed";	
+	break;	
+case 7:
+	$YY_SMC_Itt_Type = "clamped";	
+	break;	
+case 8:
+	$YY_SMC_Itt_Type = "plateau";	
+	break;	
+};
+///////////////////////////////////////////////////////////////
+string $YY_SMC_Ott_Type = "";
+switch($YY_SMC_Ott)
+{
+case 0:
+	$YY_SMC_Ott_Type = "spline";
+	break;
+case 1:
+	$YY_SMC_Ott_Type = "linear";	
+	break;
+case 2:
+	$YY_SMC_Ott_Type = "fast";	
+	break;	
+case 3:
+	$YY_SMC_Ott_Type = "slow";	
+	break;	
+case 4:
+	$YY_SMC_Ott_Type = "flat";	
+	break;	
+case 5:
+	$YY_SMC_Ott_Type = "step";	
+	break;	
+case 6:
+	$YY_SMC_Ott_Type = "fixed";	
+	break;	
+case 7:
+	$YY_SMC_Ott_Type = "clamped";	
+	break;	
+case 8:
+	$YY_SMC_Ott_Type = "plateau";	
+	break;	
+};
+////////////////////////////////////////////////////////
+int $YY_SMC_SetKey_Int = $YY_SMC_TL_Max - $YY_SMC_TL_Min ;	
+progressBar -e -bp -ii true -st "正在塌陷控制器......" -max $YY_SMC_SetKey_Int $gMainProgressBar; 		
+int $YY_SMC_For_Int = 0;
+for($YY_SMC_TXB_i = $YY_SMC_TL_Min;$YY_SMC_TXB_i <= $YY_SMC_TL_Max;$YY_SMC_TXB_i++)
+{
+cutKey -t $YY_SMC_TXB_i ($YY_SMC_Ctrl_C + "." + $YY_SMC_Attr_C);
+setKeyframe -t $YY_SMC_TXB_i -v $YY_SMC_SKF_V[$YY_SMC_For_Int] ($YY_SMC_Ctrl_C + "_AN_" + $YY_SMC_PC + "." + $YY_SMC_Attr_C);
+$YY_SMC_For_Int++;
+progressBar -edit -step 1 $gMainProgressBar;
+};
+keyTangent -itt $YY_SMC_Itt_Type -ott $YY_SMC_Ott_Type ($YY_SMC_Ctrl_C + "_AN_" + $YY_SMC_PC + "." + $YY_SMC_Attr_C);
+if(`getAttr -l ($YY_SMC_Ctrl_C + "." + $YY_SMC_Attr_C)` != 1)
+setAttr ($YY_SMC_Ctrl_C + "." + $YY_SMC_Attr_C) 0;
+progressBar -edit -endProgress $gMainProgressBar; 
+};
+///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+//塌陷功能主函数程序
+//函数功能说明:
+//此函数主要控制塌陷控制器的名称，TR方式，起始结束帧方式，以及曲线控制手柄方式和是否删除无动画帧
+global proc YY_SMC_TX_Main(string $YY_SMC_Ctrl_Name,int $YY_SMC_Main_TR,int $YY_SMC_For_Itt,int $YY_SMC_For_Ott,int $YY_SMC_Main_Time_Line_MinMax,int $YY_SMC_DelNullKey)
+{
+//$YY_SMC_Ctrl_Name = "ctrl_Root"	;
+if(`objExists $YY_SMC_Ctrl_Name`)
+   {
+waitCursor -state on;	   
+global string $gMainProgressBar;
+int $YY_SMC_TX_Main_Int;
+int $YY_SMC_TimeLine_Min;
+int $YY_SMC_TimeLine_Max;
+switch($YY_SMC_Main_Time_Line_MinMax)
+{
+case 0:
+float $YY_SMC_KFC_MinMax_A[];	
+float $YY_SMC_KFC_MinMax_B[];
+float $YY_SMC_KFC_MinMax_C[];	
+$YY_SMC_KFC_MinMax_A = `YY_SMC_KFC_Time_Proc ($YY_SMC_Ctrl_Name)`;
+if(size(`keyframe -q -tc ($YY_SMC_Ctrl_Name + "_AN_T")`)>0)
+{
+	 $YY_SMC_KFC_MinMax_B = `YY_SMC_KFC_Time_Proc ($YY_SMC_Ctrl_Name + "_AN_T")`;
+}else{
+     $YY_SMC_KFC_MinMax_B = $YY_SMC_KFC_MinMax_A;};
+if(size(`keyframe -q -tc ($YY_SMC_Ctrl_Name + "_AN_R")`)>0)
+{
+$YY_SMC_KFC_MinMax_C = `YY_SMC_KFC_Time_Proc ($YY_SMC_Ctrl_Name + "_AN_R")`;
+}else
+{
+     $YY_SMC_KFC_MinMax_C = $YY_SMC_KFC_MinMax_A;
+};
+$YY_SMC_TimeLine_Min = `min $YY_SMC_KFC_MinMax_A[0] $YY_SMC_KFC_MinMax_B[0]`;	
+$YY_SMC_TimeLine_Min = `min $YY_SMC_TimeLine_Min $YY_SMC_KFC_MinMax_C[0]`;
+
+$YY_SMC_TimeLine_Max = `max $YY_SMC_KFC_MinMax_A[1] $YY_SMC_KFC_MinMax_B[1]`;	
+$YY_SMC_TimeLine_Max = `max $YY_SMC_TimeLine_Max $YY_SMC_KFC_MinMax_C[1]`;
+	break;
+case 1:
+$YY_SMC_TimeLine_Min = `playbackOptions -q -min`;
+$YY_SMC_TimeLine_Max = `playbackOptions -q -max`;	
+	break;
+};
+$YY_SMC_TX_Main_Int = $YY_SMC_TimeLine_Max - $YY_SMC_TimeLine_Min;		
+YY_SMC_Key $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max $YY_SMC_Ctrl_Name $YY_SMC_Main_TR;
+
+float $YY_SMC_GPS_TXA[];
+float $YY_SMC_GPS_TYA[];
+float $YY_SMC_GPS_TZA[];
+
+float $YY_SMC_GPS_TXB[];
+float $YY_SMC_GPS_TYB[];
+float $YY_SMC_GPS_TZB[];
+
+float $YY_SMC_GPS_RX[];
+float $YY_SMC_GPS_RY[];
+float $YY_SMC_GPS_RZ[];
+
+float $YY_SMC_GPS_TX[];
+float $YY_SMC_GPS_TY[];
+float $YY_SMC_GPS_TZ[];
+
+if(($YY_SMC_Main_TR == 0)||($YY_SMC_Main_TR == 2))
+{
+$YY_SMC_GPS_TXA = `YY_SMC_GPS_TR $YY_SMC_Ctrl_Name translateX $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+$YY_SMC_GPS_TYA = `YY_SMC_GPS_TR $YY_SMC_Ctrl_Name translateY $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+$YY_SMC_GPS_TZA = `YY_SMC_GPS_TR $YY_SMC_Ctrl_Name translateZ $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+
+$YY_SMC_GPS_TXB = `YY_SMC_GPS_TR ($YY_SMC_Ctrl_Name + "_AN_T") translateX $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+$YY_SMC_GPS_TYB = `YY_SMC_GPS_TR ($YY_SMC_Ctrl_Name + "_AN_T") translateY $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+$YY_SMC_GPS_TZB = `YY_SMC_GPS_TR ($YY_SMC_Ctrl_Name + "_AN_T") translateZ $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+progressBar -e -bp -ii true -st "正在计算塌陷值......"  -max $YY_SMC_TX_Main_Int $gMainProgressBar; 	 
+int $YY_SMC_GPS_Int = 0;
+for($YY_SMC_TXB_For = $YY_SMC_TimeLine_Min;$YY_SMC_TXB_For <= $YY_SMC_TimeLine_Max;$YY_SMC_TXB_For++)
+{
+$YY_SMC_GPS_TX[$YY_SMC_GPS_Int] = $YY_SMC_GPS_TXA[$YY_SMC_GPS_Int] + $YY_SMC_GPS_TXB[$YY_SMC_GPS_Int];
+$YY_SMC_GPS_TY[$YY_SMC_GPS_Int] = $YY_SMC_GPS_TYA[$YY_SMC_GPS_Int] + $YY_SMC_GPS_TYB[$YY_SMC_GPS_Int];
+$YY_SMC_GPS_TZ[$YY_SMC_GPS_Int] = $YY_SMC_GPS_TZA[$YY_SMC_GPS_Int] + $YY_SMC_GPS_TZB[$YY_SMC_GPS_Int];
+$YY_SMC_GPS_Int++;
+progressBar -edit -step 1 $gMainProgressBar;
+};
+progressBar -edit -endProgress $gMainProgressBar; 
+
+YY_SMC_For_Proc $YY_SMC_GPS_TX $YY_SMC_Ctrl_Name translateX T $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max $YY_SMC_For_Itt $YY_SMC_For_Ott;
+YY_SMC_For_Proc $YY_SMC_GPS_TY $YY_SMC_Ctrl_Name translateY T $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max $YY_SMC_For_Itt $YY_SMC_For_Ott;
+YY_SMC_For_Proc $YY_SMC_GPS_TZ $YY_SMC_Ctrl_Name translateZ T $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max $YY_SMC_For_Itt $YY_SMC_For_Ott;
+
+};
+if(($YY_SMC_Main_TR == 1)||($YY_SMC_Main_TR == 2))
+{
+$YY_SMC_GPS_RX = `YY_SMC_GPS_TR ($YY_SMC_Ctrl_Name + "_AN_GPS") rotateX $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+$YY_SMC_GPS_RY = `YY_SMC_GPS_TR ($YY_SMC_Ctrl_Name + "_AN_GPS") rotateY $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+$YY_SMC_GPS_RZ = `YY_SMC_GPS_TR ($YY_SMC_Ctrl_Name + "_AN_GPS") rotateZ $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max`;
+	
+YY_SMC_For_Proc $YY_SMC_GPS_RX $YY_SMC_Ctrl_Name rotateX R $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max $YY_SMC_For_Itt $YY_SMC_For_Ott;
+YY_SMC_For_Proc $YY_SMC_GPS_RY $YY_SMC_Ctrl_Name rotateY R $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max $YY_SMC_For_Itt $YY_SMC_For_Ott;
+YY_SMC_For_Proc $YY_SMC_GPS_RZ $YY_SMC_Ctrl_Name rotateZ R $YY_SMC_TimeLine_Min $YY_SMC_TimeLine_Max $YY_SMC_For_Itt $YY_SMC_For_Ott;
+};
+if($YY_SMC_DelNullKey == 1)
+YY_SMC_DelKey $YY_SMC_Ctrl_Name;
+select -r $YY_SMC_Ctrl_Name;
+waitCursor -state off;
+print "////////////////操作成功完成////////////////";
+   };
+};
+//YY_SMC_TX_Main ("L_hand",2,0,0,0,1)
+
+
+//YY_SMC_TX_Main ("L_hand",2,0,0,0,1)
+//*******1*******//***2***/3/4/5/6/7
+//参数说明
+//1."YY_SMC_TX_Main" 函数名称  
+//2.要塌陷控制器名称
+//3.选择要塌陷的类型 "0"为只塌陷移动节点 "1" 为只塌陷旋转节点 "2" 为移动旋转节点全部塌陷
+//4.为塌陷后曲线的切线入点方式"0" spline "1" linear "2" fast "3" slow "4" flat "5" step "6" fixed "7" clamped "8" plateau
+//5.为塌陷后曲线的切线出点方式"0" spline "1" linear "2" fast "3" slow "4" flat "5" step "6" fixed "7" clamped "8" plateau
+//6.塌陷控制器的时间线长度的计算方式 "0"为得控制器及塌陷控制器关键帧的最大最小值  "1" 为当前时间线最大最小值
+//7.是否删除无动画曲线 "0"为不删除 "1"为删除
+global proc YY_SMC_TimeCtrlType(int $YY_SMC_Time_SE)
+{
+intField -e -en $YY_SMC_Time_SE YY_SMC_Time_Start;
+intField -e -en $YY_SMC_Time_SE YY_SMC_Time_End;
+};
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+global proc YY_SMC_Main_Proc()
+{
+string $YY_SMC_NamePrefix;
+string $YY_SMC_CtrlName_All_B[];
+string $YY_SMC_CtrlNmae_All_B_For;
+int $YY_SMC_TimeType_Sel;
+int $YY_SMC_RT_Sel;
+int $YY_SMC_Tan_in_Num;
+int $YY_SMC_Tan_out_Num;
+int $YY_SMC_Time_QZ;
+int $YY_SMC_Del;
+int $YY_SMC_SelType;
+$YY_SMC_NamePrefix = `textField -q -tx YY_SMC_TF_Prefix`;
+$YY_SMC_TimeType_Sel = `radioButtonGrp -q -sl YY_SMC_TimeType_RBG` - 1 ;
+$YY_SMC_RT_Sel = `radioButtonGrp -q -sl YY_SMC_TRA_RBG` -1;
+
+$YY_SMC_Tan_in_Num = `optionMenuGrp -q -sl YY_SMC_OMG_In` - 1;
+$YY_SMC_Tan_out_Num = `optionMenuGrp -q -sl YY_SMC_OMG_Out` - 1;
+
+$YY_SMC_Time_QZ = `checkBox -q -v YY_SMC_TimeLine_Ctrl`;
+$YY_SMC_Del = `checkBox -q -v YY_SMC_Del`;
+
+$YY_SMC_SelType = `radioButtonGrp -q -sl YY_SMC_HF_RBG`;
+$YY_SMC_CtrlName_All_B = `YY_SMC_CtrlName_Proc $YY_SMC_SelType 0`;
+//print $YY_SMC_CtrlName_All_B;
+//print "**\n";
+for($YY_SMC_CtrlNmae_All_B_For in $YY_SMC_CtrlName_All_B)
+{
+//print ("****\n");	
+YY_SMC_TX_Main($YY_SMC_CtrlNmae_All_B_For , $YY_SMC_RT_Sel,$YY_SMC_Tan_in_Num,$YY_SMC_Tan_out_Num,$YY_SMC_TimeType_Sel,$YY_SMC_Del);	
+};
+
+};
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+global proc string[] YY_SMC_CtrlName_Proc(int $YY_SMC_CtrlType,int $YY_SMR_Type)
+{
+string $YY_SMC_Prefix_TF;	
+string $YY_SMC_Prefix_A;
+string $YY_SMC_Prefix_Sel[];
+string $YY_SMC_CtrlName_All[];
+string $YY_SMC_CtrlName_End[];
+string $YY_SMC_CtrlName_Sel;
+string $YY_SMC_CtrlName_Sel_For;
+string $YY_SMC_CtrlName_All_For;
+string $YY_SMC_CtrlName_Return[];
+string $YY_SMC_CrrlName_JD[];
+int $YY_SMC_Ctrl_Count;
+int $YY_SMC_CtrlName_Int = 0;
+float $YY_SMC_Ctrl_Key[];
+$YY_SMC_Prefix_Sel = `ls -sl`;
+switch($YY_SMR_Type)
+{
+case 0:
+	$YY_SMC_Prefix_TF = `textField -q -tx YY_SMC_TF_Prefix`;
+	break;
+case 1:
+	$YY_SMC_Prefix_TF = `textField -q -tx YY_SMR_TF_Prefix`;
+	break;
+};
+
+if(size($YY_SMC_Prefix_TF) == 0)
+{
+$YY_SMC_Prefix_A = `YY_SetMan_Import_JointName_Prefix $YY_SMC_Prefix_Sel[0]`;
+}else
+{
+$YY_SMC_Prefix_A = $YY_SMC_Prefix_TF;
+};
+
+
+$YY_SMC_CtrlName_All = {($YY_SMC_Prefix_A + "L_hand"),($YY_SMC_Prefix_A + "L_Hand_direction"),($YY_SMC_Prefix_A + "L_shoulder_ctrl"),($YY_SMC_Prefix_A + "L_foot"),($YY_SMC_Prefix_A + "L_leg_direction"),
+	                    ($YY_SMC_Prefix_A + "R_hand"),($YY_SMC_Prefix_A + "R_Hand_direction"),($YY_SMC_Prefix_A + "R_shoulder_ctrl"),($YY_SMC_Prefix_A + "R_foot"),($YY_SMC_Prefix_A + "R_leg_direction"),
+						($YY_SMC_Prefix_A + "L_shoulder_FK"),($YY_SMC_Prefix_A + "L_forearm_FK"),($YY_SMC_Prefix_A + "L_wrist_FK"),($YY_SMC_Prefix_A + "L_UpLeg_FK"),($YY_SMC_Prefix_A + "L_Leg_FK"),($YY_SMC_Prefix_A + "L_Foot_FK"),($YY_SMC_Prefix_A + "L_ToeBase_FK"),
+						($YY_SMC_Prefix_A + "R_shoulder_FK"),($YY_SMC_Prefix_A + "R_forearm_FK"),($YY_SMC_Prefix_A + "R_wrist_FK"),($YY_SMC_Prefix_A + "R_UpLeg_FK"),($YY_SMC_Prefix_A + "R_Leg_FK"),($YY_SMC_Prefix_A + "R_Foot_FK"),($YY_SMC_Prefix_A + "R_ToeBase_FK"),
+						($YY_SMC_Prefix_A + "head_ctrl"),($YY_SMC_Prefix_A + "neck_M_ctrl"),($YY_SMC_Prefix_A + "neck_ctrl"),($YY_SMC_Prefix_A + "spine2_ctrl"),($YY_SMC_Prefix_A + "spineHigher_ctrl"),($YY_SMC_Prefix_A + "spineMid_ctrl"),($YY_SMC_Prefix_A + "spinLower_ctrl"),($YY_SMC_Prefix_A + "ctrl_Root")};
+
+if($YY_SMC_CtrlType == 2)
+{
+$YY_SMC_CrrlName_JD = $YY_SMC_Prefix_Sel;
+}else{
+$YY_SMC_CrrlName_JD = $YY_SMC_CtrlName_All;
+};
+for($YY_SMC_CtrlName_Sel_For in $YY_SMC_CrrlName_JD)
+{	
+if($YY_SMC_CtrlType == 2){
+$YY_SMC_Ctrl_Count = stringArrayCount($YY_SMC_CtrlName_Sel_For, $YY_SMC_CtrlName_All);
+}else{
+$YY_SMC_Ctrl_Count = 1;
+};
+if($YY_SMR_Type == 0){
+$YY_SMC_Ctrl_Key = `YY_SMC_KFC_Time_Proc ($YY_SMC_CtrlName_Sel_For)`;
+}else{
+	$YY_SMC_Ctrl_Key = `YY_SMC_KFC_Time_Proc ($YY_SMC_CtrlName_Sel_For + "_AN_T")`;
+if(size($YY_SMC_Ctrl_Key) < 1)
+$YY_SMC_Ctrl_Key = `YY_SMC_KFC_Time_Proc ($YY_SMC_CtrlName_Sel_For + "_AN_R")`;	
+};
+if(($YY_SMC_Ctrl_Count == 1)&&(size($YY_SMC_Ctrl_Key)>1))
+{
+$YY_SMC_CtrlName_End[$YY_SMC_CtrlName_Int] = $YY_SMC_CtrlName_Sel_For;	
+$YY_SMC_CtrlName_Int++;	
+};
+};
+return $YY_SMC_CtrlName_End;
+};
+////////////////////////////////
+//////////////////////////////////////////
+/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMR_TimeCtrlType(int $YY_SMR_Time_SE)
+{
+intField -e -en $YY_SMR_Time_SE YY_SMR_Time_Start;
+intField -e -en $YY_SMR_Time_SE YY_SMR_Time_End;
+};
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMR_Main_Proc()
+{
+string $YY_SMR_NamePrefix;
+string $YY_SMR_CtrlName_All_B[];
+string $YY_SMR_CtrlNmae_All_B_For;
+//int $YY_SMR_TimeType_Sel;
+int $YY_SMR_RT_Sel;
+//int $YY_SMR_Tan_in_Num;
+//int $YY_SMR_Tan_out_Num;
+int $YY_SMR_Time_QZ;
+int $YY_SMR_Del;
+int $YY_SMR_SelType;
+$YY_SMR_NamePrefix = `textField -q -tx YY_SMR_TF_Prefix`;
+//$YY_SMR_TimeType_Sel = `radioButtonGrp -q -sl YY_SMR_TimeType_RBG` - 1 ;
+$YY_SMR_RT_Sel = `radioButtonGrp -q -sl YY_SMR_TRA_RBG`;
+//$YY_SMR_Tan_in_Num = `optionMenuGrp -q -sl YY_SMR_OMG_In` - 1;
+//$YY_SMR_Tan_out_Num = `optionMenuGrp -q -sl YY_SMR_OMG_Out` - 1;
+$YY_SMR_Time_QZ = `checkBox -q -v YY_SMR_TimeLine_Ctrl`;
+$YY_SMR_Del = `checkBox -q -v YY_SMR_Del`;
+
+$YY_SMR_SelType = `radioButtonGrp -q -sl YY_SMR_HF_RBG`;
+$YY_SMR_CtrlName_All_B = `YY_SMC_CtrlName_Proc $YY_SMR_SelType 1`;
+//print $YY_SMR_CtrlName_All_B;	
+for($YY_SMR_CtrlNmae_All_B_For in $YY_SMR_CtrlName_All_B)
+{
+//print $YY_SMR_CtrlNmae_All_B_For;	
+YY_SMR_Ani($YY_SMR_CtrlNmae_All_B_For , $YY_SMR_RT_Sel,$YY_SMR_Del);	
+};
+};
+//////////////////////
+/////////////////////////////////////
+///////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMM_Modify()
+{
+string $YY_SMM_Prefix_TF;
+string $YY_SMM_Sel[];
+string $YY_SMM_RN;
+string $YY_SMM_NN;
+string $YY_SMM_D[];
+string $YY_SMM_MD;
+string $YY_SMM_AttrName[] = {"X","Y","Z"};
+string $YY_SMM_AttrName_For;
+float $YY_SMM_Root_TY;
+float $YY_SMM_Root_TYB;
+float $YY_SMM_Mast_TY;
+float $YY_SMM_Keyframe[];
+float $YY_SMM_Hips;
+float $YY_SMM_CtrlRoot;
+float $YY_SMM_Sub;
+float $YY_SMM_V;
+$YY_SMM_Prefix_TF = `textField -q -tx YY_SMW_ITF_A`;
+if(size($YY_SMM_Prefix_TF) == 0)
+{
+$YY_SMM_Sel = `ls -sl`;
+if(size($YY_SMM_Sel) != 0)
+$YY_SMM_Prefix_TF = `YY_SetMan_Import_JointName_Prefix $YY_SMM_Sel[0]`;
+};
+$YY_SMM_Keyframe = `keyframe -q -tc ($YY_SMM_Prefix_TF + "ctrl_Root.translate")`;
+currentTime $YY_SMM_Keyframe[0];
+$YY_SMM_Hips = `getAttr ($YY_SMM_Prefix_TF + "Hips.translateY")`;
+$YY_SMM_CtrlRoot = `getAttr ($YY_SMM_Prefix_TF + "ctrl_Root.translateY")`;
+$YY_SMM_Sub = $YY_SMM_Hips - $YY_SMM_CtrlRoot;
+$YY_SMM_V = $YY_SMM_CtrlRoot/$YY_SMM_Sub;
+
+$YY_SMM_MD = `createNode multiplyDivide -n YY_SMM_MD_Scale`;
+setAttr ($YY_SMM_MD +".operation") 2;
+for($YY_SMM_AttrName_For in $YY_SMM_AttrName)
+{
+$YY_SMM_RN = $YY_SMM_Prefix_TF + "ctrl_Root.translate" + $YY_SMM_AttrName_For;
+while(size($YY_SMM_RN) != 0)
+         {
+$YY_SMM_NN = $YY_SMM_RN;	
+$YY_SMM_RN = `connectionInfo -sfd $YY_SMM_RN`;
+         };
+$YY_SMM_D = `connectionInfo -dfs $YY_SMM_NN`;
+connectAttr -f $YY_SMM_NN ($YY_SMM_MD + ".input1" + $YY_SMM_AttrName_For);
+connectAttr -f ($YY_SMM_MD + ".output" + $YY_SMM_AttrName_For) $YY_SMM_D;
+};
+//$YY_SMM_Root_TY = `getAttr ($YY_SMM_Prefix_TF + "ctrl_Root.translateY")`;
+setAttr "YY_SMM_MD_Scale.input2X" $YY_SMM_V;
+setAttr "YY_SMM_MD_Scale.input2Y" $YY_SMM_V;
+setAttr "YY_SMM_MD_Scale.input2Z" $YY_SMM_V;
+$YY_SMM_Root_TYB = `getAttr ($YY_SMM_Prefix_TF + "ctrl_Root.translateY")`;
+$YY_SMM_Mast_TY = `getAttr ($YY_SMM_Prefix_TF + "MASTER.translateY")`;
+
+$YY_SMM_Mast_TY = $YY_SMM_Mast_TY - $YY_SMM_Root_TYB;
+
+setAttr ($YY_SMM_Prefix_TF + "MASTER.translateY") $YY_SMM_Mast_TY;
+
+
+floatSliderGrp -e -v $YY_SMM_V
+			   YY_SMM_FSG;
+
+select -r ($YY_SMM_Prefix_TF + "ctrl_Root");
+
+button -e -bgc 1 0.5 0.5  YY_SMM_TX_Button;
+button -e -vis 0  YY_SMM_TX_Button;
+button -e -vis 1  YY_SMM_TX_Button;
+};
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMM_Modify_FloatSlider()
+{
+float $YY_SMM_Modify_Float;	
+$YY_SMM_Modify_Float = `floatSliderGrp -q -v YY_SMM_FSG`;
+setAttr "YY_SMM_MD_Scale.input2X" $YY_SMM_Modify_Float;
+setAttr "YY_SMM_MD_Scale.input2Y" $YY_SMM_Modify_Float;
+setAttr "YY_SMM_MD_Scale.input2Z" $YY_SMM_Modify_Float;
+};
+
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMM_Modify_BakKey()
+{
+int $YY_SMM_GetTrans = 0;
+int $YY_SMM_GetTrans_B = 0;
+string $YY_SMM_Prefix_TFB;
+string $YY_SMM_SelB[];
+float $YY_SMM_MinMax[];
+float $YY_SMM_TX[];
+float $YY_SMM_TY[];
+float $YY_SMM_TZ[];
+
+$YY_SMM_Prefix_TFB = `textField -q -tx YY_SMW_ITF_A`;
+if(size($YY_SMM_Prefix_TFB) == 0)
+{
+$YY_SMM_SelB = `ls -sl`;
+if(size($YY_SMM_SelB) != 0)
+$YY_SMM_Prefix_TFB = `YY_SetMan_Import_JointName_Prefix $YY_SMM_SelB[0]`;
+};
+$YY_SMM_MinMax = `YY_SMC_KFC_Time_Proc ($YY_SMM_Prefix_TFB + "ctrl_Root")`;
+
+for($YY_SMM_i = $YY_SMM_MinMax[0]; $YY_SMM_i<=$YY_SMM_MinMax[1];$YY_SMM_i++)
+{
+$YY_SMM_TX[$YY_SMM_GetTrans] = `getAttr -t $YY_SMM_i ($YY_SMM_Prefix_TFB + "ctrl_Root.translateX")`;
+$YY_SMM_TY[$YY_SMM_GetTrans] = `getAttr -t $YY_SMM_i ($YY_SMM_Prefix_TFB + "ctrl_Root.translateY")`;
+$YY_SMM_TZ[$YY_SMM_GetTrans] = `getAttr -t $YY_SMM_i ($YY_SMM_Prefix_TFB + "ctrl_Root.translateZ")`;
+$YY_SMM_GetTrans++;
+};
+delete `listConnections -s 1 -c 0 -t "animCurveTL" YY_SMM_MD_Scale.input1X`;
+delete `listConnections -s 1 -c 0 -t "animCurveTL" YY_SMM_MD_Scale.input1Y`;
+delete `listConnections -s 1 -c 0 -t "animCurveTL" YY_SMM_MD_Scale.input1Z`;
+delete YY_SMM_MD_Scale;
+for($YY_SMM_ii = $YY_SMM_MinMax[0]; $YY_SMM_ii<=$YY_SMM_MinMax[1];$YY_SMM_ii++)
+{
+setKeyframe	-t $YY_SMM_ii -v $YY_SMM_TX[$YY_SMM_GetTrans_B] ($YY_SMM_Prefix_TFB + "ctrl_Root.translateX");
+setKeyframe	-t $YY_SMM_ii -v $YY_SMM_TY[$YY_SMM_GetTrans_B] ($YY_SMM_Prefix_TFB + "ctrl_Root.translateY");
+setKeyframe	-t $YY_SMM_ii -v $YY_SMM_TZ[$YY_SMM_GetTrans_B] ($YY_SMM_Prefix_TFB + "ctrl_Root.translateZ");
+$YY_SMM_GetTrans_B++;	
+};
+
+button -e -bgc 0.7 0.7 1 YY_SMM_TX_Button;
+currentTime `currentTime -q`;
+};
+
+
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+global proc YY_SMM_RE_Attr_V(int $YY_SMM_RE_ADD_Attr_Int)
+{
+string $YY_SMM_Add_Attr_Sel[];
+string $YY_SMM_Add_Attr_Sel_For;
+string $YY_SMM_Add_Attr_CB[];
+string $YY_SMM_Add_Attr_CB_For;
+float $YY_SMM_RE_Attr_V[];
+float $YY_SMM_RE_Attr_T[];
+float $YY_SMM_RE_Attr_V_For;
+float $YY_SMM_Attr_Add_V;
+int $YY_SMM_RE_Attr_V_Int = 0;
+int $YY_SMM_RE_Attr_V_Negative;
+
+switch($YY_SMM_RE_ADD_Attr_Int)
+{
+case 0:
+	$YY_SMM_Attr_Add_V = 0;
+	$YY_SMM_RE_Attr_V_Negative = -1;
+	break;
+case 1:
+	$YY_SMM_Attr_Add_V = `floatSliderGrp -q -v YY_SMM_Attr_Add_V_FSG`;
+	$YY_SMM_RE_Attr_V_Negative = 1;
+	break;
+};
+$YY_SMM_Add_Attr_Sel = `ls -sl`;
+
+for($YY_SMM_Add_Attr_Sel_For in $YY_SMM_Add_Attr_Sel)
+  {
+$YY_SMM_Add_Attr_CB = `channelBox -q -sma mainChannelBox`;
+for($YY_SMM_Add_Attr_CB_For in $YY_SMM_Add_Attr_CB)
+    {
+$YY_SMM_RE_Attr_V_Int = 0;
+if(`attributeExists $YY_SMM_Add_Attr_CB_For $YY_SMM_Add_Attr_Sel_For`)
+      {
+$YY_SMM_RE_Attr_T = `keyframe -q -tc ($YY_SMM_Add_Attr_Sel_For + "." + $YY_SMM_Add_Attr_CB_For)`;
+$YY_SMM_RE_Attr_V = `keyframe -q -vc ($YY_SMM_Add_Attr_Sel_For + "." + $YY_SMM_Add_Attr_CB_For)`;
+for($YY_SMM_RE_Attr_V_For in $YY_SMM_RE_Attr_V)
+        {
+setKeyframe -t $YY_SMM_RE_Attr_T[$YY_SMM_RE_Attr_V_Int] -v (($YY_SMM_RE_Attr_V_For * $YY_SMM_RE_Attr_V_Negative) + $YY_SMM_Attr_Add_V) -at $YY_SMM_Add_Attr_CB_For $YY_SMM_Add_Attr_Sel_For;
+$YY_SMM_RE_Attr_V_Int++;
+        };	
+      };	
+    };
+  };
+ currentTime (`currentTime -q`) ;
+};
+
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//反转动画曲线
+global proc YY_SMM_RE_AniKey()
+{
+float $YY_SMM_RE_T[];
+float $YY_SMM_RE_V[];
+int $YY_SMM_RE_VE;
+string $YY_SMM_RE_AttrName[];
+string $YY_SMM_RE_AttrName_For;
+string $YY_SMM_RE_Sl[];
+string $YY_SMM_RE_Sl_For;
+$YY_SMM_RE_Sl = `ls -sl`;
+$YY_SMM_RE_AttrName = `channelBox -q -sma mainChannelBox`;	
+	
+for($YY_SMM_RE_Sl_For in $YY_SMM_RE_Sl)
+{
+for($YY_SMM_RE_AttrName_For in $YY_SMM_RE_AttrName)
+  {	
+if(`attributeExists $YY_SMM_RE_AttrName_For $YY_SMM_RE_Sl_For`)
+     {
+$YY_SMM_RE_V = `keyframe -q -vc ($YY_SMM_RE_Sl_For + "." + $YY_SMM_RE_AttrName_For)`;
+$YY_SMM_RE_T = `keyframe -q -tc ($YY_SMM_RE_Sl_For + "." + $YY_SMM_RE_AttrName_For)`;
+
+for($YY_SMM_RE_TV_i = 0;$YY_SMM_RE_TV_i<size($YY_SMM_RE_V);$YY_SMM_RE_TV_i++)
+         {
+$YY_SMM_RE_VE = size($YY_SMM_RE_V) - $YY_SMM_RE_TV_i -1;
+setKeyframe -t $YY_SMM_RE_T[$YY_SMM_RE_TV_i] -v $YY_SMM_RE_V[$YY_SMM_RE_VE] -at $YY_SMM_RE_AttrName_For $YY_SMM_RE_Sl_For;
+         };
+     };
+  };
+};
+currentTime `currentTime -q`;
+};
+
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+global proc JD_Exprot_Proc()
+{
+int $JD_EX_Count_Sel = 0;
+int $JD_EX_Count_Node = 0;
+int $JD_EX_Count_Key = 0;
+int $JD_EX_FileTest;
+int $JD_EX_Prefix_Int;
+int $JD_EX_File_ID;
+float $JD_Export_TimeAndKey[];
+string $JD_EX_File_Address;	
+string $JD_EX_Prefix;	
+string $JD_EX_Node_Type_Filt_A = "";
+string $JD_EX_Node_Type_Filt_B = "";
+string $JD_EX_NodeName_A = "";
+string $JD_EX_NodeName_B = "";
+string $JD_EX_NodeAttrName = "";
+string $JD_EX_NodeType;
+string $JD_EX_FileAddress_If;
+string $JD_EX_Sel[] = `ls -sl`;
+string $JD_EX_For;
+string $JD_EX_Sel_Tok[];
+string $JD_EX_NewSelectName;
+string $JD_EX_Node[];
+string $JD_EX_Node_For;
+string $JD_EX_Prefix_Name[];
+string $JD_EX_NodeName_Tok[];
+string $JD_EX_Prefix_New ;
+string $JD_EX_Node_Output[];
+string $JD_EX_Node_Tok[];
+string $JD_EX_Dia_A;
+
+
+$JD_EX_FileAddress_If = `textField -q -tx JD_EX_local_file_a`;	
+$JD_EX_FileAddress_If = dirname ($JD_EX_FileAddress_If);
+$JD_EX_FileTest = `filetest -d $JD_EX_FileAddress_If`;
+if($JD_EX_FileTest == 0)
+{
+error "您输入的地址不正确请查准后重新输入！";
+};
+waitCursor -state on;
+
+$JD_EX_File_Address = `textField -q -tx JD_EX_local_file_a`;
+$JD_EX_File_ID = `fopen $JD_EX_File_Address "w"`;
+fprint $JD_EX_File_ID "JD_Export_Animation_MEL \n";
+$JD_EX_Prefix = `textField -q -tx JD_EX_Win_TF`;
+$JD_EX_Prefix_Int = size($JD_EX_Prefix) + 1;
+
+if(`checkBoxGrp -q -v1 JD_EX_Animat_Type`)
+{
+$JD_EX_Node_Type_Filt_A = "animCurveTL";
+};
+if(`checkBoxGrp -q -v2 JD_EX_Animat_Type`)
+{
+$JD_EX_Node_Type_Filt_B = "animCurveTA";
+};
+$JD_EX_Sel = `ls -sl`;
+for($JD_EX_For in $JD_EX_Sel)
+{
+tokenize $JD_EX_For "\\/ | :" $JD_EX_Sel_Tok;
+$JD_EX_NewSelectName = $JD_EX_Sel_Tok[size($JD_EX_Sel_Tok) - 1];	
+$JD_EX_Node = `listAttr -k -u -v $JD_EX_For`;
+
+for($JD_EX_Node_For in $JD_EX_Node)
+{
+$JD_EX_NodeName_A = `connectionInfo -sfd ($JD_EX_For + "." + $JD_EX_Node_For)`;	
+while(size($JD_EX_NodeName_A) > 0)
+{
+$JD_EX_NodeName_B = $JD_EX_NodeName_A;	
+$JD_EX_NodeName_A = `connectionInfo -sfd $JD_EX_NodeName_A`;
+};
+$JD_EX_NodeAttrName = $JD_EX_NodeName_B;
+$JD_EX_NodeType = `nodeType $JD_EX_NodeAttrName`;
+if(($JD_EX_NodeType == "animCurveTU")||($JD_EX_NodeType == "animCurveTA")||($JD_EX_NodeType == "animCurveTL"))
+{
+tokenize $JD_EX_NodeAttrName "\\/| :" $JD_EX_Prefix_Name;
+$JD_EX_Prefix_New = ($JD_EX_Prefix_Name[size($JD_EX_Prefix_Name)-1]);
+tokenize $JD_EX_Prefix_New "." $JD_EX_NodeName_Tok;
+
+fprint $JD_EX_File_ID "JD_Name "; //建立以JD_Name开头的专属标识符
+fprint $JD_EX_File_ID ($JD_EX_NodeType + " ");//输出节点类型
+fprint $JD_EX_File_ID ($JD_EX_NodeName_Tok[0] + " ");//输出所选骨骼所连接的动画节点的名称及空格
+$JD_EX_Node_Output = `connectionInfo -dfs $JD_EX_NodeAttrName`;
+
+tokenize $JD_EX_Node_Output[0] "." $JD_EX_Node_Tok;
+fprint $JD_EX_File_ID ($JD_EX_Node_For + " " + $JD_EX_NewSelectName);//输出选择物体连接属性及空格及选择物体短名
+fprint $JD_EX_File_ID "\n";
+fprint $JD_EX_File_ID "JD_KeyStart { \n"; //建立以JD_Key开头的专属标识符
+$JD_Export_TimeAndKey = `keyframe -q -vc -tc $JD_EX_NodeName_Tok[0]`;
+for($JD_i = 0;$JD_i<size($JD_Export_TimeAndKey);$JD_i+=2)
+{
+fprint $JD_EX_File_ID ($JD_Export_TimeAndKey[$JD_i] + " ");
+fprint $JD_EX_File_ID $JD_Export_TimeAndKey[$JD_i+1];	
+fprint $JD_EX_File_ID "\n";
+$JD_EX_Count_Key++;
+};
+fprint $JD_EX_File_ID "JD_KeyEnd } \n";
+ $JD_EX_Count_Node++;  
+ };
+       };	
+fprint $JD_EX_File_ID "\n";	
+ $JD_EX_Count_Sel++;             };
+fclose $JD_EX_File_ID;
+
+waitCursor -state off;
+$JD_EX_Dia_A ="动画输出完毕！\n\n";
+$JD_EX_Dia_A +=	"共输出选择物体  " + $JD_EX_Count_Sel +"  个\n\n";
+$JD_EX_Dia_A += "共输出动画节点  " + $JD_EX_Count_Node +"  个\n\n";
+$JD_EX_Dia_A += "共输出动画帧  " + $JD_EX_Count_Key +"  个";
+
+confirmDialog -t"输出反馈信息"
+	          -m $JD_EX_Dia_A
+			  -ma "center"
+			  -b "OK";
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+global proc JD_EX_Select_FS(int $JD_EX_Fiter)
+{
+switch($JD_EX_Fiter)
+   {
+case 0:
+	select -hi;
+	break;		
+case 1:
+string $JD_AD_sel[] = `ls -sl`;
+string $JD_AD_d;
+for($JD_AD_d in $JD_AD_sel)
+      {
+string $JD_AD_node = `nodeType $JD_AD_d`;
+if($JD_AD_node != "joint")
+         {
+select -d $JD_AD_d;
+         };	
+      };
+break;
+   };
+};
+
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+global proc YY_SMH_Help()
+{
+	if(`window -q -ex YY_Adsorb_Help_Win`)
+	{
+	deleteUI YY_Adsorb_Help_Win;
+	};
+	window 
+		  -wh 200 420
+		  -s 1
+		  -mb 0
+		  -t "角色动画综合工具使用帮助"
+		  YY_Adsorb_Help_Win;
+	string $YY_Del_Node_Help_Form = `formLayout`;
+	text -l "角色动画综合工具使用帮助" YY_Node_Main_Help_Text;
+    string $YY_Del_Node_Help_Scoll = `scrollField -ed 0 -po 1 -ww 1 -fn fixedWidthFont`;	
+	string $YY_Del_Node_Help_Maini_Text_A = "角色动画综合工具：\n此工具包括 9 大类别功能模块：";
+	$YY_Del_Node_Help_Maini_Text_A += "可以自由导入导出动画数据，可以进行IK FK之间无缝动画转换，";
+	$YY_Del_Node_Help_Maini_Text_A += "可以进行塌陷反塌陷操作，修复工具中提供了可以进行动画反转或镜像弄能。";
+	$YY_Del_Node_Help_Maini_Text_A += "更过帮助请参看使用帮助网页。";
+	scrollField -e -tx $YY_Del_Node_Help_Maini_Text_A $YY_Del_Node_Help_Scoll;
+	
+	formLayout -e
+		-af YY_Node_Main_Help_Text "left" 50
+		-af YY_Node_Main_Help_Text "right" 50
+		
+		-ac $YY_Del_Node_Help_Scoll "top" 5 YY_Node_Main_Help_Text 
+		-af $YY_Del_Node_Help_Scoll "left" 5
+	    -af $YY_Del_Node_Help_Scoll "right" 5
+		-af $YY_Del_Node_Help_Scoll "bottom" 5
+		$YY_Del_Node_Help_Form;
+	showWindow YY_Adsorb_Help_Win;
+		window -e
+		  -wh 200 420
+		  		  YY_Adsorb_Help_Win;
+};
+
+
+
+
+////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+global proc YY_SMH_About()
+{
+if(`window -q -ex YY_Adsorb_About_Win`)
+{
+deleteUI YY_Adsorb_About_Win;
+};
+window 
+	  -wh 350 180
+	  -s 1
+	  -mb 0
+	  -t "关于角色动画综合工具"
+	  YY_Adsorb_About_Win;
+columnLayout -rs 5 -cat "both" 5 -adj 1;
+text "制作：由继亮";
+text "QQ:78915620";
+text "E-Mail yjl811028@tom.com";
+text "制作时间：2009-11-4";
+text "如使用此工具中有任何问题或漏洞请及时通知本人";
+text "华强电影技术部 由继亮";
+showWindow YY_Adsorb_About_Win;
+
+window -e
+	  -wh 350 180
+	  YY_Adsorb_About_Win;
+};
+AnimateeCom;
+
+
+
+

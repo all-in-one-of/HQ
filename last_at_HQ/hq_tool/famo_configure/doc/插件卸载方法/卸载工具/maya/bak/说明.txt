@@ -1,0 +1,1 @@
+使用前请先卸载maya2015，再执行maya2015_Destroyer.exe（maya需安装在C盘）

@@ -1,0 +1,122 @@
+#! /Applications/Nuke6.3v4/Nuke6.3v4.app/Contents/MacOS/Nuke6.3v4 -nx
+version 6.3 v4
+Gizmo {
+ tile_color 0x5effff
+ gl_color 0xffffffff
+ note_font Verdana
+ mapsize {0.15 0.15}
+ addUserKnob {20 normal_light}
+ addUserKnob {7 red R -1 1}
+ addUserKnob {7 green R -1 1}
+ addUserKnob {7 blue R -1 1}
+}
+ Constant {
+  inputs 0
+  channels rgb
+  color {{parent.red i} {parent.green i} {parent.blue i} 0}
+  name Constant1
+  xpos -518
+  ypos -87
+ }
+ Dot {
+  name Dot2
+  xpos -484
+  ypos 71
+ }
+set N1537e380 [stack 0]
+ Input {
+  inputs 0
+  name Input1
+  xpos -224
+  ypos -144
+ }
+ Dot {
+  name Dot4
+  xpos -190
+  ypos 71
+ }
+set N15383e60 [stack 0]
+ ChannelMerge {
+  inputs 2
+  A rgba.red
+  operation multiply
+  B rgba.red
+  name ChannelMerge1
+  tile_color 0xff0000ff
+  xpos -374
+  ypos 57
+ }
+push $N1537e380
+ Dot {
+  name Dot5
+  xpos -484
+  ypos 173
+ }
+set N1538e170 [stack 0]
+push $N15383e60
+ Dot {
+  name Dot6
+  xpos -190
+  ypos 173
+ }
+set N15390df0 [stack 0]
+ ChannelMerge {
+  inputs 2
+  A rgba.green
+  operation multiply
+  B rgba.green
+  name ChannelMerge2
+  tile_color 0xff00ff
+  xpos -374
+  ypos 158
+ }
+ ChannelMerge {
+  inputs 2
+  operation plus
+  name ChannelMerge4
+  xpos -96
+  ypos 109
+ }
+push $N1538e170
+ Dot {
+  name Dot7
+  xpos -484
+  ypos 268
+ }
+push $N15390df0
+ Dot {
+  name Dot8
+  xpos -190
+  ypos 268
+ }
+ ChannelMerge {
+  inputs 2
+  A rgba.blue
+  operation multiply
+  B rgba.blue
+  name ChannelMerge3
+  tile_color 0xffff
+  xpos -374
+  ypos 253
+ }
+ ChannelMerge {
+  inputs 2
+  operation plus
+  name ChannelMerge5
+  xpos -96
+  ypos 191
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  xpos -96
+  ypos 270
+ }
+ Output {
+  name Output1
+  xpos -96
+  ypos 323
+ }
+end_group

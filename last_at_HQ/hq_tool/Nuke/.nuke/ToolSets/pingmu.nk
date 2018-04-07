@@ -1,0 +1,9 @@
+set cut_paste_input [stack 0]
+version 8.0 v4
+push $cut_paste_input
+X_pingmuzhuanhuan {
+ name X_pingmuzhuanhuan1
+ selected true
+ xpos 3607
+ ypos 617
+}

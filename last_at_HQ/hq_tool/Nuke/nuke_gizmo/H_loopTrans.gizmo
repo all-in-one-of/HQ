@@ -1,0 +1,89 @@
+#! /Al/Oxygen/APP/nuke/7.0v6/Nuke7.0v6 -nx
+version 7.0 v6
+Gizmo {
+ addUserKnob {20 User}
+ addUserKnob {12 SourceSize}
+ SourceSize {2048 1556}
+ addUserKnob {26 ""}
+ addUserKnob {16 Transform l Transform.X}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 371
+  ypos 94
+ }
+ Dot {
+  name Dot3
+  xpos 405
+  ypos 191
+ }
+set N5f8f050 [stack 0]
+ Dot {
+  name Dot2
+  xpos 549
+  ypos 191
+ }
+ Transform {
+  translate {{parent.Transform1.translate+parent.SourceSize.x} {parent.Transform1.translate}}
+  center {5880 600}
+  name Transform2
+  xpos 515
+  ypos 291
+ }
+ Dot {
+  name Dot4
+  xpos 549
+  ypos 530
+ }
+push $N5f8f050
+ Dot {
+  name Dot1
+  xpos 258
+  ypos 191
+ }
+ Transform {
+  translate {{parent.Transform1.translate-parent.SourceSize.x} {parent.Transform1.translate}}
+  center {5880 600}
+  name Transform3
+  xpos 224
+  ypos 289
+ }
+ Dot {
+  name Dot5
+  xpos 258
+  ypos 439
+ }
+push $N5f8f050
+ Transform {
+  translate {{parent.Transform} {parent.Transform_1}}
+  center {5880 600}
+  name Transform1
+  selected true
+  xpos 371
+  ypos 290
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos 371
+  ypos 435
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 371
+  ypos 526
+ }
+ Crop {
+  box {0 0 {parent.SourceSize.x} {parent.SourceSize.y}}
+  name Crop1
+  xpos 371
+  ypos 763
+ }
+ Output {
+  name Output1
+  xpos 371
+  ypos 829
+ }
+end_group

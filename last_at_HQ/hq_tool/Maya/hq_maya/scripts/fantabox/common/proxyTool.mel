@@ -1,0 +1,225 @@
+/*
+global proc proxyTool()
+{
+    string $selectObjs[] = `ls -sl`;
+    string $aiStands[] = `listRelatives -typ "aiStandIn" -s $selectObjs`;
+    string $assPath = `textField -q -tx cpTextfield`;
+    if(`filetest -f $assPath` == 1 && fileExtension($assPath) == "ass" && size($aiStands)>0)
+        for($aiStand in $aiStands)
+            setAttr ($aiStand + ".dso") -type "string" $assPath;
+}
+*/
+global proc proxyTool()
+{
+    string $projectDir = `workspace -q -rd` + "data/";//internalVar -uwd
+    string $winName = "changePathWinName";
+    if(`window -q -ex $winName`)
+        deleteUI $winName;
+    int $winW = 350;
+    int $winH = 335;
+    window -t "代理批量替换工具" -wh $winW $winH -s 1 $winName;
+    
+    
+    columnLayout -w $winW -h $winH -adj true -cat "both" 3 -rs 10;
+    text -l "Arnold 代理批量替换工具";
+    rowLayout -nc 2 -cw2 450 50 -adj 1;
+    textField -tx $projectDir cpTextfield;
+    symbolButton -en 1 -w 30 -image "navButtonBrowse.xpm" -c "openFile()" cpssysbutton;
+    setParent ..;
+    text -l "请选择要替换的代理物体后点击替换按钮";
+    
+    button -l "替换" - h 32 -c "changePath()";
+    
+    
+    
+    columnLayout  -adj true -cal "left" -co "left" 3 ;
+    text -l "\n　　　                         　　VR代理材质连接";
+    separator -w 170 -h 10 -st "in" ;
+    rowColumnLayout -nc 2 ; 	
+    		 text -l "\n　框选源模型:　　";
+    		 button -label "GetMtl"  -w 170 -h 12 -c "VRselShader()";
+    	 setParent ..; 	 
+    	 
+    rowColumnLayout -nc 2 ; 	
+    		 text -l "\n　选择代理模型:　";
+    		 button -label "vrayMesh"  -w 170 -h 12  -c "VRselShaderCom()";
+    	 setParent ..; 		   	 
+     separator -w 170 -h 10 -st "in" ;
+     setParent ..; 
+    
+    
+    
+    columnLayout  -adj true ;
+    $aa=`text "          先选择所有代理的组，再点击按钮执行。" `;
+    $aa2=`text "" `;
+    button -l "执行" -w 300 -h 32 -c "rigPoxy()" "rigBtn";
+    
+    
+    
+    showWindow $winName;
+    window -e -wh $winW $winH $winName;
+};
+
+global proc openFile()
+{
+    //string $multipleFilters = "Replace ass (*.ass);;All Files (*.*)";
+    string $result[] = `fileDialog2 -okc "Open" -fm 3 -dialogStyle 2`;
+    textField -e -tx ($result[0] + "/") cpTextfield;
+}
+global proc changePath()
+{
+    //string $projectDir = `workspace -q -rd` + "data/";//internalVar -uwd
+    string $assPath = `textField -q -tx cpTextfield`;
+    if(!`filetest -d $assPath`)
+        sysFile -md $assPath;
+    string $assObjs[] = `ls -type "aiStandIn"`;
+    string $oldPath[];
+    for($assObj in $assObjs)
+    {
+        $oldPath[size($oldPath)] = `getAttr ($assObj + ".dso")`;
+    }
+    string $copyPaths[] = stringArrayRemoveDuplicates($oldPath);
+    for($copyPath in $copyPaths)
+        sysFile -cp  ($assPath+ (basename($copyPath,""))) $copyPath;
+    for($assOb in $assObjs)
+    {
+        string $on = `getAttr ($assOb + ".dso")`;
+        string $baseName = basename($on,"");
+        setAttr ($assOb + ".dso") -type "string" ($assPath + $baseName) ;
+    }
+    confirmDialog -title "替换完成" -message "Ass 文件替换完成！";
+}
+
+global proc VRselShader()///////////////////////从模型选材质
+{
+    string $sel,$selmodle[],$selShapeA[], $selShapeS[],$selSGa[],$selSGs[],$selShaderS[];
+ 	    global  string $VrselShaderA[];
+   		clear  $VrselShaderA;
+    int $selSize;
+         $selmodle=`ls -sl`;
+         for ($sel in $selmodle)
+         {
+           print $sel;
+           $selShapeS=`listRelatives -s $sel`;
+           		int $i_ap=0;
+	            for ($sel_t in $selShapeS)
+	            {
+	            	$selShapeS[$i_ap]=$sel+"|"+$sel_t;
+	            	$i_ap++;
+	            }
+           print ("\n"+"$selShapeS"+"\n");
+           print $selShapeS;
+           print "\nAA___\n";
+           $selSize=`size $selShapeS`;
+           appendStringArray($selShapeA, $selShapeS, $selSize);
+         }
+         for ($sel in $selShapeA)
+         {
+           $selSGs=`listConnections -s 1 -t shadingEngine $sel`;
+          // $selSize=`size $selSGs`;
+          	 for ($selat in $selSGs)
+	        	 {
+		           if((stringArrayContains($selat, $selSGa))==0)
+		           {//appendStringArray($selSGa, $selat, 1);
+		           stringArrayInsertAtIndex(size($selSGa), $selSGa, $selat);
+		           }
+		         }
+           
+         }
+         for ($sel in $selSGa)
+         {
+            $sel=$sel+".surfaceShader";
+           $selShaderS=`listConnections -s 1 $sel`;
+         //  $selSize=`size $selShaderS`;
+          // appendStringArray($VrselShaderA, $selShaderS, $selSize);
+           
+          	 for ($selatt in $selShaderS)
+	        	 {
+		           if((stringArrayContains($selatt, $VrselShaderA))==0)
+		           {//appendStringArray($selSGa, $selat, 1);
+		           stringArrayInsertAtIndex(size($VrselShaderA), $VrselShaderA, $selatt);
+		           }
+		         }
+         }
+         select $selmodle;
+         print $VrselShaderA;
+clear $selmodle $selShapeA $selShapeS $selSGa $selSGs $selShaderS ;
+}
+global proc VRselShaderCom()
+{
+	string $sel;
+	//string $selVrMtl[]=`ls -sl`;
+	///////////////////
+	string $selmodle[]=`ls -sl`;
+    string $selShapeS[]=`listRelatives -s $selmodle[0]`;
+   			$selShapeS[0]=$selmodle[0]+"|"+$selShapeS[0];
+   			//print $selShapeS[0];
+    string $selVrMtlSG[]=`listConnections -s 1 -t shadingEngine $selShapeS[0]`;
+           $selVrMtlSG[0]=$selVrMtlSG[0]+".surfaceShader";
+    string $selVrMtl[]=`listConnections -s 1 $selVrMtlSG[0]`;
+    print $selVrMtl[0];
+
+	///////////////////
+	global  string $VrselShaderA[];
+	int $i_sss=0;
+	for($sel in $VrselShaderA)
+	{
+		string $selVrMtlSet;
+		$selVrMtlSet=$selVrMtl[0]+".shaders["+$i_sss+"]";
+		defaultNavigation -ce -source $sel -destination $selVrMtlSet;
+		print "\n__\n";
+		print $sel;
+		print "\n";
+		print $selVrMtlSet;
+		$i_sss++;
+	}
+	clear $selmodle $selShapeS $selVrMtl;
+}
+
+
+
+//////////////////////////////////////
+global proc rigPoxy()
+{
+    string $mainGrp[]=`ls -sl`;
+    string $i;
+    for($i in $mainGrp)
+    {
+        setAttr ($i+".overrideEnabled") 1;
+        setAttr ($i+".overrideDisplayType") 2;
+        string $poxies[]=`listRelatives -c -pa $i`;
+        float $pos[]=`xform -q -ws -rp $i`;
+        string $ctrl[]=`spaceLocator -n ($i+"_px")`;
+        setAttr ($ctrl[0]+".overrideEnabled") 1;
+        setAttr ($ctrl[0]+".overrideColor") 17;
+        string $grp=`group -n ($ctrl[0]+"_Grp") $ctrl[0]`;
+        xform -ws -t $pos[0] $pos[1] $pos[2] $grp;
+        parent $i $ctrl[0];
+        addAttr -ln "renderer" -k 1 -at "enum" -en "vray:ass:mr:"  $ctrl[0];
+        
+        string $px;
+        for($px in $poxies)
+        {
+            if(`gmatch $px "*_vray"`)
+            {
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 0 -at "visibility" -v 1 $px;
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 1 -at "visibility" -v 0 $px;
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 2 -at "visibility" -v 0 $px;
+            };
+            if(`gmatch $px "*_ass"`)
+            {
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 0 -at "visibility" -v 0 $px;
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 1 -at "visibility" -v 1 $px;
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 2 -at "visibility" -v 0 $px;
+            };
+            if(`gmatch $px "*_mr"`)
+            {
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 0 -at "visibility" -v 0 $px;
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 1 -at "visibility" -v 0 $px;
+                setDrivenKeyframe -cd ($i+"_px.renderer") -dv 2 -at "visibility" -v 1 $px;
+            };
+        };
+        select -r $ctrl[0];
+    }
+}
+proxyTool;

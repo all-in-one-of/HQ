@@ -1,0 +1,222 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ addUserKnob {20 Add_logo l X_WaterMark}
+ addUserKnob {6 small_fonts l "Small Fonts" +STARTLINE}
+ addUserKnob {4 input_style l "Input Style" M {"From Input" "From .nk" "" "" "" ""}}
+ addUserKnob {4 status l "Shot Status" M {"In Progress" L-Approved C-Approved D-Approved "" "" "" ""}}
+ addUserKnob {1 shotname l INVISIBLE +INVISIBLE}
+ shotname "\[python \{nuke.knob('input.file').split('/').pop().split('.').pop(0)\}]     \[frame]"
+ addUserKnob {1 artist_name l INVISIBLE +INVISIBLE}
+ artist_name "\[python \{nuke.knob('input.file').split('/').pop().split('_').pop(2)\}] (\[date %d/%b])"
+ addUserKnob {1 shotname2 l INVISIBLE +INVISIBLE}
+ shotname2 "\[python \{nuke.knob('root.name').split('/').pop().split('.').pop(0)\}]     \[frame]"
+ addUserKnob {1 artist_name2 l INVISIBLE +INVISIBLE}
+ artist_name2 "\[python \{nuke.knob('root.name').split('/').pop().split('_').pop(2)\}] (\[date %d/%b])"
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 1081
+  ypos 468
+ }
+set N15300540 [stack 0]
+ Dot {
+  name Dot2
+  xpos 1254
+  ypos 571
+ }
+set N27d1b1c0 [stack 0]
+ Text {
+  cliptype none
+  message "\[value shotname2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 20 {"\[value input.width]-20" i} {"\[value input.height]" i}}
+  center {1024 778}
+  name shotname1_small
+  xpos 1154
+  ypos 612
+ }
+ Text {
+  message "Artist: \[value artist_name2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  yjustify bottom
+  Transform 1
+  box {20 20 1440 810}
+  center {960 540}
+  name Artist1_small
+  xpos 1154
+  ypos 667
+ }
+ Text {
+  message " \[value status]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {"\[value input.width]" i} {"\[value input.height]-20" i}}
+  center {960 540}
+  name Status3_small
+  xpos 1154
+  ypos 705
+ }
+push $N27d1b1c0
+ Text {
+  cliptype none
+  message "\[value shotname2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 50 {"\[value input.width]-80" i} {"\[value input.height]" i}}
+  center {1024 778}
+  name shotname2
+  xpos 1281
+  ypos 612
+ }
+ Text {
+  message "Artist: \[value artist_name2]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  yjustify bottom
+  Transform 1
+  box {50 50 1440 810}
+  center {960 540}
+  name Artist2
+  xpos 1281
+  ypos 670
+ }
+ Text {
+  message " \[value status]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 30
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {"\[value input.width]" i} {"\[value input.height]-30" i}}
+  center {960 540}
+  name Status1
+  xpos 1288
+  ypos 708
+ }
+ Switch {
+  inputs 2
+  which {{small_fonts i}}
+  name Switch3
+  xpos 1227
+  ypos 765
+ }
+push $N15300540
+ Dot {
+  name Dot1
+  xpos 1006
+  ypos 569
+ }
+set N17dde930 [stack 0]
+ Text {
+  cliptype none
+  message "\[value shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 20 {"\[value input.width]-20" i} {"\[value input.height]" i}}
+  center {1024 778}
+  name shotname_small
+  xpos 903
+  ypos 609
+ }
+ Text {
+  message "Artist: \[value artist_name]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  yjustify bottom
+  Transform 1
+  box {20 20 1440 810}
+  center {960 540}
+  name Artist_small
+  xpos 903
+  ypos 655
+ }
+ Text {
+  message "\[value status]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 20
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {"\[value input.width]" i} {"\[value input.height]-20" i}}
+  center {960 540}
+  name Status_small
+  xpos 903
+  ypos 694
+ }
+push $N17dde930
+ Text {
+  cliptype none
+  message "\[value shotname]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {0 50 {"\[value input.width]-80" i} {"\[value input.height]" i}}
+  center {1024 778}
+  name shotname
+  xpos 1043
+  ypos 610
+ }
+ Text {
+  message "Artist: \[value artist_name]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 40
+  yjustify bottom
+  Transform 1
+  box {50 50 1440 810}
+  center {960 540}
+  name Artist
+  selected true
+  xpos 1043
+  ypos 658
+ }
+ Text {
+  message "\[value status]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+  size 30
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {"\[value input.width]" i} {"\[value input.height]-30" i}}
+  center {960 540}
+  name Status2
+  xpos 1043
+  ypos 696
+ }
+ Switch {
+  inputs 2
+  which {{small_fonts i}}
+  name Switch2
+  xpos 976
+  ypos 758
+ }
+ Switch {
+  inputs 2
+  which {{input_style i}}
+  name Switch1
+  xpos 1073
+  ypos 852
+ }
+ Output {
+  name Output1
+  xpos 1073
+  ypos 954
+ }
+end_group

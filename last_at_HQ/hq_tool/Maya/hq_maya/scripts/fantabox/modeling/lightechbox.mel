@@ -1,0 +1,450 @@
+global proc lightechbox()
+{
+  if(`window -exists attrDisplayWindow`)
+  deleteUI attrDisplayWindow;
+  window -t "灯光属性显示及批量修改" -widthHeight  450 250 attrDisplayWindow;
+  columnLayout -cal "center" -co "left" 3;
+  frameLayout -label "属性通道栏显示" -labelAlign "bottom" -borderStyle "etchedOut" -w 450 ;
+  columnLayout;
+  button -h 40 -w 445 -l "通道栏显示选中灯光属性" -c "displaySelectedLightAttr"    getLightButton;
+  button -h 40 -w 445 -l "通道栏显示所有灯光属性" -c "displayLightAttr"    displayAttrButton;
+  setParent..;
+  setParent..;
+  frameLayout -label "属性批量修改" -labelAlign "bottom" -borderStyle "etchedOut" -w 450 ;
+  columnLayout -adj 1;
+  text -h 30 -w 445 -l "为选中灯光批量修改属性"     getLighttext2;
+  separator -w 445;
+  colorSliderGrp  -h 25 -w 450-cal 1 "right" -cw3 180 80 160 -label "灯光颜色" -rgb 1 1 1 -cc "changeLightColor" wkLightColor;
+  floatSliderGrp  -h 25 -w 450 -cal 1 "right" -cw3 180 79 140 -label "intensity" -field true  -value 1 -cc "changeIntensity" wkLightIntensity;
+
+ separator -w 445;
+ colorSliderGrp -h 25 -w 450 -cal 1 "right" -cw3 180 80 160 -label "阴影颜色" -rgb 0 0 0 -cc "changeshadowColor" wkshadowColor;
+ rowLayout -nc 1  -cat 1 "left" 180  -rat 1 "top" 6  -cl1 "center";
+ checkBox -label "Use Depth Map Shadows"   -align "left" -onc "setSliderEnable1" -ofc "setSliderUnable1" shadowcheckBox1;
+ setParent..;
+
+ intSliderGrp -w 450 -enable 0 -h 25 -cal 1 "right" -cw3 180 79 100 -minValue 16 -maxValue 8192 -fieldMinValue 16 -fieldMaxValue 8192 -label "Resolution" -field true  -value 512 -cc "changeShadowResolution" wkShadowResolution;  
+ intSliderGrp -w 450 -enable 0 -h 25 -cal 1 "right" -cw3 180 79 100  -label "Filter Size" -field true  -value 1 -cc "changeFilterSize" wkFilterSize;
+ floatSliderGrp -w 450 -enable 0 -h 25 -cal 1 "right" -cw3 180 79 100  -label "Bias"  -field true  -value 0.001 -cc "changeBias" wkBias;
+ intSliderGrp -w 450 -enable 0 -h 25 -cal 1 "right" -cw3 180 79 100  -label "Fog Shadow Intensity" -field true -maxValue 10  -value 1 -cc "changeFogShadowIntensity" wkFogShadowIntensity;
+ separator -w 445;
+ rowLayout -nc 1  -cat 1 "left" 180  -rat 1 "top" 6  -cl1 "center";
+ checkBox -label "Use Ray Trace Shadows"   -align "left" -onc "setSliderEnable2" -ofc "setSliderUnable2" shadowcheckBox2;
+ setParent..;
+ intSliderGrp -w 450 -enable 0 -h 25 -cal 1 "right" -cw3 180 79 100  -label "Shadow Rays" -field true  -value 1 -cc "changeShadowRays" wkShadowRays;
+ intSliderGrp -w 450 -enable 0 -h 25 -cal 1 "right" -cw3 180 79 100  -label "Ray depth Limit" -field true  -value 1 -cc "changeRayDepthLimit" wkRayDepthLimit;
+ optionMenuGrp -l "shadow Map Format" -cc "changeAttrs()" yyFormatMenu;
+ menuItem -label "Regular Shadow Map" ;
+ menuItem -label "Detail Shadow Map";
+ setParent ..;
+ checkBox -w 445 -l "Use mental ray shadow map overrides" -cc "checkBoxAttrs(0)" cbs;
+ intFieldGrp -l "Resolution" -v1 255 -cc "checkBoxAttrs(1)" ifgRes;
+ intFieldGrp -l "Samples" -v1 0 -cc "checkBoxAttrs(2)" ifgSam;
+ floatFieldGrp -l "Softness" -v1 0.000 -cc "checkBoxAttrs(3)" ffgSof;
+ floatFieldGrp -l "Bias" -v1 0.000 -cc "checkBoxAttrs(4)" ffgBias;
+ intFieldGrp -l "Samples" -v1 0 -cc "checkBoxAttrs(5)" ifgSamp;
+ floatFieldGrp -l "Accuracy" -v1 0.000 -cc "checkBoxAttrs(6)" ffgAcc;
+ setParent..;     
+  showWindow;
+     
+}
+global proc changeAttrs()
+{
+    int $v = `optionMenuGrp -q -sl yyFormatMenu`;
+    if (`optionMenuGrp -q -ex formatMenu`)
+        optionMenuGrp -e -sl $v formatMenu;
+    string $sels[] = `ls -sl`;
+    if (size($sels)){
+        string $lightShapes[] = `listRelatives -s $sels[0]`;
+        miLightUpdateShadowMapFormat($lightShapes[0]);
+    }
+}
+global proc checkBoxAttrs(int $ty)
+{
+    string $sel[] = `ls -sl`;
+    if (size($sel)){
+        for ($s in $sel){
+            string $lightShape[] = `listRelatives -s $s`;
+            if($ty == 0){
+                int $gInt00 = `checkBox -q -v cbs`;
+                setAttr ($lightShape[0] + ".shadowMap") $gInt00;}
+            else if($ty == 1){
+                int $gInt01 = `intFieldGrp -q -v1 ifgRes`;
+                setAttr ($lightShape[0] + ".smapResolution") $gInt01;}
+            else if($ty == 2){
+                int $gInt02 = `intFieldGrp -q -v1 ifgSam`;
+                setAttr ($lightShape[0] + ".smapSamples") $gInt02;}
+            else if($ty == 3){
+                int $gInt03 = `floatFieldGrp -q -v1 ffgSof`;
+                setAttr ($lightShape[0] + ".smapSoftness") $gInt03;}
+            else if($ty == 4){
+                int $gInt04 = `floatFieldGrp -q -v1 ffgBias`;
+                setAttr ($lightShape[0] + ".smapBias") $gInt04;}
+            else if($ty == 5){
+                int $gInt05 = `intFieldGrp -q -v1 ifgSamp`;
+                setAttr ($lightShape[0] + ".smapDetailSamples") $gInt05;}
+            else if($ty == 6){
+                int $gInt06 = `floatFieldGrp -q -v1 ffgAcc`;
+                setAttr ($lightShape[0] + ".smapDetailAccuracy") $gInt06;}
+        }
+    }
+}
+ global proc int getAllLightShape()
+ {
+  global string $wkAllLight[];
+  global string $wkAllLightShape[];
+  global string $allObj[];
+  clear($wkAllLight);
+  clear($wkAllLightShape);
+  clear($allObj); 
+ 
+  $allObj=`ls -tr`;
+  int $light_j=0;
+  int $num=`size($allObj)`;
+  for($i=0;$i<$num;$i++)
+    { 
+      string $objShape[]=`pickWalk -d down $allObj[$i]`;
+      if (`objectType $objShape[0]` == "ambientLight"
+        ||`objectType $objShape[0]` == "directionalLight"
+        ||`objectType $objShape[0]` == "pointLight"
+        ||`objectType $objShape[0]` == "spotLight"
+        ||`objectType $objShape[0]` == "areaLight"
+        ||`objectType $objShape[0]` == "volumeLight")   
+       {
+         $wkAllLight[$light_j]= $allObj[$i];
+         $wkAllLightShape[$light_j]= $objShape[0];
+         ++$light_j; 
+      }
+    }
+  return 1;
+}
+global proc int displayLightAttr()
+{
+  global string $wkAllLight[];
+  global string $wkAllLightShape[];
+  getAllLightShape();
+  int $num=`size($wkAllLightShape)`; 
+  for($i=0;$i<$num;$i++)
+   { 
+    if (`objectType $wkAllLightShape[$i]` != "ambientLight")
+     {
+      string $lightdmapResolution=$wkAllLightShape[$i]+".dmapResolution";
+      string $lightdmapFilterSize=$wkAllLightShape[$i]+".dmapFilterSize";
+      string $lightfogShadowIntensity=$wkAllLightShape[$i]+".fogShadowIntensity";
+      string $lightuseMidDistDmap=$wkAllLightShape[$i]+".useMidDistDmap";
+      string $lightuseDmapAutoFocus=$wkAllLightShape[$i]+".useDmapAutoFocus";
+      string $lightdmapWidthFocus=$wkAllLightShape[$i]+".dmapWidthFocus";
+      string $lightvolumeShadowSamples=$wkAllLightShape[$i]+".volumeShadowSamples";
+      string $lightdmapSceneName=$wkAllLightShape[$i]+".dmapSceneName";
+       setAttr -cb true $lightdmapResolution;
+       setAttr -cb true $lightdmapFilterSize;
+       setAttr -cb true $lightfogShadowIntensity;
+       setAttr -cb true $lightuseMidDistDmap;
+       setAttr -cb true $lightuseDmapAutoFocus;
+       setAttr -cb true $lightdmapWidthFocus;
+       setAttr -cb true $lightvolumeShadowSamples;
+       setAttr -cb true $lightdmapSceneName;
+       setAttr -keyable true $lightdmapResolution;
+       setAttr -keyable true $lightdmapFilterSize;
+       setAttr -keyable true $lightfogShadowIntensity;
+       setAttr -keyable true $lightuseMidDistDmap;
+       setAttr -keyable true $lightuseDmapAutoFocus;
+       setAttr -keyable true $lightdmapWidthFocus;
+       setAttr -keyable true $lightvolumeShadowSamples;
+       setAttr -keyable true $lightdmapSceneName;
+     }
+   } 
+ return 1;
+}
+ global proc  getAllSelectLightShape()
+ {
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  global string $allSelectObj[];
+  clear($wkAllSelectLight);
+  clear($wkAllSelectLightShape);
+  $allSelectObj=`ls -sl`;
+  int $light_j=0;
+  int $num=`size($allSelectObj)`;
+  for($i=0;$i<$num;$i++)
+    { 
+      string $objShape[];
+      if(`objectType $allSelectObj[$i]`=="transform")
+       {$objShape=`pickWalk -d down $allSelectObj[$i]`;}
+     else {$objShape[0]=$allSelectObj[$i];}
+      if (`objectType $objShape[0]` == "ambientLight"
+        ||`objectType $objShape[0]` == "directionalLight"
+        ||`objectType $objShape[0]` == "pointLight"
+        ||`objectType $objShape[0]` == "spotLight"
+        ||`objectType $objShape[0]` == "areaLight"
+        ||`objectType $objShape[0]` == "volumeLight")   
+       {
+         $wkAllSelectLight[$light_j]= $allSelectObj[$i];
+         $wkAllSelectLightShape[$light_j]= $objShape[0];
+         ++$light_j; 
+      }
+    }
+/*  int $i=`size($wkAllSelectLightShape)`;
+  print "AllSelectLightShape ";print $i;
+  print "\n";
+  $i=`size($allSelectObj)`;
+  print "$allSelectObj ";print $i;
+  print "\n";
+*/
+ select $allSelectObj;
+}
+global proc int displaySelectedLightAttr()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  int $num=`size($wkAllSelectLightShape)`; 
+  for($i=0;$i<$num;$i++)
+   { 
+    if (`objectType $wkAllSelectLightShape[$i]` != "ambientLight")
+     {
+      string $lightdmapResolution=     $wkAllSelectLightShape[$i]+".dmapResolution";
+      string $lightdmapFilterSize=     $wkAllSelectLightShape[$i]+".dmapFilterSize";
+      string $lightfogShadowIntensity= $wkAllSelectLightShape[$i]+".fogShadowIntensity";
+      string $lightuseMidDistDmap=     $wkAllSelectLightShape[$i]+".useMidDistDmap";
+      string $lightuseDmapAutoFocus=   $wkAllSelectLightShape[$i]+".useDmapAutoFocus";
+      string $lightdmapWidthFocus=     $wkAllSelectLightShape[$i]+".dmapWidthFocus";
+      string $lightvolumeShadowSamples=$wkAllSelectLightShape[$i]+".volumeShadowSamples";
+      string $lightdmapSceneName=      $wkAllSelectLightShape[$i]+".dmapSceneName";
+       setAttr -cb true $lightdmapResolution;
+       setAttr -cb true $lightdmapFilterSize;
+       setAttr -cb true $lightfogShadowIntensity;
+       setAttr -cb true $lightuseMidDistDmap;
+       setAttr -cb true $lightuseDmapAutoFocus;
+       setAttr -cb true $lightdmapWidthFocus;
+       setAttr -cb true $lightvolumeShadowSamples;
+       setAttr -cb true $lightdmapSceneName;
+       setAttr -keyable true $lightdmapResolution;
+       setAttr -keyable true $lightdmapFilterSize;
+       setAttr -keyable true $lightfogShadowIntensity;
+       setAttr -keyable true $lightuseMidDistDmap;
+       setAttr -keyable true $lightuseDmapAutoFocus;
+       setAttr -keyable true $lightdmapWidthFocus;
+       setAttr -keyable true $lightvolumeShadowSamples;
+       setAttr -keyable true $lightdmapSceneName;
+     }
+   } 
+ return 1;
+}
+global proc changeLightColor()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myLightcolor[]=`colorSliderGrp -q -rgb wkLightColor` ;
+  float $myShadowcolor[]=`colorSliderGrp -q -rgb wkshadowColor` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+      string $selectLightcolor=$wkAllSelectLightShape[$j]+".color"; 
+      setAttr $selectLightcolor -type float3 $myLightcolor[0] $myLightcolor[1] $myLightcolor[2];
+  }
+    
+}
+global proc changeshadowColor()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myShadowcolor[]=`colorSliderGrp -q -rgb wkshadowColor` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+      string $selectLightcolor=$wkAllSelectLightShape[$j]+".shadowColor"; 
+      setAttr $selectLightcolor -type float3 $myShadowcolor[0] $myShadowcolor[1] $myShadowcolor[2];
+  }
+    
+}
+global proc changeIntensity()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myLightIntensity=`floatSliderGrp -q -value wkLightIntensity` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+      string $selectLightcolor=$wkAllSelectLightShape[$j]+".intensity"; 
+      setAttr $selectLightcolor $myLightIntensity;
+  }
+    
+}
+global proc changeShadowResolution()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myShadowResolution=`intSliderGrp -q -value wkShadowResolution` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+   if (`objectType $wkAllSelectLightShape[$j]` != "ambientLight")
+   {string $selectLightcolor=$wkAllSelectLightShape[$j]+".dmapResolution"; 
+      setAttr $selectLightcolor $myShadowResolution;}
+  }
+    
+}
+global proc changeFilterSize()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myFilterSize=`intSliderGrp -q -value wkFilterSize` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+   if (`objectType $wkAllSelectLightShape[$j]` != "ambientLight")
+   {string $selectLightcolor=$wkAllSelectLightShape[$j]+".dmapFilterSize"; 
+      setAttr $selectLightcolor $myFilterSize;}
+  }
+    
+}
+global proc changeBias()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myBias=`floatSliderGrp -q -value wkBias` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+   if (`objectType $wkAllSelectLightShape[$j]` != "ambientLight")
+   {string $selectLightcolor=$wkAllSelectLightShape[$j]+".dmapBias"; 
+      setAttr $selectLightcolor $myBias;}
+  }
+    
+}
+global proc changeFogShadowIntensity()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myFogShadowIntensity=`intSliderGrp -q -value wkFogShadowIntensity` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+   if (`objectType $wkAllSelectLightShape[$j]` != "ambientLight")
+   {string $selectLightcolor=$wkAllSelectLightShape[$j]+".fogShadowIntensity"; 
+      setAttr $selectLightcolor $myFogShadowIntensity;}
+  }
+    
+}
+global proc changeShadowRays()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myShadowRays=`intSliderGrp -q -value wkShadowRays` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+
+   string $selectLightcolor=$wkAllSelectLightShape[$j]+".shadowRays"; 
+      setAttr $selectLightcolor $myShadowRays;
+  }
+    
+}
+global proc changeRayDepthLimit()
+{
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  float $myRayDepthLimit=`intSliderGrp -q -value wkRayDepthLimit` ;
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+
+   string $selectLightcolor=$wkAllSelectLightShape[$j]+".rayDepthLimit"; 
+      setAttr $selectLightcolor $myRayDepthLimit;
+  }
+    
+}
+global proc setSliderEnable1()
+{
+ checkBox -e -v 0 shadowcheckBox2;
+ setSliderUnable2();
+ intSliderGrp -e -enable 1 wkShadowResolution;
+ intSliderGrp -e -enable 1 wkFilterSize;
+ floatSliderGrp -e -enable 1 wkBias;
+ intSliderGrp -e -enable 1 wkFogShadowIntensity;
+ 
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+   if (`objectType $wkAllSelectLightShape[$j]` != "ambientLight")
+   {string $selectLightcolor=$wkAllSelectLightShape[$j]+".useDepthMapShadows"; 
+      setAttr $selectLightcolor 1;}
+  }
+ }
+ global proc setSliderUnable1()
+{
+ intSliderGrp -e -enable 0 wkShadowResolution;
+ intSliderGrp -e -enable 0 wkFilterSize;
+ floatSliderGrp -e -enable 0 wkBias;
+ intSliderGrp -e -enable 0 wkFogShadowIntensity;
+ 
+   global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+   if (`objectType $wkAllSelectLightShape[$j]` != "ambientLight")
+   {string $selectLightcolor=$wkAllSelectLightShape[$j]+".useDepthMapShadows"; 
+      setAttr $selectLightcolor 0;}
+  }
+ }
+ global proc setSliderEnable2()
+{
+ checkBox -e -v 0 shadowcheckBox1;
+ setSliderUnable1();
+ intSliderGrp -e -enable 1 wkShadowRays;
+ intSliderGrp -e -enable 1 wkRayDepthLimit;
+ 
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+      string $selectLightcolor=$wkAllSelectLightShape[$j]+".useRayTraceShadows"; 
+      setAttr $selectLightcolor 1;
+  }
+ }
+  global proc setSliderUnable2()
+{
+ intSliderGrp -e -enable 0 wkShadowRays;
+ intSliderGrp -e -enable 0 wkRayDepthLimit;
+ 
+  global string $wkAllSelectLight[];
+  global string $wkAllSelectLightShape[];
+  getAllSelectLightShape();
+  int $i=`size($wkAllSelectLightShape)`;
+  int $j;
+  for($j=0;$j<$i;$j++)
+  {
+      string $selectLightcolor=$wkAllSelectLightShape[$j]+".useRayTraceShadows"; 
+      setAttr $selectLightcolor 0;
+  }
+ }
+lightechbox();

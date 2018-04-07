@@ -1,0 +1,68 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ addUserKnob {20 X_IDmask}
+ addUserKnob {3 maskid l "Mask ID"}
+ maskid 1
+ addUserKnob {6 premult l Premult(alpha) +STARTLINE}
+ premult true
+ addUserKnob {6 disable_erode l "Disable Erode" +STARTLINE}
+ disable_erode true
+ addUserKnob {7 edge_size l "Edge Erode" R -5 5}
+ addUserKnob {7 edge_blur l "Edge Blur"}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -38
+  ypos -302
+ }
+ Shuffle {
+  green red
+  blue red
+  name Shuffle1
+  xpos -38
+  ypos -270
+ }
+ Grade {
+  blackpoint {{maskid-1 i}}
+  whitepoint {{maskid i}}
+  name Grade1
+  xpos -38
+  ypos -238
+ }
+ Clamp {
+  MaxClampTo 0
+  MaxClampTo_enable true
+  name Clamp1
+  xpos -38
+  ypos -212
+ }
+ Dilate {
+  size -1
+  name Dilate1
+  xpos -38
+  ypos -170
+  disable {{disable_erode i}}
+ }
+ Erode {
+  channels all
+  size {{edge_size}}
+  blur {{edge_blur}}
+  quality 30
+  name Erode1
+  xpos -38
+  ypos -128
+ }
+ Premult {
+  name Premult1
+  xpos -38
+  ypos -47
+  disable {{abs(obay_a-1) i}}
+ }
+ Output {
+  name Output1
+  xpos -38
+  ypos 11
+ }
+end_group

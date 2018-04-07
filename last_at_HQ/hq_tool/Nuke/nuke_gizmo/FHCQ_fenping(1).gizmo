@@ -1,0 +1,86 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ note_font_color 0xffffffff
+ addUserKnob {20 User l singleOut}
+ addUserKnob {4 ScreenOut l ScreenOutput M {1 2 3 4 5 6}}
+ ScreenOut 6
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -588
+  ypos -24
+ }
+ Dot {
+  name Dot1
+  xpos -554
+  ypos 16
+ }
+set N2b1b7800 [stack 0]
+ Crop {
+  box {8800 0 10560 1200}
+  reformat true
+  crop false
+  name Crop6
+  xpos -344
+  ypos 79
+ }
+push $N2b1b7800
+ Crop {
+  box {7040 0 8800 1200}
+  reformat true
+  crop false
+  name Crop5
+  xpos -449
+  ypos 78
+ }
+push $N2b1b7800
+ Crop {
+  box {5280 0 7040 1200}
+  reformat true
+  crop false
+  name Crop4
+  xpos -552
+  ypos 80
+ }
+push $N2b1b7800
+ Crop {
+  box {3520 0 5280 1200}
+  reformat true
+  crop false
+  name Crop3
+  xpos -654
+  ypos 80
+ }
+push $N2b1b7800
+ Crop {
+  box {1760 0 3520 1200}
+  reformat true
+  crop false
+  name Crop2
+  xpos -753
+  ypos 80
+ }
+push $N2b1b7800
+ Crop {
+  box {0 0 1760 1200}
+  reformat true
+  crop false
+  name Crop1
+  xpos -855
+  ypos 80
+ }
+ Switch {
+  inputs 6
+  which {{ScreenOut}}
+  name Switch1
+  xpos -595
+  ypos 170
+ }
+ Output {
+  name Output1
+  xpos -595
+  ypos 259
+ }
+end_group

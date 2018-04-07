@@ -1,0 +1,1 @@
+若出现卸载不了arnold，请解压该文件到arnold安装路径根目录（默认安装路径为：C:\solidangle\mtoadeploy\2015），替换原来文件并运行进行卸载

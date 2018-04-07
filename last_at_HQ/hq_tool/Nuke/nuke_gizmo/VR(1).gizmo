@@ -1,0 +1,206 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ inputs 2
+ addUserKnob {20 ST}
+ addUserKnob {41 format_1 l format T Constant1.format}
+ addUserKnob {41 input l "Input Type" T SphericalTransform1.input}
+ addUserKnob {41 rot_order l "Input Rotation Order" T SphericalTransform1.rot_order}
+ addUserKnob {41 rx T SphericalTransform1.rx}
+ addUserKnob {41 ry T SphericalTransform1.ry}
+ addUserKnob {41 rz T SphericalTransform1.rz}
+ addUserKnob {41 output l "Output Type" T SphericalTransform1.output}
+ addUserKnob {41 out_rot_order l "Output Rotation Order" T SphericalTransform1.out_rot_order}
+ addUserKnob {41 out_rx l rx T SphericalTransform1.out_rx}
+ addUserKnob {41 out_ry l ry T SphericalTransform1.out_ry}
+ addUserKnob {41 out_rz l rz T SphericalTransform1.out_rz}
+ addUserKnob {41 format l "output format" T SphericalTransform1.format}
+ addUserKnob {41 filter T SphericalTransform1.filter}
+}
+ Input {
+  inputs 0
+  name axis
+  label axis
+  xpos 294
+  ypos -407
+  number 1
+ }
+set Ne3f84000 [stack 0]
+ Camera2 {
+  display off
+  rotate {90 0 0}
+  focal 12
+  haperture 24
+  vaperture 24
+  name Camera4
+  xpos 511
+  ypos -226
+ }
+set Nb94d4400 [stack 0]
+push $Ne3f84000
+ Camera2 {
+  display off
+  rotate {-90 0 0}
+  focal 12
+  haperture 24
+  vaperture 24
+  name Camera6
+  xpos 620
+  ypos -227
+ }
+set Nb94d4000 [stack 0]
+push $Nb94d4400
+push $Ne3f84000
+ Camera2 {
+  display off
+  rotate {0 180 0}
+  focal 12
+  haperture 24
+  vaperture 24
+  name Camera5
+  xpos 401
+  ypos -227
+ }
+set Nb94d5c00 [stack 0]
+push $Ne3f84000
+ Camera2 {
+  display off
+  rotate {0 -90 0}
+  focal 12
+  haperture 24
+  vaperture 24
+  name Camera3
+  xpos 291
+  ypos -227
+ }
+set Nb94d5800 [stack 0]
+push $Ne3f84000
+ Camera2 {
+  display off
+  rotate {0 90 0}
+  focal 12
+  haperture 24
+  vaperture 24
+  name Camera2
+  xpos 181
+  ypos -227
+ }
+set Nb94d5400 [stack 0]
+push $Ne3f84000
+ Camera2 {
+  display off
+  focal 12
+  haperture 24
+  vaperture 24
+  name Camera1
+  xpos 68
+  ypos -227
+ }
+set N71de5c00 [stack 0]
+ Input {
+  inputs 0
+  name source
+  label source
+  xpos -61
+  ypos -374
+ }
+ Sphere {
+  name Sphere1
+  xpos -61
+  ypos -312
+ }
+ Scene {
+  inputs 7
+  name Scene1
+  xpos -51
+  ypos -226
+ }
+set N71eabc00 [stack 0]
+ Constant {
+  inputs 0
+  channels rgb
+  format "2880 1440 0 0 2880 1440 1 "
+  name Constant1
+  xpos 444
+  ypos -429
+ }
+set N71eab800 [stack 0]
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender5
+  xpos 501
+  ypos -102
+ }
+push $Nb94d4000
+push $N71eabc00
+push $N71eab800
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender6
+  xpos 610
+  ypos -104
+ }
+push $Nb94d5800
+push $N71eabc00
+push $N71eab800
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender3
+  xpos 281
+  ypos -96
+ }
+push $Nb94d5400
+push $N71eabc00
+push $N71eab800
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender2
+  xpos 171
+  ypos -97
+ }
+push $Nb94d5c00
+push $N71eabc00
+push $N71eab800
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender4
+  xpos 391
+  ypos -98
+ }
+push $N71de5c00
+push $N71eabc00
+push $N71eab800
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  name ScanlineRender1
+  xpos 58
+  ypos -97
+ }
+ SphericalTransform {
+  inputs 6
+  input Cube
+  output Cube
+  out_ry -180
+  fix true
+  name SphericalTransform1
+  xpos 336
+  ypos -22
+ }
+ Output {
+  name Output1
+  xpos 336
+  ypos 58
+ }
+end_group

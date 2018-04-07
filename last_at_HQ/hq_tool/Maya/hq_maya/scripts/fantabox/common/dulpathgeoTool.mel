@@ -1,0 +1,440 @@
+global proc dulpathgeoTool()
+{
+	
+	if(`window -q -ex YY_DL_Win`)
+	{
+	deleteUI YY_DL_Win;
+	};
+	window 
+		  -wh 480 300
+		  -mb 1
+		  -s 1
+		  -t "路径复制工具"
+		  YY_DL_Win;
+	
+	menu -l "帮助";
+	menuItem -l "使用帮助" -c YY_DL_Help;
+	menu -l "关于";
+	menuItem -l "关于" -c YY_DL_About;
+	
+	
+	columnLayout -adj 1 -cat "both" 10 -rs 5;
+	text -l "线性路径复制工具";
+	separator;
+	rowLayout -nc 2 -cw2 150 150;
+	checkBox -l "关联复制" -onc "YY_DL_InS\"0\"" -ofc "YY_DL_InS\"1\""YY_DL_CB_A;
+	//checkBox -l "复制输入节点";
+	setParent ..;
+	rowLayout -nc 2 -cw2 150 150 ;
+	checkBox -l "复制输入连接" YY_DL_CB_C;
+	checkBox -l "关联节点" YY_DL_CB_D;
+	setParent ..;
+	separator -h 10;
+	radioButtonGrp -nrb 3 -l1 "曲线点复制" -l2 "指定复制个数" -l3 "指定距离复制"-sl 1 -on1 "YY_DL_DU_Num\"0\" \"0\"" -on2 "YY_DL_DU_Num\"1\" \"0\"" -on3  "YY_DL_DU_Num\"0\" \"1\""  YY_DL_RBG;
+	intSliderGrp -f 1 -en 0 -min 1 -max 100 -fmn 1 -fmx 10000 -v 1 -l "复制个数：" -ct3 "left" "left" "left" -cw3 60 50 190 YY_DL_Dum;
+	intSliderGrp -f 1 -en 0 -min 1 -max 100 -fmn 0 -fmx 100 -v 1 -l "间隔距离：" -ct3 "left" "left" "left" -cw3 60 50 190 YY_DL_Sdistance;
+	separator -h 10;
+	//new checkBoxs
+	rowLayout -nc 4 -cw4 150 150 150 150;
+	checkBox -l "沿曲线方向" -onc "YY_DL_FDiret\"0\"" -ofc "YY_DL_FDiret\"1\"" YY_DL_CB_E;
+	checkBox -l "随机方向"  -onc "YY_DL_RDiret\"0\"" -ofc "YY_DL_RDiret\"1\"" YY_DL_CB_F;
+	checkBox -l "随机距离"   -en 0 YY_DL_CB_G;
+	setParent ..;
+	
+	
+	separator -h 10;
+	button -h 50 -l "开始复制" -c YY_DL_Proc YY_DL_Button;
+	showWindow YY_DL_Win;
+	
+	window -e
+		  -wh 480 300
+		  YY_DL_Win;
+};
+////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_DL_Proc()
+{	
+	string $YY_DL_String = "";
+	int $YY_DL_Int_A = `checkBox -q -v YY_DL_CB_A`;
+	//int $YY_DL_Int_B = `checkBox -q -v YY_DL_CB_B`;
+	int $YY_DL_Int_C = `checkBox -q -v YY_DL_CB_C`;
+	int $YY_DL_Int_D = `checkBox -q -v YY_DL_CB_D`;
+	//new checkBoxs	
+	int $YY_DL_Int_E=`checkBox -q -v YY_DL_CB_E`;
+	int $YY_DL_Int_F=`checkBox -q -v YY_DL_CB_F`;
+	int $YY_DL_Int_G=`checkBox -q -v YY_DL_CB_G`;
+		
+	int $YY_DL_Curve_Point = `radioButtonGrp -q -sl YY_DL_RBG`;
+
+	if($YY_DL_Int_C == 1)
+	{
+	$YY_DL_String += "-ic";
+	};
+	if($YY_DL_Int_D == 1)
+	{
+	$YY_DL_String += "-instanceLeaf";
+	};
+	
+	string $YY_DupLine_Sel[] = `ls -sl`;
+	makeIdentity -apply 1 -t 1 -r 0 -s 0 -n 0 $YY_DupLine_Sel[0];
+	float $YY_DupLin_Sph_Piv[] = `xform -q -ws -piv $YY_DupLine_Sel[1]`;
+	if(!`objExists YY_Duplicate_Line_Group`)
+	{
+	group -n YY_Duplicate_Line_Group -em ;
+	};
+
+       
+
+ 
+	switch($YY_DL_Curve_Point)
+	{
+	case 1 :
+		
+				
+		int $YY_DL_GA = `getAttr ($YY_DupLine_Sel[0] + ".form")`; 
+
+		int $YY_DL_Sp = `getAttr ($YY_DupLine_Sel[0] + ".spans")`; 
+		    if($YY_DL_GA == 0)
+		    {
+		    $YY_DL_Sp += `getAttr ($YY_DupLine_Sel[0] + ".degree")`;
+		    };
+
+			for($Yi = 0;$Yi<$YY_DL_Sp;$Yi++)
+			{
+			    string $YY_DL_Du_Namer[];	
+			    float $YY_DL_Sp_Fl[3] = `xform -q -ws -t ($YY_DupLine_Sel[0] + ".cv[" + $Yi + "]")`;
+			    float $YY_DupLin_Float_A =  $YY_DL_Sp_Fl[0] - $YY_DupLin_Sph_Piv[0];
+			    float $YY_DupLin_Float_B =  $YY_DL_Sp_Fl[1] - $YY_DupLin_Sph_Piv[1];
+			    float $YY_DupLin_Float_C =  $YY_DL_Sp_Fl[2] - $YY_DupLin_Sph_Piv[2];
+			    if($YY_DL_Int_A == 1)
+			    {
+			    $YY_DL_Du_Namer = `instance $YY_DupLine_Sel[1]`;
+			    //xform -os -t $YY_DupLin_Float_A $YY_DupLin_Float_B $YY_DupLin_Float_C $YY_DL_Du_Namer[0];
+			    parent $YY_DL_Du_Namer YY_Duplicate_Line_Group;
+			    }
+			    else
+			    {
+			    $YY_DL_Du_Namer = eval ("duplicate -rr " + $YY_DL_String  + " " + $YY_DupLine_Sel[1]);
+			    //xform -os -t $YY_DupLin_Float_A $YY_DupLin_Float_B $YY_DupLin_Float_C $YY_DL_Du_Namer[0];
+			    parent $YY_DL_Du_Namer YY_Duplicate_Line_Group;
+			    };
+
+
+                //print $YY_DupLin_Sph_Piv;
+			    if($YY_DL_Int_F == 1)
+			    { 
+			     int $randRotY=rand(5,350);
+			     int $randRotX=rand(-65,65);
+			     int $randRotZ=rand(-65,65);
+			     rotate -r $randRotX $randRotY $randRotZ;
+			    }
+                
+                            if($YY_DL_Int_E == 1)
+					    { vector $NewPo=<<$YY_DL_Sp_Fl[0],$YY_DL_Sp_Fl[1],$YY_DL_Sp_Fl[2]>>;
+					      vector $OriginPo=<<$YY_DupLin_Sph_Piv[0],$YY_DupLin_Sph_Piv[1],$YY_DupLin_Sph_Piv[2]>>;
+					     
+					       vector $XO=<<1,0,0>>;
+						vector $YO=<<0,1,0>>;
+						vector $ZO=<<0,0,1>>;
+					  float $FangleX=`angle $NewPo $XO`; 
+					   float $FRotX=`rad_to_deg($FangleX)`;
+						    
+					 float $FangleY=`angle $NewPo $YO`; 
+					   float $FRotY=`rad_to_deg($FangleY)`;
+						    
+					float $FangleZ=`angle $NewPo $ZO`; 
+					   float $FRotZ=`rad_to_deg($FangleZ)`;
+						    
+						    
+						    
+					     float $FRotY=$FRotY;
+					    float $FRotX=$FRotX;
+					     float $FRotZ=$FRotZ;
+					      rotate -r $FRotX $FRotY $FRotZ;
+					    }
+			    
+			 
+			    move -r $YY_DupLin_Float_A $YY_DupLin_Float_B $YY_DupLin_Float_C $YY_DL_Du_Namer[0];
+			     //keyframe -e -iub false -an objects -r -o move -tc 5 $YY_DL_Du_Namer[0];
+			    
+
+			};
+		break;
+		
+	case 2 :
+		  
+		    string $YY_DL_Du_Namer_B[];	
+			int $YY_DL_IFG_Num = `intSliderGrp -q -v YY_DL_Dum`;
+	                
+	               	   
+			float $YY_DL_Point_Float = 0.000;
+			float $YY_DL_Point_Float_Add = 1.000 / ($YY_DL_IFG_Num-1);
+		    string $YY_DL_DUP_Curves_B[] = `duplicate -rr $YY_DupLine_Sel[0]`;	
+			
+		    rebuildCurve -ch 0 -rpo 1 -rt 0 -end 1 -kr 0 -kcp 0 -kep 1 -kt 0 -s $YY_DL_IFG_Num -d 3 -tol 0.01 $YY_DL_DUP_Curves_B[0];	
+			for($YY_DL_i = 0;$YY_DL_i<$YY_DL_IFG_Num;$YY_DL_i++)
+			{  
+				
+                                float $YY_DL_PointCurve[] = `pointOnCurve -pr $YY_DL_Point_Float -p -top 1 $YY_DL_DUP_Curves_B[0]`;				
+				float $YY_curvature_Direct[]=`pointOnCurve -pr $YY_DL_Point_Float -cc -top 1 $YY_DL_DUP_Curves_B[0]`;
+				float $YY_DupLin_Float_D = $YY_DL_PointCurve[0] - $YY_DupLin_Sph_Piv[0];
+				float $YY_DupLin_Float_E = $YY_DL_PointCurve[1] - $YY_DupLin_Sph_Piv[1];
+				float $YY_DupLin_Float_F = $YY_DL_PointCurve[2] - $YY_DupLin_Sph_Piv[2];
+
+				if($YY_DL_Int_A == 1)
+				{
+				$YY_DL_Du_Namer_T = `instance $YY_DupLine_Sel[1]`;
+								 
+					
+					move -r $YY_DupLin_Float_D $YY_DupLin_Float_E $YY_DupLin_Float_F $YY_DL_Du_Namer_T[0];
+					parent $YY_DL_Du_Namer_T YY_Duplicate_Line_Group;
+				}
+				else
+				{
+				$YY_DL_Du_Namer_B = eval ("duplicate -rr " + $YY_DL_String  + " " + $YY_DupLine_Sel[1]);
+				
+				if($YY_DL_Int_G==1)
+					    {
+					      float $randP=rand(0,1);
+					     float $randPoint[]=`pointOnCurve -pr $randP -p $YY_DL_DUP_Curves_B[0]`;
+						    
+					 			     
+					     move -r $randPoint[0] $randPoint[1] $randPoint[2] $YY_DL_Du_Namer_B[0];
+					     }
+				else
+				{   
+						 move -r $YY_DupLin_Float_D $YY_DupLin_Float_E $YY_DupLin_Float_F $YY_DL_Du_Namer_B[0];}
+					
+					
+					
+					      if($YY_DL_Int_F == 1)
+						    {
+						     int $randRotY=rand(5,350);
+						     int $randRotX=rand(-65,65);
+						     int $randRotZ=rand(-65,65);
+						     rotate -r $randRotX $randRotY $randRotZ;
+						    }
+						    
+				      if($YY_DL_Int_E == 1)
+					    { vector $NewPo=<<$YY_DL_PointCurve[0],$YY_DL_PointCurve[1],$YY_DL_PointCurve[2]>>;
+					      vector $OriginPo=<<$YY_DupLin_Sph_Piv[0],$YY_DupLin_Sph_Piv[1],$YY_DupLin_Sph_Piv[2]>>;
+					          vector $XO=<<1,0,0>>;
+						vector $YO=<<0,1,0>>;
+						vector $ZO=<<0,0,1>>;
+					      float $FangleX=`angle $NewPo $XO`; 
+					      float $FRotX=`rad_to_deg($FangleX)`;
+						    
+					      float $FangleY=`angle $NewPo $YO`; 
+					      float $FRotY=`rad_to_deg($FangleY)`;
+						    
+					     float $FangleZ=`angle $NewPo $ZO`; 
+					     float $FRotZ=`rad_to_deg($FangleZ)`;
+						    
+						    
+						    
+					     float $FRotY=$FRotY;
+					    float $FRotX=$FRotX;
+					     float $FRotZ=$FRotZ;
+					      rotate -r $FRotX $FRotY $FRotZ;
+					    }
+					
+					parent $YY_DL_Du_Namer_B YY_Duplicate_Line_Group;
+				};
+				                                   
+				$YY_DL_Point_Float += $YY_DL_Point_Float_Add;
+			};
+			delete $YY_DL_DUP_Curves_B;
+		break;
+		
+	case 3 :
+		  int $stepD = `intSliderGrp -q -v YY_DL_Sdistance`; 
+		 int $stepK = `intSliderGrp -q -en YY_DL_Sdistance`; 
+		       int $range=100/$stepD;				   
+			float $YY_DL_Point_Float = 0.000;
+			float $YY_DL_Point_Float_Add = $stepD/100.000;
+		       string $YY_DL_DUP_Curves_B[] = `duplicate -rr $YY_DupLine_Sel[0]`;	
+		    rebuildCurve -ch 0 -rpo 1 -rt 0 -end 1 -kr 0 -kcp 0 -kep 1 -kt 0 -s $range -d 3 -tol 0.01 $YY_DL_DUP_Curves_B[0];	
+			
+			for($RR = 0;$RR<$range;$RR++)
+			{  
+				
+                                float $YY_DL_PointCurve[] = `pointOnCurve -pr $YY_DL_Point_Float -p -top 1 $YY_DL_DUP_Curves_B[0]`;				
+				float $YY_DupLin_Float_D = $YY_DL_PointCurve[0] - $YY_DupLin_Sph_Piv[0];
+				float $YY_DupLin_Float_E = $YY_DL_PointCurve[1] - $YY_DupLin_Sph_Piv[1];
+				float $YY_DupLin_Float_F = $YY_DL_PointCurve[2] - $YY_DupLin_Sph_Piv[2];
+		
+				
+				if($YY_DL_Int_A == 1)
+				{
+				$YY_DL_Du_Namer_T = `instance $YY_DupLine_Sel[1]`;
+							 
+					move -r $YY_DupLin_Float_D $YY_DupLin_Float_E $YY_DupLin_Float_F $YY_DL_Du_Namer_T[0];						
+					parent $YY_DL_Du_Namer_T YY_Duplicate_Line_Group;
+				}
+				else
+				{
+				$YY_DL_Du_Namer_B = eval ("duplicate -rr " + $YY_DL_String  + " " + $YY_DupLine_Sel[1]);
+				
+					
+				 move -r $YY_DupLin_Float_D $YY_DupLin_Float_E $YY_DupLin_Float_F $YY_DL_Du_Namer_B[0];
+								
+				};	
+				    if($YY_DL_Int_F == 1)
+						    {
+						     int $randRotY=rand(5,350);
+						     int $randRotX=rand(-65,65);
+						     int $randRotZ=rand(-65,65);
+						     rotate -r $randRotX $randRotY $randRotZ;
+						    }
+						    
+				      if($YY_DL_Int_E == 1)
+					    { vector $NewPo=<<$YY_DL_PointCurve[0],$YY_DL_PointCurve[1],$YY_DL_PointCurve[2]>>;
+					      vector $OriginPo=<<$YY_DupLin_Sph_Piv[0],$YY_DupLin_Sph_Piv[1],$YY_DupLin_Sph_Piv[2]>>;
+					          vector $XO=<<1,0,0>>;
+						vector $YO=<<0,1,0>>;
+						vector $ZO=<<0,0,1>>;
+					      float $FangleX=`angle $NewPo $XO`; 
+					      float $FRotX=`rad_to_deg($FangleX)`;
+						    
+					      float $FangleY=`angle $NewPo $YO`; 
+					      float $FRotY=`rad_to_deg($FangleY)`;
+						    
+					     float $FangleZ=`angle $NewPo $ZO`; 
+					     float $FRotZ=`rad_to_deg($FangleZ)`;
+						    
+						    
+						    
+					     float $FRotY=$FRotY;
+					    float $FRotX=$FRotX;
+					     float $FRotZ=$FRotZ;
+					      rotate -r $FRotX $FRotY $FRotZ;
+					    }
+					
+					parent $YY_DL_Du_Namer_B YY_Duplicate_Line_Group;
+				
+				                                   
+				$YY_DL_Point_Float += $YY_DL_Point_Float_Add;
+			};
+			delete $YY_DL_DUP_Curves_B;
+		break;
+			
+	};
+
+hide $YY_DupLine_Sel;	
+};
+
+
+
+
+global proc YY_DL_FDiret(int $YY_DL_FDiret_Int)
+{
+checkBox -e -en $YY_DL_FDiret_Int YY_DL_CB_F;
+
+}
+
+global proc YY_DL_RDiret(int $YY_DL_RDiret_Int)
+{
+checkBox -e -en $YY_DL_RDiret_Int YY_DL_CB_E;
+
+}
+
+
+global proc YY_DL_DU_Num(int $YY_DL_Dum_Int1, int $YY_DL_Dum_Int2)
+{
+intSliderGrp  -e -en $YY_DL_Dum_Int1 YY_DL_Dum;
+intSliderGrp  -e -en $YY_DL_Dum_Int2 YY_DL_Sdistance;
+checkBox -e -en $YY_DL_Dum_Int1 YY_DL_CB_G;	
+};
+
+
+global proc YY_DL_InS(int $YY_DL_Ins_Int)
+{
+
+checkBox -e -en $YY_DL_Ins_Int YY_DL_CB_C;
+checkBox -e -en $YY_DL_Ins_Int YY_DL_CB_D;	
+
+};
+	////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+global proc YY_DL_Help()
+{
+	if(`window -q -ex YY_DL_Help_Win`)
+	{
+	deleteUI YY_DL_Help_Win;
+	};
+	window 
+		  -wh 220 420
+		  -s 1
+		  -mb 0
+		  -t "路径复制使用帮助"
+		  YY_DL_Help_Win;
+	string $YY_Del_Node_Help_Form = `formLayout`;
+	text -al "center" -l "路径复制使用帮助" YY_Node_Main_Help_Text;
+    string $YY_Del_Node_Help_Scoll = `scrollField -ed 0 -po 1 -ww 1 -fn fixedWidthFont`;	
+	string $YY_Del_Node_Help_Maini_Text_A = "此工具可以按照选定的曲线进行复制物体，复制可分为三种方式：\n";
+	$YY_Del_Node_Help_Maini_Text_A += "1.曲线点复制：按照选择的曲线上所存在的CV点的位置和数量复制物体，并且把复制的物体放置在";
+	$YY_Del_Node_Help_Maini_Text_A += "曲线的每个CV点上。\n";
+	$YY_Del_Node_Help_Maini_Text_A += "2.指定复制个数：可以指定要复制物体的个数，然后复制。脚本可以按照指定的个数把物体平均分配到曲线上。\n";
+	$YY_Del_Node_Help_Maini_Text_A += "3.指定距离复制：选择需要的间隔距离，然后复制，还可选择沿曲线方向，还是随机方向。\n";
+	$YY_Del_Node_Help_Maini_Text_A += "使用方法：先选择曲线，再选择要复制的物体。按照所需要的选项进行选择后点击\"开始复制\"按钮。\n";
+	$YY_Del_Node_Help_Maini_Text_A += "";
+	scrollField -e -tx $YY_Del_Node_Help_Maini_Text_A $YY_Del_Node_Help_Scoll;
+	
+	formLayout -e
+		-af YY_Node_Main_Help_Text "top" 5
+		-af YY_Node_Main_Help_Text "left" 10
+		-af YY_Node_Main_Help_Text "right" 10
+		
+		-ac $YY_Del_Node_Help_Scoll "top" 5 YY_Node_Main_Help_Text 
+		-af $YY_Del_Node_Help_Scoll "left" 5
+	    -af $YY_Del_Node_Help_Scoll "right" 5
+		-af $YY_Del_Node_Help_Scoll "bottom" 5
+		$YY_Del_Node_Help_Form;
+	showWindow YY_DL_Help_Win;
+		window -e
+		  -wh 220 420
+		  		  YY_DL_Help_Win;
+};
+////////////////////////////////////////////////////////////////////////////////////
+global proc YY_DL_About()
+{
+if(`window -q -ex YY_DL_About_Win`)
+{
+deleteUI YY_DL_About_Win;
+};
+window 
+	  -wh 350 180
+	  -s 1
+	  -mb 0
+	  -t "关于路径复制工具"
+	  YY_DL_About_Win;
+columnLayout -rs 5 -cat "both" 5 -adj 1;
+text "制作：由继亮， 更改：李晓斌";
+text "QQ:78915620";
+text "E-Mail yjl811028@tom.com";
+text "更新时间：2012-10-17";
+text "如使用此工具中有任何问题或漏洞请及时通知本人";
+text "华强电影技术部 李晓斌，由继亮";
+showWindow YY_DL_About_Win;
+
+window -e
+	  -wh 350 180
+	  YY_DL_About_Win;
+};
+
+
+
+
+
+dulpathgeoTool;
+
+
+
+
+
+
+
+
+
+

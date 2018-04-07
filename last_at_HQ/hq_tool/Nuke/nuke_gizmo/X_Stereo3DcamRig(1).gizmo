@@ -1,0 +1,101 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ inputs 0
+ tile_color 0xff0000ff
+ addUserKnob {20 stereocam l X_Stereo3DcamRig}
+ addUserKnob {41 focal l "Focal Length(mm)" T CamRig.focal}
+ addUserKnob {7 interocular l Interocular(mm) R 0 100}
+ interocular 65
+ addUserKnob {41 focaldistance l "Focal Distance" T CamRig.focal_point}
+ addUserKnob {7 convergence l Convergence(%) R 0 100}
+ convergence 100
+ addUserKnob {26 ""}
+ addUserKnob {41 xform_order l "transform order" T CamRig.xform_order}
+ addUserKnob {41 rot_order l "rotation order" T CamRig.rot_order}
+ addUserKnob {41 file_menu l chan T CamRig.file_menu}
+ addUserKnob {41 snap_menu l "" -STARTLINE T CamRig.snap_menu}
+ addUserKnob {41 read_from_file l "Camera from:" T CamRig.read_from_file}
+ addUserKnob {41 file -STARTLINE T CamRig.file}
+ addUserKnob {41 reload -STARTLINE T CamRig.reload}
+ addUserKnob {41 translate T CamRig.translate}
+ addUserKnob {41 rotate T CamRig.rotate}
+ addUserKnob {41 projection_mode l projection T CamRig.projection_mode}
+ addUserKnob {41 haperture l "horiz aperture" T CamRig.haperture}
+ addUserKnob {41 vaperture l "vert aperture" T CamRig.vaperture}
+ addUserKnob {41 near T CamRig.near}
+ addUserKnob {41 far T CamRig.far}
+ addUserKnob {41 win_translate l "window translate" T CamRig.win_translate}
+ addUserKnob {41 win_scale l "window scale" T CamRig.win_scale}
+ addUserKnob {41 winroll l "window roll" T CamRig.winroll}
+ addUserKnob {41 fbx_take_name l "take name" T CamRig.fbx_take_name}
+ addUserKnob {41 fbx_node_name l "node name" T CamRig.fbx_node_name}
+ addUserKnob {41 fbx_load_take_node_names l "load take node names" T CamRig.fbx_load_take_node_names}
+ addUserKnob {41 compute_rotation l "compute rotation" T CamRig.compute_rotation}
+ addUserKnob {41 display T Scene1.display}
+}
+ Camera2 {
+  inputs 0
+  focal 35
+  name CamRig
+  xpos 20
+  ypos 83
+ }
+set N1697c000 [stack 0]
+ Camera2 {
+  translate {{interocular/200 i} 0 0}
+  rotate {0 {degrees(atan(translate.x/focaldistance))*(convergence/100) i} 0}
+  focal {{CamRig.focal i}}
+  haperture {{CamRig.haperture i}}
+  vaperture {{CamRig.vaperture i}}
+  near {{CamRig.near i}}
+  far {{CamRig.far i}}
+  win_translate {{CamRig.win_translate i} {CamRig.win_translate i}}
+  win_scale {{CamRig.win_scale i} {CamRig.win_scale i}}
+  winroll {{CamRig.winroll i}}
+  focal_point {{sqrt((pow2(translate)*(convergence/100))+pow2(focaldistance)) i x1 0}}
+  name CamR
+  xpos 147
+  ypos 140
+ }
+set N1697f890 [stack 0]
+push $N1697c000
+ Camera2 {
+  translate {{-interocular/200 i} 0 0}
+  rotate {0 {degrees(atan(translate.x/focaldistance))*(convergence/100) i} 0}
+  focal {{CamRig.focal i}}
+  haperture {{CamRig.haperture i}}
+  vaperture {{CamRig.vaperture i}}
+  near {{CamRig.near i}}
+  far {{CamRig.far i}}
+  win_translate {{CamRig.win_translate i} {CamRig.win_translate i}}
+  win_scale {{CamRig.win_scale i} {CamRig.win_scale i}}
+  winroll {{CamRig.winroll i}}
+  focal_point {{sqrt((pow2(translate)*(convergence/100))+pow2(focaldistance)) i x1 0}}
+  name CamL
+  xpos -118
+  ypos 139
+ }
+set N16989ce0 [stack 0]
+ JoinViews {
+  inputs 2
+  name JoinViews1
+  xpos 10
+  ypos 351
+  viewassoc "left\nright"
+ }
+ Output {
+  name Output1
+  xpos 10
+  ypos 406
+ }
+push $N1697f890
+push $N1697c000
+push $N16989ce0
+ Scene {
+  inputs 3
+  name Scene1
+  xpos 20
+  ypos 220
+ }
+end_group

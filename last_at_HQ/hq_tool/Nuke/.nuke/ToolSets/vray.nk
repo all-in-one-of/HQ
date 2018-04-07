@@ -1,0 +1,227 @@
+set cut_paste_input [stack 0]
+version 8.0 v4
+BackdropNode {
+ inputs 0
+ name BackdropNode2
+ tile_color 0x71c67100
+ label v-ray02节点树
+ note_font_size 42
+ selected true
+ xpos 1139
+ ypos 431
+ bdwidth 709
+ bdheight 548
+}
+Read {
+ inputs 0
+ file F:/test/images/vray_tst_v01/vray_tst_v01.exr
+ format "640 480 0 0 640 480 1 PC_Video"
+ origset true
+ version 16
+ name Read38
+ selected true
+ xpos 1428
+ ypos 511
+}
+Dot {
+ name Dot29
+ selected true
+ xpos 1462
+ ypos 603
+}
+set Na19bd8c0 [stack 0]
+Dot {
+ name Dot37
+ selected true
+ xpos 1572
+ ypos 603
+}
+set Na19bdc30 [stack 0]
+Dot {
+ name Dot36
+ selected true
+ xpos 1682
+ ypos 603
+}
+set Na19bdfa0 [stack 0]
+Dot {
+ name Dot35
+ selected true
+ xpos 1792
+ ypos 603
+}
+add_layer {specular specular.red specular.green specular.blue}
+Shuffle {
+ in specular
+ in2 alpha
+ alpha red2
+ name Shuffle24
+ label specular
+ selected true
+ xpos 1758
+ ypos 648
+}
+push $Na19bdfa0
+add_layer {refract refract.red refract.green refract.blue}
+Shuffle {
+ in refract
+ in2 alpha
+ alpha red2
+ name Shuffle20
+ label refract
+ selected true
+ xpos 1648
+ ypos 649
+}
+push $Na19bdc30
+add_layer {reflect reflect.red reflect.green reflect.blue}
+Shuffle {
+ in reflect
+ in2 alpha
+ alpha red2
+ name Shuffle15
+ label reflect
+ selected true
+ xpos 1538
+ ypos 649
+}
+push $Na19bd8c0
+Dot {
+ name Dot33
+ selected true
+ xpos 1332
+ ypos 603
+}
+set Na19bf0d0 [stack 0]
+add_layer {diffuse diffuse.red diffuse.green diffuse.blue}
+Shuffle {
+ in diffuse
+ in2 alpha
+ alpha red2
+ name Shuffle5
+ label diffuse
+ selected true
+ xpos 1298
+ ypos 646
+}
+Dot {
+ name Dot31
+ selected true
+ xpos 1332
+ ypos 734
+}
+set Na19bf7b0 [stack 0]
+Dot {
+ name Dot30
+ selected true
+ xpos 1332
+ ypos 853
+}
+set Na19bfb20 [stack 0]
+push $Na19bd8c0
+add_layer {lighting lighting.red lighting.green lighting.blue}
+Shuffle {
+ in lighting
+ in2 alpha
+ alpha red2
+ name Shuffle6
+ label lighting
+ selected true
+ xpos 1428
+ ypos 648
+}
+push $Na19bf7b0
+Merge2 {
+ inputs 2
+ operation divide
+ name Merge21
+ label "raw lighting"
+ selected true
+ xpos 1428
+ ypos 725
+}
+Merge2 {
+ inputs 2
+ operation multiply
+ name Merge22
+ label lighting
+ selected true
+ xpos 1428
+ ypos 844
+}
+push $Na19bfb20
+push $Na19bf0d0
+Dot {
+ name Dot32
+ selected true
+ xpos 1183
+ ypos 603
+}
+add_layer {GI GI.red GI.green GI.blue}
+Shuffle {
+ in GI
+ in2 alpha
+ alpha red2
+ name Shuffle3
+ label GI
+ selected true
+ xpos 1149
+ ypos 644
+}
+push $Na19bf7b0
+Merge2 {
+ inputs 2
+ operation divide
+ name Merge19
+ label "raw GI"
+ selected true
+ xpos 1149
+ ypos 725
+}
+Merge2 {
+ inputs 2
+ operation multiply
+ name Merge20
+ label GI
+ selected true
+ xpos 1149
+ ypos 844
+}
+Dot {
+ name Dot34
+ selected true
+ xpos 1183
+ ypos 954
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Merge23
+ selected true
+ xpos 1428
+ ypos 951
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Merge24
+ selected true
+ xpos 1538
+ ypos 951
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Merge25
+ selected true
+ xpos 1648
+ ypos 951
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Merge26
+ selected true
+ xpos 1758
+ ypos 951
+}

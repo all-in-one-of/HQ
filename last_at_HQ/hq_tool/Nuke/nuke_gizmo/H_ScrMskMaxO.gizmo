@@ -1,0 +1,188 @@
+#! /Applications/Nuke7.0v6/NukeX7.0v6.app/../Nuke7.0v6.app/Contents/MacOS/Nuke7.0v6 -nx
+version 7.0 v6
+Gizmo {
+ inputs 3
+ tile_color 0x4bb3e0ff
+ addUserKnob {20 User}
+ addUserKnob {22 turnoninput +INVISIBLE T "node = nuke.thisNode()\nif node.name() == 'VIEWER_INPUT':\n    node\['name'].setValue('H_Maskingwide')\n    \nelse:\n    node\['name'].setValue('VIEWER_INPUT')" +STARTLINE}
+ addUserKnob {3 input_width t 每个素材的宽度（像素）}
+ input_width 540
+ addUserKnob {3 input_height t 每个素材的高度（像素）}
+ input_height 511
+ addUserKnob {3 ScreenNumber l INVISIBLE t 需要几个素材进行横向拼接？（最多10个） +INVISIBLE}
+ ScreenNumber 3
+ addUserKnob {26 ""}
+ addUserKnob {1 artist l INVISIBLE t 作者 +INVISIBLE}
+ addUserKnob {1 Shotname t 镜头名称}
+ addUserKnob {1 note l INVISIBLE t 备注 +INVISIBLE}
+ note " "
+}
+ Text {
+  inputs 0
+  cliptype none
+  opacity 0.5
+  message Cam01
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{input_height*0.1*0.7}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*3} {"input_height+input_height*0.2-((input_height/(input_width*3))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.2))" x490 0}}
+  translate {{-(input_width/2)*2} 0}
+  center {1372 580}
+  color {1 0.6800000072 0.7159704566 1}
+  name cam_one
+  xpos 342
+  ypos 355
+  cached true
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam02
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{input_height*0.1*0.7}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*3} {"input_height+input_height*0.2-((input_height/(input_width*3))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.2))" x490 0}}
+  translate {{curve} 0}
+  center {1372 580}
+  color {0.9527949095 0.9639999866 0.7326399684 1}
+  name cam_two
+  xpos 342
+  ypos 414
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message Cam03
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{input_height*0.1*0.7}}
+  xjustify center
+  yjustify top
+  Transform 1
+  box {0 0 {input_width*3} {"input_height+input_height*0.2-((input_height/(input_width*3))<0.25 ? (input_height*0.1*0.15): (input_height*0.1*0.2))" x490 0}}
+  translate {{(input_width/2)*2} 0}
+  center {1372 580}
+  color {0.6200000048 1 0.7252306938 1}
+  name cam_three
+  xpos 342
+  ypos 478
+ }
+ Input {
+  inputs 0
+  name Input3
+  xpos 730
+  ypos 173
+  number 2
+ }
+ Transform {
+  translate {{input_width*2} 0}
+  center {240 176}
+  name Transform4
+  xpos 730
+  ypos 241
+ }
+push 0
+ Input {
+  inputs 0
+  name Input2
+  xpos 618
+  ypos 176
+  number 1
+ }
+ Transform {
+  translate {{(input_width)} 0}
+  center {240 176}
+  name Transform5
+  xpos 618
+  ypos 242
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos 498
+  ypos 177
+ }
+ Transform {
+  center {240 176}
+  name Transform6
+  xpos 498
+  ypos 241
+ }
+ Merge2 {
+  inputs 3+1
+  also_merge all
+  name Merge2
+  xpos 618
+  ypos 310
+ }
+ Transform {
+  translate {0 {input_height*0.1}}
+  center {1440 176}
+  name Transform7
+  xpos 618
+  ypos 396
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge7
+  xpos 618
+  ypos 478
+ }
+ Text {
+  cliptype none
+  opacity 0.5
+  message "\[date %Y/%m/%d]       Shotname: \[value parent.Shotname]        CF: \[frame]        CT: \[python int(int((\[frame]-\[value first_frame])/24)/3600/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/3600)%10]:\[python int(int((\[frame]-\[value first_frame])/24)/60/10)%6]\[python int(int((\[frame]-\[value first_frame])/24)/60)%10]:\[python int((int(\[frame]-\[value first_frame])/24)/10)%6]\[python int((\[frame]-\[value first_frame])/24)%10]:\[python int(((\[frame]-\[value first_frame])%24+1)/10)]\[python ((\[frame]-\[value first_frame])%24+1)%10]         AllF:  \[python \[value last_frame]-\[value first_frame]+1]"
+  font /All/Oxygen/util/nuke/plugins/fonts/Hei.ttf
+  size {{"(input_height/(input_width*3))<0.24 ? (input_height*0.1*0.7) : (input_width*3/62)   "}}
+  xjustify center
+  yjustify bottom
+  Transform 1
+  box {0 0 {input_width*3 x1555 2880} {input_height x1555 352}}
+  translate {0 {"(input_height/(input_width*3))<0.25 ? (input_height*0.1*0.15) : (input_height*0.1*0.20)"}}
+  center {1372 580}
+  name message1
+  xpos 618
+  ypos 629
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  color 0.007
+  format "60000 60000 0 0 60000 60000 1 aa_1"
+  name Constant2
+  xpos 856
+  ypos 617
+ }
+ Crop {
+  box {0 0 {input_width*3} {input_height+input_height*0.2}}
+  reformat true
+  crop false
+  name Crop2
+  xpos 856
+  ypos 720
+ }
+ Merge2 {
+  inputs 2
+  also_merge all
+  name Merge6
+  xpos 618
+  ypos 720
+ }
+set N2f2a64a0 [stack 0]
+ Output {
+  name Output1
+  xpos 618
+  ypos 891
+ }
+push $N2f2a64a0
+ Viewer {
+  input_process false
+  name Viewer1
+  xpos 180
+  ypos 1080
+ }
+end_group

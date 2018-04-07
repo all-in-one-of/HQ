@@ -1,0 +1,309 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ inputs 8
+ addUserKnob {20 User}
+}
+ Axis2 {
+  inputs 0
+  translate {0 0 -0.01886}
+  rotate {-90 0 0}
+  name Axis2
+  xpos 607
+  ypos -55
+ }
+ Camera2 {
+  rot_order XYZ
+  translate {0 -0.01719019935 0}
+  rotate {90 0 0}
+  focal 30.93906403
+  haperture 35.99942017
+  vaperture 35.9918014
+  near 0
+  far 0.1
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{7} "Producer Perspective" "Producer Top" "Producer Bottom" "Producer Front" "Producer Back" "Producer Right" "Producer Left" cam_pre}
+  name Camera2
+  xpos 607
+  ypos 34
+ }
+set N1f5000 [stack 0]
+push $N1f5000
+ Input {
+  inputs 0
+  name cam4
+  label "cam4\n"
+  xpos 486
+  ypos -217
+  number 3
+ }
+set Nd2efa400 [stack 0]
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{4} nurbsToPoly1 nurbsToPoly5 nurbsToPoly2 nurbsToPoly3 nurbsToPoly4}
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo6
+  xpos 1117
+  ypos -147
+ }
+ Input {
+  inputs 0
+  name cam3
+  label cam3
+  xpos 376
+  ypos -220
+  number 4
+ }
+set Nd2efa800 [stack 0]
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{3} nurbsToPoly1 nurbsToPoly5 nurbsToPoly2 nurbsToPoly3 nurbsToPoly4}
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo7
+  xpos 1016
+  ypos -150
+ }
+ Input {
+  inputs 0
+  name cam1
+  label cam1
+  xpos 146
+  ypos -223
+  number 5
+ }
+set Nd2efbc00 [stack 0]
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo8
+  xpos 786
+  ypos -150
+ }
+ Input {
+  inputs 0
+  name cam2
+  label cam2
+  xpos 254
+  ypos -221
+  number 6
+ }
+set Neb2f5000 [stack 0]
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{2} nurbsToPoly1 nurbsToPoly5 nurbsToPoly2 nurbsToPoly3 nurbsToPoly4}
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo9
+  xpos 894
+  ypos -148
+ }
+ Input {
+  inputs 0
+  name cam5
+  label cam5
+  xpos 16
+  ypos -221
+  number 7
+ }
+set Neb2f4c00 [stack 0]
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{1} nurbsToPoly1 nurbsToPoly5 nurbsToPoly2 nurbsToPoly3 nurbsToPoly4}
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo10
+  xpos 656
+  ypos -146
+ }
+ Scene {
+  inputs 6
+  name Scene2
+  xpos 824
+  ypos -41
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  name Constant2
+  xpos 1085
+  ypos 31
+ }
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  antialiasing low
+  shutter 0
+  motion_vectors_type distance
+  name ScanlineRender2
+  xpos 817
+  ypos 54
+ }
+ ColorWheel {
+  inputs 0
+  gamma 0.45
+  name ColorWheel1
+  xpos 507
+  ypos 106
+ }
+set Ne737f800 [stack 0]
+ Merge2 {
+  inputs 2
+  operation in
+  name In1
+  xpos 817
+  ypos 129
+ }
+ Dot {
+  name Dot1
+  xpos 851
+  ypos 184
+ }
+ Axis2 {
+  inputs 0
+  translate {0 0 -0.01886}
+  rotate {-90 0 0}
+  name Axis1
+  xpos -33
+  ypos -46
+ }
+ Camera2 {
+  rot_order XYZ
+  translate {0 -0.01719019935 0}
+  rotate {90 0 0}
+  focal 30.93906403
+  haperture 35.99942017
+  vaperture 35.9918014
+  near 0
+  far 0.1
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{7} "Producer Perspective" "Producer Top" "Producer Bottom" "Producer Front" "Producer Back" "Producer Right" "Producer Left" cam_pre}
+  name Camera1
+  xpos -33
+  ypos 43
+ }
+set Nd2efa000 [stack 0]
+push $Nd2efa000
+push $Nd2efa400
+ Shuffle {
+  alpha white
+  name Shuffle1
+  xpos 482
+  ypos -169
+ }
+ set Cf4166400 [stack 0]
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{4} nurbsToPoly1 nurbsToPoly5 nurbsToPoly2 nurbsToPoly3 nurbsToPoly4}
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo5
+  xpos 477
+  ypos -138
+ }
+push $Nd2efa800
+clone $Cf4166400 {
+  xpos 380
+  ypos -170
+  selected false
+ }
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{3} nurbsToPoly1 nurbsToPoly5 nurbsToPoly2 nurbsToPoly3 nurbsToPoly4}
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo4
+  xpos 376
+  ypos -141
+ }
+push $Nd2efbc00
+clone $Cf4166400 {
+  xpos 148
+  ypos -178
+  selected false
+ }
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo1
+  xpos 146
+  ypos -141
+ }
+push $Neb2f5000
+clone $Cf4166400 {
+  xpos 254
+  ypos -176
+  selected false
+ }
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{2} nurbsToPoly1 nurbsToPoly5 nurbsToPoly2 nurbsToPoly3 nurbsToPoly4}
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo3
+  xpos 254
+  ypos -139
+ }
+push $Neb2f4c00
+clone $Cf4166400 {
+  xpos 16
+  ypos -183
+  selected false
+ }
+ ReadGeo2 {
+  file T:/ALL/NukePlugin/ball_cam.fbx
+  fbx_node_name {{1} nurbsToPoly1 nurbsToPoly5 nurbsToPoly2 nurbsToPoly3 nurbsToPoly4}
+  read_on_each_frame true
+  range_last 200
+  name ReadGeo2
+  xpos 16
+  ypos -137
+ }
+ Scene {
+  inputs 6
+  name Scene1
+  xpos 184
+  ypos -32
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  name Constant1
+  xpos 445
+  ypos 40
+ }
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  antialiasing low
+  shutter 0
+  motion_vectors_type distance
+  name ScanlineRender1
+  xpos 177
+  ypos 63
+ }
+push $Ne737f800
+ Merge2 {
+  inputs 2
+  operation in
+  name In
+  xpos 177
+  ypos 129
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos 177
+  ypos 174
+ }
+ Output {
+  name Output1
+  xpos 177
+  ypos 277
+ }
+end_group

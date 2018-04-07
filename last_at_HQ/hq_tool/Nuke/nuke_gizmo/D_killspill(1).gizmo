@@ -1,0 +1,179 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ inputs 2
+ addUserKnob {20 D_killspill}
+ addUserKnob {4 color_slect t "Select the color of the backing region" M {green blue ""}}
+ addUserKnob {7 Ddissolve l "which dissolve"}
+ addUserKnob {7 killblur l spillblur R 0 10}
+ addUserKnob {7 rg l redgain R -2 2}
+ addUserKnob {7 gg l greengain R -2 2}
+ addUserKnob {7 bg l bluegain R -2 2}
+ addUserKnob {7 rbm l mixone}
+ rbm 1
+ addUserKnob {7 mm l mixtow}
+ mm 1
+ addUserKnob {26 txt l "" +STARTLINE T 华强方特}
+}
+ Read {
+  inputs 0
+  file S:/ALL/FHCQ/References/Lnner/DPX/L005_C073/DPX/L005_C073.%05d.dpx
+  format "5120 2700 0 0 5120 2700 1 5120"
+  first 208
+  last 364
+  origfirst 208
+  origlast 364
+  origset true
+  auto_alpha true
+  name Read10
+  xpos -586
+  ypos -35
+ }
+ Input {
+  inputs 0
+  name Src
+  xpos -582
+  ypos 96
+  number 1
+ }
+set Ne2ffd000 [stack 0]
+ Dot {
+  name Dot5
+  xpos -22
+  ypos 284
+ }
+ Input {
+  inputs 0
+  name mask
+  xpos -1182
+  ypos 380
+ }
+set Ne2ffc800 [stack 0]
+push $Ne2ffd000
+ Shuffle {
+  red blue
+  green blue
+  alpha black
+  name Shuffle_BLUE2
+  xpos -503
+  ypos 441
+ }
+push $Ne2ffc800
+push $Ne2ffd000
+ Shuffle {
+  red green
+  blue green
+  alpha black
+  name Shuffle_GREEN2
+  xpos -428
+  ypos 241
+ }
+push $Ne2ffd000
+ Shuffle {
+  green red
+  blue red
+  alpha black
+  name Shuffle_RED2
+  xpos -417
+  ypos 333
+ }
+ Dissolve {
+  inputs 2+1
+  which {{Ddissolve}}
+  name Dissolve3
+  xpos -220
+  ypos 388
+ }
+ Merge2 {
+  inputs 2+1
+  operation minus
+  mix {{rbm}}
+  name Merge11
+  xpos -220
+  ypos 621
+ }
+push $Ne2ffc800
+push $Ne2ffd000
+ Shuffle {
+  red green
+  blue green
+  alpha black
+  name Shuffle_GREEN1
+  xpos -700
+  ypos 443
+ }
+push $Ne2ffc800
+push $Ne2ffd000
+ Shuffle {
+  green red
+  blue red
+  alpha black
+  name Shuffle_RED1
+  xpos -730
+  ypos 338
+ }
+push $Ne2ffd000
+ Shuffle {
+  red blue
+  green blue
+  alpha black
+  name Shuffle_BLUE1
+  xpos -723
+  ypos 245
+ }
+ Dissolve {
+  inputs 2+1
+  which {{Ddissolve}}
+  name Dissolve2
+  xpos -844
+  ypos 239
+ }
+ Merge2 {
+  inputs 2+1
+  operation minus
+  mix {{rbm}}
+  name Merge9
+  xpos -844
+  ypos 601
+ }
+ Switch {
+  inputs 2
+  which {{color_slect}}
+  name Switch2
+  xpos -565
+  ypos 654
+ }
+ Blur {
+  channels alpha
+  size {{killblur}}
+  name softblur
+  xpos -565
+  ypos 703
+ }
+ Clamp {
+  name Clamp3
+  xpos -565
+  ypos 777
+ }
+ Grade {
+  white {{rg} {gg} {bg} 1}
+  white_panelDropped true
+  black_clamp false
+  name Grade6
+  xpos -565
+  ypos 876
+ }
+ Merge2 {
+  inputs 2
+  operation minus
+  mix {{mm}}
+  name Merge10
+  xpos -56
+  ypos 876
+ }
+ Output {
+  name Output1
+  xpos -56
+  ypos 987
+ }
+end_group

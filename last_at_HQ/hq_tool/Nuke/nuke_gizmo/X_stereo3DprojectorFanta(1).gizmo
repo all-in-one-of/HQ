@@ -1,0 +1,175 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ inputs 2
+ addUserKnob {20 X_stereo3Dprojection}
+ addUserKnob {4 Projection_style l "@b;Projection Style" M {Horizon Vertical "" ""}}
+ addUserKnob {41 resize l "Resize type" T Reformat1.resize}
+ addUserKnob {41 center T Reformat1.center}
+ addUserKnob {41 flip T Reformat1.flip}
+ addUserKnob {41 flop T Reformat1.flop}
+ addUserKnob {41 turn T Reformat1.turn}
+}
+ Input {
+  inputs 0
+  name R
+  xpos 650
+  ypos 338
+ }
+set N114f2a10 [stack 0]
+ Shuffle {
+  alpha white
+  name Shuffle3
+  xpos 378
+  ypos 479
+ }
+ Reformat {
+  format "1024 768 0 0 1024 768 1 win"
+  resize fit
+  name Reformat1
+  xpos 383
+  ypos 512
+ }
+ set C114f9530 [stack 0]
+ Transform {
+  center {512 384}
+  name Transform_interocular4
+  xpos 378
+  ypos 568
+ }
+ Transform {
+  center {512 384}
+  name Transform3
+  xpos 378
+  ypos 605
+ }
+ Input {
+  inputs 0
+  name L
+  xpos 305
+  ypos 334
+  number 1
+ }
+set N1b510ec0 [stack 0]
+ Shuffle {
+  alpha white
+  name Shuffle2
+  xpos 136
+  ypos 482
+ }
+clone $C114f9530 {
+  xpos 136
+  ypos 527
+  selected true
+ }
+ Transform {
+  translate {0 768}
+  center {512 384}
+  name Transform2
+  xpos 136
+  ypos 605
+ }
+ Merge2 {
+  inputs 2
+  name Merge17
+  xpos 246
+  ypos 623
+ }
+ Constant {
+  inputs 0
+  channels {rgba.red rgba.green rgba.blue rgba.alpha}
+  color {0 0 0 1}
+  format "1024 1536 0 0 1024 1536 1 3Dstereo"
+  name Constant1
+  xpos 375
+  ypos 677
+ }
+ Merge2 {
+  inputs 2
+  name Merge16
+  xpos 246
+  ypos 701
+ }
+push $N114f2a10
+ Shuffle {
+  alpha white
+  name Shuffle1
+  xpos 760
+  ypos 490
+ }
+clone $C114f9530 {
+  xpos 766
+  ypos 530
+  selected false
+ }
+ Transform {
+  translate {1022 0}
+  center {512 384}
+  name Transform1
+  xpos 760
+  ypos 609
+ }
+push $N1b510ec0
+ Shuffle {
+  alpha white
+  name Shuffle4
+  xpos 518
+  ypos 493
+ }
+clone $C114f9530 {
+  xpos 526
+  ypos 541
+  selected false
+ }
+ Transform {
+  center {512 384}
+  name Transform4
+  xpos 512
+  ypos 590
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos 628
+  ypos 656
+ }
+ Constant {
+  inputs 0
+  channels {rgba.red rgba.green rgba.blue rgba.alpha}
+  color {0 0 0 1}
+  format "2048 768 0 0 2048 768 1 3Dstereo_horiz"
+  name Constant2
+  xpos 830
+  ypos 688
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 628
+  ypos 712
+ }
+set N1b575340 [stack 0]
+ Switch {
+  inputs 2
+  which {{Projection_style i}}
+  name Switch1
+  xpos 338
+  ypos 821
+ }
+set N1b57d4a0 [stack 0]
+ Output {
+  name Output1
+  xpos 338
+  ypos 924
+ }
+push $N1b575340
+push $N1b57d4a0
+ Viewer {
+  inputs 2
+  viewerProcess None
+  input_process false
+  name Viewer1
+  xpos 636
+  ypos 957
+ }
+end_group

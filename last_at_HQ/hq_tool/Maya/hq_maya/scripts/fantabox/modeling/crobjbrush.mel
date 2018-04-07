@@ -1,0 +1,6 @@
+global proc crobjbrush()
+{
+ScriptPaintToolOptions;
+artUserPaintCtx -e -tsc "geometryPaint" `currentCtx`;
+};
+crobjbrush;

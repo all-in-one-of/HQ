@@ -1,0 +1,13 @@
+global proc faceToShader()
+{
+select -cl;
+$meshes = `ls -type mesh`;
+for($each in $meshes)
+{
+$des = `listConnections -d 1  -type shadingEngine -connections 1 $each`;
+$splitArray = stringToStringArray ($des[0],".");
+if(size($splitArray)>2)
+select -add $each;
+};
+};
+faceToShader;

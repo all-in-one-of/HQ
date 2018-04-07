@@ -1,0 +1,74 @@
+#! C:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ inputs 3
+ tile_color 0x7aff
+}
+ Input {
+  inputs 0
+  name cam03
+  xpos 938
+  ypos 105
+  number 2
+ }
+ DeepTransform {
+  translate {{root.width/3*2} 0 0}
+  name DeepTransform6
+  xpos 932
+  ypos 174
+ }
+ Input {
+  inputs 0
+  name cam02
+  xpos 815
+  ypos 102
+  number 1
+ }
+ DeepTransform {
+  translate {{root.width/3} 0 0}
+  name DeepTransform4
+  xpos 815
+  ypos 173
+ }
+ Input {
+  inputs 0
+  name cam01
+  xpos 695
+  ypos 101
+ }
+ DeepTransform {
+  name DeepTransform3
+  xpos 701
+  ypos 172
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  name Constant1
+  xpos 1039
+  ypos 176
+ }
+ DeepFromImage {
+  name DeepFromImage1
+  xpos 1039
+  ypos 240
+ }
+ DeepMerge {
+  inputs 4
+  name DeepMerge1
+  xpos 815
+  ypos 255
+ }
+ Output {
+  name Output1
+  xpos 815
+  ypos 289
+ }
+ Viewer {
+  input_process false
+  name Viewer1
+  selected true
+  xpos 710
+  ypos 354
+ }
+end_group

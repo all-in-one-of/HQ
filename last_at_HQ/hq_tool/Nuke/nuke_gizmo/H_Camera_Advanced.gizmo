@@ -1,0 +1,14 @@
+#! /home/zhangkh/Nuke6.3v4/Nuke6.3 -nx
+version 6.3 v4
+Camera2 {
+ name H_Camera_Advanced1
+ tile_color 0x8d39ceff
+ selected true
+ xpos 364
+ ypos -563
+ addUserKnob {20 advanced l Advanced}
+ addUserKnob {3 s l Frame +DISABLED}
+ s {{frame}}
+ addUserKnob {22 b l Hold/unHold -STARTLINE T "nuke.thisNode()\['translate'].setExpression('curve(s)')\nnuke.thisNode()\['rotate'].setExpression('curve(s)')\n\nif nuke.thisNode()\['s'].hasExpression():\n    nuke.thisNode()\['s'].clearAnimated()\n    nuke.thisNode()\['s'].setEnabled(True)\nelse:\n    nuke.thisNode()\['s'].setExpression('frame')\n    nuke.thisNode()\['s'].setEnabled(False)"}
+}
+

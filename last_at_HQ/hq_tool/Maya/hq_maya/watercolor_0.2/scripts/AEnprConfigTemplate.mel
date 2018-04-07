@@ -1,0 +1,231 @@
+//
+//Created on 10 OCT 2016
+//@description: Changes the look of the attribute editor
+//@author: Santiago Montesdeoca
+//
+
+
+//    _____                    _       _       
+//   |_   _|__ _ __ ___  _ __ | | __ _| |_ ___ 
+//     | |/ _ \ '_ ` _ \| '_ \| |/ _` | __/ _ \
+//     | |  __/ | | | | | |_) | | (_| | ||  __/
+//     |_|\___|_| |_| |_| .__/|_|\__,_|\__\___|
+//                      |_|        
+//
+global proc AEnprConfigTemplate ( string $nodeName ) {
+	editorTemplate -beginScrollLayout; // create scrollable layout field
+	
+	//npr quality
+	editorTemplate -beginLayout "NPR Quality" -collapse false;
+		editorTemplate -ann "Enables supersampling -> removes aliasing artefacts" -addControl "renderQuality";
+	editorTemplate -endLayout;
+
+	//get npr type
+	int $numLetters = size($nodeName);
+	string $media = `substring $nodeName 1 ($numLetters-6)`;
+	$media = python("'"+ $media +"'.title()");
+	editorTemplate -beginLayout $media -collapse false;
+		editorTemplate -addExtraControls -extraControlsLabel ""; //leave this to include all non-specified additional node attributes
+	editorTemplate -endLayout;
+
+	//render surface
+	editorTemplate -beginLayout "Render Surface" -collapse false;
+		editorTemplate -beginLayout "Surface textures" -collapse true;
+			editorTemplate -callCustom "AEsurfaceTextureNew" "AEsurfaceTextureReplace" "surfaceTexture";
+			editorTemplate -callCustom "AEsurfaceNormalTextureNew" "AEsurfaceNormalTextureReplace" "surfaceNormalTexture";
+		editorTemplate -endLayout;
+		//editorTemplate -callCustom "AEnprSurfaceColorNew" "AEnprSurfaceColorReplace" "surfaceColor";
+		editorTemplate -ann "Controls the surface size" -addControl "surfaceSize"; 
+		editorTemplate -ann "Controls the frequency by which the surface changes (times/s)" -addDynamicControl "surfaceUpdate";
+		editorTemplate -ann "Controls the surface roughness" -addDynamicControl "surfaceRoughness";
+		editorTemplate -ann "Controls the distortion created by the surface" -addControl "surfaceDistortion";
+	editorTemplate -endLayout;
+
+	// object-space hand tremors
+	editorTemplate -beginLayout "Hand Tremors" -collapse true;
+		editorTemplate -addControl "handTremors";
+		editorTemplate -addControl "tremorFrequency";
+		editorTemplate -addControl "tremorSpeed";
+		editorTemplate -addControl "tremorFrontFactor";
+	editorTemplate -endLayout;
+
+	// don't show the following attributes
+	editorTemplate -suppress "caching";
+	editorTemplate -suppress "nodeState";
+	editorTemplate -suppress "frozen";
+
+	editorTemplate -endScrollLayout;
+}
+
+
+
+//    _____         _                  
+//   |_   _|____  _| |_ _   _ _ __ ___ 
+//     | |/ _ \ \/ / __| | | | '__/ _ \
+//     | |  __/>  <| |_| |_| | | |  __/
+//     |_|\___/_/\_\\__|\__,_|_|  \___|
+// 
+//create new UI element to select texture image file
+global proc  AEsurfaceTextureNew( string $nodeAttr ) {
+	setUITemplate -pst attributeEditorTemplate; //push template into the UI stack
+
+	string $value = `getAttr $nodeAttr`;
+	global int $gTextColumnWidthIndex;
+	global int $gAEMapButtonIndex;
+	global int $gAESingleWidgetWidthIndex;
+
+	// Define column sizes in relation to size of other widgets 
+	// We have to make column 3 bigger than it normally would be to
+	// fit the select button
+
+	int $col1Size = $gTextColumnWidthIndex;
+	int $col2Size = ( (3 * $gAESingleWidgetWidthIndex) - $gAEMapButtonIndex);
+	int $col3Size = 53;
+
+	rowLayout -nc 3 -columnWidth3 $col1Size $col2Size $col3Size;
+		text -label "Surface texture" surfaceTextureLabel;
+		textField -text $value 
+			-ann "texture file name" -ed 0
+			-cc ("AEsurfaceTextureSetValue "+ $nodeAttr + " surfaceTextureText") 
+			surfaceTextureText;
+		//string $toBePrinted = "image will be selected";
+		button -w $col3Size -label "select" -c ("AEsurfaceTextureSelect " +$nodeAttr + " surfaceTextureText");
+		//button -w $col3Size -label "select" -c "print "+$toBePrinted;
+		setParent ..;
+
+	setUITemplate -ppt; //pop template from UI stack
+}
+
+
+
+//replace textField with attribute in another node (if selection changed)
+global proc AEsurfaceTextureReplace( string $nodeAttr ) {
+	string $value = `getAttr $nodeAttr`;
+	textField -e -text $value -cc ("AEsurfaceTextureSetValue " + $nodeAttr + " surfaceTextureText") surfaceTextureText;
+}
+
+
+//    _   _                            _ 
+//   | \ | | ___  _ __ _ __ ___   __ _| |
+//   |  \| |/ _ \| '__| '_ ` _ \ / _` | |
+//   | |\  | (_) | |  | | | | | | (_| | |
+//   |_| \_|\___/|_|  |_| |_| |_|\__,_|_|
+// 
+//create new UI element to select texture image file
+global proc  AEsurfaceNormalTextureNew( string $nodeAttr ) {
+	setUITemplate -pst attributeEditorTemplate; //push template into the UI stack
+
+	string $value = `getAttr $nodeAttr`;
+	global int $gTextColumnWidthIndex;
+	global int $gAEMapButtonIndex;
+	global int $gAESingleWidgetWidthIndex;
+
+	// Define column sizes in relation to size of other widgets 
+	// We have to make column 3 bigger than it normally would be to
+	// fit the select button
+
+	int $col1Size = $gTextColumnWidthIndex;
+	int $col2Size = ( (3 * $gAESingleWidgetWidthIndex) - $gAEMapButtonIndex);
+	int $col3Size = 53;
+
+	rowLayout -nc 3 -columnWidth3 $col1Size $col2Size $col3Size;
+		text -label "Surface normal texture" surfaceTextureLabel;
+		textField -text $value 
+			-ann "texture file name" -ed 0
+			-cc ("AEsurfaceTextureSetValue "+ $nodeAttr + " surfaceNormalTextureText") 
+			surfaceNormalTextureText;
+		//string $toBePrinted = "image will be selected";
+		button -w $col3Size -label "select" -c ("AEsurfaceTextureSelect " +$nodeAttr + " surfaceNormalTextureText");
+		//button -w $col3Size -label "select" -c "print "+$toBePrinted;
+		setParent ..;
+
+	setUITemplate -ppt; //pop template from UI stack
+}
+
+
+
+//replace textField with attribute in another node (if selection changed)
+global proc AEsurfaceNormalTextureReplace( string $nodeAttr ) {
+	string $value = `getAttr $nodeAttr`;
+	textField -e -text $value -cc ("AEsurfaceTextureSetValue " +$nodeAttr+" surfaceTextureText") surfaceNormalTextureText;
+}
+
+
+
+//set value of textfield in the attribute
+global proc AEsurfaceTextureSetValue( string $nodeAttr , string $textField ) {
+	string	$value = `textField -q -text $textField`;
+	setAttr -type "string" $nodeAttr $value;
+}
+
+
+
+//    ____   ____    ____      _            
+//   | __ ) / ___|  / ___|___ | | ___  _ __ 
+//   |  _ \| |  _  | |   / _ \| |/ _ \| '__|
+//   | |_) | |_| | | |__| (_) | | (_) | |   
+//   |____/ \____|  \____\___/|_|\___/|_|   
+//             
+//global proc AEnprSurfaceColorNew(string $nodeAttr) {
+//	attrColorSliderGrp
+//		-label ("surfaceColor")
+//		-showButton false
+//		-at $nodeAttr
+//		customSurfaceColorSlider;
+//}
+//global proc AEnprSurfaceColorReplace(string $nodeAttr){
+//	attrColorSliderGrp
+//		-edit
+//		-at $nodeAttr
+//	customSurfaceColorSlider;
+//}
+
+
+
+
+//    _____ _ _        ____       _           _   
+//   |  ___(_) | ___  / ___|  ___| | ___  ___| |_ 
+//   | |_  | | |/ _ \ \___ \ / _ \ |/ _ \/ __| __|
+//   |  _| | | |  __/  ___) |  __/ |  __/ (__| |_ 
+//   |_|   |_|_|\___| |____/ \___|_|\___|\___|\__|
+//  
+//file dialog to select surface texture
+global proc AEsurfaceTextureSelect(string $nodeAttr, string $textField ){
+	//file dialog
+	string $fileFilter = "Image Files .jpg .png (*.jpg *.png)";
+	string $dialogTitle = "Select texture file";
+	string $startDir = `npr -env 1`;
+	$startDir += "textures";
+	string $caption = "select";
+	string $result[] = `fileDialog2 -fileFilter $fileFilter 
+		-fileMode 1 -dialogStyle 2 -startingDirectory $startDir -okCaption $caption
+		-caption $dialogTitle`;
+	
+	//check and filter file dialog
+	if (size($result)>0) {
+		string $fileName = $result[0];
+		//python is clearly more suitable to do this
+		python("import os.path");
+		$fileName = python("os.path.abspath('"+$fileName+"')");
+		print "Normalized paths are:\n";
+		print ($fileName + "\n");
+		print ($startDir + "\n");
+		string $pathCheck[] = python("'" + $fileName + "'" + ".split('" + $startDir + "')");
+		print $pathCheck;
+		int $unitTest = size($pathCheck);
+		if ($unitTest==2){
+			//change attribute with selected file name
+			int $numLetters = size($pathCheck[1]);
+			string $fName = `substring $pathCheck[1] 2 ($numLetters)`;
+			print $fName;
+			textField -e -text $fName $textField;
+			setAttr -type "string" $nodeAttr $fName;
+		} else {
+			string $messagePrompt = "Surface texture must be placed in:\n"+$startDir;
+			confirmDialog -title "Warning" 
+				-message $messagePrompt -button "Alright!" -icn "warning";
+		}
+	} else {
+		print "selection canceled";
+	}
+}

@@ -1,0 +1,131 @@
+//convert objects to instancers v1.0 
+//本mel用于制作运动物体的碎裂
+//OceanTree 海树 2004年3月22日
+
+global proc nParticlesTranslater()
+{
+if(`window -exists coti`)
+   {
+	deleteUI coti;
+   }
+window -resizeToFitChildren true -widthHeight 400 100 -title "Convert objects to instancers" coti;
+columnLayout -adjustableColumn true;
+text -l "What kind of objects to be converted?";
+radioButtonGrp -numberOfRadioButtons 2 -label "Select please" -labelArray2 "static" "animated" radioBG;
+text -l "";
+string $OK=` button -label "convert"`;
+text -l "";
+button -e -c command1 $OK;
+showWindow;
+}
+
+global proc command1()
+{
+int $radioSL=`radioButtonGrp -q -sl radioBG`;
+if ($radioSL==1) static ;
+else if ($radioSL==2) dynamic;
+//deleteUI coti;
+}
+
+global proc static()
+{
+string $origi[]=`ls -sl`;
+int $amount=size($origi);
+if ($amount==0) error "请选择要剥落的碎片 Please select the shatters which will be converted to particles";
+string $OceanTree_Pt[]=`particle -n OceanTree_Pt -jbp 0 0 0 -nj $amount -c 1`;
+string $OceanTree_Is=`particleInstancer -n OceanTree_Is $OceanTree_Pt[0]`;
+addAttr -ln indexPP -dt doubleArray  $OceanTree_Pt[1];
+dynExpression -s ($OceanTree_Pt[1]+".indexPP=id%"+$amount+";") -c $OceanTree_Pt[1];
+particleInstancer -e -name $OceanTree_Is -objectIndex indexPP $OceanTree_Pt[1];
+for ($i=0;$i<$amount;$i++)  
+{  
+float $Wpos[]=`xform -q -ws -rp $origi[$i]`;
+move -a -ws -rpr 0 0 0 $origi[$i];  
+makeIdentity -apply true -t 1 $origi[$i];  
+move -a -ws $Wpos[0] $Wpos[1] $Wpos[2] $origi[$i];
+particle -e -or $i -at position -vv $Wpos[0] $Wpos[1] $Wpos[2] $OceanTree_Pt[0] ;
+string $CloneMt=$origi[$i]+".matrix";  
+string $IsInput=$OceanTree_Is+".inputHierarchy"+"["+$i+"]";   
+connectAttr -f $CloneMt $IsInput; 
+setAttr ($origi[$i]+".visibility") 0;
+};
+}
+
+global proc dynamic()
+{
+string $origi[]=`ls -sl`;
+int $amount=size($origi);
+if ($amount==0) error "请选择要剥落的碎片 Please select the shatters which will be converted to particles";
+string $CrashControl[]=`spaceLocator -p 0 5 0 -n CrashControl`;
+string $magnitude=$CrashControl[0]+".magnitude";
+addAttr -ln magnitude -at long  -min 0 -dv 0 $CrashControl[0];
+setAttr -e -keyable true $magnitude;
+string $OceanTree_Pt[]=`particle -n OceanTree_Pt -jbp 0 0 0 -nj 0 -c 1`;
+string $OceanTree_Is=`particleInstancer -n OceanTree_Is $OceanTree_Pt[0]`;
+addAttr -ln indexPP -dt doubleArray  $OceanTree_Pt[1];
+dynExpression -s ($OceanTree_Pt[1]+".indexPP=id%"+$amount+";") -c $OceanTree_Pt[1];
+particleInstancer -e -name $OceanTree_Is -objectIndex indexPP $OceanTree_Pt[1];
+string $crash_to_particles=`group -n crash_to_particles -em`; 
+string $Clone_Group=`group -n Clone_Group -em`;
+setAttr ($Clone_Group+".visibility") 0;
+parent $CrashControl[0] $crash_to_particles;
+parent $OceanTree_Pt[0] $crash_to_particles;
+parent $OceanTree_Is $crash_to_particles;
+parent $Clone_Group $crash_to_particles;
+
+string $content[];
+$content[0]= "string $SL[]=`ls -sl`;int $SLa=size($SL);  \n";
+$content[1]= "string $magnitude=\""+$magnitude+"\";  \n";
+$content[2]= "int $i,$j,$pre,$amount,$k=`getAttr $magnitude`;  \n";
+$content[3]= "string $Clone[],$origi[],$CrashControl[],$OceanTree_Pt[],$CloneTemp[],$OceanTree_Is,$Clone_Group;  \n";
+$content[4]= "if ($k==0)  \n";
+$content[5]= "{  \n";
+$content[6]= "  if ($pre==0)  \n";
+$content[7]= "    {  \n";
+$content[8]= "";
+for ($i=0;$i<$amount;$i++){$content[8]=$content[8]+"       $origi["+$i+"]=\""+$origi[$i]+"\";  \n";};
+$content[9]= "       $CrashControl[0]=\""+$CrashControl[0]+"\";  \n";       
+$content[10]="       $OceanTree_Pt[0]=\""+$OceanTree_Pt[0]+"\";  \n"; 
+$content[11]="       $OceanTree_Is=\""+$OceanTree_Is+"\";  \n"; 
+$content[12]="       $amount="+$amount+";  \n"; 
+$content[13]="       $Clone_Group=\""+$Clone_Group+"\";  \n"; 
+$content[14]="       $pre=1;  \n";
+$content[15]= "    };  \n";
+$content[16]="  if (size($Clone)>0)  \n";
+$content[17]="    {  \n";
+$content[18]="       $j=0;  \n";
+$content[19]="       select -hi $Clone_Group;  \n";
+$content[20]="       select -tgl $Clone_Group;  \n";
+$content[21]="       delete;  \n";
+$content[22]="       clear $Clone;  \n";
+$content[23]="       for ($i=0;$i<$amount;$i++) setAttr ($origi[$i]+\".visibility\") 1;  \n";
+$content[24]="    };  \n";
+$content[25]="};  \n";
+$content[26]="for ($i=$j;$i<$k && $i<$amount;$i++)  \n";
+$content[27]="{  \n";
+$content[28]="  $CloneTemp=`duplicate -rr $origi[$i]`;  \n";
+$content[29]="  $Clone[$i]=$CloneTemp[0];  \n";
+$content[30]="  parent $Clone[$i] $Clone_Group;  \n";
+$content[31]="  float $Wpos[]=`xform -q -ws -rp $Clone[$i]`;  \n";
+$content[32]="  move -a -ws -rpr 0 0 0 $Clone[$i];  \n";
+$content[33]="  makeIdentity -apply true -t 1 $Clone[$i];  \n";
+$content[34]="  move -a -ws $Wpos[0] $Wpos[1] $Wpos[2] $Clone[$i];  \n";
+$content[35]="  emit -object $OceanTree_Pt[0] -pos $Wpos[0] $Wpos[1] $Wpos[2];  \n";
+$content[36]="  string $CloneMt=$Clone[$i]+\".matrix\";  \n";
+$content[37]="  string $IsInput=$OceanTree_Is+\".inputHierarchy\"+\"[\"+$i+\"]\";   \n";
+$content[38]="  connectAttr -f $CloneMt $IsInput;  \n";
+$content[39]="  setAttr ($origi[$i]+\".visibility\") 0;  \n";
+$content[40]="};  \n";
+$content[41]="$j=$k;  \n";
+$content[42]="select -cl;if ($SLa>0) select -r $SL[($SLa-1)];  \n";
+string $expression="";
+for ($i=0;$i<43;$i++) $expression=$expression+$content[$i];
+
+expression -s $expression -o CrashControl[0] -ae 1 -uc all ;
+
+}
+
+
+nParticlesTranslater();
+
+          

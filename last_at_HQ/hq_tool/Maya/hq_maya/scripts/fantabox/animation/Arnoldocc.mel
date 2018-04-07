@@ -1,0 +1,22 @@
+global proc Arnoldocc()
+{
+
+
+if( `window -exists OCC_assign` )
+		deleteUI -window OCC_assign;  
+if( `windowPref -exists OCC_assign` )
+		windowPref -remove OCC_assign;  
+
+int $kLibraryWinW= 300;
+int $kLibraryWinH= 80;
+
+window 
+-widthHeight  ($kLibraryWinW) ($kLibraryWinH) 
+-tlc 190 50  
+OCC_assign;
+  
+rowLayout -numberOfColumns 3 -adjustableColumn 1;
+button -label "确定赋予OCC材质吗？" -bgc 0.9 0.9 0.01 -c "source    \"//10.99.1.12/数码电影/部门文件/08技术/技术部工具箱/技术部工具箱_请勿删除/All_mel/digitalTool/animition/AssignOCC.mel\"";
+showWindow OCC_assign;
+};
+Arnoldocc;

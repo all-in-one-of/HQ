@@ -1,0 +1,9 @@
+global proc AdvancedSkeleton()
+{
+    if(`menu -ex advancedSkeleton`)
+    {
+      deleteUI advancedSkeleton;
+    }
+    menu  -tearOff on -l "AdvancedSkeleton" -p "MayaWindow" advancedSkeleton;
+    menuItem -l "Adv5¹¤¾ß¼¯" -p "advancedSkeleton" -command "python(\"execfile('O:/hq_tool/Maya/hq_maya/scripts/adv5/shuai_AdvancedSkeleton5.py')\");" Adv5Tools; 
+}

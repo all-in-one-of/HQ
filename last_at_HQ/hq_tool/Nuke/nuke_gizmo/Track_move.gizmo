@@ -1,0 +1,83 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ addUserKnob {20 Track_Move}
+ addUserKnob {4 inputStyle l "info from" M {Track Move ""}}
+ addUserKnob {41 track_bkwd_range l " @#-1<; R " T Tracker1.track_bkwd_range}
+ addUserKnob {41 track_to_start l " @#-1< " T Tracker1.track_to_start}
+ addUserKnob {41 track_prev l " @#-1<| " T Tracker1.track_prev}
+ addUserKnob {41 track_next l " @#-1|> " T Tracker1.track_next}
+ addUserKnob {41 track_to_end l " @#-1> " T Tracker1.track_to_end}
+ addUserKnob {41 track_fwd_range l " R @#-1>; " T Tracker1.track_fwd_range}
+ addUserKnob {41 track_reset l " reset " T Tracker1.track_reset}
+ addUserKnob {41 grab_pattern l " grab " T Tracker1.grab_pattern}
+ addUserKnob {41 clear_offset l " clear offset " T Tracker1.clear_offset}
+ addUserKnob {26 "" l "<b>Animation Controls</b>"}
+ addUserKnob {41 clear_all l " clear all" T Tracker1.clear_all}
+ addUserKnob {41 clear_bkwd l " clear bkwd " T Tracker1.clear_bkwd}
+ addUserKnob {41 clear_fwd l " clear fwd " T Tracker1.clear_fwd}
+ addUserKnob {41 update_viewer l "update viewer" T Tracker1.update_viewer}
+ addUserKnob {41 center_viewer l "center viewer" T Tracker1.center_viewer}
+ addUserKnob {41 predict_track l "predict track" T Tracker1.predict_track}
+ addUserKnob {26 BG l "@b;BG"}
+ addUserKnob {41 enable1 l enable T Tracker1.enable1}
+ addUserKnob {41 use_for1 l "Use to calculate:" T Tracker1.use_for1}
+ addUserKnob {41 track1 T Tracker1.track1}
+ addUserKnob {26 FG l "@b;FG"}
+ addUserKnob {41 enable2 l enable T Tracker1.enable2}
+ addUserKnob {41 use_for2 l "Use to calculate:" T Tracker1.use_for2}
+ addUserKnob {41 track2 T Tracker1.track2}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 501
+  ypos 146
+ }
+set N3e04800 [stack 0]
+ Transform {
+  translate {{Tracker1.track1.x-Tracker1.track2.x} {Tracker1.track1.y-Tracker1.track2.y}}
+  center {{parent.Tracker1.track1.x} {parent.Tracker1.track1.y}}
+  name Transform1
+  xpos 501
+  ypos 189
+ }
+push $N3e04800
+ Tracker3 {
+  use_for1 {}
+  track1 {0 0}
+  offset1 {0 0}
+  pattern1 {-118 -110 118 110}
+  search1 {-150 -110 150 110}
+  enable2 true
+  track2 {0 0}
+  offset2 {0 0}
+  pattern2 {-32 -32 32 32}
+  search2 {-22 -22 22 22}
+  track3 {0 0}
+  offset3 {0 0}
+  pattern3 {-126 -126 126 126}
+  search3 {-88 -88 88 88}
+  track4 {0 0}
+  offset4 {0 0}
+  pattern4 {-126 -126 126 126}
+  search4 {-88 -88 88 88}
+  center {1024 778}
+  name Tracker1
+  xpos 614
+  ypos 146
+ }
+ Switch {
+  inputs 2
+  which {{inputStyle}}
+  name Switch1
+  selected true
+  xpos 501
+  ypos 243
+ }
+ Output {
+  name Output1
+  xpos 501
+  ypos 299
+ }
+end_group

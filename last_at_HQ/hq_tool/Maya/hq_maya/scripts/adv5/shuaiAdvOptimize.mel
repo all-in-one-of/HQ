@@ -1,0 +1,365 @@
+global proc shuaiGroupAndRename()
+{
+    float $MainCV1[]=`xform -q -ws -t MainShape.cv[1]`;
+    float $MainCV2[]=`xform -q -ws -t MainShape.cv[3]`;
+    float $MainCV3[]=`xform -q -ws -t MainShape.cv[5]`;
+    float $MainCV4[]=`xform -q -ws -t MainShape.cv[7]`;
+    string $mainCurve=`curve -d 1 -p $MainCV2[0] 0 $MainCV1[2] -p $MainCV2[0] 0 $MainCV3[2] -p $MainCV4[0] 0 $MainCV3[2] -p $MainCV4[0] 0 $MainCV1[2] -p $MainCV2[0] 0 $MainCV1[2] -k 0 -k 1 -k 2 -k 3 -k 4 `;
+    rename $mainCurve "Character";
+    group -n "Character_G" "Character";
+    parent "Character_G" "Group";
+    group -n "Main_G" "Main";
+    group -n "_rig" "Character_G";
+    rename "Group" "_all";
+    parent "Main_G" "Character";
+    if(`objExists "Geometry"`)
+    {
+        rename "Geometry" "_geo";
+    }
+    else
+    {
+        group -em -n "_geo";
+        parent "_geo" "_all";
+    }
+    reorder -f "_rig";
+    setAttr "CharacterShape.overrideEnabled" 1;
+    setAttr "CharacterShape.overrideColor" 20;
+    string $buildPose=(`getAttr buildPose.udAttr`)+"xform -os -t 0 0 0 -ro 0 0 0 -s 1 1 1 Character;";
+    setAttr "buildPose.udAttr" -type "string" $buildPose;
+    string $hideObjs[]={"FKEye_R","FKEye_L","FKJaw_M","AimEye_M"};
+    string $n;
+    for($n in $hideObjs)
+    {
+        if(`objExists $n`)
+        {
+            hide $n;
+        }
+    }
+    if(`attributeExists "legAim" "IKLeg_L"`)
+    {
+        setAttr "IKLeg_L.legAim" 0;
+    }
+    if(`attributeExists "legAim" "IKLeg_R"`)
+    {
+        setAttr "IKLeg_R.legAim" 0;
+    }    
+}
+global proc shuaiLockHideAttr()
+{
+    string $ControlSetMembers[]=`sets -q -no ControlSet`;
+    string $i;
+    for($i in $ControlSetMembers)
+    {
+        string $shape[]=`listRelatives -s $i`;
+        string $shapeType;
+        if(size($shape)!=0)
+        {
+            $shapeType=`nodeType $shape[0]`;
+        };
+        if($shapeType=="nurbsCurve")
+        {
+            setAttr -lock true -keyable false -channelBox false ($i+".sx");
+            setAttr -lock true -keyable false -channelBox false ($i+".sy");
+            setAttr -lock true -keyable false -channelBox false ($i+".sz");
+            setAttr -lock true -keyable false -channelBox false ($i+".v");
+            if(`gmatch $i "FK*"`)
+            {
+                setAttr -lock true -keyable false -channelBox false ($i+".tx");
+                setAttr -lock true -keyable false -channelBox false ($i+".ty");
+                setAttr -lock true -keyable false -channelBox false ($i+".tz");
+            }
+        }
+    }
+    sets -e -add "ControlSet" "Character" ;
+    sets -e -add "AllSet" "Character" ;
+    setAttr -lock true -keyable false -channelBox false "Character.v";
+    /*string $LockTranslateObjs[]={"FKSpine2_M","FKChest_M","FKNeck_M","FKElbow_L","FKElbow_R"};
+    string $n;
+    for($n in $LockTranslateObjs)
+    {
+        if(`objExists $n`)
+        {
+            setAttr -lock true -keyable false -channelBox false ($n+".tx");
+            setAttr -lock true -keyable false -channelBox false ($n+".ty");
+            setAttr -lock true -keyable false -channelBox false ($n+".tz");
+        }
+    }*/
+    setAttr -lock true -keyable false -channelBox false "IKLeg_R.roll";
+    setAttr -lock true -keyable false -channelBox false "IKLeg_L.roll";
+    setAttr -lock true -keyable false -channelBox false "IKLeg_R.rollAngle";
+    setAttr -lock true -keyable false -channelBox false "IKLeg_L.rollAngle";
+    
+    setAttr -lock true -keyable false -channelBox false "FKElbow_L.rx";
+    setAttr -lock true -keyable false -channelBox false "FKElbow_L.ry";
+    setAttr -lock true -keyable false -channelBox false "FKElbow_R.rx";
+    setAttr -lock true -keyable false -channelBox false "FKElbow_R.ry";
+    
+    setAttr -lock true -keyable false -channelBox false "RollHeel_L.tx";
+    setAttr -lock true -keyable false -channelBox false "RollHeel_L.ty";
+    setAttr -lock true -keyable false -channelBox false "RollHeel_L.tz";
+    
+    setAttr -lock true -keyable false -channelBox false "RollToes_L.tx";
+    setAttr -lock true -keyable false -channelBox false "RollToes_L.ty";
+    setAttr -lock true -keyable false -channelBox false "RollToes_L.tz";
+    
+    if((`objExists "RollToesEnd_L"`)==true){
+    setAttr -lock true -keyable false -channelBox false "RollToesEnd_L.tx";
+    setAttr -lock true -keyable false -channelBox false "RollToesEnd_L.ty";
+    setAttr -lock true -keyable false -channelBox false "RollToesEnd_L.tz";
+    
+    setAttr -lock true -keyable false -channelBox false "RollToesEnd_R.tx";
+    setAttr -lock true -keyable false -channelBox false "RollToesEnd_R.ty";
+    setAttr -lock true -keyable false -channelBox false "RollToesEnd_R.tz";
+    }
+    
+    if((`objExists "RollMiddleToe4_L"`)==true){
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe4_L.tx";
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe4_L.ty";
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe4_L.tz";
+    
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe4_R.tx";
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe4_R.ty";
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe4_R.tz";
+    }
+    
+    if((`objExists "RollMiddleToe3_L"`)==true){
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe3_L.tx";
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe3_L.ty";
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe3_L.tz";
+    
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe3_R.tx";
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe3_R.ty";
+    setAttr -lock true -keyable false -channelBox false "RollMiddleToe3_R.tz";
+    }
+    
+    setAttr -lock true -keyable false -channelBox false "RollHeel_R.tx";
+    setAttr -lock true -keyable false -channelBox false "RollHeel_R.ty";
+    setAttr -lock true -keyable false -channelBox false "RollHeel_R.tz";
+    
+    setAttr -lock true -keyable false -channelBox false "RollToes_R.tx";
+    setAttr -lock true -keyable false -channelBox false "RollToes_R.ty";
+    setAttr -lock true -keyable false -channelBox false "RollToes_R.tz";
+    
+    
+    
+    transformLimits -rz -5 45 -erz 1 0 FKElbow_L;
+    transformLimits -rz -5 45 -erz 1 0 FKElbow_R;
+    sets -remove ControlSet HipSwinger_M;
+}
+global proc chenXi_Optimize()
+{
+//打断原来属性关联
+disconnectAttr "HipSwinger_M.rotate" "HipSwingerGroupRoot_M.rotate";
+//删除原来旋转约束
+delete HipSwingerStabalizeRoot_M_orientConstraint1;
+//用身体总控制器父子约束控制器
+parentConstraint -mo -weight 1 RootX_M HipSwingerStabalizeRoot_M;
+//隐藏原来胯部控制器
+setAttr "HipSwingerOffset_M.visibility" 0;
+//修复身体IK控制器
+delete IKOffsetSpine2_M_parentConstraint1;
+pointConstraint -mo -weight 1 IKSpine3_M IKOffsetSpine2_M;
+pointConstraint -mo -weight 1 IKSpine1_M IKOffsetSpine2_M;
+
+aimConstraint -mo -weight 1 -aimVector 0 1 0 -upVector 0 1 0 -worldUpType "objectrotation" -worldUpVector 0 1 0 -worldUpObject IKSpine1_M IKSpine3_M IKOffsetSpine2_M;
+}
+global proc shuaiChangeRootCtrl()
+{
+    float $Cv1[]=`xform -q -ws -t curveShape4.cv[3]`;
+    float $Cv2[]=`xform -q -ws -t curveShape1.cv[3]`;
+    float $Cv3[]=`xform -q -ws -t curveShape2.cv[3]`;
+    float $Cv4[]=`xform -q -ws -t curveShape3.cv[3]`;
+    
+    string $NewRootCurve=`curve -d 1 -p $Cv2[0] 0 $Cv1[2] -p $Cv2[0] 0 $Cv3[2] -p $Cv4[0] 0 $Cv3[2] -p $Cv4[0] 0 $Cv1[2] -p $Cv2[0] 0 $Cv1[2] -k 0 -k 1 -k 2 -k 3 -k 4 `;
+    rename $NewRootCurve "newRootCurve";
+    parent -s -add "newRootCurveShape" "RootX_M";
+    delete "newRootCurve";
+    delete {"curveShape1","curveShape2","curveShape3","curveShape4"};
+    rename "newRootCurveShape" "RootX_MShape";
+    setAttr "RootX_MShape.overrideEnabled" 1;
+    setAttr "RootX_MShape.overrideColor" 13;
+}
+global proc string cc_spine2 ()
+
+{
+if(!`objExists "ro_Root_M"` && !`objExists "FKExtraSpine2_M_po"`)
+{
+    if(`objExists "MUMD_spine1"` && `objExists "PluMin_Chestspine1"`)
+    {
+       delete  MUMD_spine1  PluMin_Chestspine1;
+     }
+    if(`objExists "Root_M"`&&`objExists "Spine1_M"`&&`objExists "Spine2_M"`&&`objExists "Spine3_M"`&&`objExists "Chest_M"`&&`objExists "Neck_M"`)
+    {
+        float $rootm[]=`xform -q -ws -t Root_M`;
+        float $spine1[]=`xform -q -ws -t Spine1_M`;
+        float $spine2[]=`xform -q -ws -t Spine2_M`;
+        float $spine3[]=`xform -q -ws -t Spine3_M`;
+        float $chest[]=`xform -q -ws -t Chest_M`;
+        float $neck[]=`xform -q -ws -t Neck_M`;
+    
+    
+        string $ro_rootm = `joint -p $rootm[0] $rootm[1] $rootm[2] -n "ro_Root_M"`;
+        string $ro_spine1= `joint -p $spine1[0] $spine1[1] $spine1[2] -n "ro_Spine1_M"`;
+        string $ro_spine2= `joint -p $spine2[0] $spine2[1] $spine2[2] -n "ro_Spine2_M"`;
+        string $ro_spine3= `joint -p $spine3[0] $spine3[1] $spine3[2] -n "ro_Spine3_M"`;
+        string $ro_chest= `joint -p $chest[0] $chest[1] $chest[2] -n "ro_Chest_M"`;
+        string $ro_neck= `joint -p $neck[0] $neck[1] $neck[2] -n "ro_Neck_M"`;
+        joint -e -oj yxz -secondaryAxisOrient xup -ch -zso $ro_rootm;
+        string $ro_grop = `group -em -n "ro_joint_G"`;
+        parent $ro_rootm $ro_grop;
+        string $spine_cuv= `curve -d 3 -p $rootm[0] $rootm[1] $rootm[2] -p $spine1[0] $spine1[1] $spine1[2] -p $spine2[0] $spine2[1] $spine2[2] -p $spine3[0] $spine3[1] $spine3[2] -p $chest[0] $chest[1] $chest[2] -p $neck[0] $neck[1] $neck[2] -k 0 -k 0 -k 0 -k 1 -k 2 -k 3 -k 3 -k 3 -n "spine_ro_curve"`;
+        string $skijione1 = `joint -p $rootm[0] $rootm[1] $rootm[2] -n "spine_skin_joint1"`;
+        string $skijione2 = `joint -p $spine2[0] $spine2[1] $spine2[2] -n "spine_skin_joint2"`;
+        string $skijione3 = `joint -p $chest[0] $chest[1] $chest[2] -n "spine_skin_joint3"`;
+        parent -w $skijione2 $skijione3 $skijione1;
+        ikSplineHandleCtx -e -createCurve false ikSplineHandleContext;
+        select -r $ro_rootm $ro_neck;
+        string $ikhand[] =` ikHandle -sol ikSplineSolver -ccv false -c $spine_cuv -n "spine_ro_ikHandle1"`;
+        string $gorpa = `group -n "spine_ro_deformer_G" $spine_cuv $skijione1 $skijione2 $skijione3 $ikhand[0]`;
+        setAttr ($spine_cuv+".inheritsTransform") 0;
+        select -r $skijione1 $skijione2 $skijione3 $spine_cuv;
+        SmoothBindSkin;
+        parentConstraint -mo -weight 1  "RootX_M" $skijione1;
+        parentConstraint -mo -weight 1  "FKSpine2_M " $skijione2;
+        parentConstraint -mo -weight 1  "FKChest_M" $skijione3;
+        string $crclh[] = `ls -type skinCluster `;
+        int $a_css = size($crclh);
+        skinPercent -tv spine_skin_joint1 1 $crclh[$a_css-1] spine_ro_curve.cv[0];
+        skinPercent -tv spine_skin_joint1 0.7 -tv spine_skin_joint2 0.3 $crclh[$a_css-1] spine_ro_curve.cv[1];
+        skinPercent -tv spine_skin_joint2 1 $crclh[$a_css-1] spine_ro_curve.cv[2];
+        skinPercent -tv spine_skin_joint2 1 $crclh[$a_css-1] spine_ro_curve.cv[3];
+        skinPercent -tv spine_skin_joint3 1 $crclh[$a_css-1] spine_ro_curve.cv[4];
+        skinPercent -tv spine_skin_joint3 1 $crclh[$a_css-1] spine_ro_curve.cv[5];
+        parent $gorpa FKOffsetSpine1_M;
+        parent $ro_grop FKOffsetSpine1_M;
+    }
+
+    string $fkxchest[] = `listRelatives -p FKXChest_M` ;
+    string $fkxchesta[] = `listRelatives -p FKExtraChest_M` ;
+    string $fkxspine[] = `listRelatives -p FKXSpine2_M` ;
+    string $fkxspinea[] = `listRelatives -p FKExtraSpine2_M` ;
+
+    if($fkxchest[0] == "FKChest_M")
+    {
+        parent FKXChest_M FKOffsetChest_M ;
+    }
+    if($fkxspine[0] == "FKSpine2_M")
+    {
+        parent FKXSpine2_M FKOffsetSpine2_M ;
+    }
+    if($fkxspinea[0] == "FKOffsetSpine2_M")
+    {
+        string $goup3 = `group -n "FKExtraSpine2_M_rotate"  FKExtraSpine2_M`;
+        string $goup4 = `group -n "FKExtraSpine2_M_pos" $goup3`;
+        parent $goup4 FKOffsetSpine1_M ;
+    }
+    if($fkxchesta[0] == "FKOffsetChest_M")
+    {
+        string $goup1 = `group -n "FKExtraChest_M_rotate"  FKExtraChest_M`;
+        string $goup2 = `group -n "FKExtraChest_M_pos" $goup1`;
+        float $spine7[]=`xform -q -ws -t Spine2_M`;
+        move $spine7[0] $spine7[1] $spine7[2] ($goup2+".scalePivot") ($goup2+".rotatePivot");
+        parent $goup2 FKExtraSpine2_M_pos;
+    }
+    orientConstraint -mo -weight 1  "FKSpine2_M" "FKExtraChest_M_pos";
+    orientConstraint  -mo -weight 1  "ro_Spine1_M" "FKXSpine1_M";    
+    orientConstraint  -mo -weight 1  "ro_Spine2_M" "FKXSpine2_M";
+    orientConstraint  -mo -weight 1  "ro_Spine3_M" "FKXSpine3_M";
+    orientConstraint  -mo -weight 1  "ro_Chest_M" "FKXChest_M";
+    string $aamA = `shadingNode -asUtility plusMinusAverage -n "spine_PMINA"`;
+    connectAttr -f FKChest_M.rotateY ($aamA+".input1D[0]");
+    connectAttr -f FKSpine2_M.rotateY ($aamA+".input1D[1]");
+    connectAttr -f ($aamA+".output1D") spine_ro_ikHandle1.twist;
+    setAttr "spine_ro_deformer_G.visibility" 0;
+    setAttr "ro_joint_G.visibility" 0;
+    
+}
+
+if(!`objExists "MUMD_Neck01"` && !`objExists "MUMD_Neck02"`)
+{
+    string $multDivideNeck1 = `shadingNode -asUtility multiplyDivide -n "MUMD_Neck01"`;
+    string $multDivideNeck2  = `shadingNode -asUtility multiplyDivide -n "MUMD_Neck02"`;
+    setAttr ($multDivideNeck1+".input2Z") .5;
+    setAttr ($multDivideNeck1+".input2X") .5;
+    setAttr ($multDivideNeck1+".input2Y") .5;
+    setAttr ($multDivideNeck2+".input2Z") .25;
+    setAttr ($multDivideNeck2+".input2X") .25;
+    setAttr ($multDivideNeck2+".input2Y") .25;
+    connectAttr -f FKNeck_M.rotate ($multDivideNeck1+".input1");
+    connectAttr -f FKNeck_M.rotate ($multDivideNeck2+".input1");
+    connectAttr -f ($multDivideNeck1+".output") FKExtraNeck1_M.rotate;
+    connectAttr -f ($multDivideNeck2+".output") FKExtraNeck2_M.rotate;   
+}
+select -cl  ;
+return "完毕";
+}
+global proc shuaiAddSwivelFootAttr()
+{
+    float $joint_L[]=`xform -q -ws -t "Toes_L"`;
+    float $joint_R[]=`xform -q -ws -t "Toes_R"`;
+    group -n "SwivelFoot_L" RollOffsetHeel_L;
+    group -n "SwivelFoot_R" RollOffsetHeel_R;
+    xform -ws -piv $joint_L[0] $joint_L[1] $joint_L[2] "SwivelFoot_L";
+    xform -ws -piv $joint_R[0] $joint_R[1] $joint_R[2] "SwivelFoot_R";
+    addAttr -ln "swivelFool" -k 1 -at double  -dv 0 |_all|_rig|Character_G|Character|Main_G|Main|MotionSystem|IKSystem|IKHandle|IKOffsetLeg_L|IKExtraLeg_L|IKLeg_L;
+    addAttr -ln "swivelFool" -k 1 -at double  -dv 0 |_all|_rig|Character_G|Character|Main_G|Main|MotionSystem|IKSystem|IKHandle|IKOffsetLeg_R|IKExtraLeg_R|IKLeg_R;
+    expression -s "SwivelFoot_L.rotateY=IKLeg_L.swivelFool;\nSwivelFoot_R.rotateY=-IKLeg_R.swivelFool;"; 
+}
+global proc shuaiFixFinggerDriven()
+{
+	selectKey -add -k -f 10 SDK1FKThumbFinger2_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKThumbFinger3_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKIndexFinger2_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKIndexFinger3_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKMiddleFinger1_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKMiddleFinger2_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKMiddleFinger3_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKRingFinger2_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKRingFinger3_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKPinkyFinger2_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKPinkyFinger3_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKIndexFinger1_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKRingFinger1_L_rotateY ;
+	selectKey -add -k -f 10 SDK1FKPinkyFinger1_L_rotateY ;
+	keyframe -animation keys -absolute -valueChange 90 ;
+}
+global proc shuaiRotateCtrls()
+{
+	select -r {"FKRoot_MShape.cv[0:7]","FKSpine2_MShape.cv[0:7]","FKChest_MShape.cv[0:7]","FKNeck_MShape.cv[0:7]","FKHead_MShape.cv[0:7]"};
+	rotate -r -os 0 0 -90 ;
+	select -cl;
+}
+global proc shuaiAddShowModAttr()
+{
+    string $main="Main";
+    if(`objExists $main`)
+    {
+        if(!attributeExists("showMod",$main))
+        {
+            addAttr -ln "showMod" -k 1 -at long  -min 0 -max 1 -dv 1 $main;
+        }
+        else
+        {
+            warning("The attribute \"showMod\" has been added to \"Main\" Control!!");
+        }
+            
+    }
+    
+}
+global proc orCon()
+{
+    string $constains[]={"Chest_M_Slide50","Spine3_M_Slide50","Spine2_M_Slide50","Spine1_M_Slide50"};
+    string $i;
+    for($i in $constains)
+    {
+        setAttr ($i+".rotate") -type "double3" 0 0 0;
+        orientConstraint -e -skip none -maintainOffset $i; 
+    }
+}
+global proc shuaiConnectCharCtrlScale()
+{
+    string $mutiplyNode=`shadingNode -asUtility multiplyDivide`;
+    connectAttr -f Main.scaleX ($mutiplyNode+".input2X");
+    connectAttr -f Character.scaleX ($mutiplyNode+".input1X");
+    connectAttr -f ($mutiplyNode+".outputX") IKCurveInfoAllMultiplySpine_M.input2X;
+};

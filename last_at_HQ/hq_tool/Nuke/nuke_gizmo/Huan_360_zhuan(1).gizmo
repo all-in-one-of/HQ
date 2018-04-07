@@ -1,0 +1,344 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ tile_color 0xaaff00ff
+ addUserKnob {20 User}
+ addUserKnob {4 screen l Screen M {234561 345612 456123 561234 612345 |5612345| "" "" "" ""}}
+ addUserKnob {26 ""}
+ addUserKnob {26 tip l "" +STARTLINE T "by:Rainy.T\n\nTip:适合各种尺寸环幕的转屏（先设置好工程尺寸）.\n|5612345|是5屏的右半在环幕最左，左半在环幕最右。"}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x7171c600
+  label |5612345|
+  note_font_size 42
+  xpos -1941
+  ypos 188
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode10
+  tile_color 0x7171c600
+  label 612345
+  note_font_size 42
+  xpos -989
+  ypos 362
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode6
+  tile_color 0x7171c600
+  label 234561
+  note_font_size 42
+  xpos -1697
+  ypos -279
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode7
+  tile_color 0x7171c600
+  label 345612
+  note_font_size 42
+  xpos -1265
+  ypos -264
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode8
+  tile_color 0x7171c600
+  label 456123
+  note_font_size 42
+  xpos -896
+  ypos -247
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode9
+  tile_color 0x7171c600
+  label 561234
+  note_font_size 42
+  xpos -1034
+  ypos 81
+  bdwidth 279
+  bdheight 236
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos -1413
+  ypos -479
+ }
+ Dot {
+  name Dot4
+  xpos -1379
+  ypos -383
+ }
+set Nee48b000 [stack 0]
+ Crop {
+  box {0 0 {(root.width/6)*4+(root.width/6)/2} {root.height}}
+  name Crop1
+  xpos -1931
+  ypos 268
+ }
+ Transform {
+  translate {{(root.width/6)*2-(root.width/6)/2} 0}
+  center {5292 600}
+  name Transform1
+  xpos -1931
+  ypos 294
+ }
+push $Nee48b000
+ Crop {
+  box {{(root.width/6)*4+(root.width/6)/2} 0 {root.width} 1200}
+  name Crop2
+  xpos -1752
+  ypos 283
+ }
+ Transform {
+  translate {{-(root.width/6)*4-(root.width/6)/2} 0}
+  center {5292 600}
+  name Transform2
+  xpos -1752
+  ypos 309
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos -1868
+  ypos 368
+ }
+ Reformat {
+  name Reformat1
+  xpos -1868
+  ypos 394
+ }
+push $Nee48b000
+ Crop {
+  box {0 0 {(root.width/6)*5} {root.height}}
+  name Crop21
+  xpos -979
+  ypos 442
+ }
+ Transform {
+  translate {{(root.width/6)*1} 0}
+  center {5292 600}
+  name Transform17
+  xpos -979
+  ypos 468
+ }
+push $Nee48b000
+ Crop {
+  box {{(root.width/6)*5} 0 {root.width} 1200}
+  name Crop22
+  xpos -800
+  ypos 457
+ }
+ Transform {
+  translate {{-(root.width/6)*5} 0}
+  center {5292 600}
+  name Transform18
+  xpos -800
+  ypos 483
+ }
+ Merge2 {
+  inputs 2
+  name Merge24
+  xpos -916
+  ypos 542
+ }
+ Reformat {
+  name Reformat8
+  xpos -916
+  ypos 568
+ }
+push $Nee48b000
+ Crop {
+  box {0 0 {(root.width/6)*4} {root.height}}
+  name Crop19
+  xpos -1024
+  ypos 161
+ }
+ Transform {
+  translate {{(root.width/6)*2} 0}
+  center {5292 600}
+  name Transform15
+  xpos -1024
+  ypos 187
+ }
+push $Nee48b000
+ Crop {
+  box {{(root.width/6)*4} 0 {root.width} 1200}
+  name Crop20
+  xpos -845
+  ypos 176
+ }
+ Transform {
+  translate {{-(root.width/6)*4} 0}
+  center {5292 600}
+  name Transform16
+  xpos -845
+  ypos 202
+ }
+ Merge2 {
+  inputs 2
+  name Merge23
+  xpos -961
+  ypos 261
+ }
+ Reformat {
+  name Reformat7
+  xpos -961
+  ypos 287
+ }
+set Nf06b5c00 [stack 0]
+push $Nee48b000
+ Crop {
+  box {0 0 {(root.width/6)*3} {root.height}}
+  name Crop17
+  xpos -886
+  ypos -167
+ }
+ Transform {
+  translate {{(root.width/6)*3} 0}
+  center {5292 600}
+  name Transform11
+  xpos -886
+  ypos -141
+ }
+push $Nee48b000
+ Crop {
+  box {{(root.width/6)*3} 0 {root.width} 1200}
+  name Crop18
+  xpos -707
+  ypos -152
+ }
+ Transform {
+  translate {{-(root.width/6)*3} 0}
+  center {5292 600}
+  name Transform12
+  xpos -707
+  ypos -126
+ }
+ Merge2 {
+  inputs 2
+  name Merge22
+  xpos -823
+  ypos -67
+ }
+ Reformat {
+  name Reformat6
+  xpos -823
+  ypos -41
+ }
+push $Nee48b000
+ Crop {
+  box {0 0 {(root.width/6)*2} {root.height}}
+  name Crop15
+  xpos -1255
+  ypos -184
+ }
+ Transform {
+  translate {{(root.width/6)*4} 0}
+  center {5292 600}
+  name Transform8
+  xpos -1255
+  ypos -158
+ }
+push $Nee48b000
+ Crop {
+  box {{(root.width/6)*2} 0 {root.width} 1200}
+  name Crop16
+  xpos -1076
+  ypos -169
+ }
+ Transform {
+  translate {{-(root.width/6)*2} 0}
+  center {5292 600}
+  name Transform10
+  xpos -1076
+  ypos -143
+ }
+ Merge2 {
+  inputs 2
+  name Merge21
+  xpos -1192
+  ypos -84
+ }
+ Reformat {
+  name Reformat5
+  xpos -1192
+  ypos -58
+ }
+push $Nee48b000
+ Crop {
+  box {0 0 {root.width/6} {root.height}}
+  name Crop13
+  xpos -1687
+  ypos -199
+ }
+ Transform {
+  translate {{(root.width/6)*5} 0}
+  center {5292 600}
+  name Transform6
+  xpos -1687
+  ypos -173
+ }
+push $Nee48b000
+ Crop {
+  box {{root.width/6} 0 {root.width} 1200}
+  name Crop14
+  xpos -1508
+  ypos -184
+ }
+ Transform {
+  translate {{-root.width/6} 0}
+  center {5292 600}
+  name Transform7
+  xpos -1508
+  ypos -158
+ }
+ Merge2 {
+  inputs 2
+  name Merge20
+  xpos -1624
+  ypos -99
+ }
+ Reformat {
+  name Reformat4
+  xpos -1624
+  ypos -73
+ }
+ Switch {
+  inputs 6
+  which {{screen}}
+  name Switch1
+  xpos -1415
+  ypos 302
+ }
+ Output {
+  name Output1
+  xpos -1415
+  ypos 403
+ }
+push $Nf06b5c00
+push 0
+ Viewer {
+  inputs 2
+  frame_range 2044-2087
+  input_number 1
+  name Viewer1
+  xpos -851
+  ypos 287
+ }
+end_group

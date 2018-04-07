@@ -1,0 +1,63 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ addUserKnob {20 camera}
+ addUserKnob {41 translate T Axis.translate}
+ addUserKnob {41 rotate T Axis.rotate}
+ addUserKnob {26 ""}
+ addUserKnob {7 PD R 30 150}
+ PD 65
+ addUserKnob {7 focus R 0 90}
+ addUserKnob {7 foca_lemgth R 5 100}
+ foca_lemgth 25
+}
+ Input {
+  inputs 0
+  name tra_cam
+  xpos -901
+  ypos 122
+ }
+ Axis2 {
+  name Axis
+  xpos -881
+  ypos 233
+ }
+set N3c6cc00 [stack 0]
+ Camera2 {
+  translate {{parent.PD.left/2000} 0 0}
+  rotate {0 {parent.focus.left} 0}
+  focal {{parent.foca_lemgth.left}}
+  name CameraR
+  xpos -774
+  ypos 316
+ }
+push $N3c6cc00
+ Camera2 {
+  translate {{-parent.PD.left/2000} 0 0}
+  rotate {0 {-parent.focus.left} 0}
+  focal {{parent.foca_lemgth.left}}
+  name CameraL
+  xpos -992
+  ypos 322
+ }
+ JoinViews {
+  inputs 2
+  name JoinViews1
+  xpos -882
+  ypos 446
+  viewassoc "left\nright"
+ }
+set N3c6dc00 [stack 0]
+ Viewer {
+  frame_range 1-259
+  name Viewer1
+  xpos -743
+  ypos 474
+ }
+push $N3c6dc00
+ Output {
+  name Output1
+  xpos -882
+  ypos 529
+ }
+end_group

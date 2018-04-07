@@ -1,0 +1,259 @@
+//
+
+global proc snaponface()
+{
+int $YY_Adsorb_Plugin = `pluginInfo -q -l nearestPointOnMesh`;
+if($YY_Adsorb_Plugin == 0)
+{
+string $YY_Adsorb_Load[] = `loadPlugin nearestPointOnMesh.mll`;
+};
+
+
+
+
+
+
+if(`window -q -ex YY_Adsorb_Win`)
+{
+deleteUI YY_Adsorb_Win;
+};
+
+window
+	   -t "表面吸附工具"
+	   -wh 300 265
+	   -mb 1
+	   -s 1
+	   YY_Adsorb_Win;
+
+menu -l "帮助";
+menuItem -l "使用帮助" -c YY_Adsorb_Help;
+menu -l "关于";
+menuItem -l "关于" -c YY_Adsorb_About;
+
+
+
+columnLayout -rs 10 -cat "both" 10 -adj 1;
+text -l "物体表面吸附工具";
+separator;
+rowLayout -nc 2 -cw2 120 150 -cl2 "left" "center";
+text -h 30 -al "left" -l "选择表面物体：";
+button -h 30 -w 150 -bgc 0.8 0.8 0.8 -l "加载表面物体" -c YY_Adsorb_SelFace YY_Adsorb_Button_A;
+setParent ..;
+rowLayout -nc 2 -cw2 120 150 -cl2 "center" "center";
+text -h 30 -l "选择吸附物体：";
+button -h 30 -w 150  -bgc 0.8 0.8 0.8 -l "加载吸附物体" -c YY_Adsorb_SelObjs YY_Adsorb_Button_B;
+setParent ..;
+floatSliderGrp 
+	           -f 1 
+			   -l "偏移值(%)：" 
+			   -cl3 "left" "center" "left" 
+			   -cw3 68 50 100
+			   -v 100.000
+			   -pre 3
+			   -min  0.00
+			   -max  100.00
+			   -fmn -100.00
+			   -fmx  100.00
+			   YY_Adsorb_FLG;
+button  -h 50 -bgc 0.8 0.8 0.8 -l "吸附" -c YY_Adsorb_Proc YY_Adsorb_Button_C;
+showWindow YY_Adsorb_Win;
+
+
+window -e
+       -wh 300 265
+       YY_Adsorb_Win;
+};
+//////////////////////////////////////////////////////////////////////////////
+global proc YY_Adsorb_SelFace()
+{
+global string $YY_Adsorb_SelFace[];
+$YY_Adsorb_SelFace = `ls -sl`;
+if(size($YY_Adsorb_SelFace) != 0)
+{
+string $YY_Adsorb_Mesh_B[] = `ls -type "mesh" -dag $YY_Adsorb_SelFace[0]`;
+if(size($YY_Adsorb_Mesh_B) != 0)
+{
+button -e -h 30 -w 150 -bgc 0.8 0.2 0.8 -l "表面物体加载完毕" YY_Adsorb_Button_A;
+button -e -h 50 -bgc 0.8 0.8 0.8 -l "吸附" YY_Adsorb_Button_C;
+}
+else
+{
+confirmDialog
+	          -t "请选择表面物体"
+			  -m "表面物体必须为 Poly 物体\n请选择一个 Poly 物体后重新加载！"
+			  -ma "center"
+			  -b "OK"
+			  ;
+};
+}
+else{
+confirmDialog
+	          -t "请选择表面物体"
+			  -m "请选择一个表面物体\n然后点击<<加载表面物体>>按钮"
+			  -ma "center"
+			  -b "OK"
+			  ;
+	
+
+};
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_Adsorb_SelObjs()
+{
+global string $YY_Adsorb_SelObjs[];
+
+$YY_Adsorb_SelObjs = `ls -sl`;
+if(size($YY_Adsorb_SelObjs)!= 0)
+{
+button -e -w 150 -bgc 0.8 0.8 0.2 -l "吸附物体加载完毕" YY_Adsorb_Button_B;
+button -e -h 50 -bgc 0.8 0.8 0.8 -l "吸附" YY_Adsorb_Button_C;
+}
+else
+{
+confirmDialog
+	          -t "请选择吸附物体"
+			  -m "请选择至少一个要被吸附的物体\n然后点击<<加载吸附物体>>按钮"
+			  -ma "center"
+			  -b "OK"
+			  ;
+};
+};
+//////////////////////////////////////////////////////////////////////////////////////////////
+global proc YY_Adsorb_Proc()
+{
+global string $YY_Adsorb_SelFace[];
+global string $YY_Adsorb_SelObjs[];
+if((size($YY_Adsorb_SelFace) == 0)||(size($YY_Adsorb_SelObjs) == 0))
+{
+confirmDialog
+	          -t "请选择物体"
+			  -m "请选择至少一个表面物体和若干吸附物体\n然后点击<<加载>>按钮！"
+			  -ma "center"
+			  -b "OK"
+			  ;
+
+}
+else
+{
+
+
+
+string $YY_Adsorb_Mesh_A[] = `ls -type "mesh" -dag $YY_Adsorb_SelFace[0]`;
+string $YY_Adsorb_NPOM_Name =`createNode nearestPointOnMesh`;
+connectAttr -f ($YY_Adsorb_Mesh_A[0]+".worldMesh[0]") ($YY_Adsorb_NPOM_Name+".inMesh");
+string $YY_Adsorb_For;
+for($YY_Adsorb_For in $YY_Adsorb_SelObjs)
+{
+vector $YY_Adsorb_Vec = `objectCenter -gl $YY_Adsorb_For`;
+setAttr ($YY_Adsorb_NPOM_Name + ".inPositionX") ($YY_Adsorb_Vec.x);
+setAttr ($YY_Adsorb_NPOM_Name + ".inPositionY") ($YY_Adsorb_Vec.y);
+setAttr ($YY_Adsorb_NPOM_Name + ".inPositionZ") ($YY_Adsorb_Vec.z);
+vector $YY_Adsorb_JL =`getAttr ($YY_Adsorb_NPOM_Name +".position")`;
+
+vector $YY_Adsorb_Sub = $YY_Adsorb_JL - $YY_Adsorb_Vec ;
+
+float $YY_Adsorb_Offsect = `floatSliderGrp -q -v YY_Adsorb_FLG` * 0.01;
+
+
+
+move -r  ($YY_Adsorb_Sub.x * $YY_Adsorb_Offsect) ($YY_Adsorb_Sub.y * $YY_Adsorb_Offsect) ($YY_Adsorb_Sub.z * $YY_Adsorb_Offsect) $YY_Adsorb_For;
+//xform -ws -a -t ($YY_Adsorb_JL.x) ($YY_Adsorb_JL.y) ($YY_Adsorb_JL.z) $YY_Adsorb_For;
+
+};
+button -e -h 50 -bgc 0.6 0.8 1 -l "吸附完毕"  YY_Adsorb_Button_C;
+
+button -e -h 30 -w 150 -bgc 0.8 0.8 0.8 -l "加载表面物体"  YY_Adsorb_Button_A;
+button -e -h 30 -w 150  -bgc 0.8 0.8 0.8 -l "加载吸附物体" YY_Adsorb_Button_B;
+delete $YY_Adsorb_NPOM_Name;
+};
+};
+
+
+
+
+global proc YY_Adsorb_Help()
+{
+	if(`window -q -ex YY_Adsorb_Help_Win`)
+	{
+	deleteUI YY_Adsorb_Help_Win;
+	};
+	window 
+		  -wh 200 420
+		  -s 1
+		  -mb 0
+		  -t "吸附物体工具使用帮助"
+		  YY_Adsorb_Help_Win;
+	string $YY_Del_Node_Help_Form = `formLayout`;
+	text -l "吸附物体工具使用帮助" YY_Node_Main_Help_Text;
+    string $YY_Del_Node_Help_Scoll = `scrollField -ed 0 -po 1 -ww 1 -fn fixedWidthFont`;	
+	string $YY_Del_Node_Help_Maini_Text_A = "此工具可以将选择的物体吸附到指定物体的表面,脚本中需要用到nearestPointOnMesh.mll";
+	$YY_Del_Node_Help_Maini_Text_A += "插件，脚本运行时已经自动加载！选择要吸附到的表便物体(此物体只能为POLY物体)，点击<<加载表面物体>>";
+	$YY_Del_Node_Help_Maini_Text_A += "选择要被吸附的物体(至少一个物体，可以为任意物体)，点击<<加载吸附物体>>按钮，最后点击<<吸附>>按钮，";
+	$YY_Del_Node_Help_Maini_Text_A += "吸附完毕，物体被吸附到表面物体的表面。\n偏移功能：吸附到表面距离的偏移量。以百分比计量。";
+	scrollField -e -tx $YY_Del_Node_Help_Maini_Text_A $YY_Del_Node_Help_Scoll;
+	
+	formLayout -e
+		-af YY_Node_Main_Help_Text "left" 50
+		-af YY_Node_Main_Help_Text "right" 50
+		
+		-ac $YY_Del_Node_Help_Scoll "top" 5 YY_Node_Main_Help_Text 
+		-af $YY_Del_Node_Help_Scoll "left" 5
+	    -af $YY_Del_Node_Help_Scoll "right" 5
+		-af $YY_Del_Node_Help_Scoll "bottom" 5
+		$YY_Del_Node_Help_Form;
+	showWindow YY_Adsorb_Help_Win;
+		window -e
+		  -wh 200 420
+		  		  YY_Adsorb_Help_Win;
+};
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+global proc YY_Adsorb_About()
+{
+if(`window -q -ex YY_Adsorb_About_Win`)
+{
+deleteUI YY_Adsorb_About_Win;
+};
+window 
+	  -wh 350 180
+	  -s 1
+	  -mb 0
+	  -t "关于吸附物体工具"
+	  YY_Adsorb_About_Win;
+columnLayout -rs 5 -cat "both" 5 -adj 1;
+text "制作：由继亮";
+text "QQ:78915620";
+text "E-Mail yjl811028@tom.com";
+text "制作时间：2009-04-22";
+text "如使用此工具中有任何问题或漏洞请及时通知本人";
+text "华强电影技术部 由继亮";
+showWindow YY_Adsorb_About_Win;
+
+window -e
+	  -wh 350 180
+	  YY_Adsorb_About_Win;
+};
+
+
+
+snaponface();
+
+
+
+
+
+
+
+
+
+
+
+
+
+

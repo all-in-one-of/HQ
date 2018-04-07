@@ -1,0 +1,531 @@
+global proc shuaiMoCapToAdv()
+{
+    global float $values[];
+    if(`window -ex "MoCapToAdvWin"`)
+    {
+        deleteUI("MoCapToAdvWin");
+    }
+    window -t "将动捕文件转换到adv上面去的窗口" "MoCapToAdvWin";
+    columnLayout "mainLayout";
+    text "选择动捕文件";
+    rowLayout -nc 3;
+    text "路径：";
+    textField "pathField";
+    button -l "浏览" -c "BrowseBt()" "browse";
+    button -l "设置初始姿势" -p "mainLayout" -c "setResetPose()" "setResetPoseBt";
+    button -en 0 -l "执行转换" -p "mainLayout" -c "runBtCom()" "runBt";
+    showWindow "MoCapToAdvWin";
+}
+global proc runBtCom()
+{
+    global float $values[];
+    string $File=`textField -q -tx "pathField"`;
+    file -r -gl -mergeNamespacesOnClash false -ns "MoCapFlie" -options "v=0;" $File;
+    int $FrameRange[]=`shuaiGetFrameRange`;
+    playbackOptions -min $FrameRange[0] -max $FrameRange[1];
+    currentTime $FrameRange[0];
+    shuaiClearAnim;
+    shuaiWritePose($values);
+    shuaiCreateMoCap;
+    shuaiGotoTPose;
+    shuaiDoConstraint;
+    shuaiBakeAnim;
+}
+global proc setResetPose()
+{
+    global float $values[];
+    $values=`shuaiReadPose`;
+    button -e -en 1 "runBt";
+}
+global proc BrowseBt()
+{
+    string $Files[]=`fileDialog2 -fm 1 -okc "select"`;
+    print $Files;
+    textField -e -tx $Files[0] "pathField" ;   
+}
+global proc shuaiClearAnim()
+{
+    string $setMenbers[]=`sets -q -no ControlSet`;
+    string $Ctrls[]={};
+    string $one;
+    int $i=0;
+    for($one in $setMenbers)
+    {
+        if(!(`gmatch $one "*Extra*"`))
+        {
+            $Ctrls[$i]=$one;
+            $i++;
+        }
+    }
+    delete -channels -unitlessAnimationCurves false  -hierarchy none -controlPoints 0 -shape 1 $Ctrls;
+}
+global proc float[] shuaiReadPose()
+{
+    string $setMenbers[]=`sets -q -no ControlSet`;
+    string $Ctrls[]={};
+    string $one;
+    int $i=0;
+    for($one in $setMenbers)
+    {
+        if(!(`gmatch $one "*Extra*"`))
+        {
+            $Ctrls[$i]=$one;
+            $i++;
+        }
+    }
+    string $Ctrl;
+    int $n=0;
+    float $valueList[]={}; 
+    float $value;
+    string $Attr;
+    for($Ctrl in $Ctrls)
+    {
+        string $Attrs[]=`listAttr -keyable $Ctrl`;
+        string $one;
+        for($one in $Attrs)
+        {
+            $value=`getAttr ($Ctrl+"."+$one)`;
+            $valueList[$n]=$value;
+            $n++;           
+        }
+    }
+    return $valueList;
+}
+global proc shuaiWritePose(float $valueList[])
+{
+    string $setMenbers[]=`sets -q -no ControlSet`;
+    string $Ctrls[]={};
+    string $one;
+    int $i=0;
+    for($one in $setMenbers)
+    {
+        if(!(`gmatch $one "*Extra*"`))
+        {
+            $Ctrls[$i]=$one;
+            $i++;
+        }
+    }
+    string $Ctrl;
+    int $n=size($valueList)-1;
+    int $x=$n;
+    float $value;
+    string $Attr;
+    for($Ctrl in $Ctrls)
+    {
+        string $Attrs[]=`listAttr -keyable $Ctrl`;
+        string $one;
+        for($one in $Attrs)
+        {
+            if(!`getAttr -lock ($Ctrl+"."+$one)`)
+            {
+                setAttr ($Ctrl+"."+$one) $valueList[($x-$n)];
+            }
+            $n--;           
+        }
+    }
+}
+global proc shuaiBuildPoseForMocap()
+{
+    string $cmdStrings=`getAttr "buildPose.udAttr"`;
+    string $buffer[];
+    $numTokens = `tokenize $cmdStrings ";" $buffer`;
+    for($i=0;$i<=$numTokens;$i++)
+    {
+        string $cmds[];
+        tokenize $buffer[$i] $cmds;
+    	string $cmd="";
+    	for ($z=0;$z<size($cmds);$z++)
+    		{
+        		$cmd+=$cmds[$z]+" ";
+    		}
+    	if (catchQuiet (`eval ($cmd)`)) warning ("Failed: "+$cmd+"\n");
+    }
+}
+global proc shuaiGotoTPose()
+{
+    float $AdvPos[]=`xform -q -ws -t "Hip_MoCap_L"`;
+    string $MoCapLegJoint[]=`ls "*:LeftUpLeg"`;
+    string $MoCapJointGrp[]=`ls "*:character_joint"`;
+    string $MoCapGeo[]=`ls "MoCapFlie:*_geo"`;
+    string $MocapJoints[]={"MoCapFlie:Hips","MoCapFlie:Spine","MoCapFlie:Spine1","MoCapFlie:Spine2","MoCapFlie:Spine3","MoCapFlie:Neck","MoCapFlie:Neck1","MoCapFlie:Head","MoCapFlie:Head_End","MoCapFlie:Chin","MoCapFlie:Chin01","MoCapFlie:Tongue01","MoCapFlie:Tongue02","MoCapFlie:Tongue03","MoCapFlie:Tongue04","MoCapFlie:Tongue05","MoCapFlie:Tongue06","MoCapFlie:LeftShoulder","MoCapFlie:LeftArm","MoCapFlie:LeftArmRoll","MoCapFlie:LeftForeArm","MoCapFlie:LeftForeArmRoll","MoCapFlie:LeftHand","MoCapFlie:Leftjoint","MoCapFlie:LeftHandThumb1","MoCapFlie:LeftHandThumb2","MoCapFlie:LeftHandThumb3","MoCapFlie:LeftHandThumb4","MoCapFlie:LeftHandIndex1","MoCapFlie:LeftHandIndex2","MoCapFlie:LeftHandIndex3","MoCapFlie:LeftHandIndex4","MoCapFlie:LeftHandMiddle1","MoCapFlie:LeftHandMiddle2","MoCapFlie:LeftHandMiddle3","MoCapFlie:LeftHandMiddle4","MoCapFlie:LeftHandRing1","MoCapFlie:LeftHandRing2","MoCapFlie:LeftHandRing3","MoCapFlie:LeftHandRing4","MoCapFlie:LeftHandPinky1","MoCapFlie:LeftHandPinky2","MoCapFlie:LeftHandPinky3","MoCapFlie:LeftHandPinky4","MoCapFlie:RightShoulder","MoCapFlie:RightArm","MoCapFlie:RightArmRoll","MoCapFlie:RightForeArm","MoCapFlie:RightForeArmRoll","MoCapFlie:RightHand","MoCapFlie:Rightjoint","MoCapFlie:RightHandThumb1","MoCapFlie:RightHandThumb2","MoCapFlie:RightHandThumb3","MoCapFlie:RightHandThumb4","MoCapFlie:RightHandIndex1","MoCapFlie:RightHandIndex2","MoCapFlie:RightHandIndex3","MoCapFlie:RightHandIndex4","MoCapFlie:RightHandMiddle1","MoCapFlie:RightHandMiddle2","MoCapFlie:RightHandMiddle3","MoCapFlie:RightHandMiddle4","MoCapFlie:RightHandRing1","MoCapFlie:RightHandRing2","MoCapFlie:RightHandRing3","MoCapFlie:RightHandRing4","MoCapFlie:RightHandPinky1","MoCapFlie:RightHandPinky2","MoCapFlie:RightHandPinky3","MoCapFlie:RightHandPinky4","MoCapFlie:LeftHips_Dummy","MoCapFlie:LeftUpLeg","MoCapFlie:LeftUpLegRoll","MoCapFlie:LeftLeg","MoCapFlie:LeftLegRoll","MoCapFlie:LeftFoot","MoCapFlie:LeftToeBase","MoCapFlie:LeftToes_End","MoCapFlie:RightHips_Dummy","MoCapFlie:RightUpLeg","MoCapFlie:RightUpLegRoll","MoCapFlie:RightLeg","MoCapFlie:RightLegRoll","MoCapFlie:RightFoot","MoCapFlie:RightToeBase","MoCapFlie:RightToes_End"};
+    string $i;
+    for($i in $MocapJoints)
+    {
+        if(`objExists $i`)
+        {
+            setAttr ($i+".rx") 0;
+            setAttr ($i+".ry") 0;
+            setAttr ($i+".rz") 0;            
+        }
+
+    }
+    float $BBoxMin[]=`getAttr ($MoCapGeo[0]+".boundingBoxMin")`;
+    xform -r -ws -t 0 (0-$BBoxMin[1]) 0 MoCapFlie:character_joint;
+    float $MoCapPos[]=`xform -q -ws -t $MoCapLegJoint[0]`;
+    float $ScaleValue=$AdvPos[1]/$MoCapPos[1];
+    scale -r -p 0 0 0 $ScaleValue $ScaleValue $ScaleValue $MoCapJointGrp[0];
+}
+global proc shuaiDoConstraint()
+{
+    string $MoCapJointGrp[]=`ls "*:character_joint"`;
+    string $AnalyseName[]=`getNamespace($MoCapJointGrp[0])`;
+    string $NameSpace=$AnalyseName[0];
+    
+    pointConstraint -mo -weight 1 ($NameSpace+"Hips") "Root_MoCap_M";
+    orientConstraint -mo -weight 1 ($NameSpace+"Hips") "Root_MoCap_M";
+    orientConstraint -mo -weight 1 ($NameSpace+"Spine") "Spine1_MoCap_M";
+    orientConstraint -mo -weight 1 ($NameSpace+"Neck") "Neck_MoCap_M";
+    orientConstraint -mo -weight 1 ($NameSpace+"Head") "Head_MoCap_M";
+    if(`objExists "Spine2_MoCap_M"`)
+    {
+        orientConstraint -mo -weight 1 ($NameSpace+"Spine1") "Spine2_MoCap_M";
+        if(`objExists "Spine3_MoCap_M"`)
+        {
+            orientConstraint -mo -weight 1 ($NameSpace+"Spine2") "Spine3_MoCap_M";
+            if(`objExists "Spine4_MoCap_M"`)
+            {
+                orientConstraint -mo -weight 1 ($NameSpace+"Spine3") "Spine4_MoCap_M";
+            }
+            else
+            {
+                orientConstraint -mo -weight 1 ($NameSpace+"Spine3") "Chest_MoCap_M";
+            }
+        }
+        else
+        {
+            orientConstraint -mo -weight 1 ($NameSpace+"Spine2") "Chest_MoCap_M";
+        }
+    }
+    else
+    {
+        orientConstraint -mo -weight 1 ($NameSpace+"Spine1") "Chest_MoCap_M";
+    }
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftShoulder") "Scapula_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftArm") "Shoulder_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftForeArm") "Elbow_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHand") "Wrist_MoCap_L";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"RightShoulder") "Scapula_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightArm") "Shoulder_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightForeArm") "Elbow_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHand") "Wrist_MoCap_R";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandThumb1") "ThumbFinger1_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandThumb2") "ThumbFinger2_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandThumb3") "ThumbFinger3_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandThumb4") "ThumbFinger4_MoCap_L";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandIndex1") "IndexFinger1_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandIndex2") "IndexFinger2_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandIndex3") "IndexFinger3_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandIndex4") "IndexFinger4_MoCap_L";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandMiddle1") "MiddleFinger1_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandMiddle2") "MiddleFinger2_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandMiddle3") "MiddleFinger3_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandMiddle4") "MiddleFinger4_MoCap_L";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandRing1") "RingFinger1_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandRing2") "RingFinger2_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandRing3") "RingFinger3_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandRing4") "RingFinger4_MoCap_L";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandPinky1") "PinkyFinger1_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandPinky2") "PinkyFinger2_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandPinky3") "PinkyFinger3_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftHandPinky4") "PinkyFinger4_MoCap_L";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandThumb1") "ThumbFinger1_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandThumb2") "ThumbFinger2_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandThumb3") "ThumbFinger3_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandThumb4") "ThumbFinger4_MoCap_R";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandIndex1") "IndexFinger1_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandIndex2") "IndexFinger2_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandIndex3") "IndexFinger3_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandIndex4") "IndexFinger4_MoCap_R";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandMiddle1") "MiddleFinger1_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandMiddle2") "MiddleFinger2_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandMiddle3") "MiddleFinger3_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandMiddle4") "MiddleFinger4_MoCap_R";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandRing1") "RingFinger1_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandRing2") "RingFinger2_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandRing3") "RingFinger3_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandRing4") "RingFinger4_MoCap_R";
+    
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandPinky1") "PinkyFinger1_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandPinky2") "PinkyFinger2_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandPinky3") "PinkyFinger3_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightHandPinky4") "PinkyFinger4_MoCap_R";
+    
+    if((`objExists "ScapulaLeg_MoCap_L"`)&&(`objExists ($NameSpace+"LeftHips_Dummy")`))
+    {
+        orientConstraint -mo -weight 1 ($NameSpace+"LeftHips_Dummy") "ScapulaLeg_MoCap_L";
+    }
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftUpLeg") "Hip_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftLeg") "Knee_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftFoot") "Ankle_MoCap_L";
+    orientConstraint -mo -weight 1 ($NameSpace+"LeftToeBase") "Toes_MoCap_L";
+    
+    if((`objExists "ScapulaLeg_MoCap_R"`)&&(`objExists ($NameSpace+"RightHips_Dummy")`))
+    {
+        orientConstraint -mo -weight 1 ($NameSpace+"RightHips_Dummy") "ScapulaLeg_MoCap_R";
+    }
+    orientConstraint -mo -weight 1 ($NameSpace+"RightUpLeg") "Hip_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightLeg") "Knee_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightFoot") "Ankle_MoCap_R";
+    orientConstraint -mo -weight 1 ($NameSpace+"RightToeBase") "Toes_MoCap_R";
+    
+}
+
+global proc string[] getNamespace(string $obj)
+{
+    string $array[] = stringToStringArray($obj, ":");
+    string $nameWithoutNamespace=$array[size($array)-1];
+    stringArrayRemoveAtIndex((size($array)-1), $array);
+    string $nameSpace=stringArrayToString($array,":")+":";
+    if($nameSpace==":")
+    {
+        $nameSpace="";
+    }
+    return {$nameSpace,$nameWithoutNamespace};
+}
+global proc string shuaiGetRootGrp()
+{
+    string $MainCtrl[]=`ls "Main"`;
+    if(size($MainCtrl)>1)
+    {
+        error "场景里面有不只一个名叫“Main”的物体";
+    }
+    string $Path[]=`listRelatives -f $MainCtrl[0]`;
+    string $tempString[];
+    tokenize $Path[0] "|" $tempString;
+    return $tempString[0];
+}
+global proc shuaiCreateMoCap ()
+{
+string $sel[]=`ls -sl`;
+if (`objExists "MoCap"`)
+	error "MoCap skeleton already exists !";
+if (!`objExists "Main"`)
+	error "No AdvancedSKeleton In Scene!";
+string $deformJoints[]=`listRelatives -type joint -ad "DeformationSystem"`;
+string $setMenbers[]=`sets -q -no ControlSet`;
+string $keyDeformJoints[],$tempString[],$parent[],$names[],$extra[];
+string $extr;
+for ($a=$i=0;$a<size($deformJoints);$a++)
+	{
+	if (`gmatch $deformJoints[$a] "*_50"`)
+		continue;
+	if (`gmatch $deformJoints[$a] "*Slider[0-9]*"`)
+		continue;
+	if (`objExists FaceAllSet`)
+		if (`sets -im FaceAllSet $deformJoints[$a]`)
+			continue;
+	tokenize $deformJoints[$a] "_" $tempString;
+	$extr="FK"+$tempString[0]+"_"+$tempString[1];
+	if (`gmatch $deformJoints[$a] "*Part[0-9]*"`)
+		continue;
+	$keyDeformJoints[$i]=$deformJoints[$a];
+	$extra[$i]=$extr;
+	$tempString[0]=$keyDeformJoints[$i];
+	for ($y=0;$y<99;$y++)
+		{
+		$tempString=`listRelatives -p $tempString[0]`;
+		if (!`gmatch $tempString[0] "*Part[0-9]*"`)
+			{
+			tokenize $tempString[0] "_" $tempString;
+			$parent[$i]=$tempString[0]+"_MoCap_"+$tempString[1];
+			break;
+			}
+		}
+	tokenize $keyDeformJoints[$i] "_" $tempString;
+	string $name=$tempString[0]+"_MoCap_"+$tempString[1];
+	if (!`stringArrayCount $name $names`)
+		{
+		$names[$i]=$name;
+		$i++;
+		}
+	}
+
+string $topJoint;
+for ($i=0;$i<size($names);$i++)
+	{
+	select -cl;
+	joint -n $names[$i]; 
+	shuaiAlign $names[$i] $keyDeformJoints[$i] 1 1 1 0;
+	setAttr ($names[$i]+".rotateOrder") (`getAttr ($keyDeformJoints[$i]+".rotateOrder")`);
+	if ($i==size($names)-1)
+		{
+		createNode -n "MoCap" transform;
+		createNode -n "CenterOffset" transform;
+		shuaiAlign "CenterOffset" RootExtraX_M 1 0 0 0;
+		parent "MoCap" (`shuaiGetRootGrp`);
+		parent "CenterOffset" "MoCap";
+		parent $names[$i] "CenterOffset";
+		parentConstraint -mo $names[$i] "RootX_M";
+		$topJoint=$names[$i];
+		} 
+	if(`gmatch $names[$i] "Wrist_*"`)
+    	{
+    	    tokenize $names[$i] "_" $tempString;
+    	    parentConstraint -mo $names[$i] ("IKArm_"+$tempString[2]);
+    	}
+	if(`gmatch $names[$i] "Ankle_*"`)
+    	{
+    	    tokenize $names[$i] "_" $tempString;
+    	    parentConstraint -mo $names[$i] ("IKLeg_"+$tempString[2]);
+    	}  
+	//if (`objExists $extra[$i]`)
+	//	setAttr ($extra[$i]+".rotateOrder") 1;
+	}
+
+for ($i=0;$i<size($names);$i++)
+	{
+	if (`objExists $parent[$i]`)
+		parent $names[$i] $parent[$i];
+	}
+string $NoConstraintFK[]={"FKShoulder_L","FKElbow_L","FKWrist_L","FKShoulder_R","FKElbow_R","FKWrist_R","FKHip_L","FKKnee_L","FKAnkle_L","FKHip_R","FKKnee_R","FKAnkle_R"};
+for ($i=0;$i<size($names);$i++)
+	{
+	if (`objExists $extra[$i]`)
+	    {
+	        if((stringArrayFind($extra[$i],0,$NoConstraintFK)==-1)&&(stringArrayFind($extra[$i],0,$setMenbers)!=-1))
+	        {
+        		orientConstraint -mo -weight 1 $names[$i] $extra[$i] ;
+	        }
+	    }
+	}
+orientConstraint -mo -weight 1 IKXShoulder_L FKShoulder_L;
+orientConstraint -mo -weight 1 -skip x -skip y IKXElbow_L FKElbow_L;
+orientConstraint -mo -weight 1 IKXWrist_L FKWrist_L;
+
+orientConstraint -mo -weight 1 IKXShoulder_R FKShoulder_R;
+orientConstraint -mo -weight 1 -skip x -skip y IKXElbow_R FKElbow_R;
+orientConstraint -mo -weight 1 IKXWrist_R FKWrist_R;
+
+orientConstraint -mo -weight 1 IKXHip_L FKHip_L;
+orientConstraint -mo -weight 1 -skip x -skip y IKXKnee_L FKKnee_L;
+orientConstraint -mo -weight 1 IKXAnkle_L FKAnkle_L;
+
+orientConstraint -mo -weight 1 IKXHip_R FKHip_R;
+orientConstraint -mo -weight 1 -skip x -skip y IKXKnee_R FKKnee_R;
+orientConstraint -mo -weight 1 IKXAnkle_R FKAnkle_R;
+//orientConstraint -mo $topJoint "RootExtraX_M";
+shuaiMoCapIKRig;
+select $sel;
+}
+global proc shuaiAlign (string $object, string $alignToObject, int $translate, int $rotate, int $jointOrient, int $rotateOrder)
+{
+string $parents[]=`listRelatives -p $object`;
+string $orientConstraint[];
+float $rotation[];
+parent $object $alignToObject;
+//Might have generated a Xform
+string $generatedXform;
+string $tempString[]=`listRelatives -p $object`;
+if ($tempString[0]!=$alignToObject)
+	$generatedXform=$tempString[0];
+if ($translate)
+	{
+	xform -os -t 0 0 0 $object;
+	if ($generatedXform!="")
+		xform -os -t 0 0 0 $generatedXform;
+	}
+if ($rotateOrder)
+	setAttr ($object+".rotateOrder") `getAttr ($alignToObject+".rotateOrder")`;
+if ($rotate)
+	{
+	xform -os -ro 0 0 0 $object;
+	if ($generatedXform!="")
+		xform -os -ro 0 0 0 $generatedXform;
+	}
+if (`objExists $parents[0]`)
+	parent $object $parents[0];
+else
+	parent -w $object;
+if ($jointOrient)
+	{
+	$orientConstraint=`orientConstraint $alignToObject $object`;
+	$rotation=`xform -q -os -ro $object`;
+	delete $orientConstraint[0];
+	setAttr -type float3 ($object+".jointOrient") $rotation[0] $rotation[1] $rotation[2];
+	setAttr -type float3 ($object+".rotate") 0 0 0;
+	}
+}
+global proc shuaiMoCapIKRig()
+{
+    spaceLocator -n "Leg_MoCap_L";
+    pointConstraint Hip_MoCap_L Ankle_MoCap_L "Leg_MoCap_L";
+    aimConstraint -offset 0 0 0 -weight 1 -aimVector 0 0 1 -upVector 0 1 0 -worldUpType "object" -worldUpObject Hip_MoCap_L Knee_MoCap_L "Leg_MoCap_L";
+    parentConstraint -mo -sr "x" -sr "y" -sr "z" "Leg_MoCap_L" PoleLeg_L;
+    
+    spaceLocator -n "Leg_MoCap_R";
+    pointConstraint Hip_MoCap_R Ankle_MoCap_R "Leg_MoCap_R";
+    aimConstraint -offset 0 0 0 -weight 1 -aimVector 0 0 1 -upVector 0 1 0 -worldUpType "object" -worldUpObject Hip_MoCap_R Knee_MoCap_R "Leg_MoCap_R";
+    parentConstraint -mo -sr "x" -sr "y" -sr "z" "Leg_MoCap_R" PoleLeg_R;
+    
+    spaceLocator -n "Arm_MoCap_L";
+    pointConstraint Shoulder_MoCap_L Wrist_MoCap_L "Arm_MoCap_L";
+    aimConstraint -offset 0 0 0 -weight 1 -aimVector 0 0 1 -upVector 0 1 0 -worldUpType "object" -worldUpObject Shoulder_MoCap_L Elbow_MoCap_L "Arm_MoCap_L";
+    parentConstraint -mo -sr "x" -sr "y" -sr "z" "Arm_MoCap_L" PoleArm_L;
+    
+    spaceLocator -n "Arm_MoCap_R";
+    pointConstraint Shoulder_MoCap_R Wrist_MoCap_R "Arm_MoCap_R";
+    aimConstraint -offset 0 0 0 -weight 1 -aimVector 0 0 1 -upVector 0 1 0 -worldUpType "object" -worldUpObject Shoulder_MoCap_R Elbow_MoCap_R "Arm_MoCap_R";
+    parentConstraint -mo -sr "x" -sr "y" -sr "z" "Arm_MoCap_R" PoleArm_R;
+    
+    string $splinIKExtras[]=`ls "IKSpine?_M"`;
+    parentConstraint -mo Root_MoCap_M $splinIKExtras[0];
+    pointConstraint -mo ("Spine"+(size($splinIKExtras)/2+1)+"_MoCap_M") $splinIKExtras[size($splinIKExtras)/2];
+    parentConstraint -mo Chest_MoCap_M $splinIKExtras[size($splinIKExtras)-1];
+    
+    //expression -s "IKLeg_R.toe=-Toes_MoCap_R.rz;\nIKLeg_L.toe=-Toes_MoCap_L.rz;";
+    
+    group -n "MoCapLocators" -p "MoCap" {"Leg_MoCap_L","Leg_MoCap_R","Arm_MoCap_L","Arm_MoCap_R"};
+    hide "MoCapLocators";
+}
+global proc int[] shuaiGetFrameRange()
+{
+    string $MoCapHips[]=`ls -type "joint" "*:Hips"`;
+    string $animCurves[]=`listConnections -type "animCurve" $MoCapHips[0]`;
+    string $curve;
+    int $FrameRange[]={0,0};
+    for($curve in $animCurves)
+    {
+        float $AllFrame[]=`keyframe -q -absolute -timeChange $curve`;
+        if($AllFrame[0]<$FrameRange[0])
+        {
+            $FrameRange[0]=floor($AllFrame[0]);
+        }
+        if($AllFrame[(size($AllFrame)-1)]>$FrameRange[1])
+        {
+            $FrameRange[1]=ceil($AllFrame[(size($AllFrame)-1)]);
+        }
+    }
+    return $FrameRange;
+}
+global proc shuaiBakeAnim()
+{    
+    string $setMenbers[]=`sets -q -no ControlSet`;
+    string $Ctrls[]={};
+    string $one;
+    int $FrameRange[]=shuaiGetFrameRange();
+    int $i=0;
+    for($one in $setMenbers)
+    {
+        if(!(`gmatch $one "*Extra*"`))
+        {
+            $Ctrls[$i]=$one;
+            $i++;
+        }
+    }
+    bakeResults -simulation true -t ($FrameRange[0]+":"+$FrameRange[1]) -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -removeBakedAttributeFromLayer false -removeBakedAnimFromLayer false -bakeOnOverrideLayer false -minimizeRotation true -controlPoints false -shape false $Ctrls;
+    delete "MoCap";
+    string $refFlie=`textField -q -tx "pathField"`;
+    file -rr $refFlie;
+}
+shuaiMoCapToAdv;

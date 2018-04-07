@@ -1,0 +1,92 @@
+#! C:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ inputs 3
+ tile_color 0xffff
+ gl_color 0xffff
+ addUserKnob {20 User}
+ addUserKnob {41 format l "output format" T Reformat4.format}
+ addUserKnob {41 format_1 l format T Constant5.format}
+}
+ Input {
+  inputs 0
+  name cam3
+  xpos 587
+  ypos -140
+ }
+ Reformat {
+  format "2700 2555 0 0 2700 2555 1 "
+  name Reformat4
+  xpos 597
+  ypos -100
+ }
+ set C57c5a270 [stack 0]
+ Transform {
+  translate {5400 0}
+  center {1362 1100}
+  filter Impulse
+  name Transform20
+  xpos 595
+  ypos -64
+ }
+ Input {
+  inputs 0
+  name cam2
+  xpos 692
+  ypos -141
+  number 1
+ }
+clone $C57c5a270 {
+  xpos 692
+  ypos -103
+  selected false
+ }
+ Transform {
+  translate {2700 0}
+  center {1362 1100}
+  filter Impulse
+  name Transform19
+  xpos 690
+  ypos -66
+ }
+push 0
+ Input {
+  inputs 0
+  name cam1
+  xpos 795
+  ypos -141
+  number 2
+ }
+clone $C57c5a270 {
+  xpos 795
+  ypos -105
+  selected false
+ }
+ Transform {
+  center {1362 1100}
+  filter Impulse
+  name Transform18
+  xpos 795
+  ypos -65
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "8100 2555 0 0 8100 2555 1.00005 8100"
+  name Constant5
+  xpos 490
+  ypos -25
+ }
+ Merge2 {
+  inputs 4+1
+  name Merge1
+  xpos 709
+  ypos -4
+ }
+ Output {
+  name Output1
+  selected true
+  xpos 709
+  ypos 27
+ }
+end_group

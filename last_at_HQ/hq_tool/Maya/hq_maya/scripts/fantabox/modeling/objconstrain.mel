@@ -1,0 +1,89 @@
+global proc objconstrain()
+{
+
+if(`window -q -ex YY_Tree_Aim_Win`)
+{
+deleteUI YY_Tree_Aim_Win;
+};
+window -wh 200 355
+	   -s 1
+	   -t "目标群体约束工具"
+	   YY_Tree_Aim_Win;
+columnLayout -rs 10 -adj 1;
+separator ;
+text -al "center" -l "目标群体约束工具";
+separator ;
+checkBoxGrp -ncb 3 -l "选择约束指向" -l1 "X" -l2 "Y" -l3 "Z" -cw4 85 35 35 35 -v1 1 YY_Tree_Aim_Axes_01;
+checkBoxGrp -ncb 3 -l "选择向上轴向" -l1 "X" -l2 "Y" -l3 "Z" -cw4 85 35 35 35 -v2 1 YY_Tree_Aim_Axes_02;
+checkBoxGrp -ncb 3 -l "选择约束轴向" -l1 "X" -l2 "Y" -l3 "Z" -cw4 85 35 35 35 -v2 1 YY_Tree_Aim_Axes_03;
+separator ;
+button -h 30 -l "添加约束" -c YY_Tree_Aim;
+button -h 30 -l "删除约束" -c YY_Del_Con;
+text -l "使用方法";
+text -al "left" -l "  添加约束：先选择摄影机再加选要\n  约束的所有物体，点击添加约束。";
+text -al "left" -l "  删除约束：选择要删除约束的面片\n  点击删除约束。";
+showWindow YY_Tree_Aim_Win;
+
+window -e
+	   -wh 200 355
+	   YY_Tree_Aim_Win;
+};
+
+global proc YY_Tree_Aim()
+{
+string $YY_Tree_Axis = "";	
+	
+int $YY_Tree_Axes_a_01 = `checkBoxGrp -q -v1 YY_Tree_Aim_Axes_01`;	
+int $YY_Tree_Axes_a_02 = `checkBoxGrp -q -v2 YY_Tree_Aim_Axes_01`;
+int $YY_Tree_Axes_a_03 = `checkBoxGrp -q -v3 YY_Tree_Aim_Axes_01`;
+
+int $YY_Tree_Axes_b_01 = `checkBoxGrp -q -v1 YY_Tree_Aim_Axes_01`;
+int $YY_Tree_Axes_b_02 = `checkBoxGrp -q -v2 YY_Tree_Aim_Axes_01`;
+int $YY_Tree_Axes_b_03 = `checkBoxGrp -q -v3 YY_Tree_Aim_Axes_01`;
+	
+int $YY_Tree_Axes_c_01 = `checkBoxGrp -q -v1 YY_Tree_Aim_Axes_03`;
+int $YY_Tree_Axes_c_02 = `checkBoxGrp -q -v2 YY_Tree_Aim_Axes_03`;
+int $YY_Tree_Axes_c_03 = `checkBoxGrp -q -v3 YY_Tree_Aim_Axes_03`;
+if($YY_Tree_Axes_c_01 == 1)
+{
+$YY_Tree_Axis += "-skip x";
+};
+if($YY_Tree_Axes_c_02 == 1)
+{
+$YY_Tree_Axis += "-skip y";
+};
+if($YY_Tree_Axes_c_03 == 1)
+{
+$YY_Tree_Axis += "-skip z";
+};
+
+	
+string $YY_Tree_Sel[] = `ls -sl`;
+//string $YY_Tree_Sel_Ev;
+for($YY_i = 1;$YY_i<size($YY_Tree_Sel);$YY_i++)
+{
+	
+string $YY_Tree_Aim_Name[] = `aimConstraint -weight 1 -aimVector $YY_Tree_Axes_a_01 $YY_Tree_Axes_a_02 $YY_Tree_Axes_a_03 -upVector $YY_Tree_Axes_b_01 $YY_Tree_Axes_b_02 $YY_Tree_Axes_b_03 -worldUpType "object" -worldUpObject $YY_Tree_Sel[0] -skip x -skip z $YY_Tree_Sel[0] $YY_Tree_Sel[$YY_i]`;
+
+};
+
+};
+
+
+global proc YY_Del_Con()
+{
+string $YY_Tree_Del_C[] = `ls -sl`;
+string $YY_B_For;
+for($YY_B_For in $YY_Tree_Del_C)
+{
+//string $YY_Tree_Ls[] = `listConnections -c 1 -t aimConstraint $YY_B_For`;
+string $YY_Tree_Ls[] = `listRelatives -typ aimConstraint $YY_B_For`;
+if(size($YY_Tree_Ls)>0)
+{
+delete $YY_Tree_Ls;
+};	
+};	
+};
+objconstrain;
+
+

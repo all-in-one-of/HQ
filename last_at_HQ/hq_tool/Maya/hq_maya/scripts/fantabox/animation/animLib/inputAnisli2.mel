@@ -1,0 +1,38 @@
+global proc inputAnisli2()
+{
+global string $selbosscn[];
+string $selObjectroles[]=`textScrollList -q -si "listObjectRole"`;
+string $buffer[];
+string $but[];
+
+    select $selbosscn[0];
+    select `ls -sl-dag -typ "nurbsCurve"`;
+    pickWalk -d up;
+    string $curs[]=`listConnections -d 1 -t "animCurve"`;
+    select $curs;
+    delete;
+    
+$numTokens = `tokenize $selObjectroles[0] "::" $buffer`;
+$Path=$buffer[$numTokens-2]+":"+$buffer[$numTokens-1]+$buffer[$numTokens-$numTokens];
+$numname=`tokenize $buffer[$numTokens-$numTokens] "." $but`;
+select $selbosscn[0];
+file -import -type "animImport" -ra true 
+-mergeNamespacesOnClash false -namespace $but[$numname-2]
+-options ";targetTime=4;copies=1;option=replace;pictures=0;connect=0;"
+-pr -loadReferenceDepth "all" $Path;
+select $selbosscn[0];
+    python("import makeAnimCurCycle03");
+    python("makeAnimCurCycle03.createBakeAni()");
+//导出动画文件
+    select $selbosscn[0];
+    file -force -options "precision=17;intValue=17;nodeNames=1;verboseUnits=0;whichRange=1;range=0:10;options=keys;hierarchy=below;controlPoints=0;shapes=1;helpPictures=0;useChannelBox=0;copyKeyCmd=-animation objects -option keys -hierarchy below -controlPoints 0 -shape 1 "
+    -typ "animExport" -pr -es "D:/AniTxt/Ani_02.anim";
+//删除动画
+    select $selbosscn[0];
+    select `ls -sl-dag -typ "nurbsCurve"`;
+    pickWalk -d up;
+    string $curs[]=`listConnections -d 1 -t "animCurve"`;
+    select $curs;
+    delete;
+
+    }

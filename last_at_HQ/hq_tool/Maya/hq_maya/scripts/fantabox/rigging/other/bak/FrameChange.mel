@@ -1,0 +1,127 @@
+global proc add_brakets(string $x){
+    global string $Time_new;
+    switch($x){
+        case "game":
+        $Time_new="game(15fps)";
+        break;
+        case "film":
+        $Time_new="film(24fps)";
+        break;
+        case "pal":
+        $Time_new="pal(25fps)";
+        break;
+        case "ntsc":
+        $Time_new="ntsc(30fps)";
+        break;
+        case "show":
+        $Time_new="show(48fps)";
+        break;
+        case "palf":
+        $Time_new="palf(50fps)";
+        break;
+        case "ntscf":
+        $Time_new="ntscf(60fps)";
+        break;
+        case "millisec":
+        $Time_new="millisec(1000fps)";
+        break;
+        default:
+        $Time_new=$x;
+        break;
+    }
+}
+
+global proc del_brakets(string $x){
+    global string $Time_v_new;
+    string $qbf[]=stringToStringArray($x,"(");
+    $Time_v_new=$qbf[0];
+}
+
+global proc Init_Time_window(){
+    global string $time_window;
+    if (`window -q -exists $time_window`) deleteUI $time_window;
+    Time_window();
+}
+
+global proc mod_Time(){
+    global string $menu_num;
+    global string $Time_v_new;
+    string $Time_v=`optionMenu -q -v $menu_num`;
+    del_brakets($Time_v);
+    currentUnit -t $Time_v_new;
+    select -hi "*Hips";
+    string $joint_sl[]=`ls -sl`;
+    int $SetEndFrame;
+    float $EndFrame = 0.000;
+    float $KeyFrame[] = `keyframe -q -tc $joint_sl[0]`;
+    float $EndTime = $KeyFrame[size($KeyFrame)-1];
+    float $EndFrame =`max $EndFrame $EndTime`;
+    $SetEndFrame =int( $EndFrame);
+    playbackOptions -min 1 -max $SetEndFrame -ast 1 -aet $SetEndFrame;
+
+    bakeResults -simulation true -t ("1:"+$SetEndFrame) $joint_sl;
+    select -cl;
+}
+
+global proc Time_window(){
+    global string $menu_num;
+    global string $Time_new;
+    global string $time_window;
+    string $Time_now=`currentUnit -q -t`;
+    if (`window -q -exists $time_window`) deleteUI $time_window;
+    string $time_window=`window "帧率改变器"`;
+        columnLayout;
+            string $menu_num=`optionMenu -w 200 -h 20 -label "更改帧率为："`;
+                menuItem -label "game(15fps)";
+                menuItem -label "film(24fps)";
+                menuItem -label "pal(25fps)";
+                menuItem -label "ntsc(30fps)";
+                menuItem -label "show(48fps)";
+                menuItem -label "palf(50fps)";
+                menuItem -label "ntscf(60fps)";
+                menuItem -label "millisec(1000fps)";
+                menuItem -label "seconds";
+                menuItem -label "minutes";
+                menuItem -label "hours";
+                menuItem -label "2fps";
+                menuItem -label "3fps";
+                menuItem -label "4fps";
+                menuItem -label "5fps";
+                menuItem -label "6fps";
+                menuItem -label "8fps";
+                menuItem -label "10fps";
+                menuItem -label "12fps";
+                menuItem -label "16fps";
+                menuItem -label "20fps";    
+                menuItem -label "40fps";
+                menuItem -label "75fps";
+                menuItem -label "80fps";
+                menuItem -label "100fps";
+                menuItem -label "120fps";
+                menuItem -label "125fps";
+                menuItem -label "150fps";
+                menuItem -label "200fps";
+                menuItem -label "240fps";
+                menuItem -label "250fps";
+                menuItem -label "300fps";    
+                menuItem -label "375fps";
+                menuItem -label "400fps";
+                menuItem -label "500fps";
+                menuItem -label "600fps";
+                menuItem -label "750fps";
+                menuItem -label "1200fps";
+                menuItem -label "1500fps";
+                menuItem -label "2000fps";
+                menuItem -label "3000fps";
+                menuItem -label "6000fps";
+                setParent..;
+        rowColumnLayout -nc 2 -cw 1 100 -cw 2 100;
+            button -l "确定" -c "mod_Time()";
+            button -l "加载" -c "Init_Time_window()";
+    showWindow $time_window;
+    add_brakets($Time_now);
+    optionMenu -e -v $Time_new $menu_num;
+}
+
+Time_window();
+

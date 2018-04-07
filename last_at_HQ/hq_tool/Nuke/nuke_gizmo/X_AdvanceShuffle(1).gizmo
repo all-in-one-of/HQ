@@ -1,0 +1,28 @@
+#! /Applications/Nuke6.1v2/NukeX6.1v2.app/../Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ label "\[value adshuffle.in]"
+ addUserKnob {20 X_AdvanceShuffle}
+ addUserKnob {41 in l Shader T adshuffle.in}
+ addUserKnob {41 alpha T adshuffle.alpha}
+ addUserKnob {41 in2 l with -STARTLINE T adshuffle.in2}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -114
+  ypos -2
+ }
+ Shuffle {
+  in2 alpha
+  alpha alpha2
+  name adshuffle
+  xpos -114
+  ypos 45
+ }
+ Output {
+  name Output2
+  xpos -114
+  ypos 105
+ }
+end_group

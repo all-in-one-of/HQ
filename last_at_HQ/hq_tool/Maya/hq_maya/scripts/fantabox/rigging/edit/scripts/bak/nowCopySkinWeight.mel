@@ -1,0 +1,546 @@
+// Copyright (C) 1997-2014 Autodesk, Inc., and/or its licensors.
+// All rights reserved.
+//
+// The coded instructions, statements, computer programs, and/or related
+// material (collectively the "Data") in these files contain unpublished
+// information proprietary to Autodesk, Inc. ("Autodesk") and/or its licensors,
+// which is protected by U.S. and Canadian federal copyright law and by
+// international treaties.
+//
+// The Data is provided for use exclusively by You. You have the right to use,
+// modify, and incorporate this Data into other products for purposes authorized 
+// by the Autodesk software license agreement, without fee.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. AUTODESK
+// DOES NOT MAKE AND HEREBY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTIES
+// INCLUDING, BUT NOT LIMITED TO, THE WARRANTIES OF NON-INFRINGEMENT,
+// MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR ARISING FROM A COURSE 
+// OF DEALING, USAGE, OR TRADE PRACTICE. IN NO EVENT WILL AUTODESK AND/OR ITS
+// LICENSORS BE LIABLE FOR ANY LOST REVENUES, DATA, OR PROFITS, OR SPECIAL,
+// DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES, EVEN IF AUTODESK AND/OR ITS
+// LICENSORS HAS BEEN ADVISED OF THE POSSIBILITY OR PROBABILITY OF SUCH DAMAGES.
+
+//
+//
+//  Creation Date:  May 3, 2017
+//
+//  Description:
+//      This script is the copy skin weight option box dialogs.
+//
+//  Input Arguments:
+//      None.
+//
+//  Return Value:
+//      None.
+//
+proc int LsyNew_copyTheSkinWeights(string $src, string $dst, string $args, int $showError)
+{
+	// find source and destination skin shapes
+	//
+	string $srcCluster = findRelatedSkinCluster($src);
+	string $dstCluster = findRelatedSkinCluster($dst);
+	string $err;
+	string $fmt = (uiRes("m_doCopySkinWeightsArgList.kIsNotASkinCluster"));
+	if (size($srcCluster) == 0) {
+		$err = `format -s $src -s $src $fmt`;
+	}
+	else if (size($dstCluster) == 0) {
+		$err = `format -s $dst -s $src $fmt`;
+	} else {
+		string $cmd = ("copySkinWeights -ss "+$srcCluster+" -ds " + $dstCluster + $args);
+		evalEcho($cmd);
+		return 1;
+    }
+	if ($showError) {
+		error($err);
+	} else {
+		warning($err);
+	}
+	return 0;
+}
+
+global proc LsyNew_doCopySkinWeightsArgList( string $version, string $args[] )
+{
+    string $currentSelection[] = `ls -selection`;
+    if (size($currentSelection) < 2) 
+	{
+		error( (uiRes("m_doCopySkinWeightsArgList.kNeedsSourceAndDest")) );
+		return;
+	}
+
+	
+	// Handle the different versions of arguments we accept, and turn them
+	// into a single set of command flags
+	//	
+	string $cmdArgs = " -noMirror";
+	if( $version == "2")
+	{
+		$cmdArgs += $args[0];
+	}
+	else
+	{
+		if( $args[0] == "smooth")
+		    $cmdArgs += " -smooth";
+	}
+	
+	// Take our (last) target out of the list
+	//
+	//string $target = $currentSelection[ size( $currentSelection) - 1];
+	for($i = 1;$i < size($currentSelection); $i++)
+	{
+		string $target = $currentSelection[$i];
+
+		// Explode any source assemblies as the command only works on shapes
+		//
+		string $assemblies[] = `ls -sl -assemblies`;
+		for( $assembly in $assemblies)
+		{
+			if( $assembly != $target)
+			{
+				select -d $assembly;
+				select -af `ls -lf -type controlPoint -ni -dag $assembly`;
+			}
+		}
+		
+		// Examine the last entry in the selection list to work out what kind of target
+		// we're dealing with
+		//
+		int $result = 0;
+		
+		if( size( `ls -assemblies $target` ) )
+		{
+			// We have a heirarchy of targets. Split the task into one copy for each
+			// destination surface we find.
+			//
+			select -d $target;
+			string $targets[] = `ls -lf -type controlPoint -ni -dag $target`;
+			string $ii;
+			for( $ii in $targets )
+			{
+				string $targetSkin = findRelatedSkinCluster( $ii );
+				if( size( $targetSkin ))
+				{
+					select -add $ii;
+					evalEcho( "copySkinWeights " + $cmdArgs);
+					select -d $ii;				
+					$result++;
+				}
+				else
+				{
+					LsyNew_CopySkinJoints($currentSelection[0],$ii);
+					string $twoObj[]={$currentSelection[0],$ii};
+					select -r $twoObj;
+					evalEcho( "copySkinWeights " + $cmdArgs);
+					select -d $ii;				
+					$result++;
+
+				}
+			}		
+			//select -add $target;
+		}
+		else
+		{	
+			if( size( `ls -type controlPoint $target`) || size( `ls -type transform $target`) )
+			{
+				// We have a single shape. Verify there's a skinCluster on it
+				//
+				string $targetSkin = findRelatedSkinCluster( $target );
+				if( size( $targetSkin ))
+				{
+					evalEcho( "copySkinWeights " + $cmdArgs);
+					$result++;
+				}
+				else
+				{
+					LsyNew_CopySkinJoints($currentSelection[0],$target);
+					string $twoObj[]={$currentSelection[0],$target};
+					select -r $twoObj;
+					evalEcho( "copySkinWeights " + $cmdArgs);			
+					$result++;
+				}
+			}
+			else
+			{
+				// We (probably) have a list of components. Try and identify the shape
+				// for this 
+				//
+				string $VEF[] = `ls -sl`;
+				string $objShape[] = `listRelatives -p $VEF`;
+				
+				for($i = 1; $i < size($objShape); $i++)
+				{
+
+					if(size( findRelatedSkinCluster ( $objShape[$i] ) ) == 0)
+					{
+						LsyNew_CopySkinJoints($objShape[0],$objShape[$i]);
+						string $twoObj[]={$objShape[0],$objShape[$i]};
+						select -r $twoObj;
+						evalEcho( "copySkinWeights " + $cmdArgs);
+					}
+				}
+
+				//print $VEF;
+				select -r $VEF;
+				evalEcho( "copySkinWeights " + $cmdArgs);
+				$result++;
+				break;
+			}
+		}
+		
+		if( $result == 0)
+		{
+			
+			error( (uiRes("m_doCopySkinWeightsArgList.kNoDestinationSkinsFound")) );
+		}
+		else
+		{
+			string $fmt = (uiRes("m_doCopySkinWeightsArgList.kCopiedResult"));
+		    print `format -s $result $fmt`;
+		}
+	
+	}
+}
+
+proc LsyNew_setOptionVars (int $forceFactorySettings)
+{
+	if ( $forceFactorySettings || !`optionVar -exists copySkinWeightsSurfaceAssociationOption` )
+		optionVar -intValue copySkinWeightsSurfaceAssociationOption 1;
+	if ( $forceFactorySettings || !`optionVar -exists copySkinWeightsInfluenceAssociationOption1` )
+		optionVar -intValue copySkinWeightsInfluenceAssociationOption1 1;
+	if ( $forceFactorySettings || !`optionVar -exists copySkinWeightsInfluenceAssociationOption2` )
+		optionVar -intValue copySkinWeightsInfluenceAssociationOption2 1;
+	if ( $forceFactorySettings || !`optionVar -exists copySkinWeightsInfluenceAssociationOption3` )
+		optionVar -intValue copySkinWeightsInfluenceAssociationOption3 1;
+		
+	if ($forceFactorySettings || !`optionVar -exists copySkinWeightsNormalize`) {
+		optionVar -intValue copySkinWeightsNormalize 0;		// off by default
+	}			
+}
+
+proc LsyNew_copySkinWeightsSetOptionVarsFromUI( string $parent)
+{
+	int $value;
+
+	$value = 1;
+	for( $i = 1; $i < 5; $i++)	
+	if( `radioButtonGrp -q -select ("copySkinWeightsSurfaceAssociationMenu" + $i)`)
+		$value = $i; 
+	optionVar -intValue copySkinWeightsSurfaceAssociationOption $value;
+	$value = `optionMenuGrp -q -select copySkinWeightsInfluenceAssociationMenu1`; optionVar -intValue copySkinWeightsInfluenceAssociationOption1 $value;
+	$value = `optionMenuGrp -q -select copySkinWeightsInfluenceAssociationMenu2`; optionVar -intValue copySkinWeightsInfluenceAssociationOption2 $value;
+	$value = `optionMenuGrp -q -select copySkinWeightsInfluenceAssociationMenu3`; optionVar -intValue copySkinWeightsInfluenceAssociationOption3 $value;
+	
+    setParent $parent;
+}
+
+global proc LsyNew_copySkinWeightsSetup(string $parent, int $forceFactorySettings)
+{
+	// Retrieve the option settings
+	//
+	LsyNew_setOptionVars( $forceFactorySettings );
+	
+	// Set the state of the check box to that of the variable smoothCopyWeights
+	//
+	if (`radioButtonGrp -exists copySkinWeightsSurfaceAssociationMenu1`) 
+	{
+		int $value = `optionVar -q copySkinWeightsSurfaceAssociationOption`;
+		if( $value > 0) radioButtonGrp -e -select 1 ("copySkinWeightsSurfaceAssociationMenu" + $value);
+		optionMenuGrp -e -select `optionVar -q copySkinWeightsInfluenceAssociationOption1` copySkinWeightsInfluenceAssociationMenu1;
+		optionMenuGrp -e -select `optionVar -q copySkinWeightsInfluenceAssociationOption2` copySkinWeightsInfluenceAssociationMenu2;
+		optionMenuGrp -e -select `optionVar -q copySkinWeightsInfluenceAssociationOption3` copySkinWeightsInfluenceAssociationMenu3;
+	}
+
+	// normalize
+	int $objectNormalize = `optionVar -query copySkinWeightsNormalize`;
+	checkBoxGrp -edit -value1 $objectNormalize copyNormalizeWidget;
+
+	setParent $parent;
+}
+
+global proc LsyNew_copySkinWeightsCallback (string $parent, int $doIt)
+{
+    setParent $parent;
+    
+	if (`radioButtonGrp -exists copySkinWeightsSurfaceAssociationMenu1`) 
+	{
+		LsyNew_copySkinWeightsSetOptionVarsFromUI( $parent);
+	}
+
+	// normalize
+	int $normalizeIt = `checkBoxGrp -query -value1 copyNormalizeWidget`;
+	optionVar -intValue copySkinWeightsNormalize $normalizeIt;	
+	
+	if ($doIt)
+	{	
+		LsyNew_performCopySkinWeights false; 
+		addToRecentCommandQueue "LsyNew_performCopySkinWeights false" "CopySkinWeights";
+	}
+}
+
+proc LsyNew_createInfluenceAssociationMenu( string $menuName, string $label, int $allowNone)
+{
+	optionMenuGrp
+		-label $label
+		-enable false
+		$menuName;
+
+	// Don't add a no-value case for the first menu		
+	if( $allowNone ) menuItem -label (uiRes("m_performCopySkinWeights.kNone"));
+	menuItem -label (uiRes("m_performCopySkinWeights.kClosestJoint"));
+	menuItem -label (uiRes("m_performCopySkinWeights.kClosestBone"));
+	menuItem -label (uiRes("m_performCopySkinWeights.kOneToOne"));
+	menuItem -label (uiRes("m_performCopySkinWeights.kLabel"));
+	menuItem -label (uiRes("m_performCopySkinWeights.kName"));
+
+	optionMenuGrp -e
+		-enable true
+		-select 1
+		-width 100
+		$menuName;
+}
+
+proc string LsyNew_copySkinWeightsWidgets( string $parent )
+{
+	setParent $parent;
+	
+	string $tabForm = `columnLayout -adjustableColumn true`;
+	
+	radioButtonGrp -numberOfRadioButtons 1
+		-label (uiRes("m_performCopySkinWeights.kSurfaceAssociation")) 
+		-label1 (uiRes("m_performCopySkinWeights.kClosestPoint")) 
+		-select 1
+		copySkinWeightsSurfaceAssociationMenu1;
+
+		radioButtonGrp -numberOfRadioButtons 1
+			-label1 (uiRes("m_performCopySkinWeights.kRayCast"))
+			-shareCollection copySkinWeightsSurfaceAssociationMenu1
+			copySkinWeightsSurfaceAssociationMenu2;
+		
+		radioButtonGrp -numberOfRadioButtons 1
+			-label1 (uiRes("m_performCopySkinWeights.kClosestComponent"))
+			-shareCollection copySkinWeightsSurfaceAssociationMenu1
+			copySkinWeightsSurfaceAssociationMenu3;
+			
+		radioButtonGrp -numberOfRadioButtons 1
+			-label1 (uiRes("m_performCopySkinWeights.kUVSpace"))
+			-shareCollection copySkinWeightsSurfaceAssociationMenu1
+			copySkinWeightsSurfaceAssociationMenu4;
+			
+	separator;
+
+	LsyNew_createInfluenceAssociationMenu( "copySkinWeightsInfluenceAssociationMenu1", (uiRes("m_performCopySkinWeights.kInfluenceAssociation1")), false);
+	LsyNew_createInfluenceAssociationMenu( "copySkinWeightsInfluenceAssociationMenu2", (uiRes("m_performCopySkinWeights.kInfluenceAssociation2")), true);
+	LsyNew_createInfluenceAssociationMenu( "copySkinWeightsInfluenceAssociationMenu3", (uiRes("m_performCopySkinWeights.kInfluenceAssociation3")), true);
+	
+	separator;	
+	
+	// Normalize
+	checkBoxGrp
+		-label ""
+		-label1 (uiRes("m_performCopySkinWeights.kNormalize")) 
+		-numberOfCheckBoxes 1
+		copyNormalizeWidget;
+	
+	return $tabForm;
+}
+
+global proc LsyNow_copySkinWeightsOptions ()
+{
+	string $commandName = "LsyNew_copySkinWeights";
+
+	// Build the option box "methods"
+	//
+	string $callback = ($commandName + "Callback");
+	string $setup = ($commandName + "Setup");
+
+	//	Get the option box.
+	//
+	//  The value returned is the name of the layout to be used as
+	//	the parent for the option box UI.
+	//
+	string $layout = getOptionBox();
+	setParent $layout;
+
+	setOptionBoxCommandName($commandName);
+
+	setUITemplate -pushTemplate DefaultTemplate;
+	waitCursor -state 1;
+	tabLayout -scr true -tv false;	// To get the scroll bars
+
+	string $parent = `columnLayout -adjustableColumn 1`;
+
+	LsyNew_copySkinWeightsWidgets $parent;
+
+	waitCursor -state 0;
+	setUITemplate -popTemplate;
+
+	//	'Apply' button.
+	//
+	string $applyBtn = getOptionBoxApplyBtn();
+	button -edit
+		-label (uiRes("m_performCopySkinWeights.kCopy")) 
+		-command ($callback + " " + $parent + " " + 1)
+		$applyBtn;
+
+	//	'Save' button.
+	//
+	string $saveBtn = getOptionBoxSaveBtn();
+	button -edit 
+		-command ($callback + " " + $parent + " " + 0 + "; hideOptionBox")
+		$saveBtn;
+
+	//	'Reset' button.
+	//
+	string $resetBtn = getOptionBoxResetBtn();
+	button -edit 
+		-command ($setup + " " + $parent + " " + 1)
+		$resetBtn;
+
+	//	Set the option box title.
+	//
+	setOptionBoxTitle (uiRes("m_performCopySkinWeights.kCopySkinWeightsOptions"));
+
+	//	Customize the 'Help' menu item text.
+	//
+	setOptionBoxHelpTag( "CopySkinWeights" );
+
+	//	Set the current values of the option box.
+	//
+	eval (($setup + " " + $parent + " " + 0));	
+	
+	//	Show the option box.
+	//
+	showOptionBox();
+}
+
+proc string LsyNow_assembleCmd()
+{
+	string $cmd;
+	string $args;
+
+	LsyNew_setOptionVars(false);    
+
+	int $surfaceAssociationMode = `optionVar -query copySkinWeightsSurfaceAssociationOption`;
+	string $surfaceAssociationModes[] = { "closestPoint", "rayCast", "closestComponent"};
+	if( $surfaceAssociationMode == 4) // UV space
+	{
+		string $uvSets[] = `polyUVSet -q -currentUVSet`;
+		string $sourceUVSet = "map1";
+		string $targetUVSet = "map1";
+		if( size( $uvSets) > 0) 
+		{
+			$sourceUVSet = $uvSets[0];
+			$targetUVSet = $uvSets[ size( $uvSets) - 1];
+		}
+		$args = $args + " -surfaceAssociation " + $surfaceAssociationModes[ 0] + " -uvSpace " + $sourceUVSet + " " + $targetUVSet;
+	}
+	else
+	{
+		$args = $args + " -surfaceAssociation " + $surfaceAssociationModes[ $surfaceAssociationMode - 1];
+	}
+
+	int $influenceAssociationMode = `optionVar -query copySkinWeightsInfluenceAssociationOption1`;
+	string $influenceAssociationModes[] = { "closestJoint", "closestBone", "oneToOne", "label", "name"};
+	if( $influenceAssociationMode > 0) $args = $args + " -influenceAssociation " + $influenceAssociationModes[ $influenceAssociationMode - 1];
+	$influenceAssociationMode = `optionVar -query copySkinWeightsInfluenceAssociationOption2`;
+	if( $influenceAssociationMode > 1) $args = $args + " -influenceAssociation " + $influenceAssociationModes[ $influenceAssociationMode - 2];
+	$influenceAssociationMode = `optionVar -query copySkinWeightsInfluenceAssociationOption3`;
+	if( $influenceAssociationMode > 1) $args = $args + " -influenceAssociation " + $influenceAssociationModes[ $influenceAssociationMode - 2];
+
+	// Normalize
+	if( `optionVar -query copySkinWeightsNormalize`)
+		$args = $args + " -normalize";
+	
+
+	$cmd = "LsyNew_doCopySkinWeightsArgList( 2, {\"" + $args + "\"} )";
+
+	return $cmd;
+}
+
+global proc string LsyNew_performCopySkinWeights(int $action)
+{
+	string $cmd = "";
+
+	switch ($action) {
+
+		//	Execute the command.
+		//
+		case 0:
+			//	Retrieve the option settings
+			//
+			LsyNew_setOptionVars(false);
+
+			//	Get the command.
+			//
+			$cmd = `LsyNow_assembleCmd`;
+			eval($cmd);
+			//	Execute the command with the option settings.
+			//
+
+			break;
+
+		//	Show the option box.
+		//
+		case 1:
+			copySkinWeightsOptions;
+			break;
+		case 2:
+			//	Get the command.
+			//
+			$cmd = `LsyNow_assembleCmd`;
+			eval($cmd);
+	}
+	return $cmd;
+}
+
+global proc LsyNew_CopySkinJoints(string $skinObj,string $UnSkinObj)
+{
+    
+    string $UnSkin = `findRelatedSkinCluster $UnSkinObj`;
+    if($UnSkin == "")
+    {
+    	string $select[] ={$skinObj,$UnSkinObj};
+	    string $Skin = `findRelatedSkinCluster $select[0]`;
+	    if(size($Skin) == 0)
+	    {
+	    	error("must is skinCluster select to first object");
+	    }
+	    
+	    string $SkinJoints[]=`skinCluster -q  -inf $Skin`;
+	    
+	    /////获取蒙皮模型的影响物
+	    select -cl;
+	    
+	    joint -p 0 0 0 -n "Skin_joint_del";
+	    int $M_size=`size $select`;
+	    for($i=1;$i<$M_size;$i++)
+	    {
+	    	 
+	    	 skinCluster -dr 4.0 "Skin_joint_del" $select[$i];
+	    	 select -r $SkinJoints;
+	    	 select -add $select[$i] ;
+	         skinClusterInfluence 1 " -dr 4"  ;
+	         select -cl;
+	       
+	    }
+	   delete "Skin_joint_del";
+	   select -cl; 
+	   ////蒙皮模型和需要蒙皮模型的骨骼蒙皮一致   
+    }
+      
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LsyNow_copySkinWeightsOptions;
+

@@ -1,0 +1,29 @@
+#! /All/Oxygen/APP/L/gcc4.1/nuke/6.1v2/Nuke6.1 -nx
+version 6.1 v2
+Gizmo {
+ addUserKnob {20 User l X_nanPixels}
+ addUserKnob {3 xShift l "x Shift"}
+ xShift 2
+ addUserKnob {3 yShift l "y Shift"}
+ yShift 2
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 17
+  ypos -33
+ }
+ Expression {
+  expr0 isnan(r)?r(x+xShift,y+yShift):r
+  expr1 isnan(g)?g(x+xShift,y+yShift):g
+  expr2 isnan(b)?b(x+xShift,y+yShift):b
+  name Expression1
+  xpos 17
+  ypos 33
+ }
+ Output {
+  name Output1
+  xpos 17
+  ypos 123
+ }
+end_group

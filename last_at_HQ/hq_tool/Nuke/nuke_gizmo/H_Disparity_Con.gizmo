@@ -1,0 +1,193 @@
+#! /home/zhangkh/Nuke6.3v4/Nuke6.3 -nx
+version 6.3 v4
+Gizmo {
+ inputs 3
+ addUserKnob {20 User}
+ addUserKnob {41 disable_1 l Unpremu_disable T Unpremult2.disable}
+ addUserKnob {41 size l expand T Blur2.size}
+ addUserKnob {41 size_1 l blur T Blur1.size}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x7171c600
+  note_font_size 42
+  xpos -619
+  ypos -73
+  bdwidth 967
+  bdheight 557
+ }
+ Input {
+  inputs 0
+  name L
+  xpos -323
+  ypos -144
+ }
+set N7271d10 [stack 0]
+ Dot {
+  name Dot3
+  xpos -452
+  ypos 130
+ }
+push $N7271d10
+ Unpremult {
+  name Unpremult2
+  xpos -323
+  ypos -17
+  disable true
+ }
+ set C76b4190 [stack 0]
+ Expression {
+  expr3 "r != 0 || g != 0"
+  name Expression2
+  xpos -323
+  ypos 18
+  disable true
+ }
+ Shuffle {
+  red alpha
+  out depth
+  name Shuffle1
+  xpos -323
+  ypos 62
+ }
+ Blur {
+  size 10
+  name Blur2
+  xpos -322
+  ypos 99
+ }
+ set C6cc1b50 [stack 0]
+ Unpremult {
+  channels {rgba.red rgba.green rgba.blue depth.Z}
+  name Unpremult1
+  xpos -323
+  ypos 146
+ }
+ Shuffle {
+  in depth
+  in2 rgba
+  red red2
+  green green2
+  blue blue2
+  name Shuffle4
+  xpos -323
+  ypos 199
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos -323
+  ypos 260
+ }
+ Blur {
+  name Blur1
+  xpos -323
+  ypos 309
+ }
+ set C6d5c990 [stack 0]
+ Dot {
+  name Dot2
+  xpos -289
+  ypos 387
+ }
+ Input {
+  inputs 0
+  name R
+  xpos 56
+  ypos -149
+  number 1
+ }
+set N7794980 [stack 0]
+ Dot {
+  name Dot1
+  xpos -75
+  ypos 159
+ }
+push $N7794980
+clone $C76b4190 {
+  xpos 56
+  ypos -12
+  selected false
+ }
+ Expression {
+  expr3 "r != 0 || g != 0"
+  name Expression1
+  xpos 56
+  ypos 31
+  disable true
+ }
+ Shuffle {
+  red alpha
+  out depth
+  name Shuffle2
+  xpos 56
+  ypos 57
+ }
+clone $C6cc1b50 {
+  xpos 56
+  ypos 105
+  selected false
+ }
+ Unpremult {
+  channels {rgba.red rgba.green rgba.blue depth.Z}
+  name Unpremult4
+  xpos 56
+  ypos 151
+ }
+ Shuffle {
+  in depth
+  in2 rgba
+  red red2
+  green green2
+  blue blue2
+  name Shuffle3
+  xpos 56
+  ypos 204
+ }
+ Merge2 {
+  inputs 2
+  name Merge3
+  xpos 56
+  ypos 265
+ }
+clone $C6d5c990 {
+  xpos 56
+  ypos 316
+  selected false
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue red2
+  alpha green2
+  out disparity
+  name ShuffleCopy1
+  xpos 56
+  ypos 383
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 426
+  ypos -563
+  number 2
+ }
+ ShuffleCopy {
+  inputs 2
+  in disparity
+  red red
+  green green
+  blue blue
+  out disparity
+  name ShuffleCopy2
+  xpos 426
+  ypos 383
+ }
+ Output {
+  name Output1
+  xpos 426
+  ypos 742
+ }
+end_group

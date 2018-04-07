@@ -1,0 +1,480 @@
+
+global proc batrenderTool()
+{
+	string $filePathCom="textFieldButtonGrp -e -tx ";
+			 $filePathCom+="`fileDialog`";
+			 $filePathCom+=" filePath";
+  
+  string $batFlCom="textFieldButtonGrp -e -tx ";
+			 $batFlCom+="`fileDialog`";
+			 $batFlCom+=" batFlPath";
+	
+	string $imageTarPathCom="fileBrowserDialog -m 4 -fc getPath -an \"请选择图片存放路径\"";
+	string $projTarPathCom="fileBrowserDialog -m 4 -fc getProjPath -an \"请选择图片存放路径\"";
+
+	if (`window -ex batchRenderWin`) deleteUI -window batchRenderWin;
+	window -t "MAYA批渲命令行生成器 （Maya Batch Render Generator）"
+		-menuBar true
+		-rtf 1
+	  batchRenderWin;
+		
+	menu -label "说明";
+		menuItem -label "帮助" ;
+		
+	columnLayout columnAll;
+		frameLayout -cll 0 -label "    基本设置" -borderStyle "etchedIn" baseSetting;
+		columnLayout baseArrange;
+		radioButtonGrp -numberOfRadioButtons 2
+									 -label "渲染方式" 
+									 -labelArray2 "本机渲染"  "网络渲染（请看说明帮助）"
+									 -select 1
+									 -cw 3 190
+									 -cw 2 80
+									 renderMode;
+		textFieldButtonGrp -label "渲染源文件"  
+											 -text "请输入需要渲染的文件名及完整路径"
+											-buttonLabel "Browse" 
+											-buttonCommand $filePathCom 
+											filePath;
+		textFieldButtonGrp -label "图片存放路径"
+											 -text  "请输入图片存放的完整路径"
+											 -buttonLabel "Browse"
+											 -buttonCommand $imageTarPathCom
+											 imageTarPath;
+		textFieldButtonGrp -label "批处理文件名称和路径"  
+										 -buttonLabel "Browse" 
+										 -buttonCommand $batFlCom 
+											batFlPath;
+		checkBox -label "如果材质丢失，中途退出" -w 180 -al "left" matSetting;
+		checkBox -label "渲染完毕后自动关机" -w 160  -al "left" shutDown;
+		setParent..;	setParent..;
+		
+/////////////////////////////////
+		frameLayout -cll 1 -cl 1
+							 -label "细节设置" 
+							 -borderStyle "etchedIn" 
+							 -w 429
+							 detailSetting;
+			columnLayout detailArrange;
+///////////				
+				rowLayout -nc 3 -cw3 100 80 80 ;	
+					checkBox -label " 渲染祯范围" 
+										-onCommand ("intFieldGrp -e -en 1 sFrameUI;intFieldGrp -e -en 1 eFrameUI")
+										-offCommand ("intFieldGrp -e -en 0 sFrameUI;intFieldGrp -e -en 0 eFrameUI")
+										frameSetting ;
+					intFieldGrp -label "开始" -en 0 -cw2 30 40 -cat 1 "left" 1 -cat 2 "both" 1 sFrameUI ;
+					intFieldGrp -label "结束" -en 0 -cw2 30 40 -cat 1 "left" 1 -cat 2 "both" 1 eFrameUI;
+			 	setParent..;
+////////////			 	
+			 	rowLayout -nc 2 -cw2 100 150;
+			 		checkBox -label " 设定摄像机" 
+			 						 -onCommand "textField -e -en 1 camUI"
+			 						 -offCommand "textField -e -en 0 camUI"
+			 						  camSetting;
+			 		textField -en 0 -w 150 -text "请输入摄像机名称" camUI ; 
+			 	setParent..;
+////////////			 	
+			 	rowLayout -nc 2 -cw2 100 150 detail1;
+			 		checkBox -label " 工程目录" 
+			 						 -onCommand "textFieldButtonGrp -e -en 1 projTarPath"
+			 						 -offCommand "textFieldButtonGrp -e -en 0 projTarPath"
+			 						 projSetting;
+					textFieldButtonGrp  -en 0
+											 				-text "请输入工程的完整路径"
+											 				-buttonLabel "Browse"
+											 				-buttonCommand $projTarPathCom
+											 				projTarPath;
+				setParent..;
+////////////////
+				rowLayout -nc 3 -cw3 100 140 140 ;	
+					checkBox -label " 设定分辨率" 
+										-onCommand ("intFieldGrp -e -en 1 pixelXUI;intFieldGrp -e -en 1 pixelYUI")
+										-offCommand ("intFieldGrp -e -en 0 pixelXUI;intFieldGrp -e -en 0 pixelYUI") 
+										resSetting;
+					intFieldGrp -v1 720 -label "宽（像素）" -en 0 -cw2 70 70 -cat 1 "right" 1 -cat 2 "both" 1 pixelXUI ;
+					intFieldGrp -v1 576 -label "高（像素）" -en 0 -cw2 70 77 -cat 1 "right" 1 -cat 2 "both" 1 pixelYUI;
+			 	setParent..;
+//////////////////////
+			 	rowLayout -nc 2 -cw2 150 150;
+			 		checkBox -label " 设定cpu个数" 
+			 						 
+			 						 -onCommand "intField -e -en 1 cpuUI"
+			 						 -offCommand "intField -e -en 0 cpuUI" 
+			 						 cpuSetting;
+			 		intField -en 0 -w 150 -v 1  cpuUI ; 
+			 	setParent..;		
+/////////////////////////////////////
+			 	rowLayout -nc 2 -cw2 150 150;
+			 		checkBox -label " 图片名称(不含扩展名)" 
+			 						  -onCommand "textField -e -en 1 imUI"
+			 						 -offCommand "textField -e -en 0 imUI" 
+			 						 imNameSetting;		
+			 					
+					textField -en 0 -w 150 -text "请输入图片名称" imUI ;	
+				setParent..;
+////////////////////////
+				rowLayout -nc 2 -cw2 150 150;
+					checkBox -label " 输入图片格式"
+									 -onCommand "textField -e -en 1 ofUI"
+									 -offCommand "textField -e -en 0 ofUI"
+									 formatSetting;
+									 
+					textField -en 0 -text "iff" -w 150 ofUI ;	
+				setParent..;
+///////////////////////////
+				rowLayout -nc 2 -cw2 150 150;
+					checkBox -label " By Frame"
+									 -onCommand "intField -e -en 1 bFrameUI"
+									 -offCommand "intField -e -en 0 bFrameUI"
+									 byFrameSetting;
+									 
+					intField -en 0 -v 1 -w 150 bFrameUI ;	
+				setParent..;
+///////////////////////////////
+				rowLayout -nc 2 -cw2 150 150;
+					checkBox -label " Frame Padding"
+									 -onCommand "intField -e -en 1 padUI"
+									 -offCommand "intField -e -en 0 padUI"
+									 padSetting;
+									 
+					intField -en 0 -v 4 -w 150 padUI ;	
+				setParent..;
+/////////////////////////////
+				rowLayout -nc 2 -cw2 150 150;
+					checkBox -label " 使用最大内存（Mb）"
+									 -onCommand "intField -e -en 1 mmUI"
+									 -offCommand "intField -e -en 0 mmUI"
+									 memSetting;
+									 
+					intField -en 0 -v 1024 -w 150 mmUI ;	
+				setParent..;
+////////////////////////////////
+				rowLayout -nc 2 -cw2 150 150;
+					checkBox -label " 设备像素比"
+									 -onCommand "floatField -e -en 1 ardUI"
+									 -offCommand "floatField -e -en 0 ardUI"
+									 ardSetting;
+									 
+					floatField -en 0 -v 1.250 -w 150 ardUI ;	
+				setParent..;
+//////////////////////////////////
+				rowLayout -nc 2 -cw2 150 150;
+					checkBox -label " 开始桢记数编号"
+									 -onCommand "intField -e -en 1 rfsUI"
+									 -offCommand "intField -e -en 0 rfsUI"
+									 rfsSetting;
+									 
+					intField -en 0 -v 51 -w 150 rfsUI ;	
+				setParent..;setParent..;setParent..;
+
+
+//////////////////////////////////
+		frameLayout -cll 1 -cl 1
+									  -label "渲染清单" 
+									  -borderStyle "etchedIn" 
+								 	  -w 429 
+								 	   ;			
+			columnLayout ;
+					scrollField -ed 1 -w 429 -h 300 -bgc 1.0 1.0 1.0 cmdList;	
+				rowLayout -nc 3 -cw3 170 150 100 -cat 3 "right" 2 ;
+					intFieldGrp  -cw 1 120 -cw 2 50 -label "选择要删除的行数" delItem ;
+					button -label "删除" -w 50 -c "del;editList";
+					button -label "清空列表" -c "clearObjList;editList";
+				setParent..;setParent..;setParent..;
+////////////////////////////////////////////
+		frameLayout -lv 0 -borderStyle "etchedIn" -w 429 -h 40;
+					rowColumnLayout  -nc 3 
+								-cw 1 140 -cw 2 140 -cw 3 140 
+								-cat 1 "both" 2 -cat 2 "both" 2 -cat 3 "both" 2
+								;
+			button -label "添加任务" -align "center" -h 35 -c "getRenderMsg;editList";
+			button -label "生成批处理文件" -align "center" -c genBatchFl;
+			button -label "关闭窗口" -align "center" -c "clear;deleteUI -window batchRenderWin";
+														
+	showWindow batchRenderWin;
+
+}
+
+
+
+///////////Get Image Path///////////////////////////////////////////////////////////////////////////
+
+global proc int getPath(string $filename,string $filetype)
+
+{
+textFieldButtonGrp -e -text $filename imageTarPath;
+return 1;
+}
+
+//////////Get Project Path////////////////////////////////////////////////////////////////////////////
+global proc int getProjPath(string $filename,string $filetype)
+
+{
+textFieldButtonGrp -e -text $filename projTarPath;
+return 1;
+}
+
+/////////////////Get Render MSG////////////////////////////////////////////////////////////////////////
+global string $cmd[];
+global string $cmdTex[];
+global int $count = 0;
+//global int $cmdIndex = 0;
+global string $tempCmd="";
+global string $tempCmdTex="";
+
+global proc getRenderMsg()
+{
+global string $cmd[];
+global string $cmdTex[];
+global int $count ;
+$count++;
+//global int $cmdIndex;
+global string $tempCmd;
+global string $tempCmdTex;
+int $reMak=0;
+
+string $rndFl=`textFieldButtonGrp -q -text filePath`;
+string $rd = `textFieldButtonGrp -q -text imageTarPath`;   
+       $tempCmd+="@render ";
+       $tempCmdTex+="@渲染任务 "+$count+" ~ ";
+       $tempCmdTex+=" 源文件     "+$rndFl+"\n";
+       $tempCmdTex+="              图片存放在  "+$rd+"\n";
+       
+       if (`radioButtonGrp -q -select renderMode`==2)
+       {
+       	$reMak++;
+      $tempCmd+="-rep ";
+      $tempCmdTex+="             备注 "+"["+$reMak+"]  网络渲染\n";
+       }
+       if (`checkBox -q -v matSetting`)
+       {
+       	$reMak++;
+       	$tempCmd+=" -amt  ";
+       	$tempCmdTex+="             备注 "+"["+$reMak+"]  如果材质丢失，停止渲染\n";
+       }
+       if (`checkBox -q -v frameSetting`)
+       {
+       	$reMak++;
+       	int $sFrame=`intFieldGrp -q -v1 sFrameUI`;
+       	int $eFrame=`intFieldGrp -q -v1 eFrameUI`;
+       	$tempCmd+="-s "+$sFrame+" "+"-e "+$eFrame+" ";
+       	$tempCmdTex+="             备注 "+"["+$reMak+"]  起始桢 "+$sFrame+"   结束桢 "+$eFrame+"\n";
+      }
+       if (`checkBox -q -v camSetting`)
+      {
+      	$reMak++;
+      	string $cam = `textField -q -text camUI`;
+      	$tempCmd+="-cam "+$cam+" ";
+      	$tempCmdTex+="             备注 "+"["+$reMak+"]  渲染的摄像机是  "+$cam+"\n";
+      }
+    	 if (`checkBox -q -v projSetting`)
+    	 {
+    	 	$reMak++;
+    	 	string $proj = `textFieldGrp -q -text projTarPath`;
+    	 	$tempCmd+="-proj "+$proj+" ";
+    	 	$tempCmdTex+="             备注 "+"["+$reMak+"]  设定的工程目录是  "+$proj+"\n";
+    	}
+    	if (`checkBox -q -v resSetting`)
+    	{
+    		$reMak++;
+    		int $pX = `intFieldGrp -q -v1 pixelXUI`;
+    		int $pY = `intFieldGrp -q -v1 pixelYUI`;
+    		$tempCmd+="-x "+$pX+" "+"-y "+$pY+" ";
+    		$tempCmdTex+="             备注 "+"["+$reMak+"]  分辨率  "+"宽 "+$pX+"   高  "+$pY+ "\n";
+    	}
+    		if (`checkBox -q -v cpuSetting`)
+    		{
+    			$reMak++;
+    		int $cpu = `intField -q -v cpuUI`;
+    		$tempCmd+="-n "+$cpu+" ";	
+    		$tempCmdTex+="             备注 "+"["+$reMak+"]  使用cpu的个数  "+$cpu+"\n";
+    		}
+      if (`checkBox -q -v imNameSetting`)
+      {
+      	$reMak++;
+      	string $im = `textField -q -text imUI`;
+      	$tempCmd += "-im "+$im+" ";
+      	$tempCmdTex+="             备注 "+"["+$reMak+"]  图片的名称(不含扩展名)  "+$im+"\n";
+      }
+       if (`checkBox -q -v formatSetting`)
+       {
+       	$reMak++;
+       	string $of = `textField -q -text ofUI`;
+       	$tempCmd += "-of "+$of+" ";
+       	$tempCmdTex+="             备注 "+"["+$reMak+"]  图片的格式  "+$of+"\n";
+      }
+      	if (`checkBox -q -v byFrameSetting`)
+      	{
+      		$reMak++;
+      		int $byFrame = `intField -q -v bFrameUI`;
+      		$tempCmd+="-b "+$byFrame+" ";
+      		$tempCmdTex+="             备注 "+"["+$reMak+"]  By Frame  "+$byFrame+"\n";
+      	}
+      	if (`checkBox -q -v padSetting`)
+      	{
+      		$reMak++;
+      		int $pad = `intField -q -v padUI`;
+      		$tempCmd+="-pad "+$pad+" ";
+      		$tempCmdTex+="             备注 "+"["+$reMak+"]  Frame Padding  "+$pad+"\n";
+      	}
+      	if (`checkBox -q -v memSetting`)
+      	{
+      		$reMak++;
+      		int $mm = `intField -q -v mmUI`;
+      		$tempCmd += "-mm "+$mm+" ";
+      		$tempCmdTex+="             备注 "+"["+$reMak+"]  最大内存使用量(Mb)  "+$mm+"\n";
+      	}
+      	if (`checkBox -q -v ardSetting`)
+      	{
+      		$reMak++;
+      		float $ard=`floatField -q -v ardUI`;
+      		$tempCmd += "-ard " + $ard + " " ;
+      		$tempCmdTex+="             备注 "+"["+$reMak+"]  设备像素比  "+$ard+"\n";
+      	}
+      	if (`checkBox -q -v rfsSetting`)
+      	{
+      		$reMak++;
+      		int $rfs = `intField -q -v rfsUI`;
+      		$tempCmd += "-rfs "+ $rfs+ " ";
+      		$tempCmdTex+="             备注 "+"["+$reMak+"]  起始桢编号  "+$rfs+"\n";
+      	}
+      
+      
+      
+      
+       
+       
+       
+       $tempCmd+="-fnc 3 ";
+       $tempCmd+="-rd "+$rd+" ";	
+       $tempCmd+=$rndFl+" ";
+      // $tempCmd+="@";
+       
+       //$tempCmdTex+="@";
+
+tokenize $tempCmd "@" $cmd;
+tokenize $tempCmdTex "@" $cmdTex;
+
+
+
+
+
+}
+
+
+//////////////////////////////Gen Batch File//////////////////////////////////////////////////////////
+
+global proc genBatchFl()
+
+{	
+	global string $cmd[];
+	global int $count;
+	string $putIn="";
+	for ($i=0;$i<$count;$i++)
+	{
+		$putIn+=($cmd[$i]+"\n");
+	}
+	if (`checkBox -q -v shutDown`) $putIn+="shutdown -s \n";
+	
+	string $batFile =`textFieldButtonGrp -q -text f`;
+	int $fileId=`fopen $batFile "w"`;
+	fprint $fileId $putIn;
+	fclose $fileId;
+	print $putIn;
+	
+}
+global proc editList()
+{
+	global string $tempCmdTex;
+	scrollField -e  -text $tempCmdTex cmdList;
+	
+	
+}
+
+global proc del()
+{
+global int $count;	
+global string $cmd[];
+global string $cmdTex[];
+global string $tempCmd;
+global string $tempCmdTex;
+int $delNum=`intFieldGrp -q -v1 delItem`;
+if (($delNum<1)||($delNum>$count))
+{
+	error "输入行号错误!";
+}
+$tempCmd="";
+$tempCmdTex="";
+$count--;
+
+
+for ($i=$delNum-1;$i<$count;$i++)
+{
+	$cmd[$i]=$cmd[$i+1];
+	$cmdTex[$i]=$cmdTex[$i+1];
+	
+}
+	$cmd[$count]="";
+	$cmdTex[$count]="";
+
+for ($i=0;$i<$count;$i++)
+{	
+	string $tempBreak[2]={"",""};
+	tokenize $cmdTex[$i] "~" $tempBreak;
+	$tempCmd+=("@"+$cmd[$i]);
+	$tempCmdTex+=("@渲染任务 "+($i+1)+" ~"+$tempBreak[1]);
+}
+
+}
+
+global proc clearObjList()
+{
+
+global string $cmd[];
+global string $cmdTex[];
+global int $count;
+global string $tempCmd;
+global string $tempCmdTex;
+
+
+for($i=0;$i<size($cmdTex);$i++)
+{
+$cmdTex[$i]="";
+$cmd[$i]="";
+}
+
+$tempCmd="";
+$tempCmdTex="";
+$count=0;
+
+
+}
+
+batrenderTool;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,137 @@
+#! /All/Oxygen/APP/L/gcc4.1/nuke/6.3v4/Nuke6.3v4 -nx
+version 6.3 v4
+Gizmo {
+tile_color 0x4394bcff
+note_font "DejaVu Sans"
+note_font_size 20
+mapsize {0.15 0.15}
+addUserKnob {20 User}
+addUserKnob {22 turnoninput l Input? T "node = nuke.thisNode()\nif node.name() == 'VIEWER_INPUT':\n    node\['name'].setValue('H_Maskingwide')\n    \nelse:\n    node\['name'].setValue('VIEWER_INPUT')" +STARTLINE}
+addUserKnob {26 ""}
+addUserKnob {6 turnon l TurnOn +STARTLINE}
+turnon true
+addUserKnob {7 maskingwidescreen l Maskingwidescreen R 0 5}
+maskingwidescreen 2.4
+addUserKnob {41 multiply l Multiply T Grade2.multiply}
+addUserKnob {26 ""}
+addUserKnob {6 turnontext l TurnOn_Text +STARTLINE}
+turnontext true
+addUserKnob {1 shotname l INVISIBLE +INVISIBLE}
+shotname "\[python \{nuke.knob('input.file').split('/').pop().split('.').pop(0)\}]     \[frame]"
+addUserKnob {1 artistname l INVISIBLE +INVISIBLE}
+artistname "\[python \{nuke.knob('input.file').split('/').pop().split('_').pop(2)\}] (\[date %Y/%m/%d])"
+addUserKnob {41 color T node_shotname.color}
+addUserKnob {41 size T node_shotname.size}
+}
+Input {
+ inputs 0
+ name Input1
+ xpos -19
+ ypos -11
+}
+set N62cc5d0 [stack 0]
+Rectangle {
+ output {rgba.red -rgba.green -rgba.blue}
+ invert true
+ area {{0 i} {"(input.height- input.width/(parent.maskingwidescreen))/2" i} {input.width i} {"input.height-(input.height- input.width/(parent.maskingwidescreen))/2" i}}
+ name Rectangle1
+ xpos 0
+ ypos 105
+}
+push $N62cc5d0
+Shuffle {
+ alpha white
+ name Shuffle2
+ xpos -101
+ ypos 90
+}
+Grade {
+ inputs 1+1
+ multiply 0.3
+ maskChannelMask rgba.red
+ name Grade2
+ xpos -101
+ ypos 136
+}
+push $N62cc5d0
+Dot {
+ name Dot1
+ xpos 183
+ ypos 172
+}
+Switch {
+ inputs 2
+ which {{parent.turnon i}}
+ name Switch1
+ xpos -101
+ ypos 243
+}
+set N67dd340 [stack 0]
+Text {
+ cliptype none
+ message "\[value shotname]"
+ font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+ size 40
+ xjustify right
+ yjustify bottom
+ Transform 1
+ box {0 50 {"\[value input.width]-80"} {"\[value input.height]"}}
+ center {1024 778}
+ color 0.3
+ name node_shotname
+ xpos -101
+ ypos 361
+}
+Text {
+ message "Artist: \[value artistname]"
+ font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+ size {{node_shotname.size}}
+ yjustify bottom
+ Transform 1
+ box {50 50 1440 810}
+ center {960 540}
+ color {{node_shotname.color}}
+ name node_Artist
+ selected true
+ xpos -101
+ ypos 405
+}
+Text {
+ message "\[value status]"
+ font /All/Oxygen/util/nuke/plugins/fonts/Arial.ttf
+ size 30
+ xjustify center
+ yjustify top
+ Transform 1
+ box {0 0 {"\[value input.width]" i} {"\[value input.height]-30" i}}
+ center {960 540}
+ name Status2
+ xpos -101
+ ypos 447
+ disable true
+}
+push $N67dd340
+Dot {
+ name Dot2
+ xpos 172
+ ypos 421
+}
+Switch {
+ inputs 2
+ which {{parent.turnontext i}}
+ name Switch2
+ xpos -101
+ ypos 557
+}
+Output {
+ name Output1
+ xpos -101
+ ypos 647
+}
+Viewer {
+ input_process false
+ name Viewer1
+ xpos -101
+ ypos 722
+}
+end_group

@@ -1,0 +1,112 @@
+global proc opAnimateCurve()
+{
+if(`window -q -ex YY_AN_Sel_Joint_Win`)
+{
+deleteUI YY_AD_tools;
+};
+
+window -wh 300 500
+	   -s 1
+	   YY_AN_Sel_Joint_Win;
+columnLayout -rs 5 -cat "both" 10 -adj 1;
+text -l "动画反馈工具集";
+separator;
+rowLayout -nc 2 -cw2 150 150 -cl2 "center" "center";
+text -l "   选择所有子骨骼工具";
+button -w 100 -h 30 -l "选择" -c YY_AD_select_hi;
+setParent ..;
+separator;
+text -l "优化关键帧工具";
+floatSliderGrp -l "时间差值" -f 1 -v 0.05 -min 0.0 -max 1 -s 0.001 -cw3 60 55 120 YY_AD_key_time_a;
+
+button -w 70 -h 30 -l "优化" -c YY_AD_frame_yh;
+separator -h 10;
+button -w 70 -h 30 -l "帮助" -c YY_AD_Tools_Help;
+//separator;
+showWindow YY_AN_Sel_Joint_Win;
+
+
+window -e
+	   -wh 300 500
+	   YY_AN_Sel_Joint_Win;
+
+};
+global proc YY_AD_select_hi()
+{
+select -hi;
+string $YY_AD_sel[] = `ls -sl`;
+string $YY_AD_d;
+for($YY_AD_d in $YY_AD_sel)
+{
+string $YY_AD_node = `nodeType $YY_AD_d`;
+if($YY_AD_node != "joint")
+{
+select -d $YY_AD_d;
+};	
+};
+};
+//////////////////////////////////////////////////////////////////
+
+global proc YY_AD_frame_yh()
+{
+	
+string $YY_AD_key_name_a[] = `keyframe -q -n`; 
+string $YY_AD_Key_for;
+for($YY_AD_Key_for in $YY_AD_key_name_a)
+{
+float $YY_AD_key_frame[] = `keyframe -q -sl $YY_AD_Key_for`;
+//float $YY_AD_key_frame_en[] = `keyframe -q -lsl $YY_AD_Key_for`;
+float $YY_AD_Key_Frmae_start = $YY_AD_key_frame[0];
+float $YY_AD_Key_Frame_End = $YY_AD_key_frame[(size($YY_AD_key_frame)-1)];
+float $YY_AD_Key_time_va = `floatSliderGrp -q -v YY_AD_key_time_a`;
+$YY_linshide = `filterCurve -f simplify -startTime $YY_AD_Key_Frmae_start -endTime $YY_AD_Key_Frame_End -timeTolerance $YY_AD_Key_time_va {$YY_AD_Key_for}`;
+
+keyTangent -itt spline -ott spline -t ($YY_AD_Key_Frmae_start+":"+$YY_AD_Key_Frame_End ) $YY_AD_Key_for;
+}	
+
+};
+
+
+
+global proc YY_AD_Tools_Help()
+{
+if(`window -q -ex YY_AD_Tools_Help_win`)
+{
+deleteUI YY_AD_Tools_Help_win;
+};
+window -wh 300 500
+	   -s 1
+	   YY_AD_Tools_Help_win;
+columnLayout -adj 1;
+text -l "反馈工具集使用帮助";
+scrollField 
+	       -fn "fixedWidthFont"
+	       -h 450
+		   -ed 0
+		   -po 0
+	       -ww 1 
+ 		   -text ("1).选择子骨骼工具：此工具用于选择当前已选择骨骼以下所有子层级的骨骼，而不会选择到其他物体。"+
+		   "\n用法：选择任意一物体点击选择按钮，脚本会选择该物体以下的所有骨骼。" +
+		   "\n\n2.）优化关键帧工具：此工具用于优化已选择的动画曲线上的关键帧，此工具会自动计算出当前已选择的关键帧的起始和结束帧"+
+		   "并且只优化这一时间段范围内的关键帧，并且优化后把该段的关键帧的切线值改为样条曲线类型。\n"+
+		   "用法：选取要优化的关键帧(在曲线编辑器里选择)调整好时间差值，点击优化按钮，优化完毕。"
+		   )
+		   YY_AD_Tools_sf;
+showWindow YY_AD_Tools_Help_win;
+
+
+};
+
+
+
+opAnimateCurve;
+
+
+
+
+
+
+
+
+
+

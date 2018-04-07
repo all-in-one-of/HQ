@@ -1,0 +1,32 @@
+global proc shuai_installGrowNode()
+{
+	string $envFileDir=(`internalVar -userAppDir`)+"2015-x64/Maya.env";
+	string $allLines[]=freadAllLines($envFileDir);
+	int $numLines=size($allLines);
+	string $line;
+	int $index=0;
+	int $st=0;
+	string $newPath="//10.99.1.12/数码电影/临时交换/08技术/个人文件夹/H黄帅/adv5/mll/maya2015";
+	for($line in $allLines)
+	{
+		if((`gmatch $line "*MAYA_PLUG_IN_PATH*"`))
+		{
+			if(!`gmatch $line ("*"+$newPath+"*")`)
+			{
+				$allLines[$index]=$line+";"+$newPath;
+				$st=1;
+			}
+			break;
+		}
+		$index++;
+	}
+	if(($st==0)&&($index==$numLines))
+	{
+		$allLines[$index]="MAYA_PLUG_IN_PATH = %REDSHIFT_PLUG_IN_PATH%"+";"+$newPath;
+	}
+	fwriteAllLines($envFileDir,$allLines);
+	if (!`pluginInfo -q -autoload  "//10.99.1.12/数码电影/临时交换/08技术/个人文件夹/H黄帅/adv5/mll/maya2015/growNode.mll"`)
+	{
+		pluginInfo -edit -autoload true "//10.99.1.12/数码电影/临时交换/08技术/个人文件夹/H黄帅/adv5/mll/maya2015/growNode.mll";
+	}
+}

@@ -1,0 +1,46 @@
+global proc NodeLockTool()
+{
+    if (`window -q -exists NodeLockToolWindow`) deleteUI NodeLockToolWindow;
+    window
+        -title "节点锁定" -wh 200 100
+              NodeLockToolWindow;
+
+    columnLayout -adj 1; 
+       text -label "";
+       separator -style "none";
+	   button -l "锁定节点" -c LockNode;
+       text -label "";
+	   button -l "解锁节点" -c UnlockNode;
+     setParent ..; 
+ showWindow   NodeLockToolWindow; 
+    
+} 
+
+global proc LockNode()
+{
+  string $selObj[] = `ls -sl`;
+  int $i=0;
+  for($i;$i<size($selObj);$i++)
+  {
+    lockNode $selObj[$i];  
+  } 
+  
+  confirmDialog -title "确认" -message "所选节点已锁定" -button "确定";
+
+} 
+
+global proc UnlockNode()
+{
+  string $selObj[] = `ls -sl`;
+  int $i=0;
+  for($i;$i<size($selObj);$i++)
+  {
+   lockNode -lock off $selObj[$i];  
+  }
+  
+  confirmDialog -title "确认" -message "所选节点已解锁" -button "确定";
+ 
+} 
+
+NodeLockTool();
+

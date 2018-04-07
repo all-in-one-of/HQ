@@ -1,0 +1,363 @@
+set cut_paste_input [stack 0]
+version 8.0 v4
+BackdropNode {
+ inputs 0
+ name BackdropNode3
+ tile_color 0x565656ff
+ label "Basic CC Scope"
+ note_font_size 50
+ selected true
+ xpos 2287
+ ypos -532
+ bdwidth 1072
+ bdheight 714
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode4
+ tile_color 0x6b6b6bff
+ label "Common CC"
+ note_font_size 50
+ selected true
+ xpos 3070
+ ypos 294
+ bdwidth 253
+ bdheight 496
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode5
+ tile_color 0x565656ff
+ label "Rfle&Spc CC Scope"
+ note_font_size 50
+ selected true
+ xpos 2554
+ ypos 1797
+ bdwidth 883
+ bdheight 520
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode6
+ tile_color 0x565656ff
+ label "Rfle&Spc Common CC"
+ note_font_size 50
+ selected true
+ xpos 3023
+ ypos 2416
+ bdwidth 359
+ bdheight 526
+}
+push $cut_paste_input
+Dot {
+ name top1
+ label Mar.10.2014
+ selected true
+ xpos 3190
+ ypos -1042
+}
+NoOp {
+ name Opt
+ tile_color 0x6f88ff
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 50
+ selected true
+ xpos 3156
+ ypos -941
+ addUserKnob {20 User l Option}
+ addUserKnob {26 Opt l "" +STARTLINE T Characters?}
+ addUserKnob {6 Characters l Yes +STARTLINE}
+}
+Unpremult {
+ channels all
+ name Unpremult1
+ selected true
+ xpos 3162
+ ypos -761
+}
+set N749b8b90 [stack 0]
+push $N749b8b90
+add_layer {GI GI.red GI.green GI.blue}
+add_layer {diffuse diffuse.red diffuse.green diffuse.blue}
+Merge2 {
+ inputs 2
+ operation divide
+ Achannels GI
+ Bchannels diffuse
+ output rgb
+ name GI
+ tile_color 0xff
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 10
+ selected true
+ xpos 3162
+ ypos -578
+}
+set N749b8f00 [stack 0]
+push $N749b8f00
+add_layer {lighting lighting.red lighting.green lighting.blue}
+Merge2 {
+ inputs 2
+ operation divide
+ Achannels lighting
+ Bchannels diffuse
+ output rgb
+ name Lighting
+ tile_color 0xff
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 10
+ selected true
+ xpos 2813
+ ypos -576
+}
+set N749b9270 [stack 0]
+push $N749b9270
+add_layer {SSS SSS.red SSS.green SSS.blue}
+Merge2 {
+ inputs 2
+ operation divide
+ Achannels SSS
+ Bchannels diffuse
+ output rgb
+ name SSS
+ tile_color 0xff
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 10
+ selected true
+ xpos 2394
+ ypos -576
+}
+Dot {
+ name Dot16
+ selected true
+ xpos 2422
+ ypos 234
+}
+push $N749b9270
+Merge2 {
+ inputs 2
+ operation plus
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Merge26
+ selected true
+ xpos 2813
+ ypos 237
+}
+push $N749b8f00
+Merge2 {
+ inputs 2
+ operation plus
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Merge27
+ selected true
+ xpos 3162
+ ypos 237
+}
+Dot {
+ name Dot21
+ selected true
+ xpos 3196
+ ypos 795
+}
+set N749ba3a0 [stack 0]
+push $N749ba3a0
+add_layer {samplerInfo1 samplerInfo1.red samplerInfo1.green samplerInfo1.blue}
+Merge2 {
+ inputs 2
+ operation multiply
+ Achannels rgb
+ Bchannels diffuse
+ output samplerInfo1
+ name Multiply5
+ selected true
+ xpos 3162
+ ypos 850
+}
+add_layer {refract refract.red refract.green refract.blue}
+Shuffle {
+ in refract
+ out rgb
+ name Refract
+ tile_color 0xffffff
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 30
+ selected true
+ xpos 3162
+ ypos 966
+}
+Dot {
+ name Dot13
+ selected true
+ xpos 3191
+ ypos 1063
+}
+set N74cb93b0 [stack 0]
+Dot {
+ name Dot12
+ selected true
+ xpos 3059
+ ypos 1063
+}
+Dot {
+ name Dot15
+ selected true
+ xpos 3059
+ ypos 1560
+}
+push $N74cb93b0
+Grade {
+ name Grade26
+ selected true
+ xpos 3162
+ ypos 1214
+}
+Group {
+ inputs 2
+ name Group1
+ selected true
+ xpos 3162
+ ypos 1563
+}
+ Input {
+  inputs 0
+  name Eyes
+  label Eyes
+  note_font "Verdana Bold Bold Bold Bold Bold Bold Bold"
+  xpos -564
+  ypos -168
+  number 1
+ }
+ Input {
+  inputs 0
+  name Hair
+  label Hair
+  note_font "Verdana Bold Bold Bold Bold Bold Bold Bold"
+  xpos -388
+  ypos -388
+ }
+ Dot {
+  name Dot18
+  xpos -360
+  ypos -298
+ }
+set N74cba850 [stack 0]
+push $N74cba850
+ Merge2 {
+  inputs 2
+  operation plus
+  Achannels rgb
+  Bchannels samplerInfo1
+  output samplerInfo1
+  name Merge11
+  xpos -388
+  ypos -242
+ }
+add_layer {multimatte2 multimatte2.red multimatte2.green multimatte2.blue}
+ Merge2 {
+  inputs 2
+  operation copy
+  Achannels rgb
+  Bchannels samplerInfo1
+  output samplerInfo1
+  maskChannelInput multimatte2.red
+  name eyes
+  tile_color 0xa3a3a3ff
+  note_font "Verdana Bold Italic Bold Italic Bold Italic Bold Italic Bold Italic Bold Italic Bold Italic Bold Italic"
+  xpos -388
+  ypos -168
+  disable {{1-parent.parent.Opt.Characters}}
+ }
+ Output {
+  name Output1
+  xpos -388
+  ypos -68
+ }
+end_group
+add_layer {specular specular.red specular.green specular.blue}
+Shuffle {
+ in specular
+ out rgb
+ name Specular
+ tile_color 0xffffff
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 30
+ selected true
+ xpos 3162
+ ypos 1740
+}
+set N74cbb720 [stack 0]
+add_layer {reflect reflect.red reflect.green reflect.blue}
+Shuffle {
+ in reflect
+ out rgb
+ name Reflect
+ tile_color 0xffffff
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 30
+ selected true
+ xpos 2759
+ ypos 1740
+}
+Dot {
+ name Dot14
+ selected true
+ xpos 2787
+ ypos 2336
+}
+push $N74cbb720
+Merge2 {
+ inputs 2
+ operation plus
+ Achannels rgb
+ Bchannels rgb
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Merge28
+ selected true
+ xpos 3162
+ ypos 2339
+}
+Grade {
+ name Grade27
+ selected true
+ xpos 3162
+ ypos 2486
+}
+Dot {
+ name Dot17
+ selected true
+ xpos 3196
+ ypos 3050
+}
+set N74cbc850 [stack 0]
+push $N74cbc850
+Merge2 {
+ inputs 2
+ operation plus
+ Achannels rgb
+ Bchannels samplerInfo1
+ output {rgba.red rgba.green rgba.blue -rgba.alpha}
+ name Merge29
+ selected true
+ xpos 3162
+ ypos 3104
+}
+Premult {
+ name Premult3
+ selected true
+ xpos 3162
+ ypos 3303
+}
+add_layer {velocity velocity.X velocity.Y velocity.Z}
+Premult {
+ channels velocity
+ name Premult6
+ selected true
+ xpos 3162
+ ypos 3350
+}
+Dot {
+ name connect1
+ selected true
+ xpos 3196
+ ypos 3638
+}

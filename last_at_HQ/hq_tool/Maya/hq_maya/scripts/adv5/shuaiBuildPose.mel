@@ -1,0 +1,42 @@
+global proc shuaiBuildPose()
+{
+    string $obj[]=`ls -sl`;
+    string $nameSpace[]=getNamespace($obj[0]);
+    string $cmdStrings=`getAttr ($nameSpace[0]+"buildPose.udAttr")`;
+    string $buffer[];
+    $numTokens = `tokenize $cmdStrings ";" $buffer`;
+    for($i=0;$i<=$numTokens;$i++)
+    {
+        string $cmds[];
+        tokenize $buffer[$i] $cmds;
+        int $NameIndex;
+        if(`gmatch $cmds[0] "xform*"`)
+        {
+            $NameIndex=size($cmds)-1;
+        }
+        else
+        {
+            $NameIndex=1;
+        }
+    	string $cmd="";
+    	for ($z=0;$z<size($cmds);$z++)
+    		{
+    		if ($z==$NameIndex)
+    			$cmd+=$nameSpace[0];
+    		$cmd+=$cmds[$z]+" ";
+    		}
+    	if (catchQuiet (`eval ($cmd)`)) warning ("Failed: "+$cmd+"\n");
+    }
+}
+global proc string[] getNamespace(string $obj)
+{
+    string $array[] = stringToStringArray($obj, ":");
+    string $nameWithoutNamespace=$array[size($array)-1];
+    stringArrayRemoveAtIndex((size($array)-1), $array);
+    string $nameSpace=stringArrayToString($array,":")+":";
+    if($nameSpace==":")
+    {
+        $nameSpace="";
+    }
+    return {$nameSpace,$nameWithoutNamespace};
+}

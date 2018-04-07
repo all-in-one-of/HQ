@@ -1,0 +1,54 @@
+
+global proc edo_autoConnectBS_ScriptPosition()
+{}
+
+global proc string get_edo_autoConnectBS_ScriptPath()
+{
+    string $place = `whatIs edo_autoConnectBS_ScriptPosition`;
+	string $buffer[];
+	string $numTokens = `tokenize $place ":" $buffer`;
+	if(size($buffer)>=3)
+		$place=strip ($buffer[1]+":"+$buffer[2]);
+	else
+		$place = substring($buffer[1],2,size($buffer[1]));
+	$place = `substitute "/[^/]+\.mel" $place ""`;
+	
+    //$place = dirname( $place );
+	return	$place;
+}
+
+global string $edo_autoConnectBS_ScriptPath;
+$edo_autoConnectBS_ScriptPath = `get_edo_autoConnectBS_ScriptPath`;
+
+global proc edo_autoConnectBS_install() 
+{
+    global string $gShelfTopLevel;
+    global string $edo_autoConnectBS_ScriptPath;
+    $edo_autoConnectBS_ScriptPath = `get_edo_autoConnectBS_ScriptPath`;
+    string $currentSelf = ( $gShelfTopLevel + "|" + 
+                            `tabLayout -q -selectTab $gShelfTopLevel` );
+    
+    int $SculptInbetweenEditor_shelfExist = `shelfButton -ex "edo_autoConnectBS_shelfButton"` ;
+		if($SculptInbetweenEditor_shelfExist)
+		{
+        deleteUI "edo_autoConnectBS_shelfButton";
+        print("Add new SculptInbetweenEditor to currentShelf!");
+		}
+
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 34
+        -height 34
+        -manage 1
+        -visible 1
+        -label "edo_autoConnectBS"
+        -image1 ($edo_autoConnectBS_ScriptPath + "/icons/edo_autoConnectBS.png")
+        -style "iconOnly" 
+        -parent $currentSelf
+        -stp "python"
+        -command ("execfile ('" + $edo_autoConnectBS_ScriptPath + "/showUi.py" + "')")
+        "edo_autoConnectBS_shelfButton";
+}
+
+edo_autoConnectBS_install();

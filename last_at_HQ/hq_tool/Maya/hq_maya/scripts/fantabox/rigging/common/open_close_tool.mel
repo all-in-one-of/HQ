@@ -1,0 +1,137 @@
+//------------------------------------
+       // 2017.5.22
+       // open_close tool
+       // author:Angel
+
+//------------------------------------
+
+
+
+//.....窗口
+
+string $window;
+if(`window -ex $window`){
+	deleteUI -window $window;
+}
+string $window = `window -w 350 -h 450 -t "锁定隐藏工具" `;
+columnLayout -adj true;
+text -l "选择";
+text -l "";
+separator;
+string $abc = `flowLayout -cs 6`;
+//string $abc = `rowLayout  -nc 4`;
+checkBox -label "Translate" -v 1 -cc "" "checkBox_T";
+checkBox -label "Rotate" -v 1 -cc "" "checkBox_R";
+checkBox -label "Scale" -v 1 -cc "" "checkBox_S";
+checkBox -label "visibility" -v 1 -cc "" "checkBox_V";
+setParent "..";
+string $form = `formLayout -numberOfDivisions 150`;
+string $b1 = `button -w 60 -h 60 -l "一键锁定隐藏" -c "h_angel(1,0,0)"`;
+string $b2 = `button -w 100 -h 100 -l "一键解锁" -c "h_angel(0,1,0)"`;
+string $column = `columnLayout -adjustableColumn true`;
+button -w 100 -h 50 -l "锁定"  -c "h_angel(1,1,0)";
+button -w 100 -h 50 -l "锁定并不可K帧" -c "h_angel(1,1,1)"; 
+button -w 100 -h 50 -l "不可K帧" -c "h_angel(0,1,1)";
+button -w 100 -h 50 -l "隐藏" -c "h_angel(0,0,0)"; 
+
+
+formLayout -edit   
+    -attachForm     $b1     "top"    50
+    -attachForm     $b1     "left"   10
+    -attachControl  $b1     "bottom" 10 $b2
+    -attachPosition $b1     "right"  5 75
+
+    -attachNone     $b2     "top"
+    -attachForm     $b2     "left"   5
+    -attachForm     $b2     "bottom" 5
+    -attachForm     $b2     "right"  5
+    
+    -attachForm     $column "top"    50
+    -attachPosition $column "left"   10 75
+    -attachControl  $column "bottom" 10 $b1
+    -attachForm     $column "right"  10
+$form;
+
+//setParent ..;
+
+showWindow $window;
+
+///////////////////////////////////////////
+
+
+
+
+//.....读取位移旋转缩放显影
+
+global proc string[] qq(){
+
+	
+	int $q1 =`checkBox -q -v "checkBox_T"`;
+	int $q2 =`checkBox -q -v "checkBox_R"`;
+	int $q3 =`checkBox -q -v "checkBox_S"`;
+	int $q4 =`checkBox -q -v "checkBox_V"`;
+	
+	string $r1[];
+	string $r2[];
+	string $r3[];
+	string $r4[];
+	
+	if ($q1 == 1){
+		$r1[0]="tx";
+		$r1[1]="ty";
+		$r1[2]="tz";
+	}
+	if ($q2 == 1){
+		$r2[0]="rx";
+		$r2[1]="ry";
+		$r2[2]="rz";
+	}
+	if ($q3 == 1){
+		$r3[0]="sx";
+		$r3[1]="sy";
+		$r3[2]="sz";
+	}
+	
+	if ($q4 == 1){
+		$r4[0] ="v";
+	}
+	
+	string $allAttr[]={$r1[0],$r1[1],$r1[2],$r2[0],$r2[1],$r2[2],$r3[0],$r3[1],$r3[2],$r4[0]};	
+		//string $attr[]={"tx","ty","tz","rx","ry","rz","sx","sy","sz","v"};
+		
+	return $allAttr;
+}
+
+///////////////////////////
+
+
+
+
+//.....锁定隐藏效果
+
+global proc h_angel(int $i,int $c,int $f)
+{
+	string $body[]=`ls-sl`;
+
+	string $aaa[] = qq();
+	//string $aaa[]={"tx","ty","tz","rx","ry","rz","sx","sy","sz","v"};
+	
+	for($b in $body)
+	{
+		for($a in $aaa)
+		{
+			if($a != "")
+			{
+				//锁定隐藏1.00setAttr -lock true -keyable false -channelBox false ，开锁显示，0，1，0
+				setAttr -lock $i -keyable $c -channelBox $f ($b + "."+ $a);
+				//lock 是锁，K是隐藏，C是不可K帧；true是1，false是0
+				
+			}
+	
+		}
+		
+	}
+		
+}
+
+///////////////////////////////////

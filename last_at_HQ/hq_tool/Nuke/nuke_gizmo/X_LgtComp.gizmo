@@ -1,0 +1,413 @@
+#! /Applications/Nuke6.1v2/Nuke6.1v2.app/Contents/MacOS/Nuke6.1v2 -nx
+version 6.1 v2
+Gizmo {
+ inputs 6
+ addUserKnob {20 main_color l Main}
+ addUserKnob {6 enable_occ l "enable occlusion" +STARTLINE}
+ enable_occ true
+ addUserKnob {6 enable_diff l "enable diffuse" -STARTLINE}
+ enable_diff true
+ addUserKnob {6 enable_spc l "enable specluar" -STARTLINE}
+ enable_spc true
+ addUserKnob {6 enable_sdw l "enable shadow" -STARTLINE}
+ enable_sdw true
+ addUserKnob {7 occ_value l "Occ Value"}
+ occ_value 1
+ addUserKnob {41 multiply l "Occ Color" T Grade11.multiply}
+ addUserKnob {7 edge_value l "Edge Value"}
+ addUserKnob {41 multiply_1 l "Edge Color" T Grade1.multiply}
+ addUserKnob {26 ""}
+ addUserKnob {20 master l "@b;master" n 1}
+ addUserKnob {41 saturation T ColorCorrect1.saturation}
+ addUserKnob {41 contrast T ColorCorrect1.contrast}
+ addUserKnob {41 gamma T ColorCorrect1.gamma}
+ addUserKnob {41 gain T ColorCorrect1.gain}
+ addUserKnob {41 offset T ColorCorrect1.offset}
+ addUserKnob {20 "" n -1}
+ addUserKnob {20 shadows l "@b;shadows" n 1}
+ shadows 0
+ addUserKnob {41 shadows.saturation l saturation T ColorCorrect1.shadows.saturation}
+ addUserKnob {41 shadows.contrast l contrast T ColorCorrect1.shadows.contrast}
+ addUserKnob {41 shadows.gamma l gamma T ColorCorrect1.shadows.gamma}
+ addUserKnob {41 shadows.gain l gain T ColorCorrect1.shadows.gain}
+ addUserKnob {41 shadows.offset l offset T ColorCorrect1.shadows.offset}
+ addUserKnob {20 "" n -1}
+ addUserKnob {20 midtones l "@b;midtones" n 1}
+ midtones 0
+ addUserKnob {41 midtones.saturation l saturation T ColorCorrect1.midtones.saturation}
+ addUserKnob {41 midtones.contrast l contrast T ColorCorrect1.midtones.contrast}
+ addUserKnob {41 midtones.gamma l gamma T ColorCorrect1.midtones.gamma}
+ addUserKnob {41 midtones.gain l gain T ColorCorrect1.midtones.gain}
+ addUserKnob {41 midtones.offset l offset T ColorCorrect1.midtones.offset}
+ addUserKnob {20 "" n -1}
+ addUserKnob {20 highlights l "@b;highlights" n 1}
+ highlights 0
+ addUserKnob {41 highlights.saturation l saturation T ColorCorrect1.highlights.saturation}
+ addUserKnob {41 highlights.contrast l contrast T ColorCorrect1.highlights.contrast}
+ addUserKnob {41 highlights.gamma l gamma T ColorCorrect1.highlights.gamma}
+ addUserKnob {41 highlights.gain l gain T ColorCorrect1.highlights.gain}
+ addUserKnob {41 highlights.offset l offset T ColorCorrect1.highlights.offset}
+ addUserKnob {20 "" n -1}
+ addUserKnob {20 endGroup_2 l endGroup n -1}
+ addUserKnob {26 version l "" +STARTLINE T "\t\t\t\t\t\tVersion1.0 by Felix xu"}
+ addUserKnob {20 diffuse l Diffuse}
+ addUserKnob {20 dif_r_group l "Dif R" n 1}
+ addUserKnob {41 white l gain T Grade2.white}
+ addUserKnob {41 multiply_2 l multiply T Grade2.multiply}
+ addUserKnob {41 gamma_1 l gamma T Grade2.gamma}
+ addUserKnob {20 endGroup_8 l endGroup n -1}
+ addUserKnob {20 dif_g_group l "Dif G" n 1}
+ addUserKnob {41 white_1 l gain T Grade3.white}
+ addUserKnob {41 multiply_3 l multiply T Grade3.multiply}
+ addUserKnob {41 gamma_2 l gamma T Grade3.gamma}
+ addUserKnob {20 endGroup_9 l endGroup n -1}
+ addUserKnob {20 dif_b_group l "Dif B" n 1}
+ addUserKnob {41 white_2 l gain T Grade4.white}
+ addUserKnob {41 multiply_4 l multiply T Grade4.multiply}
+ addUserKnob {41 gamma_3 l gamma T Grade4.gamma}
+ addUserKnob {20 endGroup_10 l endGroup n -1}
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {20 Specular}
+ addUserKnob {20 spc_r_group l "Spc R" n 1}
+ addUserKnob {7 spc_r_value l Value}
+ spc_r_value 0.5
+ addUserKnob {41 white_3 l gain T Grade7.white}
+ addUserKnob {41 multiply_5 l multiply T Grade7.multiply}
+ addUserKnob {41 gamma_4 l gamma T Grade7.gamma}
+ addUserKnob {20 endGroup_1 l endGroup n -1}
+ addUserKnob {20 spc_g_group l "Spc G" n 1}
+ addUserKnob {7 spc_g_value l Value}
+ spc_g_value 0.5
+ addUserKnob {41 white_4 l gain T Grade5.white}
+ addUserKnob {41 multiply_6 l multiply T Grade5.multiply}
+ addUserKnob {41 gamma_5 l gamma T Grade5.gamma}
+ addUserKnob {20 endGroup_6 l endGroup n -1}
+ addUserKnob {20 spc_b_group l "Spc B" n 1}
+ addUserKnob {7 spc_b_value l Value}
+ spc_b_value 0.5
+ addUserKnob {41 white_5 l gain T Grade6.white}
+ addUserKnob {41 multiply_7 l multiply T Grade6.multiply}
+ addUserKnob {41 gamma_6 l gamma T Grade6.gamma}
+ addUserKnob {20 endGroup_7 l endGroup n -1}
+ addUserKnob {20 Self_Shadow l "Self Shadow"}
+ addUserKnob {20 sdw_r_group l "Shadow R" n 1}
+ addUserKnob {41 white_6 l gain T Grade8.white}
+ addUserKnob {41 multiply_8 l multiply T Grade8.multiply}
+ addUserKnob {41 gamma_7 l gamma T Grade8.gamma}
+ addUserKnob {20 endGroup_3 l endGroup n -1}
+ addUserKnob {20 sdw_g_group l "Shadow G" n 1}
+ addUserKnob {41 white_7 l gain T Grade9.white}
+ addUserKnob {41 multiply_9 l multiply T Grade9.multiply}
+ addUserKnob {41 gamma_8 l gamma T Grade9.gamma}
+ addUserKnob {20 endGroup_4 l endGroup n -1}
+ addUserKnob {20 sdw_b_group l "Shadow B" n 1}
+ addUserKnob {41 white_8 l gain T Grade10.white}
+ addUserKnob {41 multiply_10 l multiply T Grade10.multiply}
+ addUserKnob {41 gamma_9 l gamma T Grade10.gamma}
+ addUserKnob {20 endGroup_5 l endGroup n -1}
+}
+ Input {
+  inputs 0
+  name col
+  xpos -615
+  ypos -153
+ }
+ Dot {
+  name Dot2
+  xpos -581
+  ypos -23
+ }
+set N1782b340 [stack 0]
+ Input {
+  inputs 0
+  name occ
+  xpos -468
+  ypos -178
+  number 1
+ }
+ Invert {
+  name Invert1
+  xpos -468
+  ypos -152
+ }
+ Grade {
+  name Grade11
+  xpos -468
+  ypos -110
+ }
+ Invert {
+  name Invert2
+  xpos -468
+  ypos -74
+ }
+ ShuffleCopy {
+  inputs 2
+  name ShuffleCopy1
+  xpos -468
+  ypos -23
+ }
+ Input {
+  inputs 0
+  name edge
+  xpos -772
+  ypos 378
+  number 5
+ }
+ Grade {
+  name Grade1
+  xpos -772
+  ypos 421
+ }
+push $N1782b340
+ ColorCorrect {
+  unpremult rgba.alpha
+  name ColorCorrect1
+  xpos -615
+  ypos 6
+ }
+set N17861840 [stack 0]
+ Dot {
+  name Dot7
+  xpos -498
+  ypos 131
+ }
+ Input {
+  inputs 0
+  name dif
+  xpos -790
+  ypos 116
+  number 2
+ }
+ Dot {
+  name Dot1
+  xpos -756
+  ypos 186
+ }
+set N1785af30 [stack 0]
+push $N1785af30
+push $N1785af30
+push $N17861840
+ Unpremult {
+  name Unpremult1
+  xpos -661
+  ypos 55
+ }
+ Grade {
+  inputs 1+1
+  maskChannelMask rgba.red
+  name Grade2
+  label dif_R
+  xpos -661
+  ypos 121
+ }
+ Grade {
+  inputs 1+1
+  maskChannelMask rgba.green
+  name Grade3
+  label dif_G
+  xpos -661
+  ypos 174
+ }
+ Grade {
+  inputs 1+1
+  maskChannelMask rgba.blue
+  name Grade4
+  label dif_B
+  xpos -661
+  ypos 226
+ }
+ Premult {
+  name Premult1
+  xpos -661
+  ypos 306
+ }
+ Switch {
+  inputs 2
+  which {{abs(enable_diff-1) i}}
+  name Switch2
+  xpos -580
+  ypos 356
+ }
+ Merge2 {
+  inputs 2
+  operation screen
+  mix {{edge_value i}}
+  name Merge2
+  xpos -593
+  ypos 421
+ }
+set N17888d70 [stack 0]
+ Dot {
+  name Dot8
+  xpos -498
+  ypos 518
+ }
+ Input {
+  inputs 0
+  name spc
+  xpos -995
+  ypos 443
+  number 3
+ }
+ Dot {
+  name Dot4
+  xpos -961
+  ypos 562
+ }
+set N178961e0 [stack 0]
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle3
+  xpos -887
+  ypos 622
+ }
+ Grade {
+  name Grade6
+  xpos -777
+  ypos 622
+ }
+push $N178961e0
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle2
+  xpos -888
+  ypos 558
+ }
+ Grade {
+  name Grade5
+  xpos -778
+  ypos 558
+ }
+push $N178961e0
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle1
+  xpos -883
+  ypos 493
+ }
+ Grade {
+  name Grade7
+  xpos -773
+  ypos 493
+ }
+push $N17888d70
+ Merge2 {
+  inputs 2
+  operation plus
+  mix {{spc_r_value i}}
+  name Merge3
+  xpos -615
+  ypos 493
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  mix {{spc_g_value i}}
+  name Merge4
+  xpos -615
+  ypos 558
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  mix {{spc_b_value i}}
+  name Merge5
+  xpos -615
+  ypos 622
+ }
+ Switch {
+  inputs 2
+  which {{abs(enable_spc-1) i}}
+  name Switch3
+  xpos -524
+  ypos 671
+ }
+set N178df890 [stack 0]
+ Merge2 {
+  inputs 2
+  operation multiply
+  mix {{occ_value i}}
+  name Merge1
+  xpos -346
+  ypos 704
+ }
+push $N178df890
+ Switch {
+  inputs 2
+  which {{enable_occ i}}
+  name Switch4
+  xpos -439
+  ypos 765
+ }
+set N178eb360 [stack 0]
+ Dot {
+  name Dot6
+  xpos -291
+  ypos 893
+ }
+ Input {
+  inputs 0
+  name sdw
+  xpos -605
+  ypos 874
+  number 4
+ }
+ Dot {
+  name Dot5
+  xpos -571
+  ypos 945
+ }
+set N178f3ed0 [stack 0]
+push $N178f3ed0
+push $N178f3ed0
+push $N178eb360
+ Unpremult {
+  name Unpremult2
+  xpos -468
+  ypos 845
+ }
+ Grade {
+  inputs 1+1
+  maskChannelMask rgba.red
+  name Grade8
+  xpos -468
+  ypos 888
+ }
+ Grade {
+  inputs 1+1
+  maskChannelMask rgba.green
+  name Grade9
+  xpos -468
+  ypos 941
+ }
+ Grade {
+  inputs 1+1
+  maskChannelMask rgba.blue
+  name Grade10
+  xpos -468
+  ypos 995
+ }
+ Premult {
+  name Premult2
+  xpos -468
+  ypos 1053
+ }
+ Switch {
+  inputs 2
+  which {{abs(enable_sdw-1) i}}
+  name Switch1
+  xpos -389
+  ypos 1143
+ }
+ Output {
+  name Output1
+  xpos -389
+  ypos 1237
+ }
+end_group

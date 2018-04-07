@@ -1,0 +1,92 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ addUserKnob {20 User}
+ addUserKnob {68 inputStyle l inputStyle: M {jumu180 huanmu360 qiumu4K ""}}
+ addUserKnob {41 format l "output format" T Reformat1.format}
+ addUserKnob {41 opacity T Merge1.mix}
+ addUserKnob {41 luminance T Grade1.white}
+}
+ Read {
+  inputs 0
+  file T:/ALL/NukePlugin/picture/qiumo4k.tif
+  format "4096 4096 0 0 4096 4096 1 "
+  origset true
+  name Read3
+  xpos -330
+  ypos 60
+ }
+ Reformat {
+  resize height
+  black_outside true
+  name Reformat1
+  xpos -330
+  ypos 144
+ }
+ set C50fe8000 [stack 0]
+ Read {
+  inputs 0
+  file T:/ALL/NukePlugin/picture/huanmu360.tif
+  format "11760 1200 0 0 11760 1200 1 aaa"
+  origset true
+  name Read2
+  xpos -473
+  ypos 63
+ }
+clone $C50fe8000 {
+  xpos -473
+  ypos 147
+  selected false
+ }
+ Read {
+  inputs 0
+  file T:/ALL/NukePlugin/picture/jumu180.tif
+  format "8172 2200 0 0 8172 2200 1 "
+  origset true
+  name Read1
+  xpos -624
+  ypos 49
+ }
+clone $C50fe8000 {
+  xpos -624
+  ypos 150
+  selected false
+ }
+ Switch {
+  inputs 3
+  which {{inputStyle}}
+  name Switch1
+  xpos -473
+  ypos 220
+ }
+ Grade {
+  name Grade1
+  xpos -342
+  ypos 220
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos -192
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos -192
+  ypos 220
+ }
+set Nc4b36800 [stack 0]
+ Output {
+  name Output1
+  xpos -192
+  ypos 264
+ }
+push $Nc4b36800
+ Viewer {
+  frame_range 1-100
+  name Viewer1
+  xpos -122
+  ypos 277
+ }
+end_group

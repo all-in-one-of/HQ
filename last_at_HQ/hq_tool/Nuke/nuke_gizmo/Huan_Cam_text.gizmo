@@ -1,0 +1,889 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ inputs 0
+ tile_color 0x9151ffff
+ note_font Verdana
+ addUserKnob {20 User}
+ addUserKnob {4 camstyle l CamStyle M {234561 345612 456123 561234 612345 123456 ""}}
+ camstyle 123456
+ addUserKnob {41 opacity T Text13.opacity}
+ addUserKnob {41 color T Text13.color}
+ addUserKnob {26 ""}
+ addUserKnob {26 by l "" +STARTLINE T "By:Rainy.T\n\nTip:环幕添加屏号（有六种顺序），直接叠加在节点后面，这节点相当于一个文本。\n     opacity调节字体透明度，color调节字体颜色。\n   （先设置好工程尺寸和左右眼，节点自动识别左右眼，适合任何尺寸的环幕）"}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x7171c600
+  label 123456
+  note_font_size 42
+  xpos -138
+  ypos 2520
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode10
+  tile_color 0x7171c600
+  label 612345
+  note_font_size 42
+  xpos -120
+  ypos 2246
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode6
+  tile_color 0x7171c600
+  label 234561
+  note_font_size 42
+  xpos -828
+  ypos 1605
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode7
+  tile_color 0x7171c600
+  label 345612
+  note_font_size 42
+  xpos -396
+  ypos 1620
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode8
+  tile_color 0x7171c600
+  label 456123
+  note_font_size 42
+  xpos -27
+  ypos 1637
+  bdwidth 279
+  bdheight 236
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode9
+  tile_color 0x7171c600
+  label 561234
+  note_font_size 42
+  xpos -165
+  ypos 1965
+  bdwidth 279
+  bdheight 236
+ }
+ Dot {
+  inputs 0
+  name Dot3
+  xpos -413
+  ypos 364
+ }
+set Nabfb8400 [stack 0]
+ OneView {
+  view right
+  name OneView2
+  xpos -29
+  ypos 443
+ }
+ Dot {
+  name Dot1
+  xpos 5
+  ypos 614
+ }
+set Na729dc00 [stack 0]
+ Crop {
+  box {{(root.width/6)*5} 0 {root.width} {root.height}}
+  reformat true
+  crop false
+  name Crop1
+  xpos 339
+  ypos 729
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text6.opacity.left}}
+  message cam6R
+  old_message {{99 97 109 54 82}
+    }
+  box {752.5 801.5 1238.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left}}
+  name Text1
+  xpos 339
+  ypos 778
+ }
+ Transform {
+  translate {{parent.Crop1.box.left.x} 0}
+  center {882 600}
+  name Transform1
+  xpos 339
+  ypos 829
+ }
+push $Na729dc00
+ Crop {
+  box {{(root.width/6)*4} 0 {(root.width/6)*5} {root.height}}
+  reformat true
+  crop false
+  name Crop2
+  xpos 217
+  ypos 724
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text6.opacity.left}}
+  message cam5R
+  old_message {{99 97 109 53 82}
+    }
+  box {752.5 801.5 1238.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left}}
+  name Text2
+  xpos 217
+  ypos 777
+ }
+ Transform {
+  translate {{parent.Crop2.box.left.x} 0}
+  center {882 600}
+  name Transform2
+  xpos 217
+  ypos 828
+ }
+push $Na729dc00
+ Crop {
+  box {{(root.width/6)*3} 0 {(root.width/6)*4} {root.height}}
+  reformat true
+  crop false
+  name Crop3
+  xpos 87
+  ypos 722
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text6.opacity.left}}
+  message cam4R
+  old_message {{99 97 109 52 82}
+    }
+  box {752.5 801.5 1238.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left}}
+  name Text3
+  xpos 87
+  ypos 779
+ }
+ Transform {
+  translate {{parent.Crop3.box.left.x} 0}
+  center {882 600}
+  name Transform3
+  xpos 87
+  ypos 827
+ }
+push $Na729dc00
+ Crop {
+  box {{(root.width/6)*2} 0 {(root.width/6)*3} {root.height}}
+  reformat true
+  crop false
+  name Crop4
+  xpos -29
+  ypos 722
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text6.opacity.left}}
+  message cam3R
+  old_message {{99 97 109 51 82}
+    }
+  box {752.5 801.5 1238.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left}}
+  name Text4
+  xpos -29
+  ypos 779
+ }
+ Transform {
+  translate {{parent.Crop4.box.left.x} 0}
+  center {882 600}
+  name Transform4
+  xpos -29
+  ypos 822
+ }
+push $Na729dc00
+ Crop {
+  box {{root.width/6} 0 {(root.width/6)*2} {root.height}}
+  reformat true
+  crop false
+  name Crop5
+  xpos -150
+  ypos 716
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text6.opacity.left}}
+  message cam2R
+  old_message {{99 97 109 50 82}
+    }
+  box {752.5 801.5 1238.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left} {parent.Text6.color.left}}
+  name Text5
+  xpos -150
+  ypos 774
+ }
+ Transform {
+  translate {{parent.Crop5.box.left.x} 0}
+  center {882 600}
+  name Transform5
+  xpos -150
+  ypos 813
+ }
+push 0
+push $Na729dc00
+ Crop {
+  box {0 0 {root.width/6} {root.height}}
+  reformat true
+  crop false
+  name Crop6
+  xpos -276
+  ypos 716
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message cam1R
+  old_message {{99 97 109 49 82}
+    }
+  box {752.5 801.5 1238.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text13.color.left.r} {parent.Text13.color.left.g} {parent.Text13.color.left.b} {parent.Text13.color.left.a}}
+  name Text6
+  xpos -276
+  ypos 769
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  name Constant3
+  xpos -1403
+  ypos 931
+ }
+set Nad32dc00 [stack 0]
+ Merge2 {
+  inputs 7+1
+  name Merge1
+  xpos -79
+  ypos 1016
+ }
+push $Nabfb8400
+ OneView {
+  name OneView1
+  xpos -890
+  ypos 445
+ }
+ Dot {
+  name Dot5
+  xpos -856
+  ypos 552
+ }
+set Nad32d000 [stack 0]
+ Crop {
+  box {{(root.width/6)*5} 0 {root.width} {root.height}}
+  reformat true
+  crop false
+  name Crop28
+  xpos -522
+  ypos 667
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text13.opacity.left}}
+  message cam6L
+  old_message {{99 97 109 54 76}
+    }
+  box {752.5 801.5 1223.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left}}
+  name Text18
+  xpos -522
+  ypos 716
+ }
+ Transform {
+  translate {{parent.Crop28.box.left.x} 0}
+  center {882 600}
+  name Transform23
+  xpos -522
+  ypos 767
+ }
+push $Nad32d000
+ Crop {
+  box {{(root.width/6)*4} 0 {(root.width/6)*5} {root.height}}
+  reformat true
+  crop false
+  name Crop27
+  xpos -644
+  ypos 662
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text13.opacity.left}}
+  message cam5L
+  old_message {{99 97 109 53 76}
+    }
+  box {752.5 801.5 1223.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left}}
+  name Text17
+  xpos -644
+  ypos 715
+ }
+ Transform {
+  translate {{parent.Crop27.box.left.x} 0}
+  center {882 600}
+  name Transform22
+  xpos -644
+  ypos 766
+ }
+push $Nad32d000
+ Crop {
+  box {{(root.width/6)*3} 0 {(root.width/6)*4} {root.height}}
+  reformat true
+  crop false
+  name Crop26
+  xpos -774
+  ypos 660
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text13.opacity.left}}
+  message cam4L
+  old_message {{99 97 109 52 76}
+    }
+  box {752.5 801.5 1223.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left}}
+  name Text16
+  xpos -774
+  ypos 717
+ }
+ Transform {
+  translate {{parent.Crop26.box.left.x} 0}
+  center {882 600}
+  name Transform21
+  xpos -774
+  ypos 765
+ }
+push $Nad32d000
+ Crop {
+  box {{(root.width/6)*2} 0 {(root.width/6)*3} {root.height}}
+  reformat true
+  crop false
+  name Crop25
+  xpos -890
+  ypos 660
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text13.opacity.left}}
+  message cam3L
+  old_message {{99 97 109 51 76}
+    }
+  box {752.5 801.5 1223.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left}}
+  name Text15
+  xpos -890
+  ypos 717
+ }
+ Transform {
+  translate {{parent.Crop25.box.left.x} 0}
+  center {882 600}
+  name Transform20
+  xpos -890
+  ypos 760
+ }
+push $Nad32d000
+ Crop {
+  box {{root.width/6} 0 {(root.width/6)*2} {root.height}}
+  reformat true
+  crop false
+  name Crop24
+  xpos -1011
+  ypos 654
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  opacity {{parent.Text13.opacity.left}}
+  message cam2L
+  old_message {{99 97 109 50 76}
+    }
+  box {752.5 801.5 1223.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  color {{parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left} {parent.Text13.color.left}}
+  name Text14
+  xpos -1011
+  ypos 712
+ }
+ Transform {
+  translate {{parent.Crop24.box.left.x} 0}
+  center {882 600}
+  name Transform19
+  xpos -1011
+  ypos 751
+ }
+push 0
+push $Nad32d000
+ Crop {
+  box {0 0 {root.width/6} {root.height}}
+  reformat true
+  crop false
+  name Crop23
+  xpos -1137
+  ypos 654
+ }
+ Text2 {
+  font_size_toolbar 150
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message cam1L
+  old_message {{99 97 109 49 76}
+    }
+  box {752.5 801.5 1223.5 952.5}
+  transforms {{0 2}
+    }
+  font_size_values {{0 150 1 150 2 150 3 150 4 150 0 150 1 150 2 150 3 150}
+    }
+  cursor_position 5
+  font {{ Utopia : Bold : UtopiaBold.pfa : 0 }}
+  font_size 150
+  scale {1 1}
+  cursor_initialised true
+  initial_cursor_position {{752.5 952.5}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 5292 600 0 0 1 1 0 0 0 0}
+    }
+  name Text13
+  xpos -1137
+  ypos 707
+ }
+push $Nad32dc00
+ Merge2 {
+  inputs 7+1
+  name Merge31
+  xpos -940
+  ypos 954
+ }
+ JoinViews {
+  inputs 2
+  name JoinViews1
+  xpos -544
+  ypos 1093
+  viewassoc "left\nright"
+ }
+set Nc2cf6c00 [stack 0]
+ Reformat {
+  name Reformat1
+  xpos -544
+  ypos 1196
+ }
+ Dot {
+  name Dot4
+  xpos -510
+  ypos 1501
+ }
+set Nc2cf6000 [stack 0]
+ Dot {
+  name Dot2
+  xpos -57
+  ypos 2667
+ }
+ Reformat {
+  name Reformat2
+  xpos -91
+  ypos 2711
+ }
+push $Nc2cf6000
+ Crop {
+  box {0 0 {(root.width/6)*5} {root.height}}
+  name Crop21
+  xpos -110
+  ypos 2326
+ }
+ Transform {
+  translate {{(root.width/6)*1} 0}
+  center {5292 600}
+  name Transform17
+  xpos -110
+  ypos 2352
+ }
+push $Nc2cf6000
+ Crop {
+  box {{(root.width/6)*5} 0 {root.width} 1200}
+  name Crop22
+  xpos 69
+  ypos 2341
+ }
+ Transform {
+  translate {{-(root.width/6)*5} 0}
+  center {5292 600}
+  name Transform18
+  xpos 69
+  ypos 2367
+ }
+ Merge2 {
+  inputs 2
+  name Merge24
+  xpos -47
+  ypos 2426
+ }
+ Reformat {
+  name Reformat8
+  xpos -47
+  ypos 2452
+ }
+push $Nc2cf6000
+ Crop {
+  box {0 0 {(root.width/6)*4} {root.height}}
+  name Crop19
+  xpos -155
+  ypos 2045
+ }
+ Transform {
+  translate {{(root.width/6)*2} 0}
+  center {5292 600}
+  name Transform15
+  xpos -155
+  ypos 2071
+ }
+push $Nc2cf6000
+ Crop {
+  box {{(root.width/6)*4} 0 {root.width} 1200}
+  name Crop20
+  xpos 24
+  ypos 2060
+ }
+ Transform {
+  translate {{-(root.width/6)*4} 0}
+  center {5292 600}
+  name Transform16
+  xpos 24
+  ypos 2086
+ }
+ Merge2 {
+  inputs 2
+  name Merge23
+  xpos -92
+  ypos 2145
+ }
+ Reformat {
+  name Reformat7
+  xpos -92
+  ypos 2171
+ }
+push $Nc2cf6000
+ Crop {
+  box {0 0 {(root.width/6)*3} {root.height}}
+  name Crop17
+  xpos -17
+  ypos 1717
+ }
+ Transform {
+  translate {{(root.width/6)*3} 0}
+  center {5292 600}
+  name Transform11
+  xpos -17
+  ypos 1743
+ }
+push $Nc2cf6000
+ Crop {
+  box {{(root.width/6)*3} 0 {root.width} 1200}
+  name Crop18
+  xpos 162
+  ypos 1732
+ }
+ Transform {
+  translate {{-(root.width/6)*3} 0}
+  center {5292 600}
+  name Transform12
+  xpos 162
+  ypos 1758
+ }
+ Merge2 {
+  inputs 2
+  name Merge22
+  xpos 46
+  ypos 1817
+ }
+ Reformat {
+  name Reformat6
+  xpos 46
+  ypos 1843
+ }
+push $Nc2cf6000
+ Crop {
+  box {0 0 {(root.width/6)*2} {root.height}}
+  name Crop15
+  xpos -386
+  ypos 1700
+ }
+ Transform {
+  translate {{(root.width/6)*4} 0}
+  center {5292 600}
+  name Transform8
+  xpos -386
+  ypos 1726
+ }
+push $Nc2cf6000
+ Crop {
+  box {{(root.width/6)*2} 0 {root.width} 1200}
+  name Crop16
+  xpos -207
+  ypos 1715
+ }
+ Transform {
+  translate {{-(root.width/6)*2} 0}
+  center {5292 600}
+  name Transform10
+  xpos -207
+  ypos 1741
+ }
+ Merge2 {
+  inputs 2
+  name Merge21
+  xpos -323
+  ypos 1800
+ }
+ Reformat {
+  name Reformat5
+  xpos -323
+  ypos 1826
+ }
+push $Nc2cf6000
+ Crop {
+  box {0 0 {root.width/6} {root.height}}
+  name Crop13
+  xpos -818
+  ypos 1685
+ }
+ Transform {
+  translate {{(root.width/6)*5} 0}
+  center {5292 600}
+  name Transform6
+  xpos -818
+  ypos 1711
+ }
+push $Nc2cf6000
+ Crop {
+  box {{root.width/6} 0 {root.width} 1200}
+  name Crop14
+  xpos -639
+  ypos 1700
+ }
+ Transform {
+  translate {{-root.width/6} 0}
+  center {5292 600}
+  name Transform7
+  xpos -639
+  ypos 1726
+ }
+ Merge2 {
+  inputs 2
+  name Merge20
+  xpos -755
+  ypos 1785
+ }
+ Reformat {
+  name Reformat4
+  xpos -755
+  ypos 1811
+ }
+ Switch {
+  inputs 6
+  which {{camstyle}}
+  name Switch1
+  xpos -546
+  ypos 2186
+ }
+ Output {
+  name Output2
+  xpos -546
+  ypos 3023
+ }
+push $Nc2cf6c00
+push $Nc2cf6c00
+ Viewer {
+  inputs 2
+  frame_range 2044-2087
+  name Viewer1
+  xpos -791
+  ypos 1323
+ }
+end_group

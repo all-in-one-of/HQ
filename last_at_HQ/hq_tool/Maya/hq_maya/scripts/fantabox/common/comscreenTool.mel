@@ -1,0 +1,578 @@
+//FancyCreateSet5_6Window;HuangYunZhong:2014.7.10;
+
+global float $Window6ScaleX=1960;
+global float $Window6ScaleY=1200;
+global int $Window6ScaleA=1920;
+global float $Window6ScaleB;
+$Window6ScaleB=($Window6ScaleA/6)/1.633;
+global float $Window6TranslateX=-12;
+global float $Window6TranslateY=-25;
+global int $Window5ScaleA=1024;
+global float $Window5ScaleB;
+global float $Window5TranslateX=-10;
+global float $Window5TranslateY=-25;
+global int $i1=1;
+global int $i2=2;
+global int $i3=3;
+global int $i4=4;
+global int $i5=5;
+global int $i6=6;
+global int $iD=1;
+global int $iL=2;
+global int $iU=3;
+global int $iR=4;
+global int $iC=5;
+global int $iD_R=0;
+global int $iL_R=90;
+global int $iU_R=180;
+global int $iR_R=-90;
+global int $iC_R=0;
+global string $CameraDownSet; 
+global string $CameraLeftSet; 
+global string $CameraUpSet; 
+global string $CameraRightSet; 
+global string $CameraCenterSet;
+global string $Camera1Set; 
+global string $Camera2Set; 
+global string $Camera3Set; 
+global string $Camera4Set; 
+global string $Camera5Set;
+global string $Camera6Set;
+global int $CameraText=0;
+
+global proc comscreenTool(){
+   global int $CameraText;
+   global int $i1;
+   global int $i2;
+   global int $i3;
+   global int $i4;
+   global int $i5;
+   global int $i6;
+   global string $Camera1Set; 
+   global string $Camera2Set; 
+   global string $Camera3Set; 
+   global string $Camera4Set; 
+   global string $Camera5Set;
+   global string $Camera6Set;
+   global int $iD;
+   global int $iL;
+   global int $iU;
+   global int $iR;
+   global int $iC;
+   global string $CameraDownSet; 
+   global string $CameraLeftSet; 
+   global string $CameraUpSet; 
+   global string $CameraRightSet; 
+   global string $CameraCenterSet; 
+if(`objExists "*cam5Shape"`){
+    $CameraDownSet="*cam"+$iD+"Shape";
+    $CameraLeftSet="*cam"+$iL+"Shape";
+    $CameraUpSet="*cam"+$iU+"Shape";
+    $CameraRightSet="*cam"+$iR+"Shape";
+    $CameraCenterSet="*cam"+$iC+"Shape";
+    $CameraText=1;
+    }
+if(`objExists "*camShape5"`){
+    $CameraDownSet="*camShape"+$iD;
+    $CameraLeftSet="*camShape"+$iL;
+    $CameraUpSet="*camShape"+$iU;
+    $CameraRightSet="*camShape"+$iR;
+    $CameraCenterSet="*camShape"+$iC;
+    $CameraText=1;
+    }
+if(`objExists "*:cam5Shape"`){
+    $CameraDownSet="*:cam"+$iD+"Shape";
+    $CameraLeftSet="*:cam"+$iL+"Shape";
+    $CameraUpSet="*:cam"+$iU+"Shape";
+    $CameraRightSet="*:cam"+$iR+"Shape";
+    $CameraCenterSet="*:cam"+$iC+"Shape";
+    $CameraText=1;
+    }
+if(`objExists "*:camShape5"`){
+    $CameraDownSet="*:camShape"+$iD;
+    $CameraLeftSet="*:camShape"+$iL;
+    $CameraUpSet="*:camShape"+$iU;
+    $CameraRightSet="*:camShape"+$iR;
+    $CameraCenterSet="*:camShape"+$iC;
+    $CameraText=1;
+    }
+if(`objExists "*:*:cam5Shape"`){
+    $CameraDownSet="*:*:cam"+$iD+"Shape";
+    $CameraLeftSet="*:*:cam"+$iL+"Shape";
+    $CameraUpSet="*:*:cam"+$iU+"Shape";
+    $CameraRightSet="*:*:cam"+$iR+"Shape";
+    $CameraCenterSet="*:*:cam"+$iC+"Shape";
+    $CameraText=1;
+    }
+if(`objExists "*:*:camShape5"`){
+    $CameraDownSet="*:*:camShape"+$iD;
+    $CameraLeftSet="*:*:camShape"+$iL;
+    $CameraUpSet="*:*:camShape"+$iU;
+    $CameraRightSet="*:*:camShape"+$iR;
+    $CameraCenterSet="*:*:camShape"+$iC;
+    $CameraText=1;
+    }
+if(`objExists "*:*:*:cam5Shape"`){
+    $CameraDownSet="*:*:*:cam"+$iD+"Shape";
+    $CameraLeftSet="*:*:*:cam"+$iL+"Shape";
+    $CameraUpSet="*:*:*:cam"+$iU+"Shape";
+    $CameraRightSet="*:*:*:cam"+$iR+"Shape";
+    $CameraCenterSet="*:*:*:cam"+$iC+"Shape";
+    $CameraText=1;
+    }
+if(`objExists "*:*:*:camShape5"`){
+    $CameraDownSet="*:*:*:camShape"+$iD;
+    $CameraLeftSet="*:*:*:camShape"+$iL;
+    $CameraUpSet="*:*:*:camShape"+$iU;
+    $CameraRightSet="*:*:*:camShape"+$iR;
+    $CameraCenterSet="*:*:*:camShape"+$iC;
+    $CameraText=1;
+    }
+if($CameraText==1){  
+select -d;select $CameraDownSet;
+//int $SelectValue=`objectDetailsNumberOfSelectedObjectsa`;
+  //if($SelectValue==1){
+    FancyCreate5WidnowGlobal;}
+    //else{confirmDialog -title "error" -message "Create5Window Error ：请检查相机名称重叠？" -button close;}}
+if(`objExists "*:*:*:cam6LShape"`){
+    $Camera1Set="*:*:*:cam"+$i1+"LShape";
+    $Camera2Set="*:*:*:cam"+$i2+"LShape";
+    $Camera3Set="*:*:*:cam"+$i3+"LShape";
+    $Camera4Set="*:*:*:cam"+$i4+"LShape";
+    $Camera5Set="*:*:*:cam"+$i5+"LShape";
+    $Camera6Set="*:*:*:cam"+$i6+"LShape";
+    $CameraText=2;
+    }
+if(`objExists "*:*:cam6LShape"`){
+    $Camera1Set="*:*:cam"+$i1+"LShape";
+    $Camera2Set="*:*:cam"+$i2+"LShape";
+    $Camera3Set="*:*:cam"+$i3+"LShape";
+    $Camera4Set="*:*:cam"+$i4+"LShape";
+    $Camera5Set="*:*:cam"+$i5+"LShape";
+    $Camera6Set="*:*:cam"+$i6+"LShape";
+    $CameraText=2;
+    }
+if(`objExists "*:cam6LShape"`){
+    $Camera1Set="*:cam"+$i1+"LShape";
+    $Camera2Set="*:cam"+$i2+"LShape";
+    $Camera3Set="*:cam"+$i3+"LShape";
+    $Camera4Set="*:cam"+$i4+"LShape";
+    $Camera5Set="*:cam"+$i5+"LShape";
+    $Camera6Set="*:cam"+$i6+"LShape";
+    $CameraText=2;
+    }
+if(`objExists "*cam6LShape"`){
+    $Camera1Set="*cam"+$i1+"LShape";
+    $Camera2Set="*cam"+$i2+"LShape";
+    $Camera3Set="*cam"+$i3+"LShape";
+    $Camera4Set="*cam"+$i4+"LShape";
+    $Camera5Set="*cam"+$i5+"LShape";
+    $Camera6Set="*cam"+$i6+"LShape";
+    $CameraText=2;
+    }
+if($CameraText==2){
+select -d;select $Camera1Set;
+//int $SelectValue=`objectDetailsNumberOfSelectedObjects`;
+  //if($SelectValue==1){
+    FancyCreate6WidnowGlobal;}
+    //else{confirmDialog -title "error" -message "Create5Window Error ：请检查相机名称重叠？" -button close;}}
+if($CameraText==0){confirmDialog -title "error" -message "error ：请检查相机是否存在？或相机有多次参考？" -button close;}
+}
+
+global proc FancyCreate5WidnowGlobal(){
+global string $CameraDownSet; 
+global string $CameraLeftSet; 
+global string $CameraUpSet; 
+global string $CameraRightSet; 
+global string $CameraCenterSet;
+global int $Window5ScaleA;
+$Window5ScaleB=$Window5ScaleA/3;
+global float $Window5TranslateX;
+global float $Window5TranslateY;
+if(`window -ex FancyCreate5Widnow`){deleteUI FancyCreate5Widnow;}
+if(`modelPanel -ex CameraDownSet`){deleteUI -panel CameraDownSet;}
+if(`modelPanel -ex CameraLeftSet`){deleteUI -panel CameraLeftSet;}
+if(`modelPanel -ex CameraUpSet`){deleteUI -panel CameraUpSet;}
+if(`modelPanel -ex CameraRightSet`){deleteUI -panel CameraRightSet;}
+if(`modelPanel -ex CameraCenterSet`){deleteUI -panel CameraCenterSet;}
+if(`windowPref -ex FancyCreate5Widnow`){windowPref -remove FancyCreate5Widnow;}
+window -title "FancyCreate5*Widnow_v02" -wh $Window5ScaleA $Window5ScaleA -topLeftCorner $Window5TranslateY $Window5TranslateX FancyCreate5Widnow;
+rowColumnLayout -nc 3 -width ($Window5ScaleA+10) -height $Window5ScaleA ;
+columnLayout -w $Window5ScaleB -h $Window5ScaleB -adj true ;
+rowColumnLayout -nc 3;
+button -label "线框" -h ($Window5ScaleB/4) -w ($Window5ScaleB/3) -command xiankuang5;
+button -label "实体" -h ($Window5ScaleB/4) -w ($Window5ScaleB/3) -command shiti5;
+button -label "材质" -h ($Window5ScaleB/4) -w ($Window5ScaleB/3) -command tietu5;
+setParent..;
+rowColumnLayout -nc 2 ;
+button -label "↓卐 逆转" -h ($Window5ScaleB/4) -w ($Window5ScaleB/2) -command nishizhen5;
+button -label "顺转 卍↓" -h ($Window5ScaleB/4) -w ($Window5ScaleB/2) -command shunshizhen5;
+setParent..;
+columnLayout -adj true ;
+intSliderGrp  -h ($Window5ScaleB/4-5) -columnWidth2 50 10 -value $Window5ScaleA -field true -max 1080 -min 300 WindowScaleValue;
+button  -h ($Window5ScaleB/4) -label "调整窗口大小" -command new5window;
+setParent..;
+paneLayout -w $Window5ScaleB -h ($Window5ScaleB+20) ;
+modelPanel -menuBarVisible 0 -camera $CameraLeftSet CameraLeftSet;
+text -label "";
+setParent..;setParent..;setParent..;
+columnLayout;
+paneLayout  -w $Window5ScaleB -h $Window5ScaleB ;
+modelPanel -menuBarVisible 0 -camera $CameraUpSet CameraUpSet;
+setParent..;setParent..;
+columnLayout;
+paneLayout  -w $Window5ScaleB -h $Window5ScaleB ;
+modelPanel -menuBarVisible 0 -camera $CameraCenterSet CameraCenterSet;
+setParent..;setParent..;
+columnLayout;
+paneLayout  -w $Window5ScaleB -h $Window5ScaleB ;
+modelPanel -menuBarVisible 0 -camera $CameraDownSet CameraDownSet;
+setParent..;setParent..;setParent..;setParent..;setParent..;
+columnLayout;
+rowColumnLayout -nc 2;
+text -label "请按此键关闭窗口==>>" -height 20 -width ($Window5ScaleB-45);button -width 45 -backgroundColor 0.8 0 0 -label "X" -command Close5Widnow;
+text -label "";text -height 20 -label "关闭窗口";
+text -label "" -height ($Window5ScaleB-43);
+setParent..;
+paneLayout  -w $Window5ScaleB -h $Window5ScaleB ;
+modelPanel -menuBarVisible 0 -camera $CameraRightSet CameraRightSet;
+showWindow FancyCreate5Widnow;
+	
+global int $iD_R; 
+global int $iL_R;
+global int $iU_R;
+global int $iR_R;
+global int $iC_R;
+global string $CameraDownSetAttr;
+global string $CameraLeftSetAttr;
+global string $CameraUpSetAttr;
+global string $CameraRightSetAttr; 
+global string $CameraCenterSetAttr;
+$CameraDownSetAttr=$CameraDownSet+".filmRollValue";
+$CameraLeftSetAttr=$CameraLeftSet+".filmRollValue";
+$CameraUpSetAttr=$CameraUpSet+".filmRollValue";
+$CameraRightSetAttr=$CameraRightSet+".filmRollValue";
+$CameraCenterSetAttr=$CameraCenterSet+".filmRollValue";
+if(`objExists $CameraDownSet`){setAttr $CameraDownSetAttr $iD_R;}
+if(`objExists $CameraLeftSet`){setAttr $CameraLeftSetAttr $iL_R;}
+if(`objExists $CameraUpSet`){setAttr $CameraUpSetAttr $iU_R;}
+if(`objExists $CameraRightSet`){setAttr $CameraRightSetAttr $iR_R;}
+if(`objExists $CameraCenterSet`){setAttr $CameraCenterSetAttr $iC_R;}
+
+showDisplaySetup("CameraCenterSet");
+showDisplaySetup("CameraLeftSet");
+showDisplaySetup("CameraRightSet");
+showDisplaySetup("CameraUpSet");
+showDisplaySetup("CameraDownSet");
+
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $CameraLeftSet;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $CameraRightSet;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $CameraUpSet;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $CameraDownSet;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $CameraCenterSet;
+}
+
+
+global proc new5window(){
+global int $Window5ScaleA;
+$Window5ScaleA=`intSliderGrp -q -value WindowScaleValue`;
+global float $Window5TranslateX;
+global float $Window5TranslateY;
+$Window5Translate=`window -q -topLeftCorner FancyCreate5Widnow`;
+$Window5TranslateX=$Window5Translate[1];
+$Window5TranslateY=$Window5Translate[0];
+FancyCreate5WidnowGlobal;
+}
+global proc Close5Widnow(){
+global string $CameraDownSet; 
+global string $CameraLeftSet; 
+global string $CameraUpSet; 
+global string $CameraRightSet; 
+global string $CameraCenterSet;
+global string $CameraDownSetAttr;
+global string $CameraLeftSetAttr;
+global string $CameraUpSetAttr;
+global string $CameraRightSetAttr; 
+global string $CameraCenterSetAttr;
+$CameraDownSetAttr=$CameraDownSet+".filmRollValue";
+$CameraLeftSetAttr=$CameraLeftSet+".filmRollValue";
+$CameraUpSetAttr=$CameraUpSet+".filmRollValue";
+$CameraRightSetAttr=$CameraRightSet+".filmRollValue";
+$CameraCenterSetAttr=$CameraCenterSet+".filmRollValue";
+if(`objExists $CameraDownSet`){setAttr $CameraDownSetAttr 0;}
+if(`objExists $CameraLeftSet`){setAttr $CameraLeftSetAttr 0;}
+if(`objExists $CameraUpSet`){setAttr $CameraUpSetAttr 0;}
+if(`objExists $CameraRightSet`){setAttr $CameraRightSetAttr 0;}
+if(`objExists $CameraCenterSet`){setAttr $CameraCenterSetAttr 0;}
+deleteUI FancyCreate5Widnow;   
+}
+global proc nishizhen5(){
+   global int $iD;
+   global int $iL;
+   global int $iU;
+   global int $iR;
+   global int $iC;
+   global int $iD_R;
+   global int $iL_R;
+   global int $iU_R;
+   global int $iR_R;
+   global int $iC_R;
+$iD=$iD+1;
+$iL=$iL+1;
+$iU=$iU+1;
+$iR=$iR+1;
+if($iD>=5){$iD=1;}
+if($iL>=5){$iL=1;}
+if($iU>=5){$iU=1;}
+if($iR>=5){$iR=1;}
+$iC_R=$iC_R-90;
+if($iC_R<=-360){$iC_R=0;}
+    new5window;
+    CheckCamera;
+}
+global proc shunshizhen5(){
+   global int $iD;
+   global int $iL;
+   global int $iU;
+   global int $iR;
+   global int $iC;
+   global int $iD_R;
+   global int $iL_R;
+   global int $iU_R;
+   global int $iR_R;
+   global int $iC_R;
+$iD=$iD-1;
+$iL=$iL-1;
+$iU=$iU-1;
+$iR=$iR-1;
+if($iD<=0){$iD=4;}
+if($iL<=0){$iL=4;}
+if($iU<=0){$iU=4;}
+if($iR<=0){$iR=4;}
+$iC_R=$iC_R+90;
+if($iC_R>=360){$iC_R=0;}
+    new5window;
+    CheckCamera;
+}
+global proc xiankuang5(){
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" CameraLeftSet;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" CameraRightSet;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" CameraUpSet;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" CameraDownSet;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" CameraCenterSet;
+}
+global proc shiti5(){
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false CameraLeftSet;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false CameraRightSet;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false CameraUpSet;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false CameraDownSet;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false CameraCenterSet;
+}
+global proc tietu5(){
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" CameraLeftSet;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" CameraRightSet;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" CameraUpSet;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" CameraDownSet;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" CameraCenterSet;
+}
+global proc FancyCreate6WidnowGlobal(){
+global string $Camera1Set; 
+global string $Camera2Set; 
+global string $Camera3Set; 
+global string $Camera4Set; 
+global string $Camera5Set;
+global string $Camera6Set;
+global float $Window6ScaleX;
+global float $Window6ScaleY;
+global int $Window6ScaleA;
+global float $Window6ScaleB;
+global float $Window6TranslateX;
+global float $Window6TranslateY;
+if(`window -ex FancyCreate6Widnow`){deleteUI FancyCreate6Widnow;}
+if(`modelPanel -ex Camera1Set`){deleteUI -panel Camera1Set;}
+if(`modelPanel -ex Camera2Set`){deleteUI -panel Camera2Set;}
+if(`modelPanel -ex Camera3Set`){deleteUI -panel Camera3Set;}
+if(`modelPanel -ex Camera4Set`){deleteUI -panel Camera4Set;}
+if(`modelPanel -ex Camera5Set`){deleteUI -panel Camera5Set;}
+if(`modelPanel -ex Camera6Set`){deleteUI -panel Camera6Set;}
+if(`windowPref -ex FancyCreate6Widnow`){windowPref -remove FancyCreate6Widnow;}
+window -title "FancyCreate6*Widnow_v02" -wh $Window6ScaleA ($Window6ScaleB+30) -topLeftCorner $Window6TranslateY $Window6TranslateX FancyCreate6Widnow;
+columnLayout -adj true -w $Window6ScaleA -h ($Window6ScaleB+30);
+rowColumnLayout -nc 6;
+paneLayout  -w ($Window6ScaleA/6) -h $Window6ScaleB ;
+modelPanel -menuBarVisible 0 -camera $Camera1Set Camera1Set;
+setParent..;setParent..;
+paneLayout  -w ($Window6ScaleA/6) -h $Window6ScaleB ;
+modelPanel -menuBarVisible 0 -camera $Camera2Set Camera2Set;
+setParent..;setParent..;
+paneLayout  -w ($Window6ScaleA/6) -h $Window6ScaleB ;
+modelPanel -menuBarVisible 0 -camera $Camera3Set Camera3Set;
+setParent..;setParent..;
+paneLayout  -w ($Window6ScaleA/6) -h $Window6ScaleB ;
+modelPanel -menuBarVisible 0 -camera $Camera4Set Camera4Set;
+setParent..;setParent..;
+paneLayout  -w ($Window6ScaleA/6) -h $Window6ScaleB ;
+modelPanel -menuBarVisible 0 -camera $Camera5Set Camera5Set;
+setParent..;setParent..;
+paneLayout  -w ($Window6ScaleA/6) -h $Window6ScaleB ;
+modelPanel -menuBarVisible 0 -camera $Camera6Set Camera6Set;
+setParent..;setParent..;setParent..;
+columnLayout -adj true;
+rowColumnLayout -nc 16;
+text -label "窗口大小:";
+columnLayout;
+intSliderGrp -columnWidth2 50 100 -value $Window6ScaleA -field true -max 1920 -min 800 WindowScaleValue;
+setParent..;
+text -label "分辨率:";
+intField -value $Window6ScaleX -w 40 Windonw6ScaleX;
+text -label "*";
+intField -value $Window6ScaleY -w 40 Windonw6ScaleY;
+button -label "确定" -command new6window;
+text -label "";
+button -label "|<< 切屏" -command Lqiehuan6;
+button -label "切屏 >>|" -command Rqiehuan6;
+text -label "";
+button -label "线框" -command xiankuang6;
+button -label "实体" -command shiti6;
+button -label "材质" -command tietu6;
+text -label "";
+button -width 45 -backgroundColor 0.8 0 0 -label "关闭" -command Close6Widnow;
+setParent..;
+showWindow FancyCreate6Widnow;
+
+showDisplaySetup("Camera1Set");
+showDisplaySetup("Camera2Set");
+showDisplaySetup("Camera3Set");
+showDisplaySetup("Camera4Set");
+showDisplaySetup("Camera5Set");
+showDisplaySetup("Camera6Set");
+
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $Camera1Set;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $Camera2Set;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $Camera3Set;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $Camera4Set;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $Camera5Set;
+camera -e -displayFilmGate off -displayResolution off -overscan 1.0 $Camera6Set;
+}
+global proc new6window(){
+global int $Window6ScaleA;
+global float $Window6ScaleB;
+$Window6ScaleA=`intSliderGrp -q -value WindowScaleValue`;
+global float $Window6ScaleX;
+global float $Window6ScaleY;
+$Window6ScaleX=`intField -q -value Windonw6ScaleX`;
+$Window6ScaleY=`intField -q -value Windonw6ScaleY`;
+$Window6ScaleB=($Window6ScaleA/6)/($Window6ScaleX/$Window6ScaleY);
+global float $Window6TranslateX;
+global float $Window6TranslateY;
+$Window6Translate=`window -q -topLeftCorner FancyCreate6Widnow`;
+$Window6TranslateX=$Window6Translate[1];
+$Window6TranslateY=$Window6Translate[0];
+FancyCreate6WidnowGlobal;
+}
+global proc Close6Widnow(){
+deleteUI FancyCreate6Widnow;   
+}
+global proc Rqiehuan6(){
+   global int $i1;
+   global int $i2;
+   global int $i3;
+   global int $i4;
+   global int $i5;
+   global int $i6;
+$i1=$i1-1;
+$i2=$i2-1;
+$i3=$i3-1;
+$i4=$i4-1;
+$i5=$i5-1;
+$i6=$i6-1;
+if($i1<=0){$i1=6;}
+if($i2<=0){$i2=6;}
+if($i3<=0){$i3=6;}
+if($i4<=0){$i4=6;}
+if($i5<=0){$i5=6;}
+if($i6<=0){$i6=6;}
+    new6window;
+    CheckCamera;
+}
+global proc Lqiehuan6(){
+   global int $i1;
+   global int $i2;
+   global int $i3;
+   global int $i4;
+   global int $i5;
+   global int $i6;
+$i1=$i1+1;
+$i2=$i2+1;
+$i3=$i3+1;
+$i4=$i4+1;
+$i5=$i5+1;
+$i6=$i6+1;
+if($i1>=7){$i1=1;}
+if($i2>=7){$i2=1;}
+if($i3>=7){$i3=1;}
+if($i4>=7){$i4=1;}
+if($i5>=7){$i5=1;}
+if($i6>=7){$i6=1;}
+    new6window;
+    CheckCamera;
+}
+global proc xiankuang6(){
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" Camera1Set;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" Camera2Set;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" Camera3Set;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" Camera4Set;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" Camera5Set;
+modelEditor -edit -displayAppearance "wireframe" -displayLights "default" Camera6Set;
+}
+global proc shiti6(){
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false Camera1Set;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false Camera2Set;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false Camera3Set;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false Camera4Set;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false Camera5Set;
+modelEditor -edit -displayAppearance smoothShaded -displayTextures off -activeOnly false Camera6Set;
+}
+global proc tietu6(){
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" Camera1Set;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" Camera2Set;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" Camera3Set;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" Camera4Set;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" Camera5Set;
+modelEditor -edit -da "smoothShaded" -displayTextures on -dl "default" Camera6Set;
+}
+CheckCamera;
+//FancyCreateSet5_6Window;HuangYunZhong:2014.7.10;
+
+global proc showDisplaySetup(string $camSet)
+{
+modelEditor -e -allObjects true $camSet;
+modelEditor -e -grid false $camSet;
+modelEditor -e -nurbsCurves false $camSet;
+modelEditor -e -subdivSurfaces false $camSet;
+modelEditor -e -planes false $camSet;
+modelEditor -e -lights false $camSet;
+modelEditor -e -cameras false $camSet;
+modelEditor -e -joints false $camSet;
+modelEditor -e -ikHandles false $camSet;
+modelEditor -e -deformers false $camSet;
+modelEditor -e -dynamics false $camSet;
+modelEditor -e -fluids false $camSet;
+modelEditor -e -hairSystems false $camSet;
+modelEditor -e -follicles false $camSet;
+modelEditor -e -nCloths false $camSet;
+modelEditor -e -nParticles false $camSet;
+modelEditor -e -nRigids false $camSet;
+modelEditor -e -dynamicConstraints false $camSet;
+modelEditor -e -locators false $camSet;
+modelEditor -e -dimensions false $camSet;
+modelEditor -e -pivots false $camSet;
+modelEditor -e -handles false $camSet;
+modelEditor -e -textures false $camSet;
+modelEditor -e -strokes false $camSet;
+modelEditor -e -motionTrails false $camSet;
+modelEditor -e -manipulators false $camSet;
+modelEditor -e -clipGhosts false $camSet;
+modelEditor -edit -displayAppearance smoothShaded -activeOnly false $camSet;
+};
+comscreenTool;

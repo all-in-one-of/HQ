@@ -1,0 +1,374 @@
+#! /home/zhangkh/Nuke6.3v4/Nuke6.3 -nx
+version 6.3 v4
+Gizmo {
+ note_font Verdana
+ mapsize {0.15 0.15}
+ addUserKnob {20 setting t setting}
+ addUserKnob {7 RedOffset t RedOffset R -1 1}
+ RedOffset 0.3
+ addUserKnob {7 BlueOffset t BlueOffset R -1 1}
+ BlueOffset -0.3
+ addUserKnob {6 black_outside l "black outside" +STARTLINE}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannelMask l maskBySourceLum -STARTLINE T Copy1.maskChannelMask}
+ addUserKnob {6 keysetup l keySetup +STARTLINE}
+ addUserKnob {41 range l sourceLumRange T Keyer1.range}
+ addUserKnob {41 size l blurSize T Blur1.size}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 0
+  ypos 1
+ }
+set N4d096d0 [stack 0]
+ Dot {
+  name Dot5
+  xpos 639
+  ypos 5
+ }
+ Dot {
+  name Dot6
+  xpos 639
+  ypos 369
+ }
+ Keyer {
+  operation "luminance key"
+  name Keyer1
+  xpos 326
+  ypos 359
+ }
+ Blur {
+  channels alpha
+  name Blur1
+  xpos 326
+  ypos 406
+ }
+ Dot {
+  name Dot2
+  xpos 360
+  ypos 464
+ }
+set N505f9f0 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  xpos 326
+  ypos 534
+ }
+push $N505f9f0
+push $N4d096d0
+ Dot {
+  name Dot1
+  xpos 34
+  ypos 65
+ }
+set N4d0c800 [stack 0]
+ Shuffle {
+  green black
+  name MAGENTA
+  tile_color 0xff00ffff
+  xpos 461
+  ypos 106
+ }
+set N4d0fb30 [stack 0]
+ Transform {
+  scale {{1-((parent.BlueOffset/6*6)/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform12
+  xpos 461
+  ypos 207
+ }
+ Multiply {
+  value 0.166667
+  name Multiply1
+  xpos 461
+  ypos 270
+ }
+ set C4d23470 [stack 0]
+push $N4d0c800
+ Shuffle {
+  red black
+  green black
+  name BLUE
+  tile_color 0xffff
+  xpos 287
+  ypos 106
+ }
+set N4d2ac40 [stack 0]
+push $N4d0fb30
+ Merge2 {
+  inputs 2
+  operation average
+  name Merge6
+  xpos 374
+  ypos 148
+ }
+ Transform {
+  scale {{1-((parent.BlueOffset/6*5)/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform11
+  xpos 374
+  ypos 208
+ }
+clone $C4d23470 {
+  xpos 374
+  ypos 270
+  selected false
+ }
+push $N4d2ac40
+ Transform {
+  scale {{1-((parent.BlueOffset/6*4)/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform10
+  xpos 287
+  ypos 208
+ }
+clone $C4d23470 {
+  xpos 287
+  ypos 270
+  selected false
+ }
+push $N4d0c800
+ Shuffle {
+  red black
+  name CYAN
+  tile_color 0xffffff
+  xpos 96
+  ypos 107
+ }
+set N4d60a20 [stack 0]
+push $N4d2ac40
+ Merge2 {
+  inputs 2
+  operation average
+  name Merge5
+  xpos 196
+  ypos 149
+ }
+ Transform {
+  scale {{1-((parent.BlueOffset/6*3)/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform9
+  xpos 196
+  ypos 207
+ }
+clone $C4d23470 {
+  xpos 196
+  ypos 270
+  selected false
+ }
+push $N4d60a20
+ Transform {
+  scale {{1-((parent.BlueOffset/6*2)/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform8
+  xpos 96
+  ypos 207
+ }
+clone $C4d23470 {
+  xpos 96
+  ypos 270
+  selected false
+ }
+push $N4d0c800
+ Shuffle {
+  red black
+  blue black
+  name GREEN
+  tile_color 0xff00ff
+  xpos -101
+  ypos 109
+ }
+set N4d96820 [stack 0]
+push $N4d60a20
+ Merge2 {
+  inputs 2
+  operation average
+  name Merge4
+  xpos -2
+  ypos 151
+ }
+ Transform {
+  scale {{1-((parent.BlueOffset/6*1)/100)}}
+  center {{Dot1.width/2} {Dot1.height/2}}
+  black_outside {{curve K x1 0}}
+  name Transform7
+  xpos -2
+  ypos 207
+ }
+clone $C4d23470 {
+  xpos -2
+  ypos 270
+  selected false
+ }
+push $N4d96820
+clone $C4d23470 {
+  xpos -101
+  ypos 270
+  selected false
+ }
+push $N4d0c800
+ Shuffle {
+  blue black
+  name YELLOW
+  tile_color 0xffff00ff
+  xpos -285
+  ypos 109
+ }
+set N4dc37a0 [stack 0]
+push $N4d96820
+ Merge2 {
+  inputs 2
+  operation average
+  name Merge3
+  xpos -193
+  ypos 153
+ }
+ Transform {
+  scale {{1-((parent.RedOffset/5*1)/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform5
+  xpos -193
+  ypos 207
+ }
+clone $C4d23470 {
+  xpos -193
+  ypos 270
+  selected false
+ }
+push $N4dc37a0
+ Transform {
+  scale {{1-((parent.RedOffset/5*2)/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform4
+  xpos -285
+  ypos 207
+ }
+clone $C4d23470 {
+  xpos -285
+  ypos 270
+  selected false
+ }
+push $N4d0c800
+ Shuffle {
+  green black
+  blue black
+  name RED
+  tile_color 0xff0000ff
+  gl_color 0xff0000ff
+  xpos -463
+  ypos 108
+ }
+set N4df9680 [stack 0]
+push $N4dc37a0
+ Merge2 {
+  inputs 2
+  operation average
+  name Merge2
+  xpos -372
+  ypos 154
+ }
+ Transform {
+  scale {{1-((parent.RedOffset/5*3)/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform3
+  xpos -372
+  ypos 207
+ }
+clone $C4d23470 {
+  xpos -372
+  ypos 270
+  selected false
+ }
+push 0
+push $N4d0fb30
+push $N4df9680
+ Merge2 {
+  inputs 2
+  operation average
+  name Merge1
+  xpos -552
+  ypos 152
+ }
+ Transform {
+  scale {{1-(parent.RedOffset/100) i}}
+  center {{Dot1.width/2 i} {Dot1.height/2 i}}
+  black_outside {{curve i K x1 0}}
+  name Transform1
+  xpos -552
+  ypos 207
+ }
+clone $C4d23470 {
+  xpos -552
+  ypos 270
+  selected false
+ }
+push $N4df9680
+ Transform {
+  scale {{1-((parent.RedOffset/5*4)/100)}}
+  center {{Dot1.width/2} {Dot1.height/2}}
+  black_outside {{curve K x1 0}}
+  name Transform2
+  xpos -463
+  ypos 207
+ }
+clone $C4d23470 {
+  xpos -463
+  ypos 270
+  selected false
+ }
+ Merge2 {
+  inputs 12+1
+  operation plus
+  name Merge7
+  xpos -2
+  ypos 355
+ }
+push $N4d096d0
+ Dot {
+  name Dot3
+  xpos -664
+  ypos 5
+ }
+ Dot {
+  name Dot4
+  xpos -664
+  ypos 464
+ }
+ Copy {
+  inputs 2+1
+  from0 rgba.red
+  to0 rgba.red
+  from1 rgba.green
+  to1 rgba.green
+  from2 rgba.blue
+  to2 rgba.blue
+  maskChannelMask -rgba.alpha
+  name Copy1
+  xpos -2
+  ypos 442
+ }
+ Switch {
+  inputs 2
+  which {{parent.keysetup i}}
+  name Switch1
+  xpos -2
+  ypos 578
+ }
+ Output {
+  name Output1
+  xpos -2
+  ypos 654
+ }
+end_group

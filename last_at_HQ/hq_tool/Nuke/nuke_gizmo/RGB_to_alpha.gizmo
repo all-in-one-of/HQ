@@ -1,0 +1,93 @@
+#! C:/Program Files/Nuke7.0v6/Nuke7.0.exe -nx
+version 7.0 v6
+Gizmo {
+ tile_color 0x7cffa5ff
+ addUserKnob {20 RGB_to_alpha}
+ addUserKnob {41 channels T Grade1.channels}
+ addUserKnob {41 blackpoint T Grade1.blackpoint}
+ addUserKnob {41 whitepoint T Grade1.whitepoint}
+ addUserKnob {41 black l lift T Grade1.black}
+ addUserKnob {41 white l gain T Grade1.white}
+ addUserKnob {41 multiply T Grade1.multiply}
+ addUserKnob {41 add l offset T Grade1.add}
+ addUserKnob {41 gamma T Grade1.gamma}
+ addUserKnob {26 "" l "  "}
+ addUserKnob {41 reverse T Grade1.reverse}
+ addUserKnob {41 black_clamp l "black clamp" T Grade1.black_clamp}
+ addUserKnob {41 white_clamp l "white clamp" T Grade1.white_clamp}
+}
+ Input {
+  inputs 0
+  name Input1
+  selected true
+  xpos 231
+  ypos 173
+ }
+ Dot {
+  name Dot4
+  xpos 265
+  ypos 213
+ }
+set N6b598c30 [stack 0]
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle1
+  label Red
+  xpos 135
+  ypos 290
+ }
+push 0
+push $N6b598c30
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle2
+  label Green
+  xpos 231
+  ypos 290
+ }
+push $N6b598c30
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle7
+  label Blue
+  xpos 336
+  ypos 289
+ }
+ Merge2 {
+  inputs 3+1
+  name Merge1
+  xpos 231
+  ypos 370
+ }
+ Grade {
+  channels alpha
+  name Grade1
+  xpos 231
+  ypos 421
+ }
+push $N6b598c30
+ Dot {
+  name Dot5
+  xpos 597
+  ypos 213
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos 563
+  ypos 421
+ }
+ Output {
+  name Output1
+  xpos 563
+  ypos 495
+ }
+end_group

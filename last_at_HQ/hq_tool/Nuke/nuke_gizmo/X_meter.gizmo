@@ -1,0 +1,55 @@
+#! D:/Program Files/Nuke8.0v4/nuke-8.0.v4.dll -nx
+version 8.0 v4
+Gizmo {
+ addUserKnob {20 X_meter}
+ addUserKnob {41 translate l tran01 T Tran01.translate}
+ addUserKnob {41 translate_1 l tran02 T Tran02.translate}
+ addUserKnob {41 pixel T Merge1.pixel}
+ addUserKnob {7 H}
+ H {{abs(Tran01.translate.x-Tran02.translate.x)}}
+ addUserKnob {7 v}
+ v {{abs(Tran01.translate.y-Tran02.translate.y)}}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -157
+  ypos 132
+ }
+push 0
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos -47
+  ypos 132
+  addUserKnob {20 User}
+  addUserKnob {7 pixel}
+  pixel {{((abs(Tran01.translate.x-Tran02.translate.x))**2+(abs(Tran01.translate.y-Tran02.translate.y))**2)**0.5}}
+ }
+ Output {
+  name Output1
+  xpos -51
+  ypos 179
+ }
+ Viewer {
+  input_process false
+  name Viewer1
+  xpos -60
+  ypos 312
+ }
+ Transform {
+  inputs 0
+  center {1024 778}
+  name Tran01
+  xpos -93
+  ypos 54
+ }
+ Transform {
+  inputs 0
+  center {1024 778}
+  name Tran02
+  selected true
+  xpos 6
+  ypos 58
+ }
+end_group

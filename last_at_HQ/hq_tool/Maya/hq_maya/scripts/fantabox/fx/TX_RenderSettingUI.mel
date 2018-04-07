@@ -1,0 +1,151 @@
+global proc  TX_RenderProgress() 
+{
+   
+      string $Cam[] = `rowLayout -q -ca camLyt`;
+       string $RenderCam[];
+       clear( $RenderCam);
+      for($i = 0;$i < size($Cam);$i++)
+      {
+          if(`checkBox -q -v $Cam[$i]`)
+          {
+               $RenderCam[size($RenderCam)] = `checkBox -q -l $Cam[$i]`;
+          }
+      }
+     
+        string $RenderFile = `textFieldGrp -q -tx FileNameTextFieldGrp`;
+       int $start=`intFieldGrp -q -v1 StartFTextFieldGrp`;
+       int $end=`intFieldGrp -q -v1 EndFTextFieldGrp`;
+
+     
+    if ($RenderFile == "" ) {
+        error("Please input the Correct FileName\n");
+        return ;
+    }
+    if ($end<=$start) {
+        error("Please input the Correct start and end frame\n");
+        return ;
+    }
+  
+
+
+
+float $amount;
+$amount=0;
+progressWindow -title "渲染中,按ESC退出" -progress $amount -status ("完成 0 张,还有 "+$end+"张, 进度 0%" ) -isInterruptable true;
+string $PerCam;	
+	
+//renderIntoNewWindow render;
+for ($start;$start<=$end;$start+=1)
+{currentTime $start;
+ if ( `progressWindow -query -isCancelled` ) break;
+ $amount = $start*100/$end;
+ progressWindow -edit -progress $amount -status ("完成 "+$start+" 张,还有 "+($end-$start)+"张, 进度 "+$amount+"%" );
+	 
+	 
+	for($PerCam in $RenderCam)				//设置每frame 渲染各个镜头
+	{
+	if ( `progressWindow -query -isCancelled` ) break;
+
+	renderWindowRenderCamera render renderView $PerCam;
+    catch(eval(renderWindowSaveImageCallback ("renderView", ($RenderFile+"_"+$PerCam+"."+$start), `getAttr defaultRenderGlobals.imageFormat`)));//注意output 路径为"/"
+
+	  
+	}
+}	
+progressWindow -endProgress;	
+
+
+}
+
+
+global proc TX_RenderSettingUI() {
+	
+if (`window -exists TX_RenderSettingWin`) {
+        deleteUI TX_RenderSettingWin;
+    }
+     
+   string $camID[]=`listCameras`;
+   int $Num=size($camID);
+   int $pn;
+   string $checkChoice[];
+     
+     window -title "TX Render Camera Setting" TX_RenderSettingWin;
+     
+          //options
+           int $Num=size($camID);
+           int $pn;
+          string $checkChoice[];
+           
+	   columnLayout;  
+           text -label "Please choose the camera to render!" -align "center"
+            -font "obliqueLabelFont";
+       
+	    separator -style "in";
+            rowLayout -numberOfColumns $Num camLyt;
+            
+             for($pn=0;$pn<$Num;$pn++)      
+             {
+             $checkChoice[$pn]=`checkBox -label $camID[$pn]`;
+             }
+             setParent ..;
+             separator -style "in";  
+
+	     
+          columnLayout -adjustableColumn yes -rowSpacing 10;        
+            textFieldGrp
+                -label "Render fileName with Path:" -text ""
+                -columnWidth 1 120 -columnWidth 1 180
+                -columnAttach 1 "both" 10 -cat 2 "both" 10
+                FileNameTextFieldGrp;
+           
+            intFieldGrp
+                -label "Start frame:" 
+                -columnWidth 1 120 -columnWidth 2 180
+                -columnAttach 1 "both" 10 -cat 2 "both" 10
+                StartFTextFieldGrp;
+  
+             intFieldGrp
+                -label "End frame:" 
+                -columnWidth 1 120 -columnWidth 2 180
+                -columnAttach 1 "both" 10 -cat 2 "both" 10
+                EndFTextFieldGrp;   
+           setParent ..; 
+
+       //convert the values 
+            
+        rowLayout -numberOfColumns 2
+            -columnWidth 1 150 -cw 2 150
+            -cat 1 "both" 10 -cat 2 "both" 10
+            -cal 1 "center" -cal 2 "center";
+      
+    
+    
+
+     button -l "Render" -c "TX_RenderProgress";
+
+    button -l "Cancel" -c "deleteUI TX_RenderSettingWin";
+
+    window -e -w 330 -h 110 TX_RenderSettingWin;
+    showWindow TX_RenderSettingWin;
+    
+//D:\Works\Report\2011\October\TextureShadow\scenes\CamRenderTest.mb
+
+}
+TX_RenderSettingUI();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

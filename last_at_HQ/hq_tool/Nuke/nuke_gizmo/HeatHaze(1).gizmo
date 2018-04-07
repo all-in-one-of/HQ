@@ -1,0 +1,77 @@
+#! C:/Program Files/Nuke7.0v6/Nuke7.0.exe -nx
+version 7.0 v6
+Gizmo {
+ addUserKnob {20 User}
+ addUserKnob {41 gamma T Noise3.gamma}
+ addUserKnob {41 gain T Noise3.gain}
+ addUserKnob {41 size l x/ysize T Noise3.size}
+ addUserKnob {41 uv_scale l "UV scale" T IDistort1.uv_scale}
+ addUserKnob {41 which T Switch1.which}
+ addUserKnob {41 size_1 l size T Blur1.size}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 231
+  ypos -134
+ }
+set N1993ba50 [stack 0]
+ Noise {
+  inputs 0
+  size 102
+  zoffset {{frame/45}}
+  gain 0.29
+  gamma 0.915
+  center {2048 2048}
+  name Noise3
+  xpos 77
+  ypos -145
+ }
+ Reformat {
+  name Reformat1
+  xpos 77
+  ypos -98
+ }
+ Blur {
+  size 52.5
+  name Blur1
+  xpos 77
+  ypos -52
+ }
+push $N1993ba50
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 forward.u
+  from1 rgba.green
+  to1 forward.v
+  name Copy1
+  xpos 231
+  ypos -58
+ }
+ IDistort {
+  uv forward
+  uv_scale 96.5
+  name IDistort1
+  xpos 231
+  ypos 8
+ }
+ Switch {
+  inputs 2
+  name Switch1
+  xpos 394
+  ypos 14
+ }
+ Output {
+  name Output1
+  xpos 394
+  ypos 82
+ }
+ Viewer {
+  frame 265
+  input_process false
+  name Viewer1
+  xpos 212
+  ypos 223
+ }
+end_group

@@ -1,0 +1,473 @@
+
+ proc recreateSmooth(string $object)
+{
+	if (attributeExists("sm_divisions",$object))
+	{
+		string $his[] = `listHistory -groupLevels true -pruneDagObjects 1 -leaf true $object`;
+		string $smoothNode = smoothSearch($his);
+		if ($smoothNode != "")
+		{
+			delete $smoothNode;
+			string $shapes[] = `listRelatives -fullPath -noIntermediate -type "mesh" $object`;
+			if (size($shapes)>0)
+			{
+				$plyname = `polySmooth -divisions 0 -continuity 1 -keepBorder 0 -keepSelectionBorder 1 -keepTessellation 1 -constructionHistory 1 $shapes[0]`;
+				rename $plyname "finalSmooth";
+			}
+		}	
+	}
+}
+
+proc Conswitch(string $source, string $dest)
+{
+	string $switchNode1[]  = `listConnections -plugs 1 -source 0 -destination 1 -type tripleShadingSwitch $source`;
+	string $switchNode2[]  = `listConnections -plugs 1 -source 0 -destination 1 -type doubleShadingSwitch $source`;
+	string $switchNode[] = stringArrayCatenate($switchNode1,$switchNode2); 
+  	string $switchNode3[]  = `listConnections -plugs 1 -source 0 -destination 1 -type singleShadingSwitch $source`;
+	$switchNode = stringArrayCatenate($switchNode,$switchNode3); 
+	for ($i=0; $i<size($switchNode); $i++)
+		connectAttr -f ($dest+".instObjGroups[0]") $switchNode[$i];
+}
+////////////////////////////////////////
+//////////////////////////////////
+///////////////////////////////////////
+/////////////////////////////////////////////
+//function to output the relationship between obj and shadingEngine
+proc OutputSelSG_shapes(string $obj, string $objtr, string $shading[])
+{
+
+	$tmp = (`internalVar -userAppDir` + "projects/default/scenes/tmpselmat.txt");
+	$fileID = `fopen $tmp w`;
+	
+	if ($fileID == 0)
+	{
+		// cannot open the file
+
+		error("Fail to open " + $tmp);
+	}
+	
+	for ($j = 0; $j < size($shading); $j++)		// skip last item because it is ""
+	{
+		string $objs[] = `sets -q $shading[$j]`;
+		for ($i = 0; $i < size($objs); $i++)
+		{
+			string $buf[];
+			tokenize $objs[$i] "." $buf;
+			string $shape = $buf[0];
+			string $long[] = `ls -long $shape`;
+			if ($long[0] == $obj||$long[0] == $objtr) 
+				fprint $fileID ($shading[$j] + " " + $objs[$i] + "\n");
+		}
+	}
+
+	fclose $fileID;
+}
+
+//function to transfer material
+proc transferSelMat(string $source, string $dest)
+{
+	$filename = (`internalVar -userAppDir` + "projects/default/scenes/tmpselmat.txt");
+	$fileID = `fopen $filename r`;
+
+	if ($fileID == 0)
+	{
+		// cannot open the file
+		error("Fail to open " + $filename);
+	}
+
+	string $buffer = `fgetline $fileID`;
+	$buffer = substituteAllString($buffer, "\n", "");
+
+	while (size($buffer) > 0) 
+	{
+		string $buf[];
+
+		if (`tokenize $buffer " " $buf` == 2)
+		{
+			// apply the material to the shape
+			string $SG = $buf[0];
+			string $vet = "";
+			string $buff[];
+			int $num = `tokenize $buf[1] "." $buff`;
+			string $shape = $buff[0];
+			if ($num == 2)
+				$vet = "."+$buff[1];
+			
+			sets -e -forceElement $SG ($dest+$vet);
+		}
+		$buffer = `fgetline $fileID`;
+		$buffer = substituteAllString($buffer, "\n", "");
+	}
+	fclose $fileID;
+}
+
+global proc tranUV()
+{
+string $selectall[];
+string $tagetShape[];
+$selectall=`ls -sl`;
+string $sel[] = `pickWalk -d down $selectall[0]`;
+
+for($i=1;$i<`size $selectall`;$i++)
+ {
+ $tagetShape= `pickWalk -d down $selectall[$i]`;
+ polyTransfer -vc 0 -uv 1 -v 0 -ao $sel[0] $tagetShape[0];
+ delTransfer($selectall[$i]);
+
+ //delPolyTransferNodeUV;
+ }
+}
+global proc delTransfer(string $obj)
+{
+	string $SH[]=`listRelatives -s -f -ni -type mesh $obj`;
+	string $allSH[]=`listRelatives -s -f -type mesh $obj`;
+	string $hist[]=`listHistory $obj`;
+	string $orgSH[];clear $orgSH;
+	string $delNode[];clear $delNode;
+
+	for($itSH in $allSH)
+		if(`getAttr ($itSH+".intermediateObject")`&&!size(`listConnections -d 0 $itSH`))
+			$orgSH[size($orgSH)]=$itSH;
+	for($histIt in $hist)
+		if(stringArrayContains(`nodeType $histIt`,{"transferAttributes","polyTransfer","polyPlanarProj","polyCylProj","polySphProj","polyAutoProj","polyPlanarProj","polyTweakUV"}))
+			$delNode[size($delNode)]=$histIt;
+
+	if(size($SH)==1&&size($orgSH)&&size($delNode))
+	{
+		string $mesh=`createNode mesh`;
+		for($orgIt in $orgSH)
+		{
+			connectAttr -f ($SH[0]+".outMesh") ($mesh+".inMesh");
+			refresh;
+			disconnectAttr ($SH[0]+".outMesh") ($mesh+".inMesh");
+			refresh;
+			polyTransfer -v 0 -vc 1 -uv 0 -ao $SH[0] $mesh;
+			delete -ch $mesh;
+
+			//string $conAttr[]=`connectionInfo -dfs ($orgIt+".worldMesh")`;
+			//for($conAttrIt in $conAttr)
+			//	disconnectAttr ($orgIt+".worldMesh") $conAttrIt;
+
+			
+			polyTransfer -v 0 -vc 1 -uv 1 -ao $mesh $orgIt;
+			refresh;
+			delete -ch $orgIt;
+
+			string $tranfer[]=`listConnections -d 0 $orgIt`;
+			delete `listConnections -d 0 -sh 1 ($tranfer[0]+".inputPolymesh")`;
+			//for($conAttrIt in $conAttr)
+			//	connectAttr ($orgIt+".worldMesh") $conAttrIt;
+		}
+
+		delete $delNode;
+		delete `listRelatives -p -f $mesh`;
+	}
+}
+///////////////////////////////////
+global proc delPolyTransferNodeUV()
+{
+	cycleCheck -e off;
+	//////////////////////
+	string $ioMesh[]=`ls -io -typ mesh -l`;
+	for($ioMeshIt in $ioMesh)
+	{
+		string $ioNum[]=`listConnections $ioMeshIt`;
+		if(!size($ioNum))
+		catch(`delete $ioMeshIt`);
+	}
+	///////////////////////
+	string $mesh[]=`ls -ni -typ mesh -l`;
+	string $tempSh=`createNode mesh -n tempMeshTransfer`;
+	for($meshIt in $mesh)
+	  {
+
+		  string $hist[]=`listHistory $meshIt`;
+		  int $num=0;
+		  for($histIt in $hist)
+		  {
+		   if(`objectType $histIt`=="polyTransfer"||`objectType $histIt`=="polyTweakUV"||`objectType $histIt`=="transferAttributes"||`objectType $histIt`=="polyPlanarProj"||`objectType $histIt`=="polyAutoProj"||`objectType $histIt`=="polySphProj"||`objectType $histIt`=="polyCylProj")
+			   $num=1;
+		   }
+	  
+		  if($num)
+		  {
+		  connectAttr -f ($meshIt+".outMesh") ($tempSh+".inMesh");
+		  select $tempSh;
+		  disconnectAttr ($meshIt+".outMesh") ($tempSh+".inMesh");
+
+		  string $tran[]=`listRelatives -f -p $meshIt`;
+		  string $baseSh[]=`listRelatives -f -s $tran[0]`;
+		  int $baseNum=0;
+		  for($baseShIt in $baseSh)
+			 {
+		 if(`getAttr ($baseShIt+".intermediateObject")`)
+			 {
+			 $baseNum=1;
+			 connectAttr -f ($tempSh+".outMesh") ($baseShIt+".inMesh");
+			 select $baseShIt;
+			 disconnectAttr ($tempSh+".outMesh") ($baseShIt+".inMesh");
+
+				 //setAttr ($baseShIt+".intermediateObject") 0;
+
+				 string $vex[]=`ls -fl -l ($baseShIt+".vtx[*]")`;
+				 for($vexIt in $vex)
+				   {
+				   string $buffer[];
+				   tokenize $vexIt "[]" $buffer;
+
+				   setAttr ($baseShIt+".pnts["+$buffer[1]+"].pntx") 0;
+				   setAttr ($baseShIt+".pnts["+$buffer[1]+"].pnty") 0;
+				   setAttr ($baseShIt+".pnts["+$buffer[1]+"].pntz") 0;
+				   }
+
+				 //setAttr ($baseShIt+".intermediateObject") 1;           
+			 }
+		 }
+		  if(!$baseNum)
+			  {
+		  connectAttr -f ($tempSh+".outMesh") ($meshIt+".inMesh");
+		  disconnectAttr ($tempSh+".outMesh") ($meshIt+".inMesh");
+		  }
+		  }
+
+	 
+	  }
+	string $transfer[]=`ls -typ polyTransfer`;
+	if(size($transfer)) delete $transfer;
+	string $tweakUV[]=`ls -typ polyTweakUV`;
+	if(size($tweakUV))  delete $tweakUV;
+
+	//if(!catch(`ls -typ transferAttributes`))
+	//  {
+	//  string $transferAttributes[]=`ls -typ transferAttributes`;
+	//  if(size($transferAttributes))  delete $transferAttributes;
+	//  }
+
+	string $polyPlanarProj[]=`ls -typ polyPlanarProj`;
+	if(size($polyPlanarProj))  delete $polyPlanarProj;
+	string $polyAutoProj[]=`ls -typ polyAutoProj`;
+	if(size($polyAutoProj))  delete $polyAutoProj;
+	string $polySphProj[]=`ls -typ polySphProj`;
+	if(size($polySphProj))  delete $polySphProj;
+	string $polyCylProj[]=`ls -typ polyCylProj`;
+	if(size($polyCylProj))  delete $polyCylProj;
+
+	delete `listRelatives -p $tempSh`;
+	cycleCheck -e off;
+}
+
+proc docleannamespace()
+{
+	string $namesp[] = `ls "ImUVs*:*"`;
+	for ($j=0;$j<size($namesp);$j++)
+	{
+		string $buff[];
+		tokenize $namesp[$j] "|" $buff;
+		string $obj = $buff[size($buff) - 1];
+
+		string $buf[];
+		tokenize $obj ":" $buf;
+		string $sp = $buf[0]+":";
+
+		string $new = mySubstitute($obj,$sp,"");
+		if (`objExists($namesp[$j])` && $new!=$namesp[$j] && size($new)>0)
+			rename $namesp[$j] $new;
+	}
+}
+
+
+global proc zzUvtransfer()
+{
+	global int $mat_check = 0;
+	global int $transuv_check = 1;
+	global int $transmat_check = 1;
+	global int $transuv_check1 = 1;
+	global int $transmat_check1 = 1;
+
+	global int $TransferShader_selected = 0;
+
+	int $i;
+	string $child[];
+
+	if (`window -q -exists mushconvMatWin`)
+		deleteUI mushconvMatWin;
+
+	window -title "Transfer Shader" -resizeToFitChildren true mushconvMatWin;
+
+		columnLayout -adjustableColumn true;
+			menuBarLayout;
+				menu -label "Help";
+					menuItem -label "Help on Transfer Shader..." -command "HelpCallback TransferShader";
+				setParent ..;
+    			frameLayout -label "For Scene Use" -labelAlign "top" -cll 1 -cl 1
+
+    				-borderStyle "etchedIn";
+
+				$i = 0;
+
+				string $formLayout = `formLayout`;
+ 					$child[$i++] = `textFieldGrp -columnWidth 1 100 -adjustableColumn 2 -label "Mapping File:" -editable false -text ""`;
+					$child[$i++] = `button -label "Browse" -w 80 -command ("mll_brow " + $child[0])`;
+					$child[$i++] = `checkBox -label "Transfer UVs" -value $transuv_check -changeCommand "$transuv_check = #1"`;
+					$child[$i++] = `checkBox -label "Transfer Material" -value $transmat_check -changeCommand "$transmat_check = #1"`;
+					$child[$i++] = `checkBox -label "With Full Path" -value $mat_check -changeCommand "$mat_check = #1"`;
+					$child[$i++] = `checkBox -label "For Selected Objects Only" -value $TransferShader_selected -changeCommand "$TransferShader_selected = #1"`;
+					$child[$i++] = `button -label "Apply" -command ("TransferShaderTransferUVMatApply " + $child[0])`;
+				setParent ..;
+
+				formLayout -edit
+					-attachForm		$child[0]	"top"		10
+					-attachForm		$child[0]	"left"		0
+					-attachControl		$child[0]	"right"		5	$child[1]
+
+					-attachForm		$child[1]	"top"		10
+					-attachForm		$child[1]	"right"		5
+
+					-attachControl		$child[2]	"top"		15	$child[1]
+					-attachForm		$child[2]	"left"		25
+					
+					-attachControl		$child[3]	"top"		15	$child[1]
+					-attachControl		$child[3]	"left"		30	$child[2]
+
+					-attachControl		$child[4]	"top"		20	$child[3]
+					-attachForm		$child[4]	"left"		25
+
+					-attachOppositeControl	$child[5]	"top"		0	$child[4]
+					-attachOppositeControl	$child[5]	"left"		0	$child[3]
+
+					-attachControl		$child[6]	"top"		10	$child[4]
+					-attachForm		$child[6]	"left"		5
+					-attachForm		$child[6]	"right"		5
+
+				$formLayout;
+
+				setParent ..;
+
+    			frameLayout -label "For Selected Objects Use" -labelAlign "top" -cll true
+    				-borderStyle "etchedIn";
+				$i = 0;
+
+				string $formLayout = `formLayout`;
+					$child[$i++] = `checkBox -label "传递 UVs" -v $transuv_check1 -cc "$transuv_check1 = #1"`;
+					$child[$i++] = `checkBox -label "传递 材质" -v $transmat_check1 -cc "$transmat_check1 = #1"`;
+					$child[$i++] = `button -label "应用(先选择ok的物体.)"-bgc 0.091 0.725 1 -command ("TransferUVMatSel " + $child[0] + " " + $child[1])`;
+
+				setParent ..;
+
+				formLayout -edit
+
+					-attachForm		$child[0]	"top"		15	
+					-attachForm		$child[0]	"left"		25
+					
+					-attachForm		$child[1]	"top"		15	
+					-attachControl		$child[1]	"left"		30	$child[0]
+
+					-attachControl		$child[2]	"top"		10	$child[0]
+					-attachForm		$child[2]	"left"		5
+					-attachForm		$child[2]	"right"		5
+				$formLayout;
+
+				setParent ..;
+
+			frameLayout -label "For Lighting File Use" -labelAlign "top" -cll 1 -cl 1 -borderStyle "etchedIn";
+				string $formLayout = `formLayout`;
+ 					string $textFieldGrp = `textFieldGrp -label "Material Rar File:" -editable false -columnWidth 1 100 -adjustableColumn 2`;
+					string $symbolButton = `symbolButton -image "navButtonBrowse.xpm" -command ("TransferShaderBrowse " + $textFieldGrp)`;
+					string $button = `button -label "Apply" -command ("ApplyLightingMaterial " + $textFieldGrp)`;
+					setParent ..;
+				formLayout -edit
+					-attachForm		$textFieldGrp	"left"		0
+					-attachOppositeControl	$textFieldGrp	"bottom"	0	$button
+					-attachControl		$textFieldGrp	"right"		0	$symbolButton
+
+					-attachOppositeControl	$symbolButton	"bottom"	0	$button
+					-attachControl		$symbolButton	"right"		30	$button
+
+					-attachForm		$button		"top"		10
+					-attachForm		$button		"right"		5
+				$formLayout;
+				setParent ..;
+
+	showWindow mushconvMatWin;
+}
+global proc TransferUVMatSel(string $uvcheck,string $matcheck)
+{
+	string $renderLayers[] = `ls -type renderLayer`;
+	if (size($renderLayers)>1)
+	{
+		string $confresult = `confirmDialog -title "Confirm" -message "Render Layer Exists! Continue Anyway?"
+			-button "Yes" -button "No" -defaultButton "No"
+			-cancelButton "No" -dismissString "No"`;
+		if ($confresult == "No")
+			return;
+	}
+	int $uv = `checkBox -q -v $uvcheck`;
+	int $mat = `checkBox -q -v $matcheck`;
+	
+	string $selAlls[]=`ls -sl`;
+        int $sizeAlls=size($selAlls);
+	string $first=$selAlls[0];
+	string $second;
+	int $i=1;
+	for($i=1;$i<$sizeAlls;$i++){
+		string $second=$selAlls[$i];
+		TransferUVMatSelProc($uv,$mat,$first,$second);
+		}
+}
+
+global proc TransferUVMatSelProc(int $uv, int $mat,string $first,string $second)
+{
+	select -cl;
+	select -r $first;
+	select -tgl $second;
+	string $sel[] = `ls -long -selection -dagObjects -type shape -noIntermediate`;
+	string $seltr[] = `ls -long -selection -dagObjects -type transform -noIntermediate`;
+	if (size($sel) != 2)
+		error ("polyTransfer requires two polygon objects");
+
+	cycleCheck -evaluation on;
+
+	//transfer UV
+	if ($uv)
+	{
+	/*	//add uvmin smooth node if necessary
+		string $lS[] = `listAttr -userDefined -string UVMinSmooth $seltr[0]`;
+		if (size($lS) == 1)
+		{
+			int $value = `getAttr ($seltr[0]+".UVMinSmooth")`;
+			$UVsm = getsmooth($seltr[1]);	
+			if ($UVsm == 0)
+			{
+				$smname = `polySmooth -divisions $value -continuity 1 -keepBorder 0 -keepSelectionBorder 1 -keepTessellation 1 -constructionHistory 1 $sel[1]`;
+				rename $smname "UVMinSmooth";
+				print("\n	Set UVMinSmooth on: "+$seltr[1]);
+			}
+		}
+		DeapplySmooth({$sel[0]});
+		myPolyTransfer($sel[0], $sel[1]);
+		*/
+		tranUV;
+	}
+	//transfer material
+	if ($mat)
+	{
+		//re-locate place3dTexture node
+		string $place3d[] = `listRelatives -children -fullPath -type "place3dTexture" $seltr[0]`;
+		for ($pd in $place3d)
+			parent $pd $seltr[1];
+
+		//transfer material
+		string $shading[] = `listConnections -source 0 -destination 1 -type shadingEngine $sel[0]`;
+		OutputSelSG_shapes($sel[0], $seltr[0], $shading);
+		transferSelMat($sel[0],$sel[1]);
+		recreateSmooth($seltr[1]);
+
+		//re-connect switchshading node
+		Conswitch($sel[0], $sel[1]);
+	}
+	docleannamespace();
+
+	cycleCheck -evaluation on;
+}
+//////////////////////////////////////////////////
+zzUvtransfer;

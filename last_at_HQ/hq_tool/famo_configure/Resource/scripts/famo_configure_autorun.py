@@ -1,0 +1,1 @@
+os.system( r'O:/hq_tool/famo_configure/Famo_configure.exe')

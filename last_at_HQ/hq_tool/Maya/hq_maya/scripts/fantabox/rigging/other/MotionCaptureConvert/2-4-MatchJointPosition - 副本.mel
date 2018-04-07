@@ -1,0 +1,152 @@
+//////////////////////////////////////////////////////////////
+//动作捕捉转换插件 —— 把捕捉动画转换成TSM设置插件的控制器动画。
+//插件编写人：徐阳
+//2009-8-6 一版 ；2010-4-27 二版
+//////////////////////////////////////////////////////////////
+//start ====骨骼位点对位
+
+//float $torso_position[]=`xform -ws -q -t Spine_joint1`;
+//move $torso_position[0] $torso_position[1]  $torso_position[2]  Hips.scalePivot Hips.rotatePivot ;
+setKeyframe Hips;
+
+//导入中间控制器
+file -import -type "mayaBinary" -rpr "dummy_ctrl" -options "v=0;p=17"  -pr "D:/TransformCatchAnim/dummy_ctrl.mb";
+
+float $character_high[]=`xform -ws -q -t Head_joint4`;
+distanceDimension -sp 0 0 1 -ep 0 $character_high[1] 1 ;
+
+float $scale_high =`getAttr distanceDimensionShape1.distance`/2;
+setAttr dummy_Character.scaleX $scale_high;
+setAttr dummy_Character.scaleY $scale_high;
+setAttr dummy_Character.scaleZ $scale_high;
+
+
+//用绑定角色约束中间控制器_中间控制器对位
+//躯干
+pointConstraint Upper_Body dummy_Upper_Body_G;
+pointConstraint Spine_Pelvis_FK dummy_Spine_pelvisnullFK;
+pointConstraint Spine_Middle_FK dummy_Spine_middlenullFK;
+pointConstraint Spine_Torso_FK dummy_Spine_torsonullIFK;
+pointConstraint Head_Neck dummy_Head_rotationisolated;
+pointConstraint Head_FK dummy_Head_isolatecalculate;
+//腿
+pointConstraint LeftLeg_IK_Leg dummy_LeftLeg_directioncompensate;
+pointConstraint LeftLeg_Leg_Pole_Vector dummy_LeftLeg_polevectorgroup;
+pointConstraint LeftLeg_Upper_Leg dummy_LeftLeg_upperlegnull;
+pointConstraint LeftLeg_Lower_Leg dummy_LeftLeg_lowerlegnull;
+pointConstraint LeftLeg_Foot dummy_LeftLeg_footnull;
+pointConstraint LeftLeg_Toe dummy_LeftLeg_toenull;
+pointConstraint RightLeg_IK_Leg dummy_RightLeg_directioncompensate;
+pointConstraint RightLeg_Leg_Pole_Vector dummy_RightLeg_polevectorgroup;
+pointConstraint RightLeg_Upper_Leg dummy_RightLeg_upperlegnull;
+pointConstraint RightLeg_Lower_Leg dummy_RightLeg_lowerlegnull;
+pointConstraint RightLeg_Foot dummy_RightLeg_footnull;
+pointConstraint RightLeg_Toe dummy_RightLeg_toenull;
+//手臂
+pointConstraint LeftArm_Shoulder dummy_LeftArm_shouldernull;
+pointConstraint LeftArm_Arm_Pole_Vector dummy_LeftArm_upperarmcontrolnull;
+pointConstraint LeftArm_Arm_IK dummy_LeftArm_amiknull;
+pointConstraint LeftArm_Upper_Arm dummy_LeftArm_upperarmcontrolnull;
+pointConstraint LeftArm_Lower_Arm dummy_LeftArm_lowerarmcontrolnull;
+pointConstraint LeftArm_Hand dummy_LeftArm_HandTranslate;
+pointConstraint RightArm_Shoulder dummy_RightArm_shouldernull;
+//pointConstraint RightArm_Arm_Pole_Vector dummy_RightArm_upperarmcontrolnull;
+pointConstraint RightArm_Arm_IK dummy_RightArm_amiknull;
+pointConstraint RightArm_Upper_Arm dummy_RightArm_upperarmcontrolnull;
+pointConstraint RightArm_Lower_Arm dummy_RightArm_lowerarmcontrolnull;
+pointConstraint RightArm_Hand dummy_RightArm_HandTranslate;
+//清除控制器约束
+delete dummy_Head_isolatecalculate_pointConstraint1;
+delete dummy_Head_rotationisolated_pointConstraint1;
+delete dummy_LeftArm_HandTranslate_pointConstraint1;
+delete dummy_LeftArm_lowerarmcontrolnull_pointConstraint1;
+delete dummy_LeftArm_upperarmcontrolnull_pointConstraint1;
+//delete dummy_LeftArm_upperarmcontrolnull_pointConstraint1;
+delete dummy_LeftArm_shouldernull_pointConstraint1;
+delete dummy_RightArm_HandTranslate_pointConstraint1;
+delete dummy_RightArm_lowerarmcontrolnull_pointConstraint1;
+delete dummy_RightArm_upperarmcontrolnull_pointConstraint1;
+//delete dummy_RightArm_upperarmcontrolnull_pointConstraint1;
+delete dummy_RightArm_shouldernull_pointConstraint1;
+delete dummy_Spine_torsonullIFK_pointConstraint1;
+delete dummy_Spine_middlenullFK_pointConstraint1;
+delete dummy_RightLeg_polevectorgroup_pointConstraint1;
+delete dummy_LeftLeg_polevectorgroup_pointConstraint1;
+delete dummy_Spine_pelvisnullFK_pointConstraint1;
+delete dummy_Upper_Body_G_pointConstraint1;
+delete dummy_RightLeg_directioncompensate_pointConstraint1;
+delete dummy_LeftLeg_directioncompensate_pointConstraint1;
+delete dummy_LeftLeg_toenull_pointConstraint1;
+delete dummy_LeftLeg_upperlegnull_pointConstraint1;
+delete dummy_LeftLeg_lowerlegnull_pointConstraint1;
+delete dummy_LeftLeg_footnull_pointConstraint1;
+delete dummy_RightLeg_toenull_pointConstraint1;
+delete dummy_RightLeg_upperlegnull_pointConstraint1;
+delete dummy_RightLeg_lowerlegnull_pointConstraint1;
+delete dummy_RightLeg_footnull_pointConstraint1;
+delete dummy_RightArm_amiknull_pointConstraint1;
+delete dummy_LeftArm_amiknull_pointConstraint1;
+
+
+
+
+//约束dummy控制器
+//躯干
+parentConstraint -mo Hips dummy_Upper_Body_G;
+parentConstraint -mo Hips dummy_Spine_pelvisnullFK;
+parentConstraint -mo Spine1 dummy_Spine_middlenullFK;
+parentConstraint -mo Spine2 dummy_Spine_torsonullIFK;
+parentConstraint -mo Neck dummy_Head_rotationisolated;
+orientConstraint -mo Head dummy_Head_isolatecalculate;
+
+//手臂
+orientConstraint -mo LeftShoulder dummy_LeftArm_shouldernull;
+orientConstraint -mo LeftArmRoll dummy_LeftArm_upperarmcontrolnull;
+parentConstraint -mo Leftjoint dummy_LeftArm_amiknull;
+orientConstraint -mo RightShoulder dummy_RightArm_shouldernull;
+orientConstraint -mo RightArmRoll dummy_RightArm_upperarmcontrolnull;
+parentConstraint -mo Rightjoint dummy_RightArm_amiknull;
+
+
+//肘+膝盖表达式
+expression -s "dummy_LeftArm_lowerarmcontrolnull.rotateY = LeftForeArm.rotateZ -0.0038204;\r\ndummy_RightArm_lowerarmcontrolnull.rotateY = RightForeArm.rotateZ -0.0038204;\r\ndummy_LeftLeg_lowerlegnull.rotateZ = -LeftLeg.rotateZ +7.620086;\r\ndummy_RightLeg_lowerlegnull.rotateZ = -RightLeg.rotateZ +7.620086;"  -o "" -n "boll_rot_expression" -ae 1 -uc all ;
+
+//orientConstraint -mo LeftArm dummy_LeftArm_lowerarmcontrolnull;
+//orientConstraint -mo RightArm dummy_RightArm_lowerarmcontrolnull;
+orientConstraint -mo Leftjoint dummy_LeftArm_handcontrolnull;
+orientConstraint -mo Rightjoint dummy_RightArm_handcontrolnull;
+
+/*
+orientConstraint -mo LeftArm dummy_LeftArm_Upper_Arm;
+orientConstraint -mo -skip x -skip z -weight 1 LeftForeArm dummy_LeftArm_Lower_Arm;
+
+orientConstraint -mo RightArm dummy_RightArm_Upper_Arm;
+orientConstraint -mo -skip x -skip z -weight 1 RightForeArm dummy_RightArm_Lower_Arm;
+*/
+
+//腿
+orientConstraint -mo LeftUpLegRoll dummy_LeftLeg_polevectorgroup;
+parentConstraint -mo LeftToeBase dummy_LeftLeg_directioncompensate;
+orientConstraint -mo RightUpLegRoll dummy_RightLeg_polevectorgroup;
+parentConstraint -mo RightToeBase dummy_RightLeg_directioncompensate;
+
+orientConstraint -mo LeftUpLegRoll dummy_LeftLeg_upperlegnull;
+//orientConstraint -mo -skip x -skip y -weight 1 LeftLeg dummy_LeftLeg_lowerlegnull;
+orientConstraint -mo LeftFoot dummy_LeftLeg_footnull;
+orientConstraint -mo LeftToeBase dummy_LeftLeg_toenull;
+orientConstraint -mo RightUpLegRoll dummy_RightLeg_upperlegnull;
+//orientConstraint -mo -skip x -skip y -weight 1 RightLeg dummy_RightLeg_lowerlegnull;
+orientConstraint -mo RightFoot dummy_RightLeg_footnull;
+orientConstraint -mo RightToeBase dummy_RightLeg_toenull;
+
+
+
+delete locator1;
+delete locator2;
+
+
+
+select -cl;
+//end=========
+
+

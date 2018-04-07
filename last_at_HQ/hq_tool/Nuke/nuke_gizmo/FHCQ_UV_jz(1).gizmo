@@ -1,0 +1,465 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ inputs 6
+ tile_color 0xff00ff
+ note_font "Verdana Bold"
+ note_font_size 20
+ note_font_color 0xffffffff
+ lock_connections true
+ addUserKnob {20 user l UV_output}
+ addUserKnob {6 offset l Offset t 默认下非偏移,勾选则为偏移镜头. +STARTLINE}
+}
+ Axis2 {
+  inputs 0
+  name Axis1
+  xpos 538
+  ypos -326
+ }
+set N6f213c00 [stack 0]
+ Camera2 {
+  rotate {0 -60 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  win_translate {0 0.32719836}
+  name Cam7
+  xpos 783
+  ypos -209
+ }
+ Input {
+  inputs 0
+  name cam6
+  xpos -331
+  ypos -450
+  number 5
+ }
+ Dot {
+  name Dot6
+  xpos -297
+  ypos -369
+ }
+set N6f212c00 [stack 0]
+ Project3D2 {
+  inputs 2
+  name Project3D7
+  xpos 310
+  ypos 124
+ }
+push $N6f213c00
+ Camera2 {
+  rotate {0 -360 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  win_translate {0 0.32719836}
+  name Cam8
+  xpos 683
+  ypos -207
+ }
+ Input {
+  inputs 0
+  name cam5
+  xpos -441
+  ypos -450
+  number 4
+ }
+ Dot {
+  name Dot5
+  xpos -407
+  ypos -369
+ }
+set N6f251c00 [stack 0]
+ Project3D2 {
+  inputs 2
+  name Project3D8
+  xpos 210
+  ypos 126
+ }
+push $N6f213c00
+ Camera2 {
+  rotate {0 -300 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  win_translate {0 0.32719836}
+  name Cam9
+  xpos 583
+  ypos -206
+ }
+ Input {
+  inputs 0
+  name cam4
+  xpos -551
+  ypos -450
+  number 3
+ }
+ Dot {
+  name Dot7
+  xpos -517
+  ypos -369
+ }
+set N6f250c00 [stack 0]
+ Project3D2 {
+  inputs 2
+  name Project3D9
+  xpos 110
+  ypos 127
+ }
+push $N6f213c00
+ Camera2 {
+  rotate {0 -240 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  win_translate {0 0.32719836}
+  name Cam10
+  xpos 481
+  ypos -207
+ }
+ Input {
+  inputs 0
+  name cam3
+  xpos -661
+  ypos -450
+  number 2
+ }
+ Dot {
+  name Dot4
+  xpos -627
+  ypos -369
+ }
+set N6f283c00 [stack 0]
+ Project3D2 {
+  inputs 2
+  name Project3D10
+  xpos 8
+  ypos 126
+ }
+push $N6f213c00
+ Camera2 {
+  rotate {0 -180 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  win_translate {0 0.32719836}
+  name Cam11
+  xpos 381
+  ypos -210
+ }
+ Input {
+  inputs 0
+  name cam2
+  xpos -771
+  ypos -450
+  number 1
+ }
+ Dot {
+  name Dot8
+  xpos -737
+  ypos -369
+ }
+set N6f282c00 [stack 0]
+ Project3D2 {
+  inputs 2
+  name Project3D11
+  xpos -92
+  ypos 123
+ }
+push $N6f213c00
+ Camera2 {
+  rotate {0 -120 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  win_translate {0 0.32719836}
+  name Cam12
+  xpos 281
+  ypos -210
+ }
+ Input {
+  inputs 0
+  name cam1
+  xpos -881
+  ypos -450
+ }
+ Dot {
+  name Dot3
+  xpos -847
+  ypos -369
+ }
+set N6f2bbc00 [stack 0]
+ Project3D2 {
+  inputs 2
+  name Project3D12
+  xpos -192
+  ypos 123
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat6
+  xpos -92
+  ypos 249
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat7
+  xpos 8
+  ypos 250
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat8
+  xpos 110
+  ypos 250
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat9
+  xpos 210
+  ypos 250
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat10
+  xpos 310
+  ypos 250
+ }
+ Cylinder {
+  cast_shadow false
+  receive_shadow false
+  rows 1
+  columns 200
+  radius 11
+  height 7.5
+  rot_order ZYX
+  translate {0 1.8 0}
+  rotate {0 -90 0}
+  scaling {1 1 -1}
+  name Cylinder2
+  label HM360_Noffset
+  xpos 310
+  ypos 332
+ }
+ Scene {
+  name Scene2
+  xpos 320
+  ypos 408
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "11058 1200 0 0 11058 1200 1 6Puv"
+  name Constant2
+  xpos -311
+  ypos 267
+ }
+ ScanlineRender {
+  inputs 2
+  conservative_shader_sampling false
+  projection_mode uv
+  motion_vectors_type distance
+  name ScanlineRender2
+  xpos -311
+  ypos 428
+ }
+set N6f2e9400 [stack 0]
+ Axis2 {
+  inputs 0
+  name Axis9
+  xpos -1713
+  ypos -296
+ }
+set N6f2e9000 [stack 0]
+ Camera2 {
+  rotate {0 -60 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam6
+  xpos -1486
+  ypos -141
+ }
+push $N6f212c00
+ Project3D2 {
+  inputs 2
+  name Project3D6
+  xpos -1167
+  ypos 134
+ }
+push $N6f2e9000
+ Camera2 {
+  rotate {0 -360 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam5
+  xpos -1586
+  ypos -139
+ }
+push $N6f251c00
+ Project3D2 {
+  inputs 2
+  name Project3D5
+  xpos -1267
+  ypos 136
+ }
+push $N6f2e9000
+ Camera2 {
+  rotate {0 -300 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam4
+  xpos -1686
+  ypos -138
+ }
+push $N6f250c00
+ Project3D2 {
+  inputs 2
+  name Project3D4
+  xpos -1367
+  ypos 137
+ }
+push $N6f2e9000
+ Camera2 {
+  rotate {0 -240 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam3
+  xpos -1788
+  ypos -139
+ }
+push $N6f283c00
+ Project3D2 {
+  inputs 2
+  name Project3D3
+  xpos -1469
+  ypos 136
+ }
+push $N6f2e9000
+ Camera2 {
+  rotate {0 -180 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam2
+  xpos -1888
+  ypos -142
+ }
+push $N6f282c00
+ Project3D2 {
+  inputs 2
+  name Project3D2
+  xpos -1569
+  ypos 133
+ }
+push $N6f2e9000
+ Camera2 {
+  rotate {0 -120 0}
+  focal 32.26971436
+  haperture 37.26180267
+  vaperture 25.39999962
+  name Cam1
+  xpos -1988
+  ypos -142
+ }
+push $N6f2bbc00
+ Project3D2 {
+  inputs 2
+  name Project3D1
+  xpos -1669
+  ypos 133
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat1
+  xpos -1569
+  ypos 259
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat2
+  xpos -1469
+  ypos 260
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat3
+  xpos -1367
+  ypos 260
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat4
+  xpos -1267
+  ypos 260
+ }
+ MergeMat {
+  inputs 2
+  name MergeMat5
+  xpos -1167
+  ypos 260
+ }
+ Cylinder {
+  cast_shadow false
+  receive_shadow false
+  rows 1
+  columns 200
+  radius 11
+  height 7.5
+  rot_order ZYX
+  rotate {0 -90 0}
+  scaling {1 1 -1}
+  name Cylinder1
+  label HM360_Noffset
+  xpos -1167
+  ypos 328
+ }
+ Scene {
+  name Scene1
+  xpos -1157
+  ypos 418
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "11058 1200 0 0 11058 1200 1 6Puv"
+  name Constant1
+  xpos -925
+  ypos 277
+ }
+ ScanlineRender {
+  inputs 2
+  conservative_shader_sampling false
+  projection_mode uv
+  motion_vectors_type distance
+  name ScanlineRender1
+  xpos -925
+  ypos 438
+ }
+set N6f3c1800 [stack 0]
+ Switch {
+  inputs 2
+  which {{offset}}
+  name Switch1
+  xpos -671
+  ypos 621
+ }
+ Output {
+  name Output1
+  xpos -671
+  ypos 730
+ }
+push $N6f2e9400
+push $N6f3c1800
+ Viewer {
+  inputs 2
+  frame_range 1-100
+  input_number 1
+  name Viewer1
+  xpos -1032
+  ypos 892
+ }
+end_group

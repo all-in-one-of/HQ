@@ -1,0 +1,70 @@
+{
+    "AllItem": [
+        {
+            "item": {
+                "icon": ":/images/13.png",
+                "text": "插件配置工具",
+                "type": "QTabWidget"
+            },
+            "sunitem": [
+                {
+                    "tabIcon": ":/images/maya_2015.png",
+                    "tabList": [
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\"E:\\workZone02\\文件交换区\\0629\\ToolManager\\generalapp\\common_configure.exe\"",
+                            "text": "通用配置网络版",
+                            "tooltip": "适合一般项目的配置，配置插件指向服务器"
+                        },
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\"E:\\workZone02\\文件交换区\\0629\\ToolManager\\generalapp\\common_configure_local.exe\"",
+                            "text": "通用配置本地版",
+                            "tooltip": "适合一般项目的配置，配置插件指向本地"
+                        },
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\"E:\\workZone02\\文件交换区\\0629\\ToolManager\\generalapp\\common_configure_renderFarm.exe\"",
+                            "text": "通用配置机房版",
+                            "tooltip": "一般项目插件配置，针对渲染机房"
+                        },
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\"E:\\workZone02\\文件交换区\\0629\\ToolManager\\generalapp\\linhaixueyuan_configure.exe\"",
+                            "text": "林海雪原网络版",
+                            "tooltip": "针对外包林海雪原项目，配置插件指向本地"
+                        },
+                        {
+                            "icon": ":/images/famuma_pure.png",
+                            "process": "\"E:\\workZone02\\文件交换区\\0629\\ToolManager\\generalapp\\Wuge_configure.exe\"",
+                            "text": "吴哥项目网络版",
+                            "tooltip": "针对吴哥项目项目，配置插件指向服务器"
+                        }
+                    ],
+                    "tabText": "Maya"
+                },
+                {
+                    "tabIcon": ":/images/houdini.png",
+                    "tabList": [
+                    ],
+                    "tabText": "Houdini"
+                }
+            ]
+        },
+        {
+            "item": {
+                "icon": ":/images/13.png",
+                "text": "华强小工具",
+                "type": "QGroupBox"
+            },
+            "sunitem": [
+                {
+                    "icon": "O:/hq_tool/programs/PicScaler/PicScaler.exe",
+                    "process": "\"O:\\hq_tool\\programs\\PicScaler\\PicScaler.exe\"",
+                    "text": "PicScaler",
+                    "tooltip": "PicScaler"
+                }
+            ]
+        }
+    ]
+}

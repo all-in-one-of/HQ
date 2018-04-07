@@ -1,0 +1,123 @@
+#! C:/Program Files/Nuke9.0v6/nuke-9.0.6.dll -nx
+version 9.0 v6
+Gizmo {
+ inputs 3
+ tile_color 0xffff
+ addUserKnob {20 X_pingmu180}
+ addUserKnob {4 inputStyle l input M {zm m}}
+ inputStyle m
+ addUserKnob {41 format T Constant6.format}
+}
+ Input {
+  inputs 0
+  name cam3
+  xpos 574
+  ypos 208
+ }
+ Reformat {
+  type "to box"
+  format "750 900 0 0 750 900 1 "
+  box_width {{root.width/3}}
+  box_height {{root.height}}
+  box_fixed true
+  name Reformat1
+  xpos 577
+  ypos 243
+ }
+ set C3b8d2800 [stack 0]
+ Transform {
+  translate {{"(\[value root.width]/3)*2"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform12
+  xpos 577
+  ypos 288
+ }
+set N3b8d2000 [stack 0]
+ Input {
+  inputs 0
+  name cam2
+  xpos 473
+  ypos 206
+  number 1
+ }
+clone $C3b8d2800 {
+  xpos 476
+  ypos 242
+  selected false
+ }
+ Transform {
+  translate {{"\[value root.width]/3"} 0}
+  center {1024 778}
+  filter Impulse
+  name Transform11
+  xpos 476
+  ypos 287
+ }
+set N3b747000 [stack 0]
+push 0
+ Input {
+  inputs 0
+  name cam1
+  xpos 371
+  ypos 207
+  number 2
+ }
+clone $C3b8d2800 {
+  xpos 371
+  ypos 243
+  selected false
+ }
+ Transform {
+  center {1024 778}
+  filter Impulse
+  name Transform10
+  xpos 371
+  ypos 286
+ }
+set N3b746000 [stack 0]
+ Constant {
+  inputs 0
+  channels rgb
+  name Constant6
+  xpos 703
+  ypos 338
+ }
+set N1f293c00 [stack 0]
+ Merge2 {
+  inputs 4+1
+  also_merge all
+  name Merge1
+  xpos 379
+  ypos 355
+ }
+push $N3b8d2000
+push $N3b747000
+push $N3b746000
+push $N1f293c00
+ ZMerge {
+  inputs 4
+  name ZMerge1
+  xpos 476
+  ypos 355
+ }
+ Switch {
+  inputs 2
+  which {{inputStyle}}
+  name Switch1
+  xpos 472
+  ypos 412
+ }
+ Output {
+  name Output1
+  xpos 472
+  ypos 449
+ }
+ Viewer {
+  frame_range 1-200
+  input_process false
+  name Viewer1
+  xpos 108
+  ypos 515
+ }
+end_group
